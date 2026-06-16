@@ -288,6 +288,16 @@ export interface components {
       format?: "webp" | "jpeg";
       fallback_reason?: string | null;
     };
+    SlotRecommendation: {
+      do?: string | null;
+      prepare?: string | null;
+      notice?: string | null;
+      /**
+       * @default ai
+       * @enum {string}
+       */
+      source?: "ai" | "override";
+    };
     ResultSheetResponse: {
       plan_id: string;
       days: ({
@@ -307,16 +317,7 @@ export interface components {
               checked?: boolean;
               why_short?: string | null;
               citations?: string[] | null;
-              recommendation?: {
-                do?: string | null;
-                prepare?: string | null;
-                notice?: string | null;
-                /**
-                 * @default ai
-                 * @enum {string}
-                 */
-                source?: "ai" | "override";
-              };
+              recommendation?: components["schemas"]["SlotRecommendation"];
             })[];
         })[];
     };
@@ -337,7 +338,7 @@ export interface components {
     };
     SlotOverridesPatchResponse: {
       slot_id: string;
-      recommendation?: components["schemas"]["ResultSheetResponse"]["days"]["items"]["slots"]["items"]["recommendation"];
+      recommendation?: components["schemas"]["SlotRecommendation"];
     };
     SearchPoiItem: {
       poi_id: string;

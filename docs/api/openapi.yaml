@@ -1022,6 +1022,14 @@ components:
         format: { type: string, enum: [webp, jpeg] }
         fallback_reason: { type: string, nullable: true }
 
+    SlotRecommendation:
+      type: object
+      properties:
+        do: { type: string, nullable: true }
+        prepare: { type: string, nullable: true }
+        notice: { type: string, nullable: true }
+        source: { type: string, enum: [ai, override], default: ai }
+
     ResultSheetResponse:
       type: object
       required: [plan_id, days]
@@ -1056,12 +1064,7 @@ components:
                     why_short: { type: string, nullable: true }
                     citations: { type: array, items: { type: string }, nullable: true }
                     recommendation:
-                      type: object
-                      properties:
-                        do: { type: string, nullable: true }
-                        prepare: { type: string, nullable: true }
-                        notice: { type: string, nullable: true }
-                        source: { type: string, enum: [ai, override], default: ai }
+                      $ref: '#/components/schemas/SlotRecommendation'
 
     SlotStatusPatchRequest:
       type: object
@@ -1104,7 +1107,7 @@ components:
       properties:
         slot_id: { type: string }
         recommendation:
-          $ref: '#/components/schemas/ResultSheetResponse/properties/days/items/properties/slots/items/properties/recommendation'
+          $ref: '#/components/schemas/SlotRecommendation'
 
     SearchPoiItem:
       type: object

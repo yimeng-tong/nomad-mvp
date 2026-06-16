@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nomad-mvp/prompts/fill-output.schema.json",
+  "title": "AI Fill Output",
+  "type": "object",
+  "required": ["items"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slot_id", "do"],
+        "properties": {
+          "slot_id": { "type": "string" },
+          "do": { "type": "array", "items": { "type": "string", "maxLength": 30 }, "maxItems": 3 },
+          "prepare": { "type": "array", "items": { "type": "string", "maxLength": 30 }, "maxItems": 3 },
+          "notice": { "type": "array", "items": { "type": "string", "maxLength": 30 }, "maxItems": 3 }
+        }
+      }
+    }
+  }
+}
+

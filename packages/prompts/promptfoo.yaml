@@ -1,0 +1,16 @@
+version: 1
+prompts:
+  - id: fill.one_shot.v1
+    provider: openai
+    model: gpt-4o-mini
+    temperature: 0.3
+    tests:
+      - vars:
+          slot_id: s1
+          context: "杭州·上午·2h"
+        assertions:
+          - type: json-schema
+            value: ./schemas/fill-output.schema.json
+thresholds:
+  pass_rate: 0.9
+

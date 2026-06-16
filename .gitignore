@@ -1,3 +1,16 @@
 # BMAD (local only)
 .bmad-core/
 .bmad-*/
+node_modules
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Build outputs
+dist/
+**/dist/
+
+# Logs
+*.log

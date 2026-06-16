@@ -1,0 +1,12 @@
+{
+  "name": "nomad-types",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "generate": "openapi-typescript ../../docs/api/openapi.yaml -o src/api-types.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^6.7.0"
+  }
+}
+

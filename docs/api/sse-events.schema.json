@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nomad-mvp/sse-events.schema.json",
+  "title": "nomad-mvp SSE Event Data Schemas",
+  "type": "object",
+  "description": "Top-level container providing $defs for individual SSE event data payloads. Each SSE frame uses `event:` to name the type and `data:` to carry one of these schemas.",
+  "$defs": {
+    "IngestEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trace_id", "ingest_id", "state", "ts"],
+      "properties": {
+        "trace_id": {"type": "string"},
+        "ingest_id": {"type": "string"},
+        "state": {"type": "string", "enum": ["created", "fetching", "parsing", "geo", "storing", "done", "failed"]},
+        "note_id": {"type": ["string", "null"]},
+        "retry": {"type": "integer", "minimum": 0},
+        "error": {"type": ["object", "null"], "additionalProperties": true},
+        "ts": {"type": "integer", "description": "Unix epoch milliseconds"}
+      }
+    },
+    "PlanEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trace_id", "plan_job_id", "phase", "ts"],
+      "properties": {
+        "trace_id": {"type": "string"},
+        "plan_job_id": {"type": "string"},
+        "phase": {"type": "string", "enum": ["started", "anchor", "cluster", "validate", "persist", "done"]},
+        "plan_id": {"type": ["string", "null"]},
+        "conflicts": {"type": "array", "items": {"type": "object", "additionalProperties": true}},
+        "unplaced_count": {"type": "integer", "minimum": 0},
+        "ts": {"type": "integer", "description": "Unix epoch milliseconds"}
+      }
+    },
+    "FillEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trace_id", "fill_run_id", "phase", "ts"],
+      "properties": {
+        "trace_id": {"type": "string"},
+        "fill_run_id": {"type": "string"},
+        "phase": {"type": "string", "enum": ["started", "progress", "done"]},
+        "batch_done": {"type": "integer", "minimum": 0},
+        "batch_total": {"type": "integer", "minimum": 0},
+        "ok": {"type": "integer", "minimum": 0},
+        "invalid": {"type": "integer", "minimum": 0},
+        "ts": {"type": "integer", "description": "Unix epoch milliseconds"}
+      }
+    },
+    "PingEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trace_id", "seq", "heartbeat_ms", "ts"],
+      "properties": {
+        "trace_id": {"type": "string"},
+        "seq": {"type": "integer", "minimum": 0},
+        "heartbeat_ms": {"type": "integer", "minimum": 1000},
+        "ts": {"type": "integer", "description": "Unix epoch milliseconds"}
+      }
+    },
+    "ErrorEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["error_code", "error_message"],
+      "properties": {
+        "error_code": {"type": "string"},
+        "error_message": {"type": "string"},
+        "retriable": {"type": "boolean"},
+        "details": {"type": "object", "additionalProperties": true},
+        "ts": {"type": "integer", "description": "Unix epoch milliseconds"}
+      }
+    }
+  }
+}
+
+

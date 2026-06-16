@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+          POSTGRES_DB: nomad
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U user -d nomad" --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      RATE_LIMIT_WINDOW_MS: 60000
+      SSE_IDLE_TIMEOUT_MS: 30000
+      SSE_HEARTBEAT_MS: 10000
+      DATABASE_URL: postgresql://user:pass@localhost:5432/nomad
+      REDIS_URL: redis://localhost:6379
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile=false
+
+      - name: Generate OpenAPI types
+        run: pnpm run ci:types
+
+      - name: Build workspace
+        run: pnpm run ci:build
+
+      - name: Push Prisma schema
+        run: pnpm -F nomad-prisma run db:push
+
+      - name: Lint
+        run: npx eslint .
+
+      - name: Start server
+        run: |
+          node apps/server/dist/index.js &
+          echo $! > server.pid
+          sleep 2
+      - name: Health check
+        run: curl -fsS http://localhost:3000/health
+
+      - name: Synthetic probe (ACK)
+        run: pnpm run ci:probe
+
+      - name: SSE assertions (TTFU/keepalive)
+        run: pnpm run ci:sse
+
+      - name: Promptfoo baseline (noop placeholder)
+        run: echo "promptfoo gate placeholder" 
+
+      - name: Stop server
+        if: always()
+        run: |
+          kill -9 $(cat server.pid) || true
+
+

@@ -1,0 +1,20 @@
+{
+  "APP_SEARCH_POI": ["city", "q", "result_count", "topk", "latency_ms", "success"],
+  "APP_CANDIDATE_ADD": ["plan_id", "source", "poi_id", "success"],
+  "APP_SLOT_OVERRIDES_SET": ["plan_id", "slot_id", "fields", "chars_total"],
+  "APP_SLOT_OVERRIDES_CLEAR": ["plan_id", "slot_id"],
+  "APP_HOTEL_SET": ["plan_id", "day", "hotel_poi_id"],
+  "APP_RESULT_EXPORT": ["plan_id", "files_count", "format", "total_ms"],
+  "APP_CHECKED_TOGGLE": ["plan_id", "slot_id", "checked"],
+  "API_SEARCH_POI_COUNT": [],
+  "API_SEARCH_POI_LATENCY_MS": [],
+  "API_OVERRIDES_PATCH_COUNT": [],
+  "API_OVERRIDES_PATCH_LATENCY_MS": [],
+  "API_RESULT_SHEET_READ_COUNT": [],
+  "API_EXPORT_COUNT": [],
+  "API_EXPORT_LATENCY_MS": [],
+  "SSE_ANCHORS_READY": ["plan_job_id", "city", "season", "tod", "ready"],
+  "SSE_RESULT_SHEET_UPDATED": ["plan_id", "slot_id", "source"]
+}
+
+

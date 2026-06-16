@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "prompts": [
+    {
+      "id": "fill.one_shot.v1",
+      "model": "gpt-4o-mini",
+      "temperature": 0.3,
+      "top_p": 0.9,
+      "max_tokens": 1200,
+      "prompt_ver": "2025-10-26",
+      "output_schema_ref": "./schemas/fill-output.schema.json"
+    }
+  ]
+}
+

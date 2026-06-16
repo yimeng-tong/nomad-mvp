@@ -1,0 +1,285 @@
+// Prisma schema equivalent (subset) of docs/db/schema.sql
+// Requires PostgreSQL with PostGIS/pgvector installed in DB instance
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum IngestStatus {
+  created
+  fetching
+  parsing
+  geo
+  storing
+  done
+  failed
+}
+
+enum PlanPace {
+  slow
+  normal
+  fast
+}
+
+enum SlotType {
+  place
+  free
+  other
+}
+
+enum Conflict {
+  none
+  closed
+  too_far
+  overtime
+}
+
+enum FillValidation {
+  ok
+  too_long
+  missing_do
+}
+
+model User {
+  id         String    @id @default(uuid()) @db.Uuid
+  phone      String?   @unique
+  region     String?
+  createdAt  DateTime  @default(now()) @map("created_at")
+  identities OAuthIdentity[]
+  sessions   Session[]
+  settings   UserSettings?
+  keys       UserKey[]
+}
+
+model OAuthIdentity {
+  id        String  @id @default(uuid()) @db.Uuid
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String  @db.Uuid
+  provider  String
+  subject   String
+  createdAt DateTime @default(now()) @map("created_at")
+  @@unique([provider, subject])
+}
+
+model Session {
+  id         String   @id @default(uuid()) @db.Uuid
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String   @db.Uuid
+  deviceId   String?  @map("device_fingerprint")
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+}
+
+model UserSettings {
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String   @id @db.Uuid
+  pace    PlanPace @default(normal) @map("pace_default")
+  startAt DateTime @default(dbgenerated("'1970-01-01 09:00:00+00'::timestamptz")) @map("start_time_default")
+  units   String   @default("metric")
+  mapStyle String?
+}
+
+model UserKey {
+  id        String  @id @default(uuid()) @db.Uuid
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String  @db.Uuid
+  provider  String  @default("openai")
+  encKey    Bytes   @map("enc_key")
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+model City {
+  id        String  @id @default(uuid()) @db.Uuid
+  name      String
+  tz        String  @default("Asia/Shanghai")
+}
+
+model CanonicalPOI {
+  id        String  @id @default(uuid()) @db.Uuid
+  city      City    @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId    String  @db.Uuid
+  name      String
+  address   String?
+  amapId    String? @map("amap_id")
+  openHours Json?   @map("open_hours_json")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model IngestJob {
+  id           String        @id @default(uuid()) @db.Uuid
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String        @db.Uuid
+  sourceType   String        @map("source_type")
+  sourceUrl    String?       @map("source_url")
+  sourceHash   String        @unique @map("source_hash")
+  status       IngestStatus  @default(created)
+  retryCount   Int           @default(0) @map("retry_count")
+  lastError    String?       @map("last_error_code")
+  traceId      String?       @map("trace_id")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @default(now()) @map("updated_at")
+  inspirations Inspiration[]
+}
+
+model Inspiration {
+  id           String        @id @default(uuid()) @db.Uuid
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String        @db.Uuid
+  job          IngestJob?    @relation(fields: [jobId], references: [id])
+  jobId        String?       @db.Uuid
+  title        String?
+  text         String?
+  tags         String[]
+  canonicalUrl String?       @map("canonical_url")
+  locateStatus String        @default("pending") @map("locate_status")
+  poi          CanonicalPOI? @relation(fields: [poiId], references: [id])
+  poiId        String?       @db.Uuid
+  city         City?         @relation(fields: [cityId], references: [id])
+  cityId       String?       @db.Uuid
+  sourceHash   String        @unique @map("source_hash")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  assets       Asset[]
+  candidates   LocateCandidate[]
+}
+
+model Asset {
+  id            String       @id @default(uuid()) @db.Uuid
+  inspiration   Inspiration  @relation(fields: [inspirationId], references: [id], onDelete: Cascade)
+  inspirationId String       @db.Uuid
+  kind          String
+  cosKey        String       @map("cos_key")
+  sha256        String?
+  width         Int?
+  height        Int?
+  format        String?
+  createdAt     DateTime     @default(now()) @map("created_at")
+}
+
+model LocateCandidate {
+  id            String       @id @default(uuid()) @db.Uuid
+  inspiration   Inspiration  @relation(fields: [inspirationId], references: [id], onDelete: Cascade)
+  inspirationId String       @db.Uuid
+  rank          Int
+  poiSnapshot   Json         @map("poi_snapshot_json")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  @@unique([inspirationId, rank])
+}
+
+model Plan {
+  id        String   @id @default(uuid()) @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid
+  city      City     @relation(fields: [cityId], references: [id])
+  cityId    String   @db.Uuid
+  tz        String   @default("Asia/Shanghai")
+  startDate DateTime @map("start_date")
+  days      Int
+  pace      PlanPace @default(normal)
+  status    String   @default("draft")
+  rev       Int      @default(1)
+  isLocked  Boolean  @default(false) @map("is_locked")
+  lockedAt  DateTime? @map("locked_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  daysRel   PlanDay[]
+}
+
+model PlanDay {
+  id       String @id @default(uuid()) @db.Uuid
+  plan     Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId   String @db.Uuid
+  dayIndex Int    @map("day_index")
+  date     DateTime
+  slots    PlanSlot[]
+  @@unique([planId, dayIndex])
+}
+
+model PlanSlot {
+  id         String    @id @default(uuid()) @db.Uuid
+  day        PlanDay   @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  dayId      String    @db.Uuid
+  slotIndex  Int       @map("slot_index")
+  startAt    DateTime  @map("start_at")
+  endAt      DateTime  @map("end_at")
+  type       SlotType
+  poi        CanonicalPOI? @relation(fields: [poiId], references: [id])
+  poiId      String?   @db.Uuid
+  inspiration Inspiration? @relation(fields: [inspirationId], references: [id])
+  inspirationId String? @db.Uuid
+  notes      Json?     @map("notes_json")
+  conflict   Conflict  @default(none)
+  appliedFillRunId String? @map("applied_fill_run_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @default(now()) @map("updated_at")
+  @@unique([dayId, slotIndex])
+}
+
+model EditEvent {
+  id        String   @id @default(uuid()) @db.Uuid
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId    String   @db.Uuid
+  kind      String
+  payload   Json     @map("payload_json")
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+model SlotCandidate {
+  id        String   @id @default(uuid()) @db.Uuid
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId    String   @db.Uuid
+  day       PlanDay? @relation(fields: [dayId], references: [id])
+  dayId     String?  @db.Uuid
+  slotIndex Int?     @map("slot_index")
+  source    String
+  poiSnap   Json     @map("poi_snapshot_json")
+  reason    String?  @map("reason_short")
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+model FillRun {
+  id        String   @id @default(uuid()) @db.Uuid
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId    String   @db.Uuid
+  status    String
+  metrics   Json?
+  traceId   String?  @map("trace_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  items     FillItem[]
+}
+
+model FillItem {
+  id        String         @id @default(uuid()) @db.Uuid
+  run       FillRun        @relation(fields: [fillRunId], references: [id], onDelete: Cascade)
+  fillRunId String         @db.Uuid
+  slot      PlanSlot       @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  slotId    String         @db.Uuid
+  doText    String[]       @map("do_text")
+  prepare   String[]       @map("prepare_text")
+  notice    String[]       @map("notice_text")
+  validation FillValidation
+  createdAt DateTime       @default(now()) @map("created_at")
+}
+
+model ExportJob {
+  id        String   @id @default(uuid()) @db.Uuid
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId    String   @db.Uuid
+  widthPx   Int      @map("width_px")
+  sliceByDay Boolean @default(true) @map("slice_by_day")
+  status    String
+  resultUrls String[] @map("result_urls")
+  format    String?
+  fallbackReason String? @map("fallback_reason")
+  traceId   String?  @map("trace_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+

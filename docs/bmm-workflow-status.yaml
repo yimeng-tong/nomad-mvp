@@ -1,0 +1,31 @@
+# Workflow Status
+# generated: 2025-11-03
+# project: nomad-mvp
+# project_type: software
+# project_level: 2
+# field_type: brownfield
+# workflow_path: brownfield-level-2.yaml
+
+generated: "2025-11-03"
+project: "nomad-mvp"
+project_type: "software"
+project_level: "2"
+field_type: "brownfield"
+workflow_path: "brownfield-level-2.yaml"
+
+workflow_status:
+  # Phase 1: Analysis
+  brainstorm-project: optional
+  research: optional
+  product-brief: optional
+
+  # Phase 2: Planning
+  prd: docs/prd.md
+  validate-prd: optional
+  tech-spec: required
+  create-design: conditional
+
+  # Phase 4: Implementation
+  sprint-planning: required
+
+

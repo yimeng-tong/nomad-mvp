@@ -38,6 +38,7 @@ async function buildAuthApp() {
 async function main() {
   process.env.AUTH_CAPTCHA_MODE = 'risk';
   process.env.AUTH_CAPTCHA_RISK_DEVICES = 'risky-device';
+  process.env.AUTH_CAPTCHA_STUB_TOKEN = 'captcha-ok';
   process.env.AUTH_PRIVACY_URL = 'https://nomad.test/privacy';
   process.env.AUTH_USER_AGREEMENT_URL = 'https://nomad.test/terms';
   process.env.AUTH_LOGIN_METHODS = 'phone,apple,wechat';
@@ -60,13 +61,31 @@ async function main() {
     assert(configBody.privacy_url === 'https://nomad.test/privacy', 'auth config should expose privacy URL');
     assert(configBody.user_agreement_url === 'https://nomad.test/terms', 'auth config should expose user agreement URL');
     assert(
-      configBody.enabled_methods.map((method: { id: string }) => method.id).join(',') === 'phone,apple,wechat',
+      configBody.enabled_methods.map((method: { id: string }) => method.id).join(',') === 'apple,phone,wechat',
       'auth config should expose enabled login methods',
     );
     assert(
       configBody.ios_equal_weight_order.join(',') === 'apple,phone,wechat',
       'auth config should expose iOS equal-weight method order',
     );
+
+    process.env.AUTH_LOGIN_METHODS = 'wechat';
+    const thirdPartyConfig = await app.inject({ method: 'GET', url: '/auth/config' });
+    assert(
+      parseJson(thirdPartyConfig).enabled_methods.map((method: { id: string }) => method.id).join(',') === 'apple,phone,wechat',
+      'third-party login should preserve Apple/phone/WeChat equal-weight methods',
+    );
+    process.env.AUTH_LOGIN_METHODS = 'phone,apple,wechat';
+
+    process.env.AUTH_CAPTCHA_MODE = 'invalid-mode';
+    const invalidCaptchaMode = await app.inject({
+      method: 'POST',
+      url: '/auth/otp/start',
+      headers: { 'x-device-id': 'normal-device' },
+      payload: { phone: '+15550009999', region: 'US' },
+    });
+    assert(parseJson(invalidCaptchaMode).captcha_required === true, 'invalid captcha mode should fail closed');
+    process.env.AUTH_CAPTCHA_MODE = 'risk';
 
     const normalStart = await app.inject({
       method: 'POST',
@@ -84,7 +103,7 @@ async function main() {
       method: 'POST',
       url: '/auth/otp/start',
       headers: { 'x-device-id': 'risky-device' },
-      payload: { phone: '+15550001111', region: 'US' },
+      payload: { phone: '+15550002222', region: 'US' },
     });
     assert(riskyStart.statusCode === 200, 'risky OTP start should still return contract response');
     const riskyBody = parseJson(riskyStart);
@@ -92,18 +111,71 @@ async function main() {
     assert(riskyBody.retry_after_sec === 60, 'captcha-required OTP start should keep retry timing');
     assert(riskyBody.captcha_required === true, 'risky OTP start should require captcha');
 
+    const badCaptcha = await app.inject({
+      method: 'POST',
+      url: '/auth/otp/start',
+      headers: { 'x-device-id': 'risky-device' },
+      payload: { phone: '+15550002222', region: 'US', captcha_token: 'bad-token' },
+    });
+    assert(parseJson(badCaptcha).captcha_required === true, 'arbitrary captcha token should not satisfy captcha');
+
     const captchaSatisfied = await app.inject({
       method: 'POST',
       url: '/auth/otp/start',
       headers: { 'x-device-id': 'risky-device' },
-      payload: { phone: '+15550001111', region: 'US', captcha_token: 'captcha-ok' },
+      payload: { phone: '+15550002222', region: 'US', captcha_token: 'captcha-ok' },
     });
     assert(captchaSatisfied.statusCode === 200, 'captcha token should satisfy OTP start');
     assert(parseJson(captchaSatisfied).captcha_required === false, 'satisfied captcha should clear captcha_required');
 
+    const retryStart = await app.inject({
+      method: 'POST',
+      url: '/auth/otp/start',
+      headers: { 'x-device-id': 'normal-device' },
+      payload: { phone: '+15550003333', region: 'US' },
+    });
+    assert(retryStart.statusCode === 200, 'first OTP start should succeed');
+    const retryBlocked = await app.inject({
+      method: 'POST',
+      url: '/auth/otp/start',
+      headers: { 'x-device-id': 'normal-device' },
+      payload: { phone: '+15550003333', region: 'US' },
+    });
+    assert(retryBlocked.statusCode === 429, 'second OTP start before retry should be rate limited');
+    assert(parseJson(retryBlocked).error_code === 'AUTH_OTP_RETRY_LATER', 'retry guard should use standard error envelope');
+
     const unauthMe = await app.inject({ method: 'GET', url: '/me' });
     assert(unauthMe.statusCode === 401, 'missing auth should be rejected');
     assert(parseJson(unauthMe).error_code === 'AUTH_SESSION_EXPIRED', 'missing auth should use auth error envelope');
+
+    const invalidVerify = await app.inject({
+      method: 'POST',
+      url: '/auth/otp/verify',
+      payload: { phone: '+15550001111' },
+    });
+    assert(invalidVerify.statusCode === 400, 'OTP verify without otp/code should be rejected');
+    assert(parseJson(invalidVerify).error_code === 'AUTH_PARAMS_INVALID', 'invalid verify should use standard error envelope');
+
+    const verifyWithoutStart = await app.inject({
+      method: 'POST',
+      url: '/auth/otp/verify',
+      payload: { phone: '+15550004444', otp: '000000' },
+    });
+    assert(verifyWithoutStart.statusCode === 401, 'OTP verify before start should be rejected');
+    assert(parseJson(verifyWithoutStart).error_code === 'AUTH_OTP_INVALID', 'missing OTP challenge should be rejected');
+
+    await app.inject({
+      method: 'POST',
+      url: '/auth/otp/start',
+      payload: { phone: '+15550005555', region: 'US' },
+    });
+    const wrongOtp = await app.inject({
+      method: 'POST',
+      url: '/auth/otp/verify',
+      payload: { phone: '+15550005555', otp: '111111' },
+    });
+    assert(wrongOtp.statusCode === 401, 'wrong OTP should be rejected');
+    assert(parseJson(wrongOtp).error_code === 'AUTH_OTP_INVALID', 'wrong OTP should use auth error code');
 
     const verify = await app.inject({
       method: 'POST',
@@ -114,7 +186,10 @@ async function main() {
     assert(verify.statusCode === 200, 'OTP verify should succeed');
     const verifyBody = parseJson(verify);
     assert(typeof verifyBody.user_id === 'string' && verifyBody.user_id.length > 2, 'OTP verify should return user_id');
+    assert(verifyBody.session.id !== verifyBody.user_id, 'session id should not be the user id');
+    assert(verifyBody.session.id.startsWith('sess_'), 'session id should be an opaque session token');
     assert(verifyBody.session.device_id === 'ios-device', 'OTP verify should return session metadata');
+    assert(verify.headers['x-device-id'] === 'ios-device', 'OTP verify should return X-Device-Id header');
     const setCookie = getSetCookie(verify);
     assert(setCookie.includes('HttpOnly'), 'session cookie should be httpOnly');
     assert(setCookie.includes('SameSite=Lax'), 'session cookie should use SameSite=Lax by default');
@@ -140,18 +215,28 @@ async function main() {
     assert(sessionDelete.statusCode === 200, 'session delete should succeed');
     assert(parseJson(sessionDelete).ok === true, 'session delete should return ok');
     assert(getSetCookie(sessionDelete).includes('sid='), 'session delete should clear sid cookie');
+    const staleMe = await app.inject({ method: 'GET', url: '/me', headers: { cookie: sidCookie } });
+    assert(staleMe.statusCode === 401, 'deleted session cookie should no longer authenticate');
 
+    await app.inject({
+      method: 'POST',
+      url: '/auth/otp/start',
+      headers: { 'x-device-id': 'ios-device' },
+      payload: { phone: '+15550006666', region: 'US' },
+    });
     const verifyAgain = await app.inject({
       method: 'POST',
       url: '/auth/otp/verify',
       headers: { 'x-device-id': 'ios-device' },
-      payload: { phone: '+15550001111', otp: '000000', device_fingerprint: 'ios-device' },
+      payload: { phone: '+15550006666', otp: '000000', device_fingerprint: 'ios-device' },
     });
     const secondSidCookie = getSidCookie(verifyAgain);
     const logout = await app.inject({ method: 'POST', url: '/logout', headers: { cookie: secondSidCookie } });
     assert(logout.statusCode === 200, 'logout should succeed');
     assert(parseJson(logout).ok === true, 'logout should return ok');
     assert(getSetCookie(logout).includes('sid='), 'logout should clear sid cookie');
+    const staleLogout = await app.inject({ method: 'POST', url: '/logout', headers: { cookie: 'sid=stale' } });
+    assert(staleLogout.statusCode === 200, 'logout should clear stale cookies without requiring auth');
   } finally {
     await app.close();
   }

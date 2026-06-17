@@ -4,6 +4,11 @@
  */
 
 
+/** OneOf type helpers */
+type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+type OneOf<T extends any[]> = T extends [infer Only] ? Only : T extends [infer A, infer B, ...infer Rest] ? OneOf<[XOR<A, B>, ...Rest]> : never;
+
 export interface paths {
   "/ingest/start": {
     /**
@@ -219,15 +224,23 @@ export interface components {
       /** @enum {string|null} */
       captcha_provider?: "tencent" | null;
     };
-    OtpVerifyRequest: {
+    OtpVerifyRequest: OneOf<[{
       phone: string;
-      otp?: string;
-      /** @description Compatibility alias for otp. */
+      otp: string;
+      /** @description Compatibility alias for otp. If supplied with otp */
       code?: string;
       device_fingerprint?: string;
       /** @description Compatibility alias for device_fingerprint. */
       device_id?: string;
-    };
+    }, {
+      phone: string;
+      /** @description Compatibility alias for code. If supplied with code */
+      otp?: string;
+      code: string;
+      device_fingerprint?: string;
+      /** @description Compatibility alias for device_fingerprint. */
+      device_id?: string;
+    }]>;
     Session: {
       id: string;
       device_id: string;
@@ -595,6 +608,18 @@ export interface components {
     };
     /** @description Unauthorized */
     Error401: {
+      content: {
+        "application/json": components["schemas"]["ErrorEnvelope"];
+      };
+    };
+    /** @description Forbidden */
+    Error403: {
+      content: {
+        "application/json": components["schemas"]["ErrorEnvelope"];
+      };
+    };
+    /** @description Not Found */
+    Error404: {
       content: {
         "application/json": components["schemas"]["ErrorEnvelope"];
       };
@@ -1203,6 +1228,7 @@ export interface operations {
         };
       };
       400: components["responses"]["Error400"];
+      403: components["responses"]["Error403"];
       429: components["responses"]["Error429"];
     };
   };
@@ -1225,6 +1251,7 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       429: components["responses"]["Error429"];
     };
   };
@@ -1279,7 +1306,7 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
-      404: components["responses"]["Error400"];
+      404: components["responses"]["Error404"];
     };
   };
   /** Clear current session cookie */
@@ -1291,7 +1318,6 @@ export interface operations {
           "application/json": components["schemas"]["OkResponse"];
         };
       };
-      401: components["responses"]["Error401"];
     };
   };
   /**

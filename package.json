@@ -2,6 +2,9 @@
   "name": "nomad-mvp-monorepo",
   "private": true,
   "version": "0.1.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "ci:types": "pnpm -F nomad-types run generate",
     "ci:build": "pnpm -r build",

@@ -702,7 +702,9 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/OtpStartResponse' }
         '400': { $ref: '#/components/responses/Error400' }
-        '429': { $ref: '#/components/responses/Error429' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '429':
+          $ref: '#/components/responses/Error429'
 
   /auth/otp/verify:
     post:
@@ -726,6 +728,7 @@ paths:
                 $ref: '#/components/schemas/OtpVerifyResponse'
         '400': { $ref: '#/components/responses/Error400' }
         '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
         '429': { $ref: '#/components/responses/Error429' }
 
   /me:
@@ -795,22 +798,19 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/OkResponse' }
         '401': { $ref: '#/components/responses/Error401' }
-        '404': { $ref: '#/components/responses/Error400' }
+        '404': { $ref: '#/components/responses/Error404' }
 
   /logout:
     post:
       tags: [Sessions]
       summary: Clear current session cookie
       operationId: logout
-      security:
-        - SessionAuth: []
       responses:
         '200':
           description: Logged out
           content:
             application/json:
               schema: { $ref: '#/components/schemas/OkResponse' }
-        '401': { $ref: '#/components/responses/Error401' }
 
   /feedback/link:
     get:
@@ -960,9 +960,9 @@ components:
       type: object
       required: [phone]
       properties:
-        phone: { type: string }
-        region: { type: string, default: CN }
-        captcha_token: { type: string, nullable: true }
+        phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\\+?[0-9][0-9 -]{4,30}[0-9]$' }
+        region: { type: string, minLength: 2, maxLength: 8, pattern: '^[A-Z]{2,8}$', default: CN }
+        captcha_token: { type: string, minLength: 1, maxLength: 2048, nullable: true }
 
     OtpStartResponse:
       type: object
@@ -974,14 +974,23 @@ components:
         captcha_provider: { type: string, nullable: true, enum: [tencent] }
 
     OtpVerifyRequest:
-      type: object
-      required: [phone]
-      properties:
-        phone: { type: string }
-        otp: { type: string }
-        code: { type: string, description: Compatibility alias for otp. }
-        device_fingerprint: { type: string }
-        device_id: { type: string, description: Compatibility alias for device_fingerprint. }
+      oneOf:
+        - type: object
+          required: [phone, otp]
+          properties:
+            phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\\+?[0-9][0-9 -]{4,30}[0-9]$' }
+            otp: { type: string, minLength: 4, maxLength: 12 }
+            code: { type: string, minLength: 4, maxLength: 12, description: Compatibility alias for otp. If supplied with otp, it must match. }
+            device_fingerprint: { type: string, minLength: 1, maxLength: 128 }
+            device_id: { type: string, minLength: 1, maxLength: 128, description: Compatibility alias for device_fingerprint. }
+        - type: object
+          required: [phone, code]
+          properties:
+            phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\\+?[0-9][0-9 -]{4,30}[0-9]$' }
+            otp: { type: string, minLength: 4, maxLength: 12, description: Compatibility alias for code. If supplied with code, it must match. }
+            code: { type: string, minLength: 4, maxLength: 12 }
+            device_fingerprint: { type: string, minLength: 1, maxLength: 128 }
+            device_id: { type: string, minLength: 1, maxLength: 128, description: Compatibility alias for device_fingerprint. }
 
     Session:
       type: object
@@ -1413,6 +1422,16 @@ components:
           schema: { $ref: '#/components/schemas/ErrorEnvelope' }
     Error401:
       description: Unauthorized
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    Error403:
+      description: Forbidden
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    Error404:
+      description: Not Found
       content:
         application/json:
           schema: { $ref: '#/components/schemas/ErrorEnvelope' }

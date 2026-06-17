@@ -119,6 +119,10 @@ export interface paths {
     /** Set or change hotel for a day (display-only slot) */
     patch: operations["setHotel"];
   };
+  "/auth/config": {
+    /** Get login compliance and method configuration */
+    get: operations["authConfig"];
+  };
   "/auth/otp/start": {
     /** Start OTP flow (SMS) */
     post: operations["authOtpStart"];
@@ -126,6 +130,10 @@ export interface paths {
   "/auth/otp/verify": {
     /** Verify OTP and create session */
     post: operations["authOtpVerify"];
+  };
+  "/me": {
+    /** Get current user and session */
+    get: operations["me"];
   };
   "/sessions/me": {
     /** Get current session */
@@ -138,6 +146,10 @@ export interface paths {
   "/sessions/{id}": {
     /** Revoke a session */
     delete: operations["sessionsDelete"];
+  };
+  "/logout": {
+    /** Clear current session cookie */
+    post: operations["logout"];
   };
   "/feedback/link": {
     /**
@@ -172,6 +184,50 @@ export interface components {
       /** Format: uri */
       url: string;
     };
+    LoginMethod: {
+      /** @enum {string} */
+      id: "phone" | "apple" | "wechat";
+      label: string;
+      /** @enum {string} */
+      type: "phone" | "third_party";
+      provider?: string | null;
+      enabled: boolean;
+    };
+    AuthCaptchaConfig: {
+      /** @enum {string} */
+      provider: "tencent";
+      /** @enum {string} */
+      mode: "off" | "risk" | "always";
+    };
+    AuthConfigResponse: {
+      privacy_url: string;
+      user_agreement_url: string;
+      enabled_methods: components["schemas"]["LoginMethod"][];
+      ios_equal_weight_order: ("apple" | "phone" | "wechat")[];
+      captcha: components["schemas"]["AuthCaptchaConfig"];
+    };
+    OtpStartRequest: {
+      phone: string;
+      /** @default CN */
+      region?: string;
+      captcha_token?: string | null;
+    };
+    OtpStartResponse: {
+      sent: boolean;
+      retry_after_sec: number;
+      captcha_required: boolean;
+      /** @enum {string|null} */
+      captcha_provider?: "tencent" | null;
+    };
+    OtpVerifyRequest: {
+      phone: string;
+      otp?: string;
+      /** @description Compatibility alias for otp. */
+      code?: string;
+      device_fingerprint?: string;
+      /** @description Compatibility alias for device_fingerprint. */
+      device_id?: string;
+    };
     Session: {
       id: string;
       device_id: string;
@@ -181,11 +237,33 @@ export interface components {
       created_at?: string;
     };
     SessionResponse: {
-      user?: {
-        id?: string;
+      user: {
+        id: string;
         phone?: string | null;
       };
-      session?: components["schemas"]["Session"];
+      session: components["schemas"]["Session"];
+    };
+    CurrentUserResponse: {
+      user_id: string;
+      user: {
+        id: string;
+        phone?: string | null;
+      };
+      session: components["schemas"]["Session"];
+    };
+    OtpVerifyResponse: {
+      user_id: string;
+      user: {
+        id: string;
+        phone?: string | null;
+      };
+      session: components["schemas"]["Session"];
+    };
+    SessionListResponse: {
+      sessions: components["schemas"]["Session"][];
+    };
+    OkResponse: {
+      ok: boolean;
     };
     ErrorEnvelope: {
       /** @example INGEST_TIMEOUT */
@@ -1099,24 +1177,29 @@ export interface operations {
       401: components["responses"]["Error401"];
     };
   };
+  /** Get login compliance and method configuration */
+  authConfig: {
+    responses: {
+      /** @description Login configuration */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AuthConfigResponse"];
+        };
+      };
+    };
+  };
   /** Start OTP flow (SMS) */
   authOtpStart: {
     requestBody: {
       content: {
-        "application/json": {
-          phone: string;
-          captcha_token?: string | null;
-        };
+        "application/json": components["schemas"]["OtpStartRequest"];
       };
     };
     responses: {
-      /** @description OTP sent (or simulated for test) */
+      /** @description OTP send status or captcha requirement */
       200: {
         content: {
-          "application/json": {
-            /** @enum {string} */
-            status?: "ok";
-          };
+          "application/json": components["schemas"]["OtpStartResponse"];
         };
       };
       400: components["responses"]["Error400"];
@@ -1127,11 +1210,7 @@ export interface operations {
   authOtpVerify: {
     requestBody: {
       content: {
-        "application/json": {
-          phone: string;
-          code: string;
-          device_id?: string;
-        };
+        "application/json": components["schemas"]["OtpVerifyRequest"];
       };
     };
     responses: {
@@ -1141,12 +1220,24 @@ export interface operations {
           "X-Device-Id"?: string;
         };
         content: {
-          "application/json": components["schemas"]["SessionResponse"];
+          "application/json": components["schemas"]["OtpVerifyResponse"];
         };
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
       429: components["responses"]["Error429"];
+    };
+  };
+  /** Get current user and session */
+  me: {
+    responses: {
+      /** @description Current user and session */
+      200: {
+        content: {
+          "application/json": components["schemas"]["CurrentUserResponse"];
+        };
+      };
+      401: components["responses"]["Error401"];
     };
   };
   /** Get current session */
@@ -1167,9 +1258,7 @@ export interface operations {
       /** @description Sessions */
       200: {
         content: {
-          "application/json": {
-            sessions?: components["schemas"]["Session"][];
-          };
+          "application/json": components["schemas"]["SessionListResponse"];
         };
       };
       401: components["responses"]["Error401"];
@@ -1184,8 +1273,23 @@ export interface operations {
     };
     responses: {
       /** @description Deleted */
-      204: {
-        content: never;
+      200: {
+        content: {
+          "application/json": components["schemas"]["OkResponse"];
+        };
+      };
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error400"];
+    };
+  };
+  /** Clear current session cookie */
+  logout: {
+    responses: {
+      /** @description Logged out */
+      200: {
+        content: {
+          "application/json": components["schemas"]["OkResponse"];
+        };
       };
       401: components["responses"]["Error401"];
     };

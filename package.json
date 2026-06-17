@@ -2,10 +2,14 @@
   "name": "nomad-mvp-monorepo",
   "private": true,
   "version": "0.1.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "ci:types": "pnpm -F nomad-types run generate",
     "ci:build": "pnpm -r build",
-    "ci:start-server": "node apps/server/dist/index.js",
+    "ci:start-server": "node apps/server/dist/apps/server/src/index.js",
+    "ci:auth": "pnpm -F nomad-server run test:auth",
     "ci:probe": "tsx scripts/synthetic-probe.ts",
     "ci:sse": "tsx scripts/sse-assert.ts"
   },

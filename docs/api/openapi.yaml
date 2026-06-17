@@ -673,6 +673,18 @@ paths:
         '401': { $ref: '#/components/responses/Error401' }
 
   # --- Auth & Sessions ---
+  /auth/config:
+    get:
+      tags: [Auth]
+      summary: Get login compliance and method configuration
+      operationId: authConfig
+      responses:
+        '200':
+          description: Login configuration
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthConfigResponse' }
+
   /auth/otp/start:
     post:
       tags: [Auth]
@@ -682,23 +694,17 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              required: [phone]
-              properties:
-                phone: { type: string }
-                captcha_token: { type: string, nullable: true }
+            schema: { $ref: '#/components/schemas/OtpStartRequest' }
       responses:
         '200':
-          description: OTP sent (or simulated for test)
+          description: OTP send status or captcha requirement
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, enum: [ok] }
+              schema: { $ref: '#/components/schemas/OtpStartResponse' }
         '400': { $ref: '#/components/responses/Error400' }
-        '429': { $ref: '#/components/responses/Error429' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '429':
+          $ref: '#/components/responses/Error429'
 
   /auth/otp/verify:
     post:
@@ -709,13 +715,7 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              required: [phone, code]
-              properties:
-                phone: { type: string }
-                code: { type: string }
-                device_id: { type: string }
+            schema: { $ref: '#/components/schemas/OtpVerifyRequest' }
       responses:
         '200':
           description: Session created
@@ -725,16 +725,35 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SessionResponse'
+                $ref: '#/components/schemas/OtpVerifyResponse'
         '400': { $ref: '#/components/responses/Error400' }
         '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
         '429': { $ref: '#/components/responses/Error429' }
+
+  /me:
+    get:
+      tags: [Sessions]
+      summary: Get current user and session
+      operationId: me
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: Current user and session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUserResponse'
+        '401': { $ref: '#/components/responses/Error401' }
 
   /sessions/me:
     get:
       tags: [Sessions]
       summary: Get current session
       operationId: sessionsMe
+      security:
+        - SessionAuth: []
       responses:
         '200':
           description: Current session
@@ -749,17 +768,15 @@ paths:
       tags: [Sessions]
       summary: List my sessions
       operationId: sessionsList
+      security:
+        - SessionAuth: []
       responses:
         '200':
           description: Sessions
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  sessions:
-                    type: array
-                    items: { $ref: '#/components/schemas/Session' }
+                $ref: '#/components/schemas/SessionListResponse'
         '401': { $ref: '#/components/responses/Error401' }
 
   /sessions/{id}:
@@ -767,14 +784,33 @@ paths:
       tags: [Sessions]
       summary: Revoke a session
       operationId: sessionsDelete
+      security:
+        - SessionAuth: []
       parameters:
         - in: path
           name: id
           required: true
           schema: { type: string }
       responses:
-        '204': { description: Deleted }
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
         '401': { $ref: '#/components/responses/Error401' }
+        '404': { $ref: '#/components/responses/Error404' }
+
+  /logout:
+    post:
+      tags: [Sessions]
+      summary: Clear current session cookie
+      operationId: logout
+      responses:
+        '200':
+          description: Logged out
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
 
   /feedback/link:
     get:
@@ -889,6 +925,73 @@ components:
         required: [url]
         properties:
           url: { type: string, format: uri }
+    LoginMethod:
+      type: object
+      required: [id, label, type, enabled]
+      properties:
+        id: { type: string, enum: [phone, apple, wechat] }
+        label: { type: string }
+        type: { type: string, enum: [phone, third_party] }
+        provider: { type: string, nullable: true }
+        enabled: { type: boolean }
+
+    AuthCaptchaConfig:
+      type: object
+      required: [provider, mode]
+      properties:
+        provider: { type: string, enum: [tencent] }
+        mode: { type: string, enum: [off, risk, always] }
+
+    AuthConfigResponse:
+      type: object
+      required: [privacy_url, user_agreement_url, enabled_methods, ios_equal_weight_order, captcha]
+      properties:
+        privacy_url: { type: string }
+        user_agreement_url: { type: string }
+        enabled_methods:
+          type: array
+          items: { $ref: '#/components/schemas/LoginMethod' }
+        ios_equal_weight_order:
+          type: array
+          items: { type: string, enum: [apple, phone, wechat] }
+        captcha: { $ref: '#/components/schemas/AuthCaptchaConfig' }
+
+    OtpStartRequest:
+      type: object
+      required: [phone]
+      properties:
+        phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\\+?[0-9][0-9 -]{4,30}[0-9]$' }
+        region: { type: string, minLength: 2, maxLength: 8, pattern: '^[A-Z]{2,8}$', default: CN }
+        captcha_token: { type: string, minLength: 1, maxLength: 2048, nullable: true }
+
+    OtpStartResponse:
+      type: object
+      required: [sent, retry_after_sec, captcha_required]
+      properties:
+        sent: { type: boolean }
+        retry_after_sec: { type: integer, minimum: 1 }
+        captcha_required: { type: boolean }
+        captcha_provider: { type: string, nullable: true, enum: [tencent] }
+
+    OtpVerifyRequest:
+      oneOf:
+        - type: object
+          required: [phone, otp]
+          properties:
+            phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\\+?[0-9][0-9 -]{4,30}[0-9]$' }
+            otp: { type: string, minLength: 4, maxLength: 12 }
+            code: { type: string, minLength: 4, maxLength: 12, description: Compatibility alias for otp. If supplied with otp, it must match. }
+            device_fingerprint: { type: string, minLength: 1, maxLength: 128 }
+            device_id: { type: string, minLength: 1, maxLength: 128, description: Compatibility alias for device_fingerprint. }
+        - type: object
+          required: [phone, code]
+          properties:
+            phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\\+?[0-9][0-9 -]{4,30}[0-9]$' }
+            otp: { type: string, minLength: 4, maxLength: 12, description: Compatibility alias for code. If supplied with code, it must match. }
+            code: { type: string, minLength: 4, maxLength: 12 }
+            device_fingerprint: { type: string, minLength: 1, maxLength: 128 }
+            device_id: { type: string, minLength: 1, maxLength: 128, description: Compatibility alias for device_fingerprint. }
+
     Session:
       type: object
       required: [id, device_id, expires_at]
@@ -900,13 +1003,55 @@ components:
 
     SessionResponse:
       type: object
+      required: [user, session]
       properties:
         user:
           type: object
+          required: [id]
           properties:
             id: { type: string }
             phone: { type: string, nullable: true }
         session: { $ref: '#/components/schemas/Session' }
+
+    CurrentUserResponse:
+      type: object
+      required: [user_id, user, session]
+      properties:
+        user_id: { type: string }
+        user:
+          type: object
+          required: [id]
+          properties:
+            id: { type: string }
+            phone: { type: string, nullable: true }
+        session: { $ref: '#/components/schemas/Session' }
+
+    OtpVerifyResponse:
+      type: object
+      required: [user_id, user, session]
+      properties:
+        user_id: { type: string }
+        user:
+          type: object
+          required: [id]
+          properties:
+            id: { type: string }
+            phone: { type: string, nullable: true }
+        session: { $ref: '#/components/schemas/Session' }
+
+    SessionListResponse:
+      type: object
+      required: [sessions]
+      properties:
+        sessions:
+          type: array
+          items: { $ref: '#/components/schemas/Session' }
+
+    OkResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
     ErrorEnvelope:
       type: object
       required: [error_code, error_message]
@@ -1277,6 +1422,16 @@ components:
           schema: { $ref: '#/components/schemas/ErrorEnvelope' }
     Error401:
       description: Unauthorized
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    Error403:
+      description: Forbidden
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    Error404:
+      description: Not Found
       content:
         application/json:
           schema: { $ref: '#/components/schemas/ErrorEnvelope' }

@@ -29,7 +29,10 @@ async function probeFill(planId: string) {
 
 async function probeExport(planId: string) {
   const r = await fetch(`${API}/export/png`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Trace-Id': traceId, 'X-Device-Id': 'syn-device' }, body: JSON.stringify({ plan_id: planId, width_px: 1080, slice_by_day: true }) });
-  if (r.status !== 200) throw new Error('export failed');
+  if (r.status !== 200) {
+    const body = await r.text();
+    throw new Error(`export failed (${r.status}): ${body}`);
+  }
   const j = await r.json();
   console.log('export ok', j.format, j.files.length);
 }

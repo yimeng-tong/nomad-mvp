@@ -60,6 +60,9 @@ jobs:
       - name: Lint
         run: pnpm run ci:lint
 
+      - name: Install Puppeteer Chrome
+        run: pnpm -F nomad-server exec puppeteer browsers install chrome
+
       - name: Start server
         run: |
           pnpm run ci:start-server &

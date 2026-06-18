@@ -1,21 +1,5 @@
 import fetch from 'node-fetch';
 
-async function main() {
-  const base = process.env.API_URL || 'http://localhost:3000';
-  // Health
-  const h = await fetch(`${base}/health`);
-  if (!h.ok) throw new Error('health failed');
-  // OTP roundtrip (mock)
-  await fetch(`${base}/auth/otp/start`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ phone: '15500000000', region: 'CN' }) });
-  const v = await fetch(`${base}/auth/otp/verify`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ phone: '15500000000', otp: '000000' }) });
-  if (!v.ok) throw new Error('otp verify failed');
-  console.log('probe ok');
-}
-
-main().catch((e) => { console.error(e); process.exit(1); });
-
-import fetch from 'node-fetch';
-
 const API = process.env.API_BASE || 'http://localhost:3000';
 const traceId = `syn_${Date.now()}`;
 

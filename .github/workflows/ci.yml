@@ -54,6 +54,12 @@ jobs:
       - name: Build workspace
         run: pnpm run ci:build
 
+      - name: Mobile tests
+        run: pnpm run ci:mobile
+
+      - name: Home and Library contract probe
+        run: pnpm run ci:home-library
+
       - name: Push Prisma schema
         run: pnpm -F nomad-prisma run db:push
 

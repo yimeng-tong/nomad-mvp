@@ -10,6 +10,22 @@ type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> &
 type OneOf<T extends any[]> = T extends [infer Only] ? Only : T extends [infer A, infer B, ...infer Rest] ? OneOf<[XOR<A, B>, ...Rest]> : never;
 
 export interface paths {
+  "/home/input/parse": {
+    /** Classify unified Home input into ingest, trip params, or unknown */
+    post: operations["parseHomeInput"];
+  };
+  "/library/cities": {
+    /** List user-owned inspiration city aggregates */
+    get: operations["listLibraryCities"];
+  };
+  "/library/inspirations": {
+    /** List user-owned inspirations for Home and Library */
+    get: operations["listLibraryInspirations"];
+  };
+  "/library/inspirations/{inspiration_id}/candidates": {
+    /** List sanitized pending-location candidates for an inspiration */
+    get: operations["listLibraryCandidates"];
+  };
   "/ingest/start": {
     /**
      * Start ingest of a single Xiaohongshu link (async)
@@ -286,6 +302,81 @@ export interface components {
       details?: {
         [key: string]: unknown;
       };
+    };
+    HomeInputParseRequest: {
+      text: string;
+    };
+    HomeTripParams: {
+      city: string;
+      /** Format: date */
+      start_date?: string | null;
+      days?: number | null;
+      /** @enum {string|null} */
+      pace?: "tight" | "comfortable" | null;
+    };
+    PlannerHandoffSelectedItem: {
+      item_id: string;
+      poi_id?: string | null;
+      /** @enum {string|null} */
+      source?: "library" | "home_card" | "home_input" | null;
+      must_go?: boolean | null;
+      /** @enum {string|null} */
+      time_hint?: "morning" | "afternoon" | "evening" | null;
+      stay_minutes_hint?: number | null;
+    };
+    PlannerHandoff: {
+      /** @example /planner/pick?city=杭州&source=home_input */
+      route: string;
+      /** @enum {string} */
+      source: "home_input" | "home_card";
+      selected_items: components["schemas"]["PlannerHandoffSelectedItem"][];
+    };
+    HomeInputParseResponse: {
+      /** @enum {string} */
+      type: "xhs_link" | "trip_params" | "unknown";
+      original_text: string;
+      /** Format: uri */
+      url?: string | null;
+      warning?: components["schemas"]["IngestWarning"];
+      trip_params?: components["schemas"]["HomeTripParams"];
+      planner_handoff?: components["schemas"]["PlannerHandoff"];
+    };
+    LibraryCitySummary: {
+      city_id: string;
+      name: string;
+      inspiration_count: number;
+      pending_count: number;
+    };
+    LibraryCitiesResponse: {
+      cities: components["schemas"]["LibraryCitySummary"][];
+      unlocated_count: number;
+    };
+    LibraryInspirationItem: {
+      id: string;
+      title: string | null;
+      summary: string | null;
+      /** @enum {string} */
+      locate_status: "resolved" | "pending";
+      city_id: string | null;
+      city_name: string | null;
+      poi_id: string | null;
+      poi_name: string | null;
+      poi_address: string | null;
+      asset_count: number;
+      candidate_count: number;
+      /** Format: date-time */
+      created_at: string;
+    };
+    LibraryInspirationsResponse: {
+      items: components["schemas"]["LibraryInspirationItem"][];
+    };
+    LibraryCandidate: {
+      candidate_id: string;
+      name: string;
+      address: string;
+    };
+    LibraryCandidatesResponse: {
+      candidates: components["schemas"]["LibraryCandidate"][];
     };
     IngestStartRequest: {
       /** @enum {string} */
@@ -682,6 +773,77 @@ export type external = Record<string, never>;
 
 export interface operations {
 
+  /** Classify unified Home input into ingest, trip params, or unknown */
+  parseHomeInput: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["HomeInputParseRequest"];
+      };
+    };
+    responses: {
+      /** @description Input classification result */
+      200: {
+        content: {
+          "application/json": components["schemas"]["HomeInputParseResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      429: components["responses"]["Error429"];
+      500: components["responses"]["Error500"];
+    };
+  };
+  /** List user-owned inspiration city aggregates */
+  listLibraryCities: {
+    responses: {
+      /** @description City aggregates for the authenticated user's inspirations */
+      200: {
+        content: {
+          "application/json": components["schemas"]["LibraryCitiesResponse"];
+        };
+      };
+      401: components["responses"]["Error401"];
+      500: components["responses"]["Error500"];
+    };
+  };
+  /** List user-owned inspirations for Home and Library */
+  listLibraryInspirations: {
+    parameters: {
+      query?: {
+        city_id?: string;
+        locate_status?: "resolved" | "pending";
+      };
+    };
+    responses: {
+      /** @description Inspiration list for the authenticated user */
+      200: {
+        content: {
+          "application/json": components["schemas"]["LibraryInspirationsResponse"];
+        };
+      };
+      401: components["responses"]["Error401"];
+      500: components["responses"]["Error500"];
+    };
+  };
+  /** List sanitized pending-location candidates for an inspiration */
+  listLibraryCandidates: {
+    parameters: {
+      path: {
+        inspiration_id: string;
+      };
+    };
+    responses: {
+      /** @description Top-5 sanitized candidates */
+      200: {
+        content: {
+          "application/json": components["schemas"]["LibraryCandidatesResponse"];
+        };
+      };
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
+      500: components["responses"]["Error500"];
+    };
+  };
   /**
    * Start ingest of a single Xiaohongshu link (async)
    * @deprecated

@@ -11,6 +11,11 @@ describe('sanitizeAnalyticsProps', () => {
         reason_code: 'AUTH_REQUIRED',
         method: 'phone',
         sessionId: 'sess_123',
+        candidate_confidence: 0.82,
+        distance_m: 230,
+        duration_sec: 45,
+        internal_rank: 1,
+        user_rating: 4.8,
       }),
     ).toEqual({
       reason_code: 'AUTH_REQUIRED',

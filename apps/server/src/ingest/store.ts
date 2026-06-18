@@ -5,10 +5,48 @@ import type { RehostedAsset, StandardizedCandidate, XhsFetchedPost } from './ada
 import type { IngestEvent, IngestJobRecord, IngestStage, IngestWarning, StoredInspirationResult } from './types.js';
 
 type Subscriber = (event: IngestEvent) => void;
+export type LibraryCitySummaryRecord = {
+  city_id: string;
+  name: string;
+  inspiration_count: number;
+  pending_count: number;
+};
+
+export type LibraryInspirationRecord = {
+  id: string;
+  title: string | null;
+  summary: string | null;
+  locate_status: 'resolved' | 'pending';
+  city_id: string | null;
+  city_name: string | null;
+  poi_id: string | null;
+  poi_name: string | null;
+  poi_address: string | null;
+  asset_count: number;
+  candidate_count: number;
+  created_at: string;
+};
+
+export type LibraryCandidateRecord = {
+  candidate_id: string;
+  name: string;
+  address: string;
+};
+
+type MemoryInspiration = LibraryInspirationRecord & {
+  user_id: string;
+  candidates: LibraryCandidateRecord[];
+};
+type CityGroupCount = {
+  cityId: string | null;
+  _count: { _all: number };
+};
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const jobs = new Map<string, IngestJobRecord>();
 const sourceHashIndex = new Map<string, string>();
 const subscribers = new Map<string, Set<Subscriber>>();
+const memoryInspirations = new Map<string, MemoryInspiration>();
 
 function uuidFromStableId(value: string) {
   const hex = createHash('sha256').update(value).digest('hex');
@@ -200,6 +238,27 @@ export async function persistIngestOutput(input: {
   const inspirationId = `mem_${input.job.id}`;
 
   if (!prisma) {
+    const cityName = input.highConfidence?.cityName || null;
+    memoryInspirations.set(inspirationId, {
+      id: inspirationId,
+      user_id: input.job.userId,
+      title: input.post.title,
+      summary: input.post.text,
+      locate_status: locateStatus,
+      city_id: cityName ? `mem_city_${createHash('sha1').update(cityName).digest('hex').slice(0, 10)}` : null,
+      city_name: cityName,
+      poi_id: input.highConfidence ? `mem_poi_${createHash('sha1').update(input.highConfidence.amapId || input.highConfidence.name).digest('hex').slice(0, 10)}` : null,
+      poi_name: input.highConfidence?.name ?? null,
+      poi_address: input.highConfidence?.address ?? null,
+      asset_count: input.assets.length,
+      candidate_count: input.candidates.length,
+      created_at: new Date().toISOString(),
+      candidates: input.candidates.slice(0, 5).map((candidate) => ({
+        candidate_id: `${inspirationId}_cand_${candidate.rank}`,
+        name: candidate.name,
+        address: candidate.address || '待确认地址',
+      })),
+    });
     return {
       inspirationId,
       locateStatus,
@@ -311,4 +370,143 @@ export function clearIngestStateForTests() {
   jobs.clear();
   sourceHashIndex.clear();
   subscribers.clear();
+  memoryInspirations.clear();
+}
+
+function toLibraryItem(item: MemoryInspiration): LibraryInspirationRecord {
+  const { user_id: _userId, candidates: _candidates, ...safeItem } = item;
+  return safeItem;
+}
+
+export async function listLibraryCitiesForUser(userId: string): Promise<{ cities: LibraryCitySummaryRecord[]; unlocated_count: number }> {
+  const prisma = getPrisma();
+  const dbUserId = dbUserIdFor(userId);
+
+  if (!prisma) {
+    const aggregate = new Map<string, LibraryCitySummaryRecord>();
+    let unlocatedCount = 0;
+    for (const item of memoryInspirations.values()) {
+      if (item.user_id !== userId) continue;
+      if (!item.city_id || !item.city_name) {
+        unlocatedCount += 1;
+        continue;
+      }
+      const current = aggregate.get(item.city_id) ?? {
+        city_id: item.city_id,
+        name: item.city_name,
+        inspiration_count: 0,
+        pending_count: 0,
+      };
+      current.inspiration_count += 1;
+      if (item.locate_status === 'pending') current.pending_count += 1;
+      aggregate.set(item.city_id, current);
+    }
+    return {
+      cities: Array.from(aggregate.values()).sort((a, b) => b.inspiration_count - a.inspiration_count || a.name.localeCompare(b.name)),
+      unlocated_count: unlocatedCount,
+    };
+  }
+
+  const grouped = (await prisma.inspiration.groupBy({
+    by: ['cityId'],
+    where: { userId: dbUserId, cityId: { not: null } },
+    _count: { _all: true },
+  } as any)) as CityGroupCount[];
+  const cityIds = grouped.map((entry: { cityId: string | null }) => entry.cityId).filter(Boolean) as string[];
+  const cities = await prisma.city.findMany({ where: { id: { in: cityIds } } });
+  const cityNames = new Map(cities.map((city: { id: string; name: string }) => [city.id, city.name]));
+  const pendingByCity = (await prisma.inspiration.groupBy({
+    by: ['cityId'],
+    where: { userId: dbUserId, cityId: { in: cityIds }, locateStatus: 'pending' },
+    _count: { _all: true },
+  } as any)) as CityGroupCount[];
+  const pendingCounts = new Map(pendingByCity.map((entry) => [entry.cityId, entry._count._all]));
+  const unlocatedCount = await prisma.inspiration.count({ where: { userId: dbUserId, cityId: null } });
+
+  return {
+    cities: grouped
+      .map((entry) => ({
+        city_id: entry.cityId!,
+        name: cityNames.get(entry.cityId!) || '未知城市',
+        inspiration_count: entry._count._all,
+        pending_count: pendingCounts.get(entry.cityId) ?? 0,
+      }))
+      .sort((a: LibraryCitySummaryRecord, b: LibraryCitySummaryRecord) => b.inspiration_count - a.inspiration_count || a.name.localeCompare(b.name)),
+    unlocated_count: unlocatedCount,
+  };
+}
+
+export async function listLibraryInspirationsForUser(userId: string, filters: { cityId?: string; locateStatus?: string; limit?: number } = {}) {
+  const prisma = getPrisma();
+  const dbUserId = dbUserIdFor(userId);
+  const limit = Math.min(Math.max(filters.limit ?? 100, 1), 100);
+
+  if (!prisma) {
+    return Array.from(memoryInspirations.values())
+      .filter((item) => item.user_id === userId)
+      .filter((item) => !filters.cityId || item.city_id === filters.cityId)
+      .filter((item) => !filters.locateStatus || item.locate_status === filters.locateStatus)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))
+      .slice(0, limit)
+      .map(toLibraryItem);
+  }
+
+  const rows = (await prisma.inspiration.findMany({
+    where: {
+      userId: dbUserId,
+      ...(filters.cityId ? { cityId: filters.cityId } : {}),
+      ...(filters.locateStatus ? { locateStatus: filters.locateStatus } : {}),
+    },
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+    include: {
+      city: true,
+      poi: true,
+      assets: { select: { id: true } },
+      candidates: { select: { id: true } },
+    },
+  } as any)) as any[];
+
+  return rows.map((row: any): LibraryInspirationRecord => ({
+    id: row.id,
+    title: row.title,
+    summary: row.text,
+    locate_status: row.locateStatus === 'resolved' ? 'resolved' : 'pending',
+    city_id: row.cityId,
+    city_name: row.city?.name ?? null,
+    poi_id: row.poiId,
+    poi_name: row.poi?.name ?? null,
+    poi_address: row.poi?.address ?? null,
+    asset_count: row.assets.length,
+    candidate_count: row.candidates.length,
+    created_at: row.createdAt.toISOString(),
+  }));
+}
+
+export async function listLibraryCandidatesForUser(userId: string, inspirationId: string): Promise<LibraryCandidateRecord[] | null> {
+  const prisma = getPrisma();
+  const dbUserId = dbUserIdFor(userId);
+
+  if (!prisma) {
+    const item = memoryInspirations.get(inspirationId);
+    if (!item || item.user_id !== userId) return null;
+    if (item.locate_status !== 'pending') return null;
+    return item.candidates;
+  }
+  if (!uuidPattern.test(inspirationId)) return null;
+
+  const inspiration = (await prisma.inspiration.findFirst({
+    where: { id: inspirationId, userId: dbUserId, locateStatus: 'pending' },
+    include: { candidates: { orderBy: { rank: 'asc' } } },
+  } as any)) as any | null;
+  if (!inspiration) return null;
+
+  return inspiration.candidates.slice(0, 5).map((candidate: any): LibraryCandidateRecord => {
+    const snapshot = candidate.poiSnapshot && typeof candidate.poiSnapshot === 'object' ? candidate.poiSnapshot : {};
+    return {
+      candidate_id: candidate.id,
+      name: typeof snapshot.name === 'string' ? snapshot.name : '待确认地点',
+      address: typeof snapshot.address === 'string' ? snapshot.address : '待确认地址',
+    };
+  });
 }

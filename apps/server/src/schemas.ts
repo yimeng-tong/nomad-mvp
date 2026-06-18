@@ -12,6 +12,10 @@ export const IngestXhsBody = z.object({
   share_text: z.string().optional()
 });
 
+export const HomeInputParseBody = z.object({
+  text: z.string().trim().min(1).max(2000)
+});
+
 const Item = z.object({
   item_id: z.string(),
   poi_id: z.string().optional(),

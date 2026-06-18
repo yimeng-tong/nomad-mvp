@@ -34,7 +34,7 @@ development_status:
   epic-1: in-progress
   1-1-login-session-and-compliance-contract: done
   1-2-mobile-login-first-screen: done
-  1-3-single-xhs-ingest-with-sse-progress: backlog
+  1-3-single-xhs-ingest-with-sse-progress: ready-for-dev
   1-4-home-unified-input-and-inspiration-library: backlog
   1-5-settings-feedback-and-account-entry-points: backlog
   epic-1-retrospective: optional

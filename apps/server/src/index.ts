@@ -9,6 +9,8 @@ import cookie from '@fastify/cookie';
 import authPlugin, { authGuard } from './plugins/auth.js';
 import authRoutes from './routes/auth.js';
 import ingestRoutes from './routes/ingest.js';
+import homeRoutes from './routes/home.js';
+import libraryRoutes from './routes/library.js';
 import byokRoutes from './routes/byok.js';
 import accountRoutes from './routes/account.js';
 import queuesPlugin from './plugins/queues.js';
@@ -55,6 +57,8 @@ await app.register(authPlugin);
 await app.register(queuesPlugin);
 await app.register(authRoutes);
 await app.register(ingestRoutes);
+await app.register(homeRoutes);
+await app.register(libraryRoutes);
 await app.register(byokRoutes);
 await app.register(accountRoutes);
 

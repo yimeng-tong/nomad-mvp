@@ -19,7 +19,90 @@ tags:
   - name: ResultSheet
   - name: Search
   - name: Feedback
+  - name: Home
+  - name: Library
 paths:
+  /home/input/parse:
+    post:
+      tags: [Home]
+      summary: Classify unified Home input into ingest, trip params, or unknown
+      operationId: parseHomeInput
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HomeInputParseRequest'
+      responses:
+        '200':
+          description: Input classification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HomeInputParseResponse'
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '429': { $ref: '#/components/responses/Error429' }
+        '500': { $ref: '#/components/responses/Error500' }
+
+  /library/cities:
+    get:
+      tags: [Library]
+      summary: List user-owned inspiration city aggregates
+      operationId: listLibraryCities
+      responses:
+        '200':
+          description: City aggregates for the authenticated user's inspirations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LibraryCitiesResponse'
+        '401': { $ref: '#/components/responses/Error401' }
+        '500': { $ref: '#/components/responses/Error500' }
+
+  /library/inspirations:
+    get:
+      tags: [Library]
+      summary: List user-owned inspirations for Home and Library
+      operationId: listLibraryInspirations
+      parameters:
+        - in: query
+          name: city_id
+          schema: { type: string }
+        - in: query
+          name: locate_status
+          schema: { type: string, enum: [resolved, pending] }
+      responses:
+        '200':
+          description: Inspiration list for the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LibraryInspirationsResponse'
+        '401': { $ref: '#/components/responses/Error401' }
+        '500': { $ref: '#/components/responses/Error500' }
+
+  /library/inspirations/{inspiration_id}/candidates:
+    get:
+      tags: [Library]
+      summary: List sanitized pending-location candidates for an inspiration
+      operationId: listLibraryCandidates
+      parameters:
+        - in: path
+          name: inspiration_id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Top-5 sanitized candidates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LibraryCandidatesResponse'
+        '401': { $ref: '#/components/responses/Error401' }
+        '404': { $ref: '#/components/responses/Error404' }
+        '500': { $ref: '#/components/responses/Error500' }
+
   /ingest/start:
     post:
       tags: [Ingest]
@@ -1064,6 +1147,123 @@ components:
         error_message: { type: string }
         retriable: { type: boolean }
         details: { type: object, additionalProperties: true }
+
+    HomeInputParseRequest:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string, minLength: 1, maxLength: 2000 }
+
+    HomeTripParams:
+      type: object
+      required: [city]
+      properties:
+        city: { type: string }
+        start_date: { type: string, format: date, nullable: true }
+        days: { type: integer, minimum: 1, nullable: true }
+        pace: { type: string, enum: [tight, comfortable], nullable: true }
+
+    PlannerHandoffSelectedItem:
+      type: object
+      required: [item_id]
+      properties:
+        item_id: { type: string }
+        poi_id: { type: string, nullable: true }
+        source: { type: string, enum: [library, home_card, home_input], nullable: true }
+        must_go: { type: boolean, nullable: true }
+        time_hint: { type: string, enum: [morning, afternoon, evening], nullable: true }
+        stay_minutes_hint: { type: integer, minimum: 0, nullable: true }
+
+    PlannerHandoff:
+      type: object
+      required: [route, source, selected_items]
+      properties:
+        route: { type: string, example: '/planner/pick?city=杭州&source=home_input' }
+        source: { type: string, enum: [home_input, home_card] }
+        selected_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlannerHandoffSelectedItem'
+
+    HomeInputParseResponse:
+      type: object
+      required: [type, original_text]
+      properties:
+        type: { type: string, enum: [xhs_link, trip_params, unknown] }
+        original_text: { type: string }
+        url: { type: string, format: uri, nullable: true }
+        warning:
+          nullable: true
+          $ref: '#/components/schemas/IngestWarning'
+        trip_params:
+          nullable: true
+          $ref: '#/components/schemas/HomeTripParams'
+        planner_handoff:
+          nullable: true
+          $ref: '#/components/schemas/PlannerHandoff'
+
+    LibraryCitySummary:
+      type: object
+      required: [city_id, name, inspiration_count, pending_count]
+      properties:
+        city_id: { type: string }
+        name: { type: string }
+        inspiration_count: { type: integer, minimum: 0 }
+        pending_count: { type: integer, minimum: 0 }
+
+    LibraryCitiesResponse:
+      type: object
+      required: [cities, unlocated_count]
+      properties:
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/LibraryCitySummary'
+        unlocated_count: { type: integer, minimum: 0 }
+
+    LibraryInspirationItem:
+      type: object
+      required: [id, title, summary, locate_status, city_id, city_name, poi_id, poi_name, poi_address, asset_count, candidate_count, created_at]
+      properties:
+        id: { type: string }
+        title: { type: string, nullable: true }
+        summary: { type: string, nullable: true }
+        locate_status: { type: string, enum: [resolved, pending] }
+        city_id: { type: string, nullable: true }
+        city_name: { type: string, nullable: true }
+        poi_id: { type: string, nullable: true }
+        poi_name: { type: string, nullable: true }
+        poi_address: { type: string, nullable: true }
+        asset_count: { type: integer, minimum: 0 }
+        candidate_count: { type: integer, minimum: 0 }
+        created_at: { type: string, format: date-time }
+
+    LibraryInspirationsResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LibraryInspirationItem'
+
+    LibraryCandidate:
+      type: object
+      required: [candidate_id, name, address]
+      properties:
+        candidate_id: { type: string }
+        name: { type: string }
+        address: { type: string }
+
+    LibraryCandidatesResponse:
+      type: object
+      required: [candidates]
+      properties:
+        candidates:
+          type: array
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/LibraryCandidate'
 
     IngestStartRequest:
       type: object

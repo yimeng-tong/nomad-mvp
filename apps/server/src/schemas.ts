@@ -3,6 +3,12 @@ import { z } from 'zod';
 export const IngestStartBody = z.object({
   source: z.literal('xhs'),
   url: z.string().url().optional(),
+  share_text: z.string().optional(),
+  force: z.boolean().optional()
+});
+
+export const IngestXhsBody = z.object({
+  url: z.string().url().optional(),
   share_text: z.string().optional()
 });
 

@@ -10,6 +10,7 @@
     "dev": "tsx src/index.ts",
     "build": "tsc -p tsconfig.json",
     "test:auth": "TMPDIR=/tmp node --import tsx scripts/auth-contract-probe.ts",
+    "test:ingest": "TMPDIR=/tmp node --import tsx scripts/ingest-contract-probe.ts",
     "start": "node dist/apps/server/src/index.js"
   },
   "dependencies": {

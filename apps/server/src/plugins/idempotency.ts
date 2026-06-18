@@ -24,8 +24,8 @@ export default fp(async (app) => {
 
 declare module 'fastify' {
   interface FastifyInstance {
-    checkIdempotency: (path: string, body: any, ttlMs: number, userId?: string) => any | null
-    storeIdempotency: (path: string, body: any, ttlMs: number, response: any, userId?: string) => void
+    checkIdempotency: (path: string, body: any, ttlMs: number, userId?: string) => any | null | Promise<any | null>
+    storeIdempotency: (path: string, body: any, ttlMs: number, response: any, userId?: string) => void | Promise<void>
   }
 }
 

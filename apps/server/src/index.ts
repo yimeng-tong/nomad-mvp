@@ -51,8 +51,7 @@ await app.register(cors, { origin: true, credentials: true });
 await app.register(cookie);
 await app.register(traceIdPlugin);
 await app.register(errorEnvelope);
-await app.register(idempotency);
-await app.register(idempotencyRedis);
+await app.register(process.env.REDIS_URL ? idempotencyRedis : idempotency);
 await app.register(authPlugin);
 await app.register(queuesPlugin);
 await app.register(authRoutes);
@@ -77,11 +76,11 @@ app.post<{ Body: IngestStartRequest, Reply: IngestStartResponse | any }>('/inges
   const traceId = req.traceId || randomUUID();
   const parsed = IngestStartBody.safeParse((req as any).body ?? {});
   if (!parsed.success) return reply.sendError('PLAN_PARAMS_INVALID', 'invalid ingest body', 400, false, { issues: parsed.error.issues });
-  const cached = app.checkIdempotency('/ingest/start', req.body, 24 * 60 * 60 * 1000);
+  const cached = await app.checkIdempotency('/ingest/start', req.body, 24 * 60 * 60 * 1000);
   if (cached) return reply.header('X-Trace-Id', traceId).code(202).send(cached);
   const ingestId = `ing_${randomUUID()}`;
   const res: IngestStartResponse = { ingest_id: ingestId, state: 'created', sse_url: `/sse/ingest/${ingestId}` };
-  app.storeIdempotency('/ingest/start', req.body, 24 * 60 * 60 * 1000, res);
+  await app.storeIdempotency('/ingest/start', req.body, 24 * 60 * 60 * 1000, res);
   reply.header('X-Trace-Id', traceId).code(202).send(res);
 });
 
@@ -112,12 +111,12 @@ app.post<{ Body: PlanGenerateRequest, Reply: PlanGenerateResponse | any }>('/pla
   const traceId = req.traceId || randomUUID();
   const parsed = PlanGenerateBody.safeParse((req as any).body ?? {});
   if (!parsed.success) return reply.sendError('PLAN_PARAMS_INVALID', 'invalid plan body', 400, false, { issues: parsed.error.issues });
-  const cached = app.checkIdempotency('/plan/generate', req.body, 10 * 60 * 1000);
+  const cached = await app.checkIdempotency('/plan/generate', req.body, 10 * 60 * 1000);
   if (cached) return reply.header('X-Trace-Id', traceId).code(202).send(cached);
   const planId = `pl_${randomUUID()}`;
   const planJobId = `pj_${randomUUID()}`;
   const res: PlanGenerateResponse = { plan_id: planId, plan_job_id: planJobId, sse_url: `/sse/plan/${planJobId}` };
-  app.storeIdempotency('/plan/generate', req.body, 10 * 60 * 1000, res);
+  await app.storeIdempotency('/plan/generate', req.body, 10 * 60 * 1000, res);
   reply.header('X-Trace-Id', traceId).code(202).send(res);
 });
 

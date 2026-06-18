@@ -56,7 +56,7 @@ export async function createOrGetIngestJob(input: {
         traceId: input.traceId,
       },
     });
-    dbId = persisted.id;
+    dbId = persisted.id as typeof dbId;
     id = `ing_${dbId}`;
   }
 

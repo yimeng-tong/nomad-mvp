@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "tsx src/index.ts",
+    "prebuild": "pnpm -F nomad-prisma run generate",
     "build": "tsc -p tsconfig.json",
     "test:auth": "TMPDIR=/tmp node --import tsx scripts/auth-contract-probe.ts",
     "test:ingest": "TMPDIR=/tmp node --import tsx scripts/ingest-contract-probe.ts",

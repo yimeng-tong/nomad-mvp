@@ -192,6 +192,7 @@ GPT-5 Codex
 - `pnpm -r build` - passes.
 - `git diff --check` - passes.
 - Local listening server verification was attempted earlier but could not be authorized in Codex Desktop due sandbox usage-limit approval rejection; real HTTP/SSE listening should be covered by GitHub CI probes.
+- GitHub PR #5 first CI run failed because clean GitHub Actions build ran before Prisma Client generation; fixed by adding `prebuild` to `apps/server/package.json`.
 
 ### Completion Notes List
 
@@ -201,6 +202,7 @@ GPT-5 Codex
 - Added ingest service modules with Prisma-backed persistence plus no-DB in-memory fallback, stable per-user source hashing, adapter seams, COS key-only media re-host stubs, pending-location degradation, and branch suppression/crop/top-5 candidate logic.
 - Added SSE progress events for `created`, `fetching`, `parsing` diagnostics, `geo`, `storing`, `done`, plus degraded failure events with trace context.
 - Updated OpenAPI source, regenerated generated API types, and updated synthetic/SSE probes to exercise canonical ingest flow and backward compatibility.
+- Added a server `prebuild` hook so clean CI environments generate Prisma Client before compiling server TypeScript.
 
 ### File List
 
@@ -226,3 +228,4 @@ GPT-5 Codex
 
 - 2026-06-18: Created Story 1.3 context and marked ready for dev.
 - 2026-06-18: Implemented Story 1.3 XHS ingest service, SSE progress, degradation semantics, OpenAPI/types, and probes; marked ready for review.
+- 2026-06-18: Fixed CI clean-build Prisma Client generation by adding server `prebuild`.

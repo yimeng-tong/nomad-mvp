@@ -1,7 +1,15 @@
 import puppeteer from 'puppeteer';
 
 export async function renderPlanToImages(planId: string, widthPx: number, sliceByDay: boolean) {
-  const browser = await puppeteer.launch({ headless: true });
+  const launchOptions: Parameters<typeof puppeteer.launch>[0] = { headless: true };
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+  }
+  if (process.env.CI) {
+    launchOptions.args = ['--no-sandbox', '--disable-setuid-sandbox'];
+  }
+
+  const browser = await puppeteer.launch(launchOptions);
   try {
     const page = await browser.newPage();
     await page.setViewport({ width: widthPx, height: 1920, deviceScaleFactor: 1 });

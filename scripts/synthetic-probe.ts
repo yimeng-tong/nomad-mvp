@@ -1,21 +1,5 @@
 import fetch from 'node-fetch';
 
-async function main() {
-  const base = process.env.API_URL || 'http://localhost:3000';
-  // Health
-  const h = await fetch(`${base}/health`);
-  if (!h.ok) throw new Error('health failed');
-  // OTP roundtrip (mock)
-  await fetch(`${base}/auth/otp/start`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ phone: '15500000000', region: 'CN' }) });
-  const v = await fetch(`${base}/auth/otp/verify`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ phone: '15500000000', otp: '000000' }) });
-  if (!v.ok) throw new Error('otp verify failed');
-  console.log('probe ok');
-}
-
-main().catch((e) => { console.error(e); process.exit(1); });
-
-import fetch from 'node-fetch';
-
 const API = process.env.API_BASE || 'http://localhost:3000';
 const traceId = `syn_${Date.now()}`;
 
@@ -45,7 +29,10 @@ async function probeFill(planId: string) {
 
 async function probeExport(planId: string) {
   const r = await fetch(`${API}/export/png`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Trace-Id': traceId, 'X-Device-Id': 'syn-device' }, body: JSON.stringify({ plan_id: planId, width_px: 1080, slice_by_day: true }) });
-  if (r.status !== 200) throw new Error('export failed');
+  if (r.status !== 200) {
+    const body = await r.text();
+    throw new Error(`export failed (${r.status}): ${body}`);
+  }
   const j = await r.json();
   console.log('export ok', j.format, j.files.length);
 }

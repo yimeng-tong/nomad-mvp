@@ -8,6 +8,7 @@
   "scripts": {
     "ci:types": "pnpm -F nomad-types run generate",
     "ci:build": "pnpm -r build",
+    "ci:lint": "echo \"eslint gate placeholder\"",
     "ci:start-server": "node apps/server/dist/apps/server/src/index.js",
     "ci:auth": "pnpm -F nomad-server run test:auth",
     "ci:probe": "tsx scripts/synthetic-probe.ts",

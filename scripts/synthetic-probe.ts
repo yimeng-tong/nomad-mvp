@@ -67,6 +67,7 @@ async function probeExport(planId: string) {
     throw new Error(`export failed (${r.status}): ${body}`);
   }
   const j = (await r.json()) as { format?: string; files?: unknown[] };
+  if (!Array.isArray(j.files) || j.files.length === 0) throw new Error('export files missing');
   console.log('export ok', j.format, j.files?.length);
 }
 

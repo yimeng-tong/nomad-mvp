@@ -52,7 +52,7 @@ function suppressedChains() {
   return configured?.length ? configured : defaultSuppressedChains;
 }
 
-function isSuppressedChain(candidate: BranchCandidateInput) {
+export function isSuppressedChain(candidate: BranchCandidateInput) {
   const name = candidate.name.toLowerCase();
   return suppressedChains().some((chain) => name.includes(chain.toLowerCase()));
 }
@@ -61,6 +61,7 @@ export function selectBranchCandidates(candidates: BranchCandidateInput[], main?
   return candidates
     .slice(0, 20)
     .filter((candidate) => !isSuppressedChain(candidate))
+    .filter((candidate) => typeof candidate.distanceMeters !== 'number' || (Number.isFinite(candidate.distanceMeters) && candidate.distanceMeters >= 0))
     .map((candidate) => ({ ...candidate, distanceMeters: withDistance(candidate, main) }))
     .filter((candidate) => candidate.distanceMeters === undefined || candidate.distanceMeters <= 2000)
     .sort((a, b) => {

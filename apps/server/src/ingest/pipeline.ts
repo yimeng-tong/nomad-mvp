@@ -1,4 +1,4 @@
-import { selectBranchCandidates } from './branch-rules.js';
+import { isSuppressedChain, selectBranchCandidates } from './branch-rules.js';
 import { extractPoiCandidates, fetchXhsPost, rehostMedia, standardizeCandidates } from './adapters.js';
 import { appendIngestEvent, getJob, persistIngestOutput } from './store.js';
 import type { ExtractedCandidate, RehostedAsset, StandardizedCandidate, XhsFetchedPost } from './adapters.js';
@@ -10,7 +10,16 @@ export function startIngestPipeline(jobId: string) {
   if (!job || job.status === 'done' || job.status === 'failed' || runningJobs.has(jobId)) return;
   runningJobs.add(jobId);
   queueMicrotask(() => {
-    void runIngestPipeline(jobId).finally(() => runningJobs.delete(jobId));
+    void runIngestPipeline(jobId)
+      .catch((error) => {
+        void appendIngestEvent(jobId, {
+          state: 'failed',
+          error_code: 'INGEST_PIPELINE_UNHANDLED',
+          error_message: errorMessage(error),
+          retriable: true,
+        }).catch(() => undefined);
+      })
+      .finally(() => runningJobs.delete(jobId));
   });
 }
 
@@ -44,6 +53,7 @@ function fallbackPost(sourceUrl: string): XhsFetchedPost {
 export async function runIngestPipeline(jobId: string) {
   const job = getJob(jobId);
   if (!job) return;
+  let degraded = false;
 
   try {
     await appendIngestEvent(jobId, { state: 'fetching' });
@@ -51,6 +61,7 @@ export async function runIngestPipeline(jobId: string) {
     try {
       post = await fetchXhsPost(job.sourceUrl);
     } catch (error) {
+      degraded = true;
       await appendDegradedFailure(jobId, 'INGEST_XHS_FETCH_DEGRADED', error);
       post = fallbackPost(job.sourceUrl);
     }
@@ -62,6 +73,7 @@ export async function runIngestPipeline(jobId: string) {
     try {
       extracted = await extractPoiCandidates(post);
     } catch (error) {
+      degraded = true;
       await appendDegradedFailure(jobId, 'INGEST_EXTRACTION_DEGRADED', error);
     }
 
@@ -70,11 +82,16 @@ export async function runIngestPipeline(jobId: string) {
     try {
       standardized = await standardizeCandidates(extracted);
     } catch (error) {
+      degraded = true;
       await appendDegradedFailure(jobId, 'INGEST_GEO_DEGRADED', error);
     }
+    const highConfidence =
+      !degraded && standardized.highConfidence && !isSuppressedChain(standardized.highConfidence)
+        ? standardized.highConfidence
+        : undefined;
     const mainPoint =
-      typeof standardized.highConfidence?.lat === 'number' && typeof standardized.highConfidence.lon === 'number'
-        ? { lat: standardized.highConfidence.lat, lon: standardized.highConfidence.lon }
+      typeof highConfidence?.lat === 'number' && typeof highConfidence.lon === 'number'
+        ? { lat: highConfidence.lat, lon: highConfidence.lon }
         : undefined;
     const branchCandidates = selectBranchCandidates(standardized.candidates, mainPoint);
 
@@ -83,13 +100,14 @@ export async function runIngestPipeline(jobId: string) {
     try {
       assets = await rehostMedia(post.media, job.sourceUrl);
     } catch (error) {
+      degraded = true;
       await appendDegradedFailure(jobId, 'INGEST_REHOST_DEGRADED', error);
     }
     const stored = await persistIngestOutput({
       job,
       post,
       assets,
-      highConfidence: standardized.highConfidence,
+      highConfidence: degraded ? undefined : highConfidence,
       candidates: branchCandidates,
     });
 

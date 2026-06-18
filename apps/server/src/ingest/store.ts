@@ -15,12 +15,68 @@ function uuidFromStableId(value: string) {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-8${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
 }
 
+export function dbUserIdFor(userId: string) {
+  return uuidFromStableId(userId);
+}
+
 export function sourceHashFor(userId: string, normalizedUrl: string) {
   return createHash('sha256').update(`${userId}:${normalizedUrl}`).digest('hex');
 }
 
 export function getJob(id: string) {
   return jobs.get(id);
+}
+
+function hydrateJobFromDb(persisted: {
+  id: string;
+  userId: string;
+  sourceUrl: string | null;
+  sourceHash: string;
+  status: string;
+  retryCount: number;
+  lastError: string | null;
+  traceId: string | null;
+}, fallback: { traceId: string; sourceUrl?: string; warning?: IngestWarning }) {
+  const id = `ing_${persisted.id}`;
+  const status = persisted.status as IngestStage;
+  const traceId = persisted.traceId || fallback.traceId;
+  const event: IngestEvent = {
+    trace_id: traceId,
+    ingest_id: id,
+    state: status,
+    retry: persisted.retryCount,
+    error_code: persisted.lastError ?? undefined,
+    ts: Date.now(),
+  };
+  const job: IngestJobRecord = {
+    id,
+    dbId: persisted.id,
+    userId: persisted.userId,
+    dbUserId: persisted.userId,
+    sourceUrl: persisted.sourceUrl || fallback.sourceUrl || '',
+    sourceHash: persisted.sourceHash,
+    status,
+    traceId,
+    retryCount: persisted.retryCount,
+    warning: fallback.warning,
+    events: [event],
+  };
+  jobs.set(id, job);
+  sourceHashIndex.set(persisted.sourceHash, id);
+  return job;
+}
+
+export async function getOrHydrateJob(id: string) {
+  const job = jobs.get(id);
+  if (job) return job;
+
+  const prisma = getPrisma();
+  const dbId = id.startsWith('ing_') ? id.slice(4) : id;
+  if (!prisma || !dbId) return undefined;
+
+  const persisted = await prisma.ingestJob.findUnique({ where: { id: dbId } }).catch(() => null);
+  if (!persisted) return undefined;
+  return hydrateJobFromDb(persisted, { traceId: persisted.traceId || randomUUID() });
 }
 
 export async function createOrGetIngestJob(input: {
@@ -43,10 +99,11 @@ export async function createOrGetIngestJob(input: {
       update: {},
       create: { id: dbUserId },
     });
-    const persisted = await prisma.ingestJob.upsert({
-      where: { sourceHash },
-      update: { traceId: input.traceId, sourceUrl: input.sourceUrl, status: 'created' as any },
-      create: {
+    const existing = await prisma.ingestJob.findUnique({ where: { sourceHash } });
+    if (existing) return hydrateJobFromDb(existing, { traceId: input.traceId, sourceUrl: input.sourceUrl, warning: input.warning });
+
+    const persisted = await prisma.ingestJob.create({
+      data: {
         id: dbId,
         userId: dbUserId,
         sourceType: 'xhs',
@@ -98,7 +155,15 @@ export async function appendIngestEvent(jobId: string, event: Omit<IngestEvent, 
   };
   job.status = next.state;
   job.events.push(next);
-  subscribers.get(jobId)?.forEach((subscriber) => subscriber(next));
+  const set = subscribers.get(jobId);
+  for (const subscriber of Array.from(set ?? [])) {
+    try {
+      subscriber(next);
+    } catch {
+      set?.delete(subscriber);
+    }
+  }
+  if (set?.size === 0) subscribers.delete(jobId);
 
   const prisma = getPrisma();
   if (prisma) {
@@ -178,8 +243,8 @@ export async function persistIngestOutput(input: {
       text: input.post.text,
       canonicalUrl: input.job.sourceUrl,
       locateStatus,
-      poiId,
-      cityId,
+      poiId: poiId ?? null,
+      cityId: cityId ?? null,
     } as any,
     create: {
       userId: input.job.dbUserId,
@@ -195,6 +260,7 @@ export async function persistIngestOutput(input: {
     } as any,
   });
 
+  await prisma.asset.deleteMany({ where: { inspirationId: inspiration.id } });
   for (const asset of input.assets) {
     await prisma.asset.create({
       data: {
@@ -209,6 +275,10 @@ export async function persistIngestOutput(input: {
     });
   }
 
+  if (input.highConfidence || input.candidates.length === 0) {
+    await prisma.locateCandidate.deleteMany({ where: { inspirationId: inspiration.id } });
+  }
+
   if (!input.highConfidence) {
     for (const candidate of input.candidates) {
       await prisma.locateCandidate.upsert({
@@ -221,6 +291,12 @@ export async function persistIngestOutput(input: {
         },
       });
     }
+    await prisma.locateCandidate.deleteMany({
+      where: {
+        inspirationId: inspiration.id,
+        rank: { notIn: input.candidates.map((candidate) => candidate.rank) },
+      },
+    });
   }
 
   return {

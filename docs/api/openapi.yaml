@@ -95,9 +95,11 @@ paths:
                     id: 01J0...
                     event: ingest
                     data: {"trace_id":"t-1","ingest_id":"ing_123","state":"created","retry":0,"ts":1730000000}
-                    
+
                     event: ping
                     data: {"seq":1,"heartbeat_ms":10000,"ts":1730000010}
+        '401': { $ref: '#/components/responses/Error401' }
+        '404': { $ref: '#/components/responses/Error404' }
 
   /sse/ingest/{ingest_id}:
     get:
@@ -130,9 +132,11 @@ paths:
                     id: 01J0...
                     event: ingest
                     data: {"trace_id":"t-1","ingest_id":"ing_123","state":"created","retry":0,"ts":1730000000}
-                    
+
                     event: ping
                     data: {"seq":1,"heartbeat_ms":10000,"ts":1730000010}
+        '401': { $ref: '#/components/responses/Error401' }
+        '404': { $ref: '#/components/responses/Error404' }
 
   /plan/generate:
     post:
@@ -1091,6 +1095,9 @@ components:
     IngestXhsRequest:
       type: object
       description: Provide either url or share_text containing a Xiaohongshu URL.
+      anyOf:
+        - required: [url]
+        - required: [share_text]
       properties:
         url: { type: string, format: uri, nullable: true }
         share_text: { type: string, nullable: true }

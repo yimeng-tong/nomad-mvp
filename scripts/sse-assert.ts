@@ -46,6 +46,12 @@ function assertIngestStages(url: string, timeoutMs = 5000) {
       const data = JSON.parse(event.data);
       states.push(data.state);
       if (data.sub_stage) subStages.push(data.sub_stage);
+      if (data.state === 'failed') {
+        clearTimeout(timer);
+        es.close();
+        reject(new Error(`ingest failed: ${data.error_code ?? 'unknown'}`));
+        return;
+      }
       if (data.state === 'done') {
         clearTimeout(timer);
         es.close();

@@ -33,6 +33,22 @@ export type StandardizedCandidate = BranchCandidateInput & {
   cityName?: string;
 };
 
+function validateFetchedPost(value: unknown): XhsFetchedPost {
+  if (!value || typeof value !== 'object') throw new Error('XHS_DOWNLOADER_BAD_PAYLOAD');
+  const body = value as Partial<XhsFetchedPost>;
+  if (!Array.isArray(body.media)) throw new Error('XHS_DOWNLOADER_BAD_PAYLOAD');
+  for (const asset of body.media) {
+    if (!asset || typeof asset.url !== 'string' || (asset.kind !== 'image' && asset.kind !== 'video')) {
+      throw new Error('XHS_DOWNLOADER_BAD_PAYLOAD');
+    }
+  }
+  return {
+    title: typeof body.title === 'string' ? body.title : '小红书灵感',
+    text: typeof body.text === 'string' ? body.text : '',
+    media: body.media,
+  };
+}
+
 function shouldFailStub(stage: string) {
   return (process.env.INGEST_STUB_FAIL_STAGE ?? '')
     .split(',')
@@ -51,7 +67,7 @@ export async function fetchXhsPost(url: string): Promise<XhsFetchedPost> {
       body: JSON.stringify({ url }),
     });
     if (!response.ok) throw new Error(`XHS_DOWNLOADER_${response.status}`);
-    return (await response.json()) as XhsFetchedPost;
+    return validateFetchedPost(await response.json());
   }
 
   return {

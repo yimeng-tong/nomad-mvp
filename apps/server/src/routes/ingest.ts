@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { authGuard } from '../plugins/auth.js';
 import { IngestStartBody, IngestXhsBody } from '../schemas.js';
 import { parseXhsInput } from '../ingest/link-parser.js';
-import { createOrGetIngestJob, getJob, subscribeToIngest } from '../ingest/store.js';
+import { createOrGetIngestJob, dbUserIdFor, getOrHydrateJob, subscribeToIngest } from '../ingest/store.js';
 import { startIngestPipeline } from '../ingest/pipeline.js';
 import type { IngestEvent, IngestStartResult } from '../ingest/types.js';
 
@@ -40,15 +40,18 @@ function sendIngestEvent(reply: any, event: IngestEvent) {
 }
 
 async function streamIngestEvents(req: any, reply: any, jobId: string) {
-  const job = getJob(jobId);
+  const job = await getOrHydrateJob(jobId);
   if (!job) {
+    return reply.sendError('INGEST_JOB_NOT_FOUND', 'ingest job not found', 404, false);
+  }
+  if (job.dbUserId !== dbUserIdFor(req.user!.id)) {
     return reply.sendError('INGEST_JOB_NOT_FOUND', 'ingest job not found', 404, false);
   }
 
   reply.raw.setHeader('Cache-Control', 'no-cache');
   reply.raw.setHeader('Content-Type', 'text/event-stream');
   reply.raw.setHeader('Connection', 'keep-alive');
-  reply.raw.setHeader('X-Trace-Id', traceIdFor(req));
+  reply.raw.setHeader('X-Trace-Id', job.traceId);
 
   for (const event of job.events) sendIngestEvent(reply, event);
   const unsubscribe = subscribeToIngest(job.id, (event) => sendIngestEvent(reply, event));
@@ -66,6 +69,7 @@ async function streamIngestEvents(req: any, reply: any, jobId: string) {
         data: JSON.stringify({
           trace_id: job.traceId,
           ingest_id: job.id,
+          state: 'failed',
           error_code: 'SSE_IDLE_TIMEOUT',
           error_message: 'idle timeout',
           retriable: true,

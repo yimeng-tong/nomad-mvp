@@ -744,6 +744,8 @@ export interface operations {
           "text/event-stream": string;
         };
       };
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
     };
   };
   /**
@@ -768,6 +770,8 @@ export interface operations {
           "text/event-stream": string;
         };
       };
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
     };
   };
   /** Generate day-level skeleton (partial fill) asynchronously */

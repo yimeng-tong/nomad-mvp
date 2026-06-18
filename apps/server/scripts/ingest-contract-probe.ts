@@ -47,6 +47,12 @@ async function main() {
 
   const branches = [
     {
+      name: '负距离候选',
+      address: '异常地址',
+      distanceMeters: -1,
+      confidence: 1,
+    },
+    {
       name: '星巴克 西湖店',
       address: '连锁地址',
       lat: 30.001,
@@ -66,6 +72,7 @@ async function main() {
   const selected = selectBranchCandidates(branches, { lat: 30, lon: 120 });
   assert(selected.length === 5, 'branch candidates should store only Top-5');
   assert(selected.every((candidate) => !candidate.name.includes('星巴克')), 'chain suppression should remove configured chains');
+  assert(selected.every((candidate) => candidate.name !== '负距离候选'), 'invalid negative distances should not outrank real candidates');
   assert(selected.every((candidate) => candidate.distanceMeters <= 2000), 'branch candidates should be cropped to 2km');
   assert(selected[0].rank === 1 && selected[4].rank === 5, 'branch candidates should be ranked');
 
@@ -152,6 +159,18 @@ async function main() {
     assert(body.ingest_id?.startsWith('ing_'), 'ingest response should include ingest_id');
     assert(body.sse_url === `/ingest/${body.ingest_id}/events`, 'canonical response should use canonical SSE URL');
     assert(body.warning?.code === 'INGEST_SINGLE_LINK_ONLY', 'multi-link response should include warning copy');
+
+    const otherUserSse = await app.inject({
+      method: 'GET',
+      url: body.sse_url,
+      headers: {
+        'x-trace-id': 'trace-ingest-probe',
+        'x-user-id': '00000000-0000-4000-8000-000000000002',
+        'x-device-id': 'ingest-probe',
+      },
+    });
+    assert(otherUserSse.statusCode === 404, 'ingest SSE should not expose another user job');
+    assert(parseJson(otherUserSse).error_code === 'INGEST_JOB_NOT_FOUND', 'cross-user SSE should hide job existence');
 
     const legacy = await app.inject({
       method: 'POST',

@@ -300,12 +300,39 @@ export interface components {
       ingest_id: string;
       /** @enum {string} */
       state: "created";
-      /** @example /sse/ingest/ing_123 */
-      sse_url?: string;
+      /** @example /ingest/ing_123/events */
+      sse_url: string;
+      warning?: components["schemas"]["IngestWarning"];
     };
+    IngestWarning: {
+      /** @enum {string} */
+      code: "INGEST_SINGLE_LINK_ONLY";
+      /** @example 一次仅处理一条链接，其余请逐条粘贴 */
+      message: string;
+      extra_count: number;
+    };
+    /** @description Provide either url or share_text containing a Xiaohongshu URL. */
     IngestXhsRequest: {
       /** Format: uri */
-      url: string;
+      url?: string | null;
+      share_text?: string | null;
+    };
+    IngestEvent: {
+      trace_id: string;
+      ingest_id: string;
+      /** @enum {string} */
+      state: "created" | "fetching" | "parsing" | "geo" | "storing" | "done" | "failed";
+      /** @enum {string|null} */
+      sub_stage?: "text" | "ocr" | "vision" | null;
+      retry?: number;
+      fetched_count?: number;
+      parsed_count?: number;
+      candidate_count?: number;
+      stored_count?: number;
+      error_code?: string | null;
+      error_message?: string | null;
+      retriable?: boolean | null;
+      ts: number;
     };
     PlanGenerateRequest: {
       city: string;
@@ -717,6 +744,8 @@ export interface operations {
           "text/event-stream": string;
         };
       };
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
     };
   };
   /**
@@ -741,6 +770,8 @@ export interface operations {
           "text/event-stream": string;
         };
       };
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
     };
   };
   /** Generate day-level skeleton (partial fill) asynchronously */

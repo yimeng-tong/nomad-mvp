@@ -95,9 +95,11 @@ paths:
                     id: 01J0...
                     event: ingest
                     data: {"trace_id":"t-1","ingest_id":"ing_123","state":"created","retry":0,"ts":1730000000}
-                    
+
                     event: ping
                     data: {"seq":1,"heartbeat_ms":10000,"ts":1730000010}
+        '401': { $ref: '#/components/responses/Error401' }
+        '404': { $ref: '#/components/responses/Error404' }
 
   /sse/ingest/{ingest_id}:
     get:
@@ -130,9 +132,11 @@ paths:
                     id: 01J0...
                     event: ingest
                     data: {"trace_id":"t-1","ingest_id":"ing_123","state":"created","retry":0,"ts":1730000000}
-                    
+
                     event: ping
                     data: {"seq":1,"heartbeat_ms":10000,"ts":1730000010}
+        '401': { $ref: '#/components/responses/Error401' }
+        '404': { $ref: '#/components/responses/Error404' }
 
   /plan/generate:
     post:
@@ -1072,17 +1076,49 @@ components:
 
     IngestStartResponse:
       type: object
-      required: [ingest_id, state]
+      required: [ingest_id, state, sse_url]
       properties:
         ingest_id: { type: string }
         state: { type: string, enum: [created] }
-        sse_url: { type: string, example: '/sse/ingest/ing_123' }
+        sse_url: { type: string, example: '/ingest/ing_123/events' }
+        warning:
+          $ref: '#/components/schemas/IngestWarning'
+
+    IngestWarning:
+      type: object
+      required: [code, message, extra_count]
+      properties:
+        code: { type: string, enum: [INGEST_SINGLE_LINK_ONLY] }
+        message: { type: string, example: '一次仅处理一条链接，其余请逐条粘贴' }
+        extra_count: { type: integer, minimum: 1 }
 
     IngestXhsRequest:
       type: object
-      required: [url]
+      description: Provide either url or share_text containing a Xiaohongshu URL.
+      anyOf:
+        - required: [url]
+        - required: [share_text]
       properties:
-        url: { type: string, format: uri }
+        url: { type: string, format: uri, nullable: true }
+        share_text: { type: string, nullable: true }
+
+    IngestEvent:
+      type: object
+      required: [trace_id, ingest_id, state, ts]
+      properties:
+        trace_id: { type: string }
+        ingest_id: { type: string }
+        state: { type: string, enum: [created, fetching, parsing, geo, storing, done, failed] }
+        sub_stage: { type: string, enum: [text, ocr, vision], nullable: true }
+        retry: { type: integer, minimum: 0 }
+        fetched_count: { type: integer, minimum: 0 }
+        parsed_count: { type: integer, minimum: 0 }
+        candidate_count: { type: integer, minimum: 0 }
+        stored_count: { type: integer, minimum: 0 }
+        error_code: { type: string, nullable: true }
+        error_message: { type: string, nullable: true }
+        retriable: { type: boolean, nullable: true }
+        ts: { type: integer }
 
     PlanGenerateRequest:
       type: object

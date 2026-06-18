@@ -8,6 +8,7 @@ import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import authPlugin, { authGuard } from './plugins/auth.js';
 import authRoutes from './routes/auth.js';
+import ingestRoutes from './routes/ingest.js';
 import byokRoutes from './routes/byok.js';
 import accountRoutes from './routes/account.js';
 import queuesPlugin from './plugins/queues.js';
@@ -18,10 +19,8 @@ import idempotencyRedis from './plugins/idempotency-redis.js';
 import { sentryInit, trackFillRun } from './integrations/telemetry.js';
 import { initFlags, isEnabled } from './integrations/flags.js';
 import { z } from 'zod';
-import { IngestStartBody, PlanGenerateBody, AiFillBody, ExportBody } from './schemas.js';
+import { PlanGenerateBody, AiFillBody, ExportBody } from './schemas.js';
 import type { components } from '../../../packages/types/src/api-types.js';
-type IngestStartRequest = components['schemas']['IngestStartRequest'];
-type IngestStartResponse = components['schemas']['IngestStartResponse'];
 type PlanGenerateRequest = components['schemas']['PlanGenerateRequest'];
 type PlanGenerateResponse = components['schemas']['PlanGenerateResponse'];
 type AiFillRequest = components['schemas']['AiFillRequest'];
@@ -55,6 +54,7 @@ await app.register(process.env.REDIS_URL ? idempotencyRedis : idempotency);
 await app.register(authPlugin);
 await app.register(queuesPlugin);
 await app.register(authRoutes);
+await app.register(ingestRoutes);
 await app.register(byokRoutes);
 await app.register(accountRoutes);
 
@@ -70,41 +70,6 @@ await app.register(fastifyPlugin(async (f) => {
 
 // Health
 app.get('/health', async () => ({ status: 'ok' }));
-
-// Minimal ingest start (ACK 202)
-app.post<{ Body: IngestStartRequest, Reply: IngestStartResponse | any }>('/ingest/start', { config: { rateLimit: { max: 30, timeWindow: 24 * 60 * 60 * 1000 } } }, async (req, reply) => {
-  const traceId = req.traceId || randomUUID();
-  const parsed = IngestStartBody.safeParse((req as any).body ?? {});
-  if (!parsed.success) return reply.sendError('PLAN_PARAMS_INVALID', 'invalid ingest body', 400, false, { issues: parsed.error.issues });
-  const cached = await app.checkIdempotency('/ingest/start', req.body, 24 * 60 * 60 * 1000);
-  if (cached) return reply.header('X-Trace-Id', traceId).code(202).send(cached);
-  const ingestId = `ing_${randomUUID()}`;
-  const res: IngestStartResponse = { ingest_id: ingestId, state: 'created', sse_url: `/sse/ingest/${ingestId}` };
-  await app.storeIdempotency('/ingest/start', req.body, 24 * 60 * 60 * 1000, res);
-  reply.header('X-Trace-Id', traceId).code(202).send(res);
-});
-
-// SSE mock streams
-app.get('/sse/ingest/:id', { preHandler: authGuard }, async (req, reply) => {
-  const traceId = (req.headers['x-trace-id'] as string) || randomUUID();
-  reply.raw.setHeader('Cache-Control', 'no-cache');
-  reply.raw.setHeader('Content-Type', 'text/event-stream');
-  reply.raw.setHeader('Connection', 'keep-alive');
-  const ingestId = (req.params as any).id as string;
-  reply.sse({ event: 'ingest', data: JSON.stringify({ trace_id: traceId, ingest_id: ingestId, state: 'created', retry: 0, ts: Date.now() }) });
-  let lastEvent = Date.now();
-  const ping = setInterval(() => {
-    const now = Date.now();
-    if (now - lastEvent > SSE_IDLE_TIMEOUT_MS) {
-      reply.sse({ event: 'error', data: JSON.stringify({ error_code: 'SSE_IDLE_TIMEOUT', error_message: 'idle timeout', retriable: true, ts: now }) });
-      clearInterval(ping);
-      try { reply.raw.end(); } catch {}
-      return;
-    }
-    reply.sse({ event: 'ping', data: JSON.stringify({ trace_id: traceId, seq: now, heartbeat_ms: SSE_HEARTBEAT_MS, ts: now }) });
-  }, SSE_HEARTBEAT_MS);
-  req.raw.on('close', () => clearInterval(ping));
-});
 
 // Plan generate → ACK 202 and stream phases
 app.post<{ Body: PlanGenerateRequest, Reply: PlanGenerateResponse | any }>('/plan/generate', { config: { rateLimit: { max: 60, timeWindow: 24 * 60 * 60 * 1000 } } }, async (req, reply) => {

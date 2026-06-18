@@ -62,7 +62,7 @@ jobs:
 
       - name: Start server
         run: |
-          node apps/server/dist/index.js &
+          pnpm run ci:start-server &
           echo $! > server.pid
           sleep 2
       - name: Health check

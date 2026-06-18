@@ -27,9 +27,16 @@ export const AiFillBody = z.object({
   dry_run: z.boolean().optional()
 });
 
+const ExportWidth = z.union([
+  z.literal(1080),
+  z.literal(1242),
+  z.literal('1080'),
+  z.literal('1242')
+]).transform((v) => Number(v));
+
 export const ExportBody = z.object({
   plan_id: z.string(),
-  width_px: z.enum(['1080','1242']).transform((v) => Number(v)).optional(),
+  width_px: ExportWidth.optional(),
   slice_by_day: z.boolean().optional(),
   theme: z.enum(['light','dark']).optional()
 });

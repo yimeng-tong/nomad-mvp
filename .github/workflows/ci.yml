@@ -58,7 +58,7 @@ jobs:
         run: pnpm -F nomad-prisma run db:push
 
       - name: Lint
-        run: npx eslint .
+        run: pnpm run ci:lint
 
       - name: Start server
         run: |
@@ -81,4 +81,3 @@ jobs:
         if: always()
         run: |
           kill -9 $(cat server.pid) || true
-

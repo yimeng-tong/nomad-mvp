@@ -16,24 +16,24 @@ so that skeleton generation starts with the right city, dates, pace, and POI hin
 
 ## Acceptance Criteria
 
-1. Given the user enters planning from Home input or a destination card, when trip parameters are incomplete, then Confirm collects city, pace, travel date/day range, first-day/last-day time windows, wake/morning start preference, hotel and hotel-change details, hotel breakfast, luggage handling, reservations/tickets, and smart-planning preference.
+1. Given the user enters planning from Home input or a destination card, when trip parameters are incomplete, then Confirm collects city, pace, travel date/day range, first-day/last-day time windows, wake/morning start preference, per-date hotel inputs, hotel breakfast as a hotel sub-item, luggage handling, and smart-planning preference.
 2. Given the user reaches Picker, when it renders, then route parameters include city, start, days, source, and optional rec_id, and the header clearly shows missing values as placeholders.
 3. Given inspirations exist across cities, when Picker displays city tabs, then tabs are sorted by straight-line distance to the target city center and only cities with inspiration count > 1 are shown.
-4. Given the user selects cards or markers, when selection changes, then card, marker, basket, must_go, time_hint, and stay_minutes_hint states remain consistent.
-5. Given special time-bound activities are present, when the user confirms planning inputs, then dawn, sunset, night, and night-market constraints are carried forward as hard time hints.
+4. Given the user selects L3 POI child items, when selection changes, then the L3 item, map marker, parent L2 selected-count state, basket, selected-required anchor state, time_hint, and stay_minutes_hint remain consistent.
+5. Given uploaded inspirations imply special time-bound activities, when the user confirms planning inputs, then dawn, sunset, night, and night-market constraints are derived from those inspirations and carried forward for Agent planning without requiring a manual special-time toggle.
 6. Given Story 2.0 introduces or changes planning contracts, when implementation is complete, then `docs/api/openapi.yaml` remains the API source of truth and `packages/types/src/api-types.ts` is regenerated rather than hand-edited.
 7. Given Story 2.0 is UI-heavy, when implementation is complete, then mobile and desktop screenshots verify Confirm and Picker states without text overflow, nested cards, unclear disabled states, or marketing-page layout.
 
 ## Tasks / Subtasks
 
-- [ ] Complete the Story 2.0 UX design prep gate before coding (AC: 1-5, 7)
-  - [ ] Generate 2-3 mobile visual directions for Confirm and Picker using imagegen, grounded in the PRD/Epics/UX/Tech Spec rather than free-form invention.
-  - [ ] Choose one direction with product feedback and capture the accepted direction as component notes in this story before `bmad-dev-story`.
-  - [ ] Convert the accepted mockup into implementation specs for Confirm form sections, Picker city tabs, inspiration cards/list, map/list fallback, selected basket, status copy, and CTA states.
-  - [ ] If design iteration reveals new requirements, update the story/UX notes before implementation instead of silently expanding scope during coding.
+- [x] Complete the Story 2.0 UX design prep gate before coding (AC: 1-5, 7)
+  - [x] Generate 2-3 mobile visual directions for Confirm and Picker using imagegen, grounded in the PRD/Epics/UX/Tech Spec rather than free-form invention.
+  - [x] Choose one direction with product feedback and capture the accepted direction as component notes in this story before `bmad-dev-story`.
+  - [x] Convert the accepted mockup into implementation specs for Confirm form sections, Picker city tabs, inspiration cards/list, map/list fallback, selected basket, status copy, and CTA states.
+  - [x] If design iteration reveals new requirements, update the story/UX notes before implementation instead of silently expanding scope during coding.
 - [ ] Align Planner Picker and generation input contracts before UI work (AC: 1-6)
-  - [ ] Update OpenAPI schemas for planner context so selected items support `item_id`, optional `poi_id`, `must_go`, `time_hint`, `stay_minutes_hint`, and source context.
-  - [ ] Update `PlanGenerateRequest` to accept Epic 2 inputs: `city`, `start_date`, `days`, `pace: tight|comfortable`, `selected_items[]`, optional hotel constraints, luggage plan, ticket/reservation constraints, and `hard_time_hints`.
+  - [ ] Update OpenAPI schemas for planner context so selected L3 items support `item_id`, optional `poi_id`, source context, `time_hint`, `stay_minutes_hint`, and an internal selected-required anchor semantic without exposing `must_go` as a user-facing toggle.
+  - [ ] Update `PlanGenerateRequest` to accept Epic 2 inputs: `city`, `start_date`, `days`, `pace: tight|comfortable`, user-selected L3 anchors, optional unselected candidate L3 pool, optional per-date hotel constraints, luggage plan, wake/morning preference, and derived hard-time hints.
   - [ ] Keep Story 2.0 contract work limited to request/context shape and handoff readiness; do not implement full skeleton generation or HQ planning behavior.
   - [ ] Regenerate `packages/types/src/api-types.ts` with `pnpm -F nomad-types run generate` after OpenAPI edits.
 - [ ] Build Confirm screen and route/state handoff (AC: 1, 2, 5, 7)
@@ -41,16 +41,19 @@ so that skeleton generation starts with the right city, dates, pace, and POI hin
   - [ ] Add a mobile feature folder such as `apps/mobile/src/planner/` with typed API/view-model helpers, Confirm screen, Picker screen, and focused tests.
   - [ ] Parse existing `/planner/pick?...` handoff routes into initial Confirm/Picker params while preserving `source`, `rec_id`, and selected inspiration anchors.
   - [ ] Confirm must support missing city/date/days placeholders and validation copy from UX, including "请选择城市", "请完善出行时间", and "请选择出发时间" where applicable.
-  - [ ] Capture wake/morning preference, first/last-day time windows, hotel/change details, hotel breakfast, luggage handling, reservations/tickets, and smart-planning default-on state in local planner context.
-  - [ ] Convert reservations/special activities with dawn, sunset, night, and night-market semantics into hard time hints carried forward to Picker/generation input.
+  - [ ] Capture wake/morning preference, first/last-day time windows, per-date hotel inputs, hotel breakfast as a hotel child field, luggage handling, and smart-planning default-on state in local planner context.
+  - [ ] Keep tickets/reservations inside Agent planning context when they are present in uploaded inspirations; do not create a standalone Confirm ticket row for this story.
+  - [ ] Convert uploaded-inspiration signals with dawn, sunset, night, and night-market semantics into derived hard-time hints carried forward to Picker/generation input.
 - [ ] Build Planner Picker list-first MVP with map linkage seams (AC: 2-5, 7)
   - [ ] Reuse existing Library data contracts where possible for city summaries and inspiration items; avoid creating a second inspiration data source.
   - [ ] Show Picker header as `{city or 待填写} · {date or 待填写} · {days or 待填写}` with a lightweight parameter edit sheet.
   - [ ] Render city tabs only for cities with `inspiration_count > 1`, sorted by straight-line distance to the target city center when coordinates are available, with deterministic fallback ordering when coordinates are missing.
-  - [ ] Implement card/list selection and selected basket so card, marker placeholder, basket, `must_go`, `time_hint`, and `stay_minutes_hint` remain synchronized.
+  - [ ] Render L2 groups as area/scenic-route containers and L3 child items as selectable POIs; L2 must never be a selectable must-go object.
+  - [ ] Implement L3 item selection and selected basket so L3 item, marker placeholder, L2 selected-count state, basket, selected-required anchor state, `time_hint`, and `stay_minutes_hint` remain synchronized.
+  - [ ] Treat unselected L3 items as Agent-usable optional candidates; items not selected and not placed by Agent should flow to the future plan candidate page/drawer.
   - [ ] Provide a weak-network/no-map list fallback and "仅列表继续" behavior without blocking selection.
   - [ ] Keep real map SDK loading optional/seamed in this story; a deterministic list-first implementation is acceptable if the map cannot be introduced safely in one story.
-  - [ ] `生成骨架` may call the existing placeholder `/plan/generate` only with the aligned request contract, but must not implement Story 2.1 skeleton content, HQ progress, timeline editing, or export.
+  - [ ] The user-facing CTA must be "开始规划"; do not expose internal terms such as "生成骨架" or "骨架". The CTA may call the existing placeholder `/plan/generate` only with the aligned request contract, but must not implement Story 2.1 skeleton content, HQ progress, timeline editing, or export.
 - [ ] Add privacy-safe analytics and honest UI states (AC: 1-7)
   - [ ] Emit semantic events through the existing analytics wrapper, including `confirm_open`, `confirm_continue`, `picker_open`, `picker_add_inspiration`, `picker_remove_inspiration`, and `picker_generate_skeleton`.
   - [ ] Ensure analytics payloads do not include raw notes, URLs, phone/session/cookie/OTP values, internal candidate scores, provider ids, or unredacted user-entered reservation text.
@@ -86,19 +89,43 @@ so that skeleton generation starts with the right city, dates, pace, and POI hin
 - Design mockups are advisory implementation input, not a replacement for Acceptance Criteria. If a chosen mockup changes behavior, update this story or the UX notes before coding.
 - Use imagegen for mobile visual directions, then validate the coded UI with browser screenshots. Do not code directly from images if it conflicts with OpenAPI, PRD, Epic 2 AC, or project context.
 
+### Accepted R4 UX Baseline
+
+- Reference mockup: `./2-0-confirm-picker-r4.png`.
+- R4 combines the accepted R2 Confirm pattern with the accepted R3 Picker spatial pattern.
+- User-facing language must use "开始规划" for the planning CTA. Do not show "生成骨架", "骨架", `must_go`, or "必去" in the Story 2.0 UI.
+- Confirm fields:
+  - `起床时间` is required enough to drive morning slot start and should be directly visible, defaulting to a sensible value when available.
+  - `行李` is a first-class input. It should capture how luggage is handled on hotel-change days; if the trip implies hotel changes, do not silently leave it unresolved.
+  - `酒店（可留空）` is edited per date/night. Each date row supports free-text hotel name input, AMap POI matching, and a visible `留空` action.
+  - Breakfast is a child field of each hotel date row (`含早餐`), not a top-level Confirm row.
+  - Tickets/reservations are not a standalone Confirm row in this story; Agent planning should infer them from uploaded inspiration content when present.
+  - Special time windows are not manually enabled by the user. Uploaded content determines whether dawn/sunset/night/night-market constraints are relevant, and Agent planning applies them.
+- Picker hierarchy:
+  - L2 is an area/scenic-route group only, such as `鼓浪屿`, `环岛路`, `中山路`, or `沙坡尾`.
+  - L3 is the selectable POI/sub-item, such as `日光岩`, `菽庄花园`, `最美转角`, `黄厝海滩`, or `骑楼街`.
+  - Selecting an L3 means the user wants it planned. UI should show only `已选`; internally this can map to a selected-required anchor for planning.
+  - Unselected L3 items are not rejected. They remain Agent-usable optional candidates, and if the Agent does not place them, they should later appear in the plan candidate page/drawer owned by Story 2.1+.
+  - L2 rows and markers must not have checkboxes or selected checkmarks. L2 state is represented through a dot/pin color and selected L3 count: gray means no selected L3, green means at least one selected L3, and a number indicates selected L3 count under that L2.
+  - The currently focused L2 may use outline/highlight, but focus is not selection.
+- Map/list stretch states:
+  - `附近`: map auto-zooms to the active L2 or selected L3 and nearby L3 POIs only.
+  - `半屏`: shows active L2 plus nearby L2 groups and a mixed map/list split.
+  - `全城`: shows the broader city/region L2 distribution and grouped L2/L3 list.
+
 ### API Contract Guardrails
 
 - `docs/api/openapi.yaml` is the API source of truth; regenerate `packages/types/src/api-types.ts` after contract edits and never hand-edit generated types.
 - Keep TypeScript imports NodeNext-compatible with `.js` runtime specifiers in server code.
 - Protected routes should use existing `authGuard` and standard `reply.sendError` envelopes.
-- New planning request fields should be narrow, typed, and compatible with future Story 2.1 skeleton generation: `hotels`, `luggage_plan`, `ticket_constraints`, and `hard_time_hints`.
+- New planning request fields should be narrow, typed, and compatible with future Story 2.1 planning generation: `hotels` by date, `luggage_plan`, `wake_preference`, selected L3 anchors, optional candidate L3 pool, and hard-time hints derived from uploaded inspiration evidence.
 - Do not create a parallel Library/Planner backend stack if existing Home/Library APIs can provide the data needed for Picker.
 
 ### UX Guardrails
 
-- Confirm components from UX: CityPicker, PaceSegmentedControl, DateRangePickerFlexible, MorningStartTimePicker, TripConstraintForm, SmartPlanSwitch, PrimaryCTAButton.
-- Picker components from UX: CityTabs, InspirationCardGrid or list-first equivalent, MapSheet seam/fallback, SelectedBasketPanel.
-- Confirm must ask the Xiamen-validation questions that now matter for planning: wake preference, arrival/departure time, hotel, hotel breakfast, hotel change and luggage handling, reservations/tickets, and special time-bound activities.
+- Confirm components from UX: CityPicker, PaceSegmentedControl, DateRangePickerFlexible, MorningStartTimePicker, PerDateHotelMatcher, LuggagePlanInput, SmartPlanSwitch, PrimaryCTAButton.
+- Picker components from UX: CityTabs, L2AreaGroupList, L3PoiSelector, MapSheet seam/fallback, SelectedBasketPanel.
+- Confirm must ask the Xiamen-validation questions that now matter for planning: wake preference, arrival/departure time, per-date hotel when known, hotel breakfast as hotel sub-data, and hotel-change luggage handling.
 - Picker should feel like a dense mobile planning tool, not a marketing page. Keep touch targets at least 44px, card radii 8px or less, stable bottom basket dimensions, and no nested cards.
 - Use honest copy for fallback states: "网络较差，已切换为清单模式", "暂无可用灵感，试试更换城市或关键词", "已添加 · 撤销", and "待定位 · 选择地址" where applicable.
 
@@ -165,3 +192,4 @@ TBD
 ### Change Log
 
 - 2026-06-19: Created Story 2.0 context and marked ready for dev.
+- 2026-06-20: Captured accepted R4 UX baseline for Confirm hotel/luggage inputs, L2/L3 Picker semantics, selected L3 planning anchors, and user-facing "开始规划" CTA.

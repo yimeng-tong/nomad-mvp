@@ -14,7 +14,7 @@ Provide a pragmatic, end-to-end architecture aligned with PRD/UX, NFRs, and SSE-
 - DB: PostgreSQL + PostGIS + pgvector
 - Maps/Geo: AMap Web API (search/geocode/matrix)
 - Auth: Authing + Captcha; Sessions in DB
-- Storage/CDN: Tencent COS + CDN; KMS (Envelope) for BYOK
+- Storage/CDN: Tencent COS + CDN; server-managed Provider secrets for AI usage
 - Export: Puppeteer (PNG/WebP, day-slice)
 - Observability: Sentry, Langfuse, structured logs; synthetic probes
 - Feature flags: Unleash
@@ -78,7 +78,7 @@ Refer to `docs/ops/analytics.md` for event monitoring and dashboards.
 
 ## Data Model (summary)
 Refer to `docs/db/schema.sql` for full DDL.
-- Users, OAuthIdentity, Sessions, UserSettings, UserKeys (BYOK)
+- Users, OAuthIdentity, Sessions, UserSettings, AIUsageQuota
 - Cities, CanonicalPOI(geography,GIST)
 - IngestJob(status enum), Inspiration(+Assets, LocateCandidate)
 - Plan/PlanDay/PlanSlot(slot_type, conflict_type, status_checked, overrides, rev, locked_at/is_locked)
@@ -106,14 +106,14 @@ See `docs/api/openapi.yaml`.
 - Feedback（默认）: 无服务端 API；客户端直接打开 `https://support.qq.com/product/{PRODUCT_ID}`
 - Feedback（可选）: GET /feedback/link?source={page}（若启用“产品自己的用户登录态”，按官方参数规范拼接并签名/校验（若官方要求））
 
-## Security & BYOK
-- KMS CMK + Envelope (AES-256-GCM) for user-provided keys
-- Redact key material in logs/Sentry/Langfuse
-- Rotation: CMK 90d; DEK on key change
+## Security & AI Usage
+- Provider secrets stay server-side and are never returned to clients
+- Redact prompts, provider metadata, and sensitive account data in logs/Sentry/Langfuse
+- Enforce per-user/device/workspace quota, concurrency, cost caps, and degradation
 - Feedback 隐私：默认不传登录态（平台随机头像/昵称）；如启用“产品自己的用户登录态”，仅传最小必要字段（不含手机号/邮箱），遵循官方参数与签名/校验要求。
 
 ## Rate Limits & Degrade
-See `docs/ops/rate-limits.md`. Limits by user/IP/device; AI concurrency 1; map overlays/candidates.topk switches. BYOK cold-start: first 10 exports free; +1 free export per ingest; prompt BYOK when free_count==0.
+See `docs/ops/rate-limits.md`. Limits by user/IP/device; AI concurrency 1; map overlays/candidates.topk switches; platform quota/cost controls handle low quota, queuing, low-cost generation, and no-AI fallback.
 
 ## Performance & Scaling
 - Hot paths tuned for low p95 ACK/TTFU; streamed SSE output
@@ -130,7 +130,7 @@ See `docs/ops/rate-limits.md`. Limits by user/IP/device; AI concurrency 1; map o
 - Auth model: Session cookie (HttpOnly, SameSite=Lax/None+Secure) with `/auth/otp/start`, `/auth/otp/verify`, `/logout`, `/sessions`.
 - Guards: All SSE endpoints and write APIs require authenticated user; per-user isolation by session.
 - Headers: CORS allowlist + helmet security headers; standardized error envelope.
-- BYOK: KMS envelope wrapping for DEK; audit all key ops; logs/telemetry PII redaction.
+- AI usage: Provider secrets server-side; audit provider routing and quota changes; logs/telemetry PII redaction.
 - Risk controls: OTP flood → 429 with Retry-After; captcha gate by IP/device signals; feature flags to tighten during spikes.
 
 ## SSE Auth & Isolation

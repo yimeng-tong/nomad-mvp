@@ -28,7 +28,7 @@
 - Validate inputs with schemas (zod/joi) near boundaries.
 
 ## Security & Privacy
-- No PII in logs. BYOK never in plaintext at rest. Use envelope/KMS.
+- No PII in logs. Provider secrets stay server-side and never appear in frontend payloads, analytics, traces, or generated exports.
 - Apply least-privilege to tokens and storage.
 
 ## Style & Formatting

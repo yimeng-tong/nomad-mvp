@@ -4,6 +4,8 @@ Generated: 2026-06-17
 Project: nomad-mvp
 Assessor: BMAD 6.8 readiness workflow
 
+> Superseded note (2026-06-19): This readiness report was generated before the BYOK/Xiamen correct-course pass. For current MVP scope, use `sprint-change-proposal-2026-06-19.md`, the refreshed PRD, Epics, UX, Architecture, and Supporting Tech Specs. BYOK is no longer an MVP user path.
+
 ## Document Discovery
 
 ### Files Used
@@ -36,7 +38,7 @@ Total FRs extracted: 51
 - FR9: 顶部可行性校验（闭店/过远/超时）并提供一键修复方案。
 - FR10: AI 一次性填充：在用户确定骨架后，对“剩余可控块”进行一次性编排，并为“所有块”补全“做什么/准备什么/注意什么”的要点；不改变时间与顺序。
 - FR11: 导出行程 PNG（行程卡片）。
-- FR12: 设置页：展示用户登录信息；配置 BYOK（用户自带 OpenAI Key）并加密存储；提供账号删除与数据导出。
+- FR12: 设置页：展示用户登录信息、AI 使用额度/状态、账号删除、数据导出与反馈入口；MVP 不要求用户配置自己的模型 Key。
 - FR13: 观测与评测：接入 Langfuse（提示版本/调用追踪）与 promptfoo（离线 A/B 评测），前后端接入 Sentry。
 - FR14: 第三方集成（国内可用）：Authing/极光（登录）、腾讯行为验证、高德地图 SDK+Web API（POI/搜索/逆地理/距离矩阵）、腾讯云 COS+CDN（直传签名+缩略图处理）、n8n（异步编排）、友盟 U-Link+U-App（归因/分析）。
 - FR15: 登录等权展示（iOS 中国区）：Apple｜手机号｜微信 并列同权同尺寸，排序：Apple｜手机号｜微信；登录首屏埋点区分入口。
@@ -50,7 +52,7 @@ Total FRs extracted: 51
 - FR22: 冲突分级与进入 AI 填充门控：硬冲突（无坐标/闭店/跨日不可达）需先修复并禁用进入；软冲突（略超时/通勤略远等）允许进入但顶部保留提醒与一键修复。
 - FR23: AI 填充输出规范：每块输出“做什么（必填≤3行×≤30字/行）｜准备（可选≤3行×≤30字）｜注意（可选≤3行×≤30字）”，超长折叠；缺少“做什么”报错并回退；后端对超长硬裁并加省略号。
 - FR24: 导出 PNG 规格：长图固定宽度 1080 px（可选 1242 px），纵向不设上限；超图按天切片导出多张；优先 WebP，不兼容降级 JPEG（75–80%），尽量 ≤ 600 KB；导出接口支持 width_px 与 slice_by_day 参数并提供预览提示。
-- FR25: BYOK 引导：AI 填充页顶部灰条提示“当前使用平台额度，去配置我的 OpenAI Key”；设置首页显示配置状态；首次需自带 Key 时弹一次性教育页（用途与隐私），之后不重复打扰（远程开关控制）。
+- FR25: AI 使用额度引导：AI 填充/导出相关页面显示平台额度、生成状态、导出次数或成本友好提示；额度不足或服务降级时提供明确文案、重试/稍后继续路径与可配置远程开关，不要求用户配置 Key。
 - FR26: Planner Picker 入口路径：A) 底部输入解析得到 trip_params → 进入 Picker；B) 目的地卡“开始规划”→ 进入 Picker（传 city、place_hints 可选）。
 - FR27: Planner Picker 路由与参数：/planner/pick?city={CITY}&start={YYYY-MM-DD?}&days={N?}&source={home_input|home_card}&rec_id={CARD_ID?}。
 - FR27.1: 规划前确认页（Confirm）：在统一输入与进入编排之间新增确认页，字段包含：城市、出行节奏 pace（tight｜comfortable）、出行时间段（可选灵活天数；可选首尾两天到达/出发时间）、早上出发时间（用于确定 2h 起始时间槽）、是否启用“智能编排”。“智能编排”默认是；选择后将后台并行启动高质量编排（见 FR32.2）。
@@ -67,7 +69,7 @@ Total FRs extracted: 51
 - FR36: 酒店槽与餐饮处理（v0.4 更新）：每日生成 hotel_slot（今晚入住酒店，仅展示，不参与 2h/4h 槽编排）；hotel_slot 在时间轴 DayN 末尾固定显示，支持“更换酒店/查看地图/预订链接/备注”；未选择时显示“待选择”。餐饮按普通槽处理（是否纳入 2h/4h 由 Planner 输出决定）。
 - FR36.1: 酒店感知的编排偏好（v0.3 新增）：当当日存在 hotel_slot 时，编排期对早/晚段采用软约束偏好： - 晚段靠近酒店的候选优先（near_hotel boost）； - 早段靠近上一晚酒店的候选优先； - 该偏好仅作为排序加分，不得压过硬约束（营业覆盖/时窗/通勤/T_commute_max/transport_slot 边界）。
 - FR37: 结果页（行程单）（MVP 轻编辑）：展示 AI 填充后的行程与每槽位建议（why_short/引用来源）；允许对每个槽位的「做什么/准备/注意」进行轻编辑（≤3×30 字/段），编辑内容保存为 slot-level overrides；再次运行 AI 填充不覆盖 overrides，并提供“恢复 AI 内容（单槽重置）”；编辑槽位需返回“天级骨架 → AI 填充 → 结果页”的循环路径或“天级骨架 ↔ 灵感页”路径；支持导出 PNG；到达 result_sheet 视为“已完成”。
-- FR38: BYOK 冷启动策略（v0.3 新增）：默认提供首 10 次“导出”免费配额；每发生 1 次“入库”行为，免费次数 +1（鼓励 UGC 导入）；当免费次数 ≤ 3 时弹“入库教育”引导，免费次数 = 0 时弹出 BYOK 教育与配置入口；平台额度为默认通道，BYOK 为“可选增强”，重度用户可切换。
+- FR38: 平台 AI 额度与成本控制策略：默认由平台托管 AI 调用；按用户/设备/workspace 设置每日请求、并发、导出与成本上限；额度接近或达到上限时展示提示、排队/稍后重试、低成本模型或无 AI 降级路径；BYOK 仅作为 Post-MVP 可选增强。
 - FR39: AI 事实引用与幻觉约束（v0.3 新增）：AI 填充生成“做什么/准备/注意”时需附事实来源（如高德热门评价标签/官方介绍/可信UGC摘要）；若无法为“做什么”找到来源，则保留文案并显式标注“注意事实核查”；前端展示引用来源短链与 why_short。
 - FR40: 计划延续与状态（v0.3 新增）：首页增加“最近行程”入口；行程单每个槽位提供“状态按钮：打卡<>已打卡”，用于旅途期间标记；该数据为后续“自动化记忆日志/数据回流”预留。
 - FR41: 酒店选择优先（v0.3 新增）：当日仅有 1 个酒店候选时，自动写入 hotel_slot；当有多个或 0 个酒店候选时，保持空白直至用户选择；一旦选择酒店，自动启用 near_hotel 早/晚弱偏好。
@@ -82,7 +84,7 @@ Total NFRs extracted: 17
 
 - NFR1: 国内可用三方服务优先；外部依赖需有可替代方案或降级策略。
 - NFR2: 前后端以 SSE 展示异步进度；MVP 不使用远程推送。
-- NFR3: BYOK 安全：采用 KMS/Envelope 加密存储；日志脱敏；对象存储私有读写与签名 URL。
+- NFR3: AI 安全与成本控制：平台 Provider secrets 仅在服务端管理；日志、Sentry、Langfuse 与埋点必须脱敏；对象存储私有读写与签名 URL；AI 请求具备速率限制、成本上限、异常熔断和降级策略。
 - NFR4: 性能目标（MVP）：骨架生成与 AI 填充端到端 50 分位时延设定并监测（具体阈值由架构阶段细化）。
 - NFR5: 质量指标：首次可行行程率≥目标值；“空槽一次添加成功率”≥目标值；地理消歧 Top-1/Top-3 命中率设定并监测（阈值由架构/评测方案细化）。
 - NFR6: 可观测性：Langfuse/promptfoo/Sentry 接入完备，关键漏斗（登录→入库→选择→骨架→AI 填充→导出）可埋点度量。
@@ -164,7 +166,7 @@ Total NFRs extracted: 17
 
 ### Missing Requirements
 
-None identified as blocking. Cross-epic requirements such as third-party integrations, BYOK education, and domestic fallback are intentionally mapped to the stories that first need them.
+None identified as blocking at the time. After the 2026-06-19 correct-course pass, cross-epic requirements such as third-party integrations, platform AI quota education, and domestic fallback are mapped to the stories that first need them.
 
 ## UX Alignment Assessment
 

@@ -18,13 +18,13 @@
 - SSE health: reconnect counts, idle timeout triggers, ping loss.
 - Export: render latency histograms; slice hit-rate; WebP→JPEG fallback rate.
  - Account: deletion/export queue depth; success/error counts; retry/backoff rates.
- - BYOK: set/delete events; KMS errors (redacted); key rotation counters.
+ - AI quota: quota warning/degrade events; provider fallback; cost guard trips.
 
 ## Synthetic Probes (5-min cadence)
 - Script runs: ingest → generate → fill → export.
 - Assert SLO windows and record trace links.
  - Account probes: export job completion (mock); delete job enqueue success.
- - Auth/BYOK: otp-start/verify round-trip, byok set/delete smoke.
+ - Auth/AI quota: otp-start/verify round-trip, quota/degrade smoke.
 
 ## Acceptance (P0)
 1) Ingest: ≤1s see created/fetching; ≤10s heartbeat; finish done.

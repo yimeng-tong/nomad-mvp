@@ -1,9 +1,8 @@
 # Nomad MVP UX Input Package
 
-Generated: 2026-06-17
+Generated: 2026-06-19
 
 This BMAD input package combines the mobile-first front-end specification and UX deltas.
-
 
 ---
 
@@ -60,7 +59,7 @@ Rationale:
 ```mermaid
 graph TD
   A[Login / 首屏登录] --> B[Home / 首页<br/>顶部分段：旅行规划｜灵感库]
-  B --> C[Confirm / 确认页<br/>城市｜节奏2h/4h｜时间段｜早出发｜智能编排=是]
+  B --> C[Confirm / 确认页<br/>城市｜节奏2h/4h｜到离时间｜酒店/行李｜智能编排=是]
   B --> D[Library / 灵感库]
   C --> E[Picker / 灵感选择（上下文）]
   E --> F[Skeleton / 天级骨架<br/>2h/4h 槽位＋大弹窗＋可行性校验]
@@ -68,7 +67,7 @@ graph TD
   F --> H[AI Fill / 一次性填充]
   H --> I[Result Sheet / 结果页（导出 PNG）]
 
-  B --> J[Settings / 设置<br/>BYOK｜账号删除｜数据导出｜反馈入口]
+  B --> J[Settings / 设置<br/>AI 用量｜账号删除｜数据导出｜反馈入口]
   J --> K[Feedback WebView / 反馈与建议]
 
   %% 关键交互与降级
@@ -81,7 +80,7 @@ graph TD
 - Secondary Navigation:
   - Skeleton 顶部：D1..Dn Tabs；状态条（HQ 并行/完成可“切换-采用”）；A/B 展示开关（餐时分割）。
   - Timeline：空槽大弹窗（候选/AI 建议/自由活动）；长按编辑；顶部可行性校验与一键修复。
-  - Settings：BYOK、账号删除、数据导出、反馈入口（WebView）。
+  - Settings：AI 使用额度/状态、账号删除、数据导出、反馈入口（WebView）。
 - Breadcrumb Strategy: 移动端单页面流，面包屑不显式；通过标题/返回与 Tabs 维持定位。
 
 ## User Flows
@@ -213,22 +212,22 @@ graph TD
 
 ---
 
-### Flow: Settings → BYOK 配置
-**User Goal:** 配置个人 OpenAI Key 覆盖平台额度
+### Flow: Settings → AI 用量与额度
+**User Goal:** 查看平台 AI 使用额度、生成状态与降级策略
 
-**Entry Points:** 设置页 BYOK
+**Entry Points:** 设置页 AI 用量、AI Fill/ResultSheet 额度提示
 
-**Success Criteria:** 安全保存，后续调用走 BYOK；可随时切换/删除
+**Success Criteria:** 用户理解剩余额度、排队/降级状态与重试路径，不需要配置自己的 Key
 
 ```mermaid
 graph TD
-  A[Settings] --> B[打开 BYOK]
-  B --> C[录入/校验/保存]
-  C --> D[成功提示]
+  A[Settings] --> B[打开 AI 用量]
+  B --> C[查看额度/并发/降级状态]
+  C --> D[重试/稍后继续/低成本模式说明]
 ```
 
 **Edge Cases & Error Handling:**
-- 校验失败/失效 → 友好提示与回退到平台额度
+- 额度不足/服务繁忙 → 友好提示、排队、稍后重试或无 AI 降级路径
 
 ## Wireframes & Mockups
 
@@ -237,7 +236,7 @@ graph TD
 
 ## Component Library / Design System（提纲）
 
-- 组件清单（示例）：TopSwitch、UnifiedInput、CityCard、LocationModal、PlanTimelineMobile、FixSheet、HQStatusBar、SwitchAdoptToast、BYOKForm
+- 组件清单（示例）：TopSwitch、UnifiedInput、CityCard、LocationModal、PlanTimelineMobile、FixSheet、HQStatusBar、SwitchAdoptToast、TripConstraintForm、AIQuotaPanel
 - 状态与变体：loading/empty/error/weak-network
 
 ## Component Specifications（Mobile）
@@ -260,11 +259,15 @@ graph TD
 - Props: `value: time`，`step: 15|30`，`onChange(time)`
 - Notes: 与 2h/4h 起始对齐，影响 Timeline 起点
 
-5) SmartPlanSwitch
+5) TripConstraintForm
+- Props: `hotels[]`，`breakfastIncluded?: boolean`，`luggagePlan?: 'old_hotel'|'new_hotel'|'station'|'carry'|'unknown'`，`tickets?: Constraint[]`，`wakePreference?`
+- Notes: 酒店影响早晚活动半径、区域聚类、换酒店缓冲与行李处理；预约/门票用于生成 hard time hints
+
+6) SmartPlanSwitch
 - Props: `checked: true`（默认是），`onToggle(checked)`，`hint: string`
 - Notes: 打开即后台启动 HQ 并行；状态交由 Skeleton 顶部状态条承接
 
-6) PrimaryCTAButton
+7) PrimaryCTAButton
 - Props: `label`，`onPress`，`loading?`，`disabled?`
 
 ### Picker Components
@@ -322,8 +325,9 @@ graph TD
 - ExportButton: 反馈成功/失败；超长分天切片
 
 ### Settings & Feedback Components
-1) BYOKForm
-- Props: `value`，`onValidate(key)`，`onSave(key)`；失败回退平台额度
+1) AIQuotaPanel
+- Props: `quotaStatus`，`usageSummary`，`degradeState?`，`onRetry?`，`onOpenDetails?`
+- Behavior: 展示平台额度、生成/导出用量、并发/排队状态与降级提示；不收集用户模型 Key
 
 2) FeedbackWebView
 - Props: `url`，失败降级 `FallbackForm{text, screenshot}`（COS 上传）
@@ -346,6 +350,8 @@ graph TD
   - 城市未选："请选择城市"
   - 日期/天数缺失："请完善出行时间"
   - 早出发未设："请选择出发时间"
+  - 酒店未定："可先留空，稍后会影响早晚安排"
+  - 行李未定："换酒店日请确认行李处理"
 - 校验失败：
   - 到/离港时间无效："到/离港时间不合理，请重新选择"
   - 时间范围过短："最少 1 天，请调整"
@@ -387,10 +393,11 @@ graph TD
 - 导出成功："已导出"
 - 导出失败："导出失败 · 重试"
 
-### Settings / BYOK
-- 保存成功："已保存"
-- 校验失败："密钥无效，请检查"
-- 回退提示："已回退到平台额度"
+### Settings / AI 用量
+- 正常："当前使用平台额度"
+- 接近上限："额度不多，建议先导出关键行程"
+- 额度不足："额度暂时不足，可稍后重试"
+- 降级："已切换为低成本生成"
 
 ### Feedback WebView
 - 打开失败："页面无法内嵌，已在系统浏览器打开"
@@ -411,8 +418,10 @@ graph TD
   1) 城市选择（CityPicker）
   2) 出行节奏 Pace（Segmented: 紧凑2h｜舒适4h）
   3) 出行时间段（灵活天数/日期选择；可选首尾到/离港时间）
-  4) 早上出发时间（2h/4h 起始对齐选项）
-  5) 智能编排开关（默认是，说明“后台将生成高质量版本，可稍后切换-采用”）
+  4) 起床/早上出发偏好（2h/4h 起始对齐选项）
+  5) 酒店、是否酒店早餐、换酒店与行李处理
+  6) 预约/门票/日出/日落/夜市等强时间约束
+  7) 智能编排开关（默认是，说明“后台将生成高质量版本，可稍后切换-采用”）
 - Footer CTA: “继续（进入灵感选择）”。
 
 **Interaction Notes**: 参数校验；缺参弹 Sheet 补齐；弱网保底本地回显。
@@ -455,15 +464,15 @@ graph TD
 
 **Interaction Notes**: 超长分天切片；弱网提示重试。
 
-### Settings（设置/BYOK/反馈）
-**Purpose**: 账户与 Key 管理、反馈入口。
+### Settings（设置/AI 用量/反馈）
+**Purpose**: 账户、AI 用量、隐私与反馈入口。
 
 **Layout**
-- BYOK: 录入/校验/保存；状态显示；失败回退平台额度。
+- AI Usage: 平台额度、生成/导出用量、并发/排队状态、降级说明。
 - Account: 账号删除、数据导出。
 - Feedback: 跳 WebView（失败降级内置表单）。
 
-**Interaction Notes**: BYOK 安全提示；最小必要字段；不打断主流程。
+**Interaction Notes**: 额度/成本提示不打断主流程；仅在额度不足或降级时给清晰行动路径。
 
 ### Feedback WebView（反馈与建议）
 **Purpose**: 在内嵌环境完成官方反馈流程。
@@ -487,9 +496,9 @@ graph TD
 ## Analytics & Metrics Plan（埋点与指标方案）
 
 ### 命名规范与采集约束
-- 命名：snake_case，按页面/领域前缀（如 `confirm_*`, `picker_*`, `skeleton_*`, `aifill_*`, `export_*`, `byok_*`）。
+- 命名：snake_case，按页面/领域前缀（如 `confirm_*`, `picker_*`, `skeleton_*`, `aifill_*`, `export_*`, `ai_quota_*`）。
 - 上报：统一封装层（友盟/埋点 SDK），失败重试与离线队列；所有调用含时间戳与 session_id。
-- 隐私：不采集 PII（手机号/邮箱/Key）；BYOK 仅记录操作结果，不记录密钥明文/摘要。
+- 隐私：不采集 PII（手机号/邮箱/Key）；AI 用量事件仅记录状态、额度区间、降级原因，不记录用户输入原文或 Provider secrets。
  - 事件包头（Envelope，必携）：`event_id`（uuidv4）、`prev_event_id?`、`seq`（自增）、`timestamp_ms`、`session_id`、`journey_id?`、`plan_id?`、`trace_id?`、`span_id?`
  - ID 生成规则：
    - `journey_id`：在 `confirm_continue` 生成，贯穿 Confirm→Result 的一次完整路径；“另存为/新计划”生成新 ID。
@@ -501,7 +510,7 @@ graph TD
 - Confirm
   - `confirm_open`
   - `confirm_param_change` {field, from, to}
-  - `confirm_continue` {city, days, pace, morning_start, smart_plan:true}
+  - `confirm_continue` {city, days, pace, morning_start, hotel_count, has_luggage_plan, ticket_count, smart_plan:true}
 
 - Picker（灵感选择）
   - `picker_open` {city, tabs_count}
@@ -536,13 +545,12 @@ graph TD
   - `export_success` {time_ms}
   - `export_fail` {error_code}
 
-- Settings / BYOK
-  - `byok_open`
-  - `byok_validate_success`
-  - `byok_validate_fail` {error_code}
-  - `byok_save_success`
-  - `byok_save_fail` {error_code}
-  - `byok_revert_platform`
+- Settings / AI Quota
+  - `ai_quota_open`
+  - `ai_quota_warning_show` {reason}
+  - `ai_quota_retry_click`
+  - `ai_quota_degrade_show` {mode}
+  - `ai_quota_degrade_accept` {mode}
 
 - Feedback
   - `feedback_open` {mode:'webview|fallback_form'}
@@ -647,7 +655,7 @@ Header Usage
   - 长按：替换/移动D±1/调时/删除（撤销）
 - AI 填充（一键生成→预览→应用全部）
 - 导出（PNG 卡片）
-- 设置（BYOK、账号删除、数据导出、单位/时间制/动效开关）
+- 设置（AI 用量、账号删除、数据导出、单位/时间制/动效开关）
 
 ## 2. Global Components & Patterns
 - TopSwitch: sticky segmented control.
@@ -921,15 +929,15 @@ Citings & Why（事实引用与简因说明）
   - 槽位轻编辑：≤3×30 字/段；按钮“恢复 AI 内容（单槽重置）”。
   - 顶部轻条：导出前显示可行性修复建议摘要。
 
-Header（导出与 BYOK 冷启动）
-- 导出区域右侧显示「免费导出次数：N」；当 N ≤ 3 显示软提醒；当 N = 0 显示 BYOK 教育条（按钮“去配置我的 OpenAI Key”）。
-- 点击教育条跳转设置页 BYOK 区域；返回时刷新计数显示。
+Header（导出与平台 AI 额度）
+- 导出区域右侧显示「平台额度：正常/偏低/排队/降级」；当额度偏低显示软提醒；当额度不足时显示可稍后继续或低成本生成说明。
+- 点击额度条跳转设置页 AI 用量区域；返回时刷新计数与降级状态。
 - 文案：
-  - N ≤ 3：“剩余免费导出次数不多，建议尽快完成或配置 BYOK。”
-  - N = 0：“已用尽免费导出次数。你可以配置 BYOK 继续导出。”
-- 埋点：resultsheet_open, resultsheet_export_click, byok_prompt_open, byok_prompt_confirm。
+  - 额度偏低：“平台额度不多，建议先导出关键行程。”
+  - 额度不足：“平台额度暂时不足，可稍后重试或使用低成本生成。”
+- 埋点：resultsheet_open, resultsheet_export_click, ai_quota_warning_show, ai_quota_retry_click。
 
-Wireframe — ResultSheet Header（BYOK+Export）
+Wireframe — ResultSheet Header（Quota+Export）
 ```
 [HeaderBar]
 ┌───────────────────────────────────────────────────────────────┐
@@ -937,11 +945,11 @@ Wireframe — ResultSheet Header（BYOK+Export）
 │                                                （≤3 显黄点）│
 └───────────────────────────────────────────────────────────────┘
 
-BYOK 教育条（当 N=0 显示，位于 Header 下方）
+AI 额度提示条（当额度不足或降级时显示，位于 Header 下方）
 ┌───────────────────────────────────────────────────────────────┐
-│ 已用尽免费导出次数。你可以配置 BYOK 继续导出。 [ 去配置 ]  │
+│ 平台额度暂时不足，可稍后重试或使用低成本生成。 [ 查看 ]   │
 └───────────────────────────────────────────────────────────────┘
-注：导出按钮在 N=0 仍可点击，但点击前先展示教育条；“去配置”跳设置页 BYOK 段。
+注：导出按钮仍可点击；若触发降级，先展示提示条；“查看”跳设置页 AI 用量段。
 ```
 
 Slot 状态（打卡）
@@ -965,7 +973,7 @@ Save/Restore Edge & Errors（轻编辑）
 - 导出接口：/export/png 支持 width_px、slice_by_day；预览提示“行程较长，已分为多张”
 
 ### 3.9 设置
-- 总体：分组为 账号与登录 / 规划偏好 / AI 与 BYOK / 数据与隐私 / 诊断与缓存
+- 总体：分组为 账号与登录 / 规划偏好 / AI 用量 / 数据与隐私 / 诊断与缓存
 
 A. 账号与登录（MVP）
 - 我的账号：头像、昵称、手机号
@@ -977,11 +985,11 @@ B. 规划偏好（MVP）
 - 默认起始时间：09:00（可改）
 - 时间微调步进：15 分钟（默认）
 
-C. AI 与 BYOK（MVP）
-- AI 调用来源：平台额度（默认） / 使用我的 OpenAI Key（BYOK）
-- 我的 OpenAI Key：状态（未配置/已配置，掩码展示）
-- 配置/更换密钥：文本框 + 保存
-- 删除密钥：二次确认
+C. AI 用量（MVP）
+- AI 调用来源：平台额度（默认，服务端统一管理 Provider secrets）
+- 平台额度状态：正常/偏低/排队/降级；展示今日生成、导出与并发状态
+- 降级说明：低成本生成、稍后继续、无 AI 兜底文案
+- Post-MVP：BYOK 可作为高级/内部能力保留，但不在 MVP 主路径展示
 
 D. 可访问性与减少动效（全局）
 - 系统“减少动态效果”开启时：
@@ -1030,8 +1038,8 @@ H. 诊断与缓存（MVP）
 补充：
 - 结果页打卡："打卡" / "已打卡"
 - 最近行程入口："继续上次行程"
-- BYOK 教育条："已用尽免费导出次数。你可以配置 BYOK 继续导出。"
-- 免费次数少："剩余免费导出次数不多，建议尽快完成或配置 BYOK。"
+- AI 额度不足："平台额度暂时不足，可稍后重试或使用低成本生成。"
+- AI 额度偏低："平台额度不多，建议先导出关键行程。"
 - 事实核查："注意事实核查"
 - 引用来源占位："来源：AMap/官方/UGC"
 
@@ -1051,7 +1059,7 @@ H. 诊断与缓存（MVP）
 - slot_check_toggle(slot_id, to=checked|unchecked, page)
 - ai_fill_citation_open(source)
 - ai_fill_citation_missing(slot_id)
-- byok_prompt_open / byok_prompt_confirm
+- ai_quota_warning_show / ai_quota_retry_click / ai_quota_degrade_accept
 - recent_plan_open(plan_id, status=done|draft)
 
 ## 8. Open Questions
@@ -1087,12 +1095,12 @@ flowchart LR
 - FR9 可行性校验 + 一键修复 → FixSheet + 3.5 Fix
 - FR10 AI 一次性填充（不改时间/顺序，补齐三要点） → 3.6 AI 填充
 - FR11 导出 PNG → 3.7 导出
-- FR12 设置（BYOK/删除/导出） → 3.8 设置（A/B/C/G/H 分组）
+- FR12 设置（AI 用量/删除/导出） → 3.8 设置（A/B/C/G/H 分组）
 - FR13 观测与评测（Langfuse/promptfoo/Sentry） → 7. Telemetry Blueprint（UX 侧埋点草案）
 - FR14 第三方集成（登录/地图/COS 等） → 6. Compliance & Risk（可见性与文案）
 - NFR1 国内可用/降级策略 → 文案与状态兜底（见 10.3）
 - NFR2 前后端以 SSE 展示进度 → 10.1 入库进度 UI
-- NFR3 BYOK 安全（加密/脱敏/签名 URL） → 3.8 设置（呈现与说明）
+- NFR3 AI 安全与成本控制（服务端 secrets/脱敏/签名 URL/额度降级） → 3.8 设置（呈现与说明）
 - NFR4 性能目标（交互时延） → 0. Design Principles & Motion
 - NFR6 可观测性漏斗 → 7. Telemetry Blueprint
 - NFR8 动效/单列/分段吸顶 → 0/1/3 对应
@@ -1176,7 +1184,7 @@ Toast 模式（实验开关）仅在关键节点显示：
 - AI 填充失败/配额不足 → 保持骨架；引导分天或稍后
 - 骨架冲突剩余 1 处 → 顶部 fix 条提供 1-2 个可落地选项
 - 地图配额接近 → 降级：关闭热力圈/仅列表；提示“地图功能降级”
-- BYOK 未配置 → AI 页顶部灰条提示 + 一键前往设置
+- AI 额度不足/降级 → AI 页顶部灰条提示 + 一键查看额度/稍后继续
 
 ## 10.4 实施补充（建议纳入）
 - 地图 × 卡片抽屉三段吸附：列表主视 / 分屏 / 全屏地图；地图懒加载、Marker 聚合
@@ -1344,6 +1352,8 @@ Rules:
 - SSE phases → Mobile IA new §10.1b Skeleton SSE
 
 
+
+
 ---
 
 ## Source: `docs/ux/ux-v0.3-light-delta.md`
@@ -1356,7 +1366,7 @@ Refs: PRD v0.3-light (`docs/prd.md`), Mobile IA (`docs/ux/mobile-ia.md`), v0.2 D
 
 ## Scope
 
-This delta specifies UX changes required for the MVP (v0.3-light). It builds on v0.2 and introduces ResultSheet, FR44‑lite search, hotel_slot (display-only), near_hotel hints, and BYOK visibility. Multi-city/transport/history timeline are not exposed.
+This delta specifies UX changes required for the MVP (v0.3-light). It builds on v0.2 and introduces ResultSheet, FR44‑lite search, hotel_slot (display-only), near_hotel hints, and platform AI quota visibility. Multi-city/transport/history timeline are not exposed.
 
 ## 1) IA & Navigation
 
@@ -1372,7 +1382,7 @@ This delta specifies UX changes required for the MVP (v0.3-light). It builds on 
 - Export PNG from this page; show feasibility fix summary before export.
 - Visiting ResultSheet marks plan as completed.
 - Slot Check-in：每个槽位右侧提供「打卡 <> 已打卡」切换；无网排队提示“稍后同步”；时间线与结果页一致显示状态对勾。
-- BYOK Counter：导出区域显示「免费导出次数：N」；N ≤ 3 显示软提醒；N = 0 显示 BYOK 教育条并跳转设置页。
+- AI Quota Status：导出区域显示平台额度状态；额度偏低显示软提醒；额度不足显示稍后继续/低成本生成说明并跳转设置页 AI 用量。
 
 ## 3) Skeleton
 
@@ -1394,11 +1404,11 @@ This delta specifies UX changes required for the MVP (v0.3-light). It builds on 
 - Hotel selection modal uses FR44‑lite search (Top‑5, no map); select writes to hotel_slot; no “留空”。
 - No auto-replan on choose/change in MVP.
 
-## 6) BYOK Visibility
+## 6) AI Quota Visibility
 
-- ResultSheet/export header bar shows free export counts; ≤3 soft reminder; 0 → BYOK education.
-- Default channel is platform credits; BYOK is optional enhancement.
-  - 文案：N ≤ 3：“剩余免费导出次数不多，建议尽快完成或配置 BYOK。”；N = 0：“已用尽免费导出次数。你可以配置 BYOK 继续导出。”
+- ResultSheet/export header bar shows platform quota state: normal / low / queued / degraded.
+- Default channel is platform-managed AI usage; BYOK is post-MVP optional and not shown in the MVP path.
+  - 文案：额度偏低：“平台额度不多，建议先导出关键行程。”；额度不足：“平台额度暂时不足，可稍后重试或使用低成本生成。”
 
 ## 7) Microcopy
 
@@ -1409,13 +1419,13 @@ This delta specifies UX changes required for the MVP (v0.3-light). It builds on 
 - Reasons: “时窗贴合/距离更近/人气更高/靠近酒店”。
  - Check-in："打卡" / "已打卡"
  - 最近行程入口："继续上次行程"
- - BYOK：N ≤ 3 提醒文案；N = 0 教育文案
+ - AI 额度：偏低提醒文案；不足/降级文案
 
 ## 8) Telemetry & Flags
 
 - New: resultsheet_open, resultsheet_export_click, slot_edit_apply, slot_edit_reset_ai,
   search_open, search_submit, search_result_click, candidate_reason_source,
-  slot_check_toggle, ai_fill_citation_open, ai_fill_citation_missing, byok_prompt_open, byok_prompt_confirm, recent_plan_open。
+  slot_check_toggle, ai_fill_citation_open, ai_fill_citation_missing, ai_quota_warning_show, ai_quota_retry_click, ai_quota_degrade_accept, recent_plan_open。
 - Keep: seed_*, skeleton_phase_seen, undo_toast_show/undo_apply, seed_reset_*.
 - Flags: skeleton_sse_ui=breadcrumb|toast, fr44lite_enabled=true|false.
 

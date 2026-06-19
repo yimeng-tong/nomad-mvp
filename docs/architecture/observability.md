@@ -27,6 +27,7 @@
 
 ## Metrics & Funnels（对齐前端规格）
 - TTFP、HQ 采用率、可行性修复成功率、导出率、添加→落位转化、入库可达率、交互性能
+- AI 额度与成本：quota_remaining_band、queue_rate、degrade_rate、provider_fallback_rate、cost_per_successful_plan、cost_guard_trip_count
 - 漏斗：
   1) confirm_open → confirm_continue → picker_generate_skeleton → skeleton_open → aifill_open → export_success
   2) skeleton_open → skeleton_hq_status.done → skeleton_hq_switch_adopt → skeleton_hq_switch_adopt_result.success
@@ -38,5 +39,4 @@
 参见：`../ops/analytics.md`（埋点与看板）、`../ops/events.json`（事件样例）
 
 ## Privacy
-- 不采集 PII；BYOK 无明文；错误与事件脱敏；最小必要原则
-
+- 不采集 PII；Provider secrets 不进入前端、日志或事件；错误与事件脱敏；最小必要原则

@@ -7,7 +7,7 @@
 - SSE /ingest/{job_id}/events — stages: created|fetching|parsing|geo|storing|done
 
 ## Planner / Skeleton
-- POST /plan/generate {city,start,days,pace,selected_items[]}
+- POST /plan/generate {city,start,days,pace,selected_items[],hotels?,luggage_plan?,ticket_constraints?,hard_time_hints?}
 - GET  /plan/{plan_id}
 - POST /plan/validate {plan_id} → {hard_cnt,soft_cnt,suggestions[]}
 - POST /plan/fix {plan_id, action}
@@ -23,10 +23,9 @@
 ## Export
 - POST /export/png {plan_id, width_px, slice_by_day}
 
-## Settings / BYOK
-- POST /byok/validate {key}
-- POST /byok/save {key}
+## Settings / AI Usage
+- GET /settings/ai-usage → quota, usage, queue/degrade state
+- Existing BYOK compatibility endpoints are not part of the MVP user path.
 
 ## Observability hooks
 - POST /events (optional relay)
-

@@ -47,11 +47,13 @@
 - APP_AI_CITATION_MISSING
   - props: { plan_id, slot_id }
 
-### BYOK & Exports
-- APP_BYOK_PROMPT_OPEN
-  - props: { from_page: resultsheet|settings, free_count }
-- APP_BYOK_PROMPT_CONFIRM
-  - props: { from_page, free_count }
+### AI Quota & Exports
+- APP_AI_QUOTA_WARNING_SHOW
+  - props: { from_page: resultsheet|settings|aifill, reason: low|exhausted|queued|degraded }
+- APP_AI_QUOTA_RETRY_CLICK
+  - props: { from_page, reason }
+- APP_AI_QUOTA_DEGRADE_ACCEPT
+  - props: { from_page, mode: low_cost|no_ai }
 
 ### Search & Manual Add
 - APP_SEARCH_POI_MANUAL_ADD

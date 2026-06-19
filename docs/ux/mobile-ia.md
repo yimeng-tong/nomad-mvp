@@ -46,7 +46,7 @@ Header Usage
   - 长按：替换/移动D±1/调时/删除（撤销）
 - AI 填充（一键生成→预览→应用全部）
 - 导出（PNG 卡片）
-- 设置（BYOK、账号删除、数据导出、单位/时间制/动效开关）
+- 设置（AI 用量、账号删除、数据导出、单位/时间制/动效开关）
 
 ## 2. Global Components & Patterns
 - TopSwitch: sticky segmented control.
@@ -320,15 +320,15 @@ Citings & Why（事实引用与简因说明）
   - 槽位轻编辑：≤3×30 字/段；按钮“恢复 AI 内容（单槽重置）”。
   - 顶部轻条：导出前显示可行性修复建议摘要。
 
-Header（导出与 BYOK 冷启动）
-- 导出区域右侧显示「免费导出次数：N」；当 N ≤ 3 显示软提醒；当 N = 0 显示 BYOK 教育条（按钮“去配置我的 OpenAI Key”）。
-- 点击教育条跳转设置页 BYOK 区域；返回时刷新计数显示。
+Header（导出与平台 AI 额度）
+- 导出区域右侧显示「平台额度：正常/偏低/排队/降级」；当额度偏低显示软提醒；当额度不足时显示可稍后继续或低成本生成说明。
+- 点击额度条跳转设置页 AI 用量区域；返回时刷新计数与降级状态。
 - 文案：
-  - N ≤ 3：“剩余免费导出次数不多，建议尽快完成或配置 BYOK。”
-  - N = 0：“已用尽免费导出次数。你可以配置 BYOK 继续导出。”
-- 埋点：resultsheet_open, resultsheet_export_click, byok_prompt_open, byok_prompt_confirm。
+  - 额度偏低：“平台额度不多，建议先导出关键行程。”
+  - 额度不足：“平台额度暂时不足，可稍后重试或使用低成本生成。”
+- 埋点：resultsheet_open, resultsheet_export_click, ai_quota_warning_show, ai_quota_retry_click。
 
-Wireframe — ResultSheet Header（BYOK+Export）
+Wireframe — ResultSheet Header（Quota+Export）
 ```
 [HeaderBar]
 ┌───────────────────────────────────────────────────────────────┐
@@ -336,11 +336,11 @@ Wireframe — ResultSheet Header（BYOK+Export）
 │                                                （≤3 显黄点）│
 └───────────────────────────────────────────────────────────────┘
 
-BYOK 教育条（当 N=0 显示，位于 Header 下方）
+AI 额度提示条（当额度不足或降级时显示，位于 Header 下方）
 ┌───────────────────────────────────────────────────────────────┐
-│ 已用尽免费导出次数。你可以配置 BYOK 继续导出。 [ 去配置 ]  │
+│ 平台额度暂时不足，可稍后重试或使用低成本生成。 [ 查看 ]   │
 └───────────────────────────────────────────────────────────────┘
-注：导出按钮在 N=0 仍可点击，但点击前先展示教育条；“去配置”跳设置页 BYOK 段。
+注：导出按钮仍可点击；若触发降级，先展示提示条；“查看”跳设置页 AI 用量段。
 ```
 
 Slot 状态（打卡）
@@ -364,7 +364,7 @@ Save/Restore Edge & Errors（轻编辑）
 - 导出接口：/export/png 支持 width_px、slice_by_day；预览提示“行程较长，已分为多张”
 
 ### 3.9 设置
-- 总体：分组为 账号与登录 / 规划偏好 / AI 与 BYOK / 数据与隐私 / 诊断与缓存
+- 总体：分组为 账号与登录 / 规划偏好 / AI 用量 / 数据与隐私 / 诊断与缓存
 
 A. 账号与登录（MVP）
 - 我的账号：头像、昵称、手机号
@@ -376,11 +376,11 @@ B. 规划偏好（MVP）
 - 默认起始时间：09:00（可改）
 - 时间微调步进：15 分钟（默认）
 
-C. AI 与 BYOK（MVP）
-- AI 调用来源：平台额度（默认） / 使用我的 OpenAI Key（BYOK）
-- 我的 OpenAI Key：状态（未配置/已配置，掩码展示）
-- 配置/更换密钥：文本框 + 保存
-- 删除密钥：二次确认
+C. AI 用量（MVP）
+- AI 调用来源：平台额度（默认，服务端统一管理 Provider secrets）
+- 平台额度状态：正常/偏低/排队/降级；展示今日生成、导出与并发状态
+- 降级说明：低成本生成、稍后继续、无 AI 兜底文案
+- Post-MVP：BYOK 可作为高级/内部能力保留，但不在 MVP 主路径展示
 
 D. 可访问性与减少动效（全局）
 - 系统“减少动态效果”开启时：
@@ -429,8 +429,8 @@ H. 诊断与缓存（MVP）
 补充：
 - 结果页打卡："打卡" / "已打卡"
 - 最近行程入口："继续上次行程"
-- BYOK 教育条："已用尽免费导出次数。你可以配置 BYOK 继续导出。"
-- 免费次数少："剩余免费导出次数不多，建议尽快完成或配置 BYOK。"
+- AI 额度不足："平台额度暂时不足，可稍后重试或使用低成本生成。"
+- AI 额度偏低："平台额度不多，建议先导出关键行程。"
 - 事实核查："注意事实核查"
 - 引用来源占位："来源：AMap/官方/UGC"
 
@@ -450,7 +450,7 @@ H. 诊断与缓存（MVP）
 - slot_check_toggle(slot_id, to=checked|unchecked, page)
 - ai_fill_citation_open(source)
 - ai_fill_citation_missing(slot_id)
-- byok_prompt_open / byok_prompt_confirm
+- ai_quota_warning_show / ai_quota_retry_click / ai_quota_degrade_accept
 - recent_plan_open(plan_id, status=done|draft)
 
 ## 8. Open Questions
@@ -486,12 +486,12 @@ flowchart LR
 - FR9 可行性校验 + 一键修复 → FixSheet + 3.5 Fix
 - FR10 AI 一次性填充（不改时间/顺序，补齐三要点） → 3.6 AI 填充
 - FR11 导出 PNG → 3.7 导出
-- FR12 设置（BYOK/删除/导出） → 3.8 设置（A/B/C/G/H 分组）
+- FR12 设置（AI 用量/删除/导出） → 3.8 设置（A/B/C/G/H 分组）
 - FR13 观测与评测（Langfuse/promptfoo/Sentry） → 7. Telemetry Blueprint（UX 侧埋点草案）
 - FR14 第三方集成（登录/地图/COS 等） → 6. Compliance & Risk（可见性与文案）
 - NFR1 国内可用/降级策略 → 文案与状态兜底（见 10.3）
 - NFR2 前后端以 SSE 展示进度 → 10.1 入库进度 UI
-- NFR3 BYOK 安全（加密/脱敏/签名 URL） → 3.8 设置（呈现与说明）
+- NFR3 AI 安全与成本控制（服务端 secrets/脱敏/签名 URL/额度降级） → 3.8 设置（呈现与说明）
 - NFR4 性能目标（交互时延） → 0. Design Principles & Motion
 - NFR6 可观测性漏斗 → 7. Telemetry Blueprint
 - NFR8 动效/单列/分段吸顶 → 0/1/3 对应
@@ -575,7 +575,7 @@ Toast 模式（实验开关）仅在关键节点显示：
 - AI 填充失败/配额不足 → 保持骨架；引导分天或稍后
 - 骨架冲突剩余 1 处 → 顶部 fix 条提供 1-2 个可落地选项
 - 地图配额接近 → 降级：关闭热力圈/仅列表；提示“地图功能降级”
-- BYOK 未配置 → AI 页顶部灰条提示 + 一键前往设置
+- AI 额度不足/降级 → AI 页顶部灰条提示 + 一键查看额度/稍后继续
 
 ## 10.4 实施补充（建议纳入）
 - 地图 × 卡片抽屉三段吸附：列表主视 / 分屏 / 全屏地图；地图懒加载、Marker 聚合

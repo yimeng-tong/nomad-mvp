@@ -19,11 +19,13 @@
 | /plan/days/{day}/hotel | user       | 30/day       | Set hotel display slot |
 | /plan/slots/{slot}/overrides | user | 120/hour     | Light edit text |
 
-## Free Quotas & BYOK (v0.3)
-- Export: first 10 exports free per user.
-- Ingest bonus: each successful `/ingest/start` (+parse OK) adds +1 free export.
-- Education gates: when free_exports ≤ 3, show ingest education; when free_exports == 0, show BYOK setup.
-- Default billing path: platform quota first; BYOK optional for heavy users.
+## Platform AI Quotas & Cost Controls (v0.5)
+- Default billing path: platform-managed AI usage; users do not configure model keys in MVP.
+- Daily budgets: configurable per user, device, and workspace for ingest parsing, plan generation, AI fill, and export.
+- Concurrency: AI jobs remain 1 concurrent per user by default; excess work is queued with visible status.
+- Cost guardrails: per-day and per-workspace spend caps, retry budgets, provider fallback budgets, and abnormal-spend circuit breakers.
+- Education gates: when quota is low, show a soft cost-friendly reminder; when quota is exhausted or degraded, offer queue, retry later, low-cost generation, or no-AI fallback.
+- Admin controls: thresholds, provider/model routing, retry budgets, and circuit breakers are remotely adjustable.
 
 Burst protection (additional):
 - IP: ingest 10/min; generate 10/min; otp 3/min.
@@ -45,7 +47,7 @@ Burst protection (additional):
 - picker.weakened: list-only mode when map unstable.
 
 ## Security Notes
-- BYOK: KMS CMK + Envelope; never log key material; redact in Sentry/Langfuse.
+- Provider secrets: server-side only; never log secrets or user prompts; redact Sentry/Langfuse and analytics payloads.
 - Rate-limit responses: 429 with `Retry-After` and error envelope.
 - Abuse signals: IP reputation, device mismatch, OTP failures → captcha pre-gate.
 

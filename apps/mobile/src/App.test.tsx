@@ -74,4 +74,40 @@ describe('App', () => {
     expect(await screen.findByRole('heading', { name: '行程选择已准备' })).toBeInTheDocument();
     expect(screen.getByText('已带入 1 个灵感锚点')).toBeInTheDocument();
   });
+
+  it('opens Settings from the authenticated Home menu', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.endsWith('/me')) return jsonResponse(currentUser);
+      if (url.endsWith('/library/cities')) return jsonResponse(cities);
+      if (url.includes('/library/inspirations')) return jsonResponse(libraryItems);
+      if (url.endsWith('/user-key')) return jsonResponse({ configured: false, provider: null, key_ref: null });
+      return jsonResponse({}, 404);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(<App />);
+
+    fireEvent.click(await screen.findByRole('button', { name: '菜单' }));
+    expect(await screen.findByRole('heading', { name: '设置' })).toBeInTheDocument();
+    expect(screen.getByText('平台额度可继续使用')).toBeInTheDocument();
+  });
+
+  it('routes AI quota education moments to BYOK configuration', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.endsWith('/me')) return jsonResponse(currentUser);
+      if (url.endsWith('/library/cities')) return jsonResponse(cities);
+      if (url.includes('/library/inspirations')) return jsonResponse(libraryItems);
+      if (url.endsWith('/user-key')) return jsonResponse({ configured: false, provider: null, key_ref: null });
+      return jsonResponse({}, 404);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(<App />);
+
+    fireEvent.click(await screen.findByRole('button', { name: '配置我的 OpenAI Key' }));
+    expect(await screen.findByRole('heading', { name: '设置' })).toBeInTheDocument();
+    expect(screen.getByLabelText('OpenAI Key')).toBeInTheDocument();
+  });
 });

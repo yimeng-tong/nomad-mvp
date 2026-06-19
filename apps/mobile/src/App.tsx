@@ -3,12 +3,14 @@ import { LoginScreen } from './auth/LoginScreen';
 import { createAuthApiClient, type CurrentUserResponse } from './auth/api';
 import { HomeScreen } from './home/HomeScreen';
 import type { PlannerHandoff } from './home/api';
+import { SettingsScreen } from './settings/SettingsScreen';
 import './styles.css';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<CurrentUserResponse | null>(null);
   const [sessionChecked, setSessionChecked] = useState(false);
   const [plannerHandoff, setPlannerHandoff] = useState<PlannerHandoff | null>(null);
+  const [view, setView] = useState<'home' | 'settings'>('home');
 
   useEffect(() => {
     let cancelled = false;
@@ -41,6 +43,10 @@ export default function App() {
 
   if (!currentUser) return <LoginScreen onAuthenticated={setCurrentUser} />;
 
+  if (view === 'settings') {
+    return <SettingsScreen currentUser={currentUser} onBack={() => setView('home')} />;
+  }
+
   if (plannerHandoff) {
     return (
       <main className="home-shell" aria-labelledby="planner-handoff-title">
@@ -61,5 +67,5 @@ export default function App() {
     );
   }
 
-  return <HomeScreen onPlannerHandoff={setPlannerHandoff} />;
+  return <HomeScreen onPlannerHandoff={setPlannerHandoff} onOpenSettings={() => setView('settings')} />;
 }

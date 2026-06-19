@@ -643,44 +643,42 @@ paths:
       tags: [BYOK]
       summary: Validate a user-provided API key without storing it
       operationId: byokValidate
+      security:
+        - SessionAuth: []
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              required: [key]
-              properties:
-                key: { type: string }
+            schema: { $ref: '#/components/schemas/ByokValidateRequest' }
       responses:
         '200':
           description: Validation result
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  valid: { type: boolean }
-                  provider: { type: string, nullable: true }
+              schema: { $ref: '#/components/schemas/ByokValidateResponse' }
         '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
 
   /byok/save:
     post:
       tags: [BYOK]
       summary: Save BYOK (encrypted) — alias for /user-key
       operationId: byokSave
+      security:
+        - SessionAuth: []
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              required: [key]
-              properties:
-                key: { type: string }
+            schema: { $ref: '#/components/schemas/ByokSaveRequest' }
       responses:
-        '204': { description: Saved }
+        '200':
+          description: Saved key status
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserKeyStatusResponse' }
         '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
 
 
   /search/poi:
@@ -905,6 +903,8 @@ paths:
       summary: Get feedback product URL (support.qq.com)
       description: Returns the official product URL (https://support.qq.com/product/{PRODUCT_ID}). If product login state is enabled server-side, parameters per official spec may be attached.
       operationId: getFeedbackLink
+      security:
+        - SessionAuth: []
       parameters:
         - in: query
           name: source
@@ -920,6 +920,36 @@ paths:
         '401': { $ref: '#/components/responses/Error401' }
         '429': { $ref: '#/components/responses/Error429' }
         '500': { $ref: '#/components/responses/Error500' }
+
+  /account/export:
+    post:
+      tags: [Account]
+      summary: Queue account data export
+      operationId: accountExport
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: Account export task
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccountTaskResponse' }
+        '401': { $ref: '#/components/responses/Error401' }
+
+  /account:
+    delete:
+      tags: [Account]
+      summary: Queue account deletion
+      operationId: accountDelete
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: Account deletion task
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccountTaskResponse' }
+        '401': { $ref: '#/components/responses/Error401' }
 
   /auth/bind/apple:
     post:
@@ -963,35 +993,40 @@ paths:
       tags: [BYOK]
       summary: Get masked BYOK status
       operationId: getUserKey
+      security:
+        - SessionAuth: []
       responses:
         '200':
           description: Key status
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  configured: { type: boolean }
+              schema: { $ref: '#/components/schemas/UserKeyStatusResponse' }
+        '401': { $ref: '#/components/responses/Error401' }
     post:
       tags: [BYOK]
       summary: Set or replace BYOK (encrypted and envelope stored)
       operationId: setUserKey
+      security:
+        - SessionAuth: []
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              required: [key]
-              properties:
-                key: { type: string }
+            schema: { $ref: '#/components/schemas/ByokSaveRequest' }
       responses:
-        '204': { description: Saved }
+        '200':
+          description: Saved key status
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserKeyStatusResponse' }
         '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
     delete:
       tags: [BYOK]
       summary: Delete BYOK
       operationId: deleteUserKey
+      security:
+        - SessionAuth: []
       responses:
         '204': { description: Deleted }
         '401': { $ref: '#/components/responses/Error401' }
@@ -1012,6 +1047,45 @@ components:
         required: [url]
         properties:
           url: { type: string, format: uri }
+
+    AccountTaskResponse:
+      type: object
+      required: [task_id, status]
+      properties:
+        task_id: { type: string }
+        status: { type: string, enum: [queued, in_progress, done, failed] }
+
+    UserKeyStatusResponse:
+      type: object
+      required: [configured]
+      properties:
+        configured: { type: boolean }
+        provider: { type: string, nullable: true }
+        key_ref: { type: string, nullable: true }
+
+    ByokValidateRequest:
+      type: object
+      required: [key]
+      properties:
+        key: { type: string, minLength: 1 }
+
+    ByokValidateResponse:
+      type: object
+      required: [valid]
+      properties:
+        valid: { type: boolean }
+        provider: { type: string, nullable: true }
+
+    ByokSaveRequest:
+      type: object
+      required: [key]
+      properties:
+        key:
+          type: string
+          minLength: 8
+          pattern: '^\S+$'
+        provider: { type: string, enum: [openai], nullable: true }
+
     LoginMethod:
       type: object
       required: [id, label, type, enabled]

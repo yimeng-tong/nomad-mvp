@@ -19,6 +19,7 @@ export type HomeScreenProps = {
   apiClient?: HomeApiClient;
   analytics?: Analytics;
   onPlannerHandoff?: (handoff: PlannerHandoff) => void;
+  onOpenSettings?: () => void;
 };
 
 function titleFor(item: LibraryInspirationItem) {
@@ -55,7 +56,7 @@ function filtersForLibrary(filter: LibraryFilter) {
   return undefined;
 }
 
-export function HomeScreen({ apiClient, analytics, onPlannerHandoff }: HomeScreenProps) {
+export function HomeScreen({ apiClient, analytics, onPlannerHandoff, onOpenSettings }: HomeScreenProps) {
   const client = useMemo(() => apiClient ?? createHomeApiClient(), [apiClient]);
   const tracker = useMemo(() => analytics ?? createNoopAnalytics(), [analytics]);
   const activeCandidateId = useRef<string | null>(null);
@@ -241,7 +242,7 @@ export function HomeScreen({ apiClient, analytics, onPlannerHandoff }: HomeScree
   return (
     <main className="home-shell" aria-labelledby="home-title">
       <header className="home-header">
-        <button className="icon-button" type="button" aria-label="菜单">
+        <button className="icon-button" type="button" aria-label="菜单" onClick={onOpenSettings}>
           ☰
         </button>
         <div className="segment-control" aria-label="首页模式">
@@ -359,6 +360,10 @@ export function HomeScreen({ apiClient, analytics, onPlannerHandoff }: HomeScree
         ) : (
           <section className="plan-panel" aria-label="规划入口">
             <p>从目的地卡或底部输入开始。</p>
+            <p className="status-text">平台额度可先用，需要更高额度时可配置我的 OpenAI Key。</p>
+            <button type="button" onClick={onOpenSettings}>
+              配置我的 OpenAI Key
+            </button>
             {selectedItems.length > 0 ? <p>已选 {selectedItems.length} 个灵感作为锚点。</p> : null}
           </section>
         )}

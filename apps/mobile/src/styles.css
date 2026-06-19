@@ -446,6 +446,93 @@ button:focus-visible {
   min-height: 70vh;
 }
 
+.settings-shell {
+  min-height: 100vh;
+  padding: max(14px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
+  background: #f8faf7;
+}
+
+.settings-shell .home-header h1 {
+  font-size: 22px;
+}
+
+.settings-content {
+  width: min(100%, 480px);
+  margin: 0 auto;
+  display: grid;
+  gap: 12px;
+}
+
+.settings-section {
+  display: grid;
+  gap: 12px;
+  padding: 13px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(23, 33, 27, 0.12);
+}
+
+.settings-section h2 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.settings-section p {
+  margin: 0;
+  color: #52605a;
+  line-height: 1.45;
+}
+
+.settings-facts {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.settings-facts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.settings-facts dt,
+.settings-facts dd {
+  margin: 0;
+}
+
+.settings-facts dt {
+  color: #52605a;
+}
+
+.settings-facts dd {
+  max-width: 68%;
+  overflow-wrap: anywhere;
+  font-weight: 720;
+}
+
+.settings-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 9px;
+}
+
+.settings-actions button,
+.settings-section > button,
+.fallback-form button {
+  min-height: 46px;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #247e6f;
+  color: #ffffff;
+  font-weight: 760;
+}
+
+.fallback-form {
+  display: grid;
+  gap: 10px;
+}
+
 .bottom-sheet {
   position: fixed;
   left: 0;

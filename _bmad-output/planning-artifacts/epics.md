@@ -17,6 +17,8 @@ inputDocuments:
 
 This document provides the complete epic and story breakdown for nomad-mvp, decomposing requirements from the PRD, UX design, architecture, and supplemental Epic 2/3 tech specs into implementable stories.
 
+Correct-course note (2026-06-19): BYOK is removed from the MVP delivery path and treated only as post-MVP/internal compatibility. MVP AI usage is platform-managed through quotas, rate limits, cost monitoring, provider fallback, and degradation. Epic 2/3 stories also incorporate learnings from the real Xiamen planning validation run.
+
 ## Requirements Inventory
 
 ### Functional Requirements
@@ -24,7 +26,7 @@ This document provides the complete epic and story breakdown for nomad-mvp, deco
 - FR1: 登录首屏支持手机号+短信登录；如提供第三方登录（Authing/极光一键），iOS 必须等权提供 Apple 登录；按需触发腾讯行为验证。
 - FR2: 首页顶部分段“旅行规划｜灵感库”，中部显示目的地卡片（城市聚合），底部统一输入框可识别小红书链接或行程自然语言。
 - FR3: 统一输入分流：优先判定小红书链接；否则解析自然语言行程；无法判定时给出二选一提示。
-- FR4: 小红书入库流程（单次仅处理一条链接）（更新）：异步获取作品 → 多模态 LLM 图文抽取（产 POI 名称候选列表 + 作者对该 POI 的评价线索，如有）→ 图片二次存储至 COS（禁止热链）→ AMap 标准化（判定标准 POI/坐标/文字地址）→ 高置信自动入库 / 低置信标记“待定位”；前台用 SSE 展示进度。 解析抽取策略（更新）：默认启用多模态 LLM（含图+文）进行抽取；输出“POI 名称候选列表 + 作者评价线索（如有）”，保留 evidence.source 与置信度；若无法可靠抽取，则降级为“仅媒体+待定位”。取消原 text→OCR→VLM 的流水线模式（不再按低置信逐级触发）。
+- FR4: 小红书入库流程（单次仅处理一条链接）（更新）：异步获取作品 → 多模态 LLM 图文/关键帧抽取（产 POI 名称候选列表 + 作者对该 POI 的评价线索，如有）→ 视频按时长抽帧并先做语音检测，静音/BGM 跳过 ASR → 媒体二次存储至 COS（禁止热链）→ AMap 标准化与验证（标准名、地址、坐标、营业时间、评分、人均、电话等）→ 高置信自动入库 / 低置信标记“待定位”；前台用 SSE 展示进度。解析抽取策略保留 evidence.source、source_attribution、质量等级与置信度；若无法可靠抽取，则降级为“仅媒体+待定位”。
 - FR4.1: 连锁与分店规则（标准化阶段）（更新）：抑制常见连锁误解析：通过“连锁品牌抑制列表（可编辑）”限制泛化匹配（列表由 Backoffice 维护）；当无法确定具体分店时，从 AMap 检索≤20 家分店，按“主 POI 附近 2km”裁剪，仅保留 2km 内分店并进入后续流程。
 - FR5: 灵感库：按城市聚合与列表展示；“待定位”条目点击整行弹窗，提供 Top-5 候选地（名称+地址，不显示置信度），不阻塞后续流程。
 - FR6: 灵感选择页：按城市列出可勾选的“想去”条目；支持对“待定位”进行 Top-5 选择。
@@ -33,7 +35,7 @@ This document provides the complete epic and story breakdown for nomad-mvp, deco
 - FR9: 顶部可行性校验（闭店/过远/超时）并提供一键修复方案。
 - FR10: AI 一次性填充：在用户确定骨架后，对“剩余可控块”进行一次性编排，并为“所有块”补全“做什么/准备什么/注意什么”的要点；不改变时间与顺序。
 - FR11: 导出行程 PNG（行程卡片）。
-- FR12: 设置页：展示用户登录信息；配置 BYOK（用户自带 OpenAI Key）并加密存储；提供账号删除与数据导出。
+- FR12: 设置页：展示用户登录信息、AI 使用额度/状态、账号删除、数据导出与反馈入口；MVP 不要求用户配置自己的模型 Key。
 - FR13: 观测与评测：接入 Langfuse（提示版本/调用追踪）与 promptfoo（离线 A/B 评测），前后端接入 Sentry。
 - FR14: 第三方集成（国内可用）：Authing/极光（登录）、腾讯行为验证、高德地图 SDK+Web API（POI/搜索/逆地理/距离矩阵）、腾讯云 COS+CDN（直传签名+缩略图处理）、n8n（异步编排）、友盟 U-Link+U-App（归因/分析）。
 - FR15: 登录等权展示（iOS 中国区）：Apple｜手机号｜微信 并列同权同尺寸，排序：Apple｜手机号｜微信；登录首屏埋点区分入口。
@@ -47,24 +49,24 @@ This document provides the complete epic and story breakdown for nomad-mvp, deco
 - FR22: 冲突分级与进入 AI 填充门控：硬冲突（无坐标/闭店/跨日不可达）需先修复并禁用进入；软冲突（略超时/通勤略远等）允许进入但顶部保留提醒与一键修复。
 - FR23: AI 填充输出规范：每块输出“做什么（必填≤3行×≤30字/行）｜准备（可选≤3行×≤30字）｜注意（可选≤3行×≤30字）”，超长折叠；缺少“做什么”报错并回退；后端对超长硬裁并加省略号。
 - FR24: 导出 PNG 规格：长图固定宽度 1080 px（可选 1242 px），纵向不设上限；超图按天切片导出多张；优先 WebP，不兼容降级 JPEG（75–80%），尽量 ≤ 600 KB；导出接口支持 width_px 与 slice_by_day 参数并提供预览提示。
-- FR25: BYOK 引导：AI 填充页顶部灰条提示“当前使用平台额度，去配置我的 OpenAI Key”；设置首页显示配置状态；首次需自带 Key 时弹一次性教育页（用途与隐私），之后不重复打扰（远程开关控制）。
+- FR25: AI 使用额度引导：AI 填充/导出相关页面显示平台额度、生成状态、导出次数或成本友好提示；额度不足或服务降级时提供明确文案、重试/稍后继续路径与可配置远程开关，不要求用户配置 Key。
 - FR26: Planner Picker 入口路径：A) 底部输入解析得到 trip_params → 进入 Picker；B) 目的地卡“开始规划”→ 进入 Picker（传 city、place_hints 可选）。
 - FR27: Planner Picker 路由与参数：/planner/pick?city={CITY}&start={YYYY-MM-DD?}&days={N?}&source={home_input|home_card}&rec_id={CARD_ID?}。
-- FR27.1: 规划前确认页（Confirm）：在统一输入与进入编排之间新增确认页，字段包含：城市、出行节奏 pace（tight｜comfortable）、出行时间段（可选灵活天数；可选首尾两天到达/出发时间）、早上出发时间（用于确定 2h 起始时间槽）、是否启用“智能编排”。“智能编排”默认是；选择后将后台并行启动高质量编排（见 FR32.2）。
+- FR27.1: 规划前确认页（Confirm）：在统一输入与进入编排之间新增确认页，字段包含：城市、出行节奏 pace（tight｜comfortable）、出行时间段（可选灵活天数；可选首尾两天到达/出发时间）、起床/早上出发偏好、酒店/换酒店信息、是否酒店早餐、行李处理方式、预约/门票/特殊活动约束、是否启用“智能编排”。“智能编排”默认是；选择后将后台并行启动高质量编排（见 FR32.2）。
 - FR28: Planner Picker 头部：标题“{城市} · {出行日期?占位} · {天数?占位}”；缺参以“待填写”灰字占位；右侧“修改参数”轻量 Sheet（日期选择器 + 天数步进器 + pace 可选）；返回保留来源上下文。
 - FR29: Planner Picker 视图结构：顶部城市 Tabs（按与目标城市中心点“直线距离”排序；仅展示灵感量 > 1 的城市）；中部卡片列表 + 地图-卡片联动（Sheet 吸附位 High→Split→Map-Full），详情统一全高 Bottom Sheet；弱网/无地图自动降级为清单视图并提示。
 - FR30: 已选篮与主按钮：吸底左“已选 N”（可展开面板：移除/必去 must_go/时段 time_hint/时长 stay_minutes_hint），右主按钮：“生成骨架”；允许在无已选时直接生成（selected_items 为空）；缺参时弹参数 Sheet 补齐后生成。
 - FR31: 选点与一致性：卡片/Marker 状态一致；卡片→Map 飞行 300ms；Map→卡片滚动并“抬升”；低置信项卡片右上“去定位”入口。
-- FR32: 生成骨架（部分填充 + AI 预布局，v0.2 更新）：POST /plan/generate 使用 selected_items 作为锚点；must_go/time_hint 优先落位；当启用 planner_autoplace_v1 时，对“无硬冲突”的候选按配额 quota=ceil(α×S_left)（默认 α=0.6，可远程配置）进行自动落位；selected_items 为空时，基于 AnchorPool 生成 Top-N 锚点并仅对“无硬冲突”条目落位；预布局不得引入硬冲突，软冲突不落位仅提示；预布局块需标记 origin=ai_seed，并提供 5–8 秒撤销与一键重置；未落位项进入“空槽→候选抽屉/AI 建议/自由活动”。
+- FR32: 生成骨架（部分填充 + AI 预布局，v0.2 更新）：POST /plan/generate 使用 selected_items 作为锚点；must_go/time_hint 与 dawn/sunset/night/night-market 等强时间约束优先落位；当启用 planner_autoplace_v1 时，对“无硬冲突”的 AMap 已验证候选按配额 quota=ceil(α×S_left)（默认 α=0.6，可远程配置）进行自动落位；selected_items 为空时，基于 AnchorPool/城市热门生成 Top-N 锚点并仅对“无硬冲突”条目落位；未落位项进入“空槽→候选抽屉/AI 建议/AMap 搜索/自由活动”。
 - FR32.1: 快速版传统编排（L2 基础）：仅编排主景点（不纳入酒店/打卡点/餐饮）；按用户 pace 将粒度映射为 2h（tight）/4h（comfortable），2.5h 阈值对齐（≤2.5h→2h，>2.5h→4h）；当天优先安排同属同一 L1 下的其他 L2；生成结果可立即使用。
 - FR32.2: 高质量 LLM 编排（后台并行）：当确认页勾选“智能编排”或在天级骨架顶部手动启用时，后端后台生成高质量版本；前端先呈现快速版，顶部提示“后台正在生成高质量版本”，完成后通知用户并在顶部提供“切换-采用”入口；两版本并存直至用户确定切换。
 - FR33: AI 预布局可控性（v0.2 新增）：提供远程开关 enable_ai_seed/planner_autoplace_v1；出现超时/配额/错误时自动降级为“无预布局”的骨架并提示；SSE 事件流 started→freeze→must_go→quota→candidates→place→validate→persist→done；埋点 seed_accept_rate/seed_conflict_rate/seed_time_ms/fallback_rate。
 - FR34: AnchorPool（离线锚点，v0.2 新增）：使用离线 AnchorPool（city×season×tod×category）作为候选来源；不可用时回退内置 Top-50 并记录日志；进入骨架页并行 anchors.prepare 读取池并在线轻量重排，可用时可推送 anchors_ready（SSE）。
 - FR35: 多城市与交通槽（Post-MVP，暂不在本版范围）：支持 multi_city 计划；当日存在跨城段时，生成 transport_slot 占用相应时段；跨城通勤约束仍采用 T_commute_max（基于总天数 D）；编排以 transport_slot 为边界分段进行，分段内独立应用配额与候选；transport_slot 不参与 AI 预布局的普通候选落位。
-- FR36: 酒店槽与餐饮处理（v0.4 更新）：每日生成 hotel_slot（今晚入住酒店，仅展示，不参与 2h/4h 槽编排）；hotel_slot 在时间轴 DayN 末尾固定显示，支持“更换酒店/查看地图/预订链接/备注”；未选择时显示“待选择”。餐饮按普通槽处理（是否纳入 2h/4h 由 Planner 输出决定）。
-- FR36.1: 酒店感知的编排偏好（v0.3 新增）：当当日存在 hotel_slot 时，编排期对早/晚段采用软约束偏好： - 晚段靠近酒店的候选优先（near_hotel boost）； - 早段靠近上一晚酒店的候选优先； - 该偏好仅作为排序加分，不得压过硬约束（营业覆盖/时窗/通勤/T_commute_max/transport_slot 边界）。
-- FR37: 结果页（行程单）（MVP 轻编辑）：展示 AI 填充后的行程与每槽位建议（why_short/引用来源）；允许对每个槽位的「做什么/准备/注意」进行轻编辑（≤3×30 字/段），编辑内容保存为 slot-level overrides；再次运行 AI 填充不覆盖 overrides，并提供“恢复 AI 内容（单槽重置）”；编辑槽位需返回“天级骨架 → AI 填充 → 结果页”的循环路径或“天级骨架 ↔ 灵感页”路径；支持导出 PNG；到达 result_sheet 视为“已完成”。
-- FR38: BYOK 冷启动策略（v0.3 新增）：默认提供首 10 次“导出”免费配额；每发生 1 次“入库”行为，免费次数 +1（鼓励 UGC 导入）；当免费次数 ≤ 3 时弹“入库教育”引导，免费次数 = 0 时弹出 BYOK 教育与配置入口；平台额度为默认通道，BYOK 为“可选增强”，重度用户可切换。
+- FR36: 酒店槽与餐饮处理（v0.5 更新）：每日生成 hotel_slot（今晚入住酒店，作为行程节奏、区域聚类、换酒店缓冲、行李处理和晚间活动半径的核心约束）；hotel_slot 在时间轴 DayN 末尾固定显示，支持“更换酒店/查看地图/预订链接/备注”；未选择时显示“待选择”。餐饮按普通槽处理；酒店早餐影响早段安排。
+- FR36.1: 酒店感知的编排偏好（v0.5 更新）：当当日存在 hotel_slot 时，编排期对早/晚段采用软约束偏好： - 晚段靠近酒店的候选优先（near_hotel boost）； - 早段靠近上一晚酒店的候选优先； - 换酒店日加入退房/交通/寄存/入住缓冲； - 该偏好仅作为排序加分，不得压过硬约束（营业覆盖/时窗/通勤/T_commute_max/transport_slot 边界）。
+- FR37: 结果页（行程单）（MVP 轻编辑）：展示 AI 填充后的行程与每槽位建议（why_short/引用来源/source_attribution/质量等级）；允许对每个槽位的「做什么/准备/注意」进行轻编辑（≤3×30 字/段），编辑内容保存为 slot-level overrides；再次运行 AI 填充不覆盖 overrides，并提供“恢复 AI 内容（单槽重置）”；支持导出 PNG；到达 result_sheet 视为“已完成”；厦门 `output/行程单_final.md` 作为未来导出格式与 QA fixture 参考。
+- FR38: 平台 AI 额度与成本控制策略（v0.5 更新）：默认由平台托管 AI 调用；按用户/设备/workspace 设置每日请求、并发、导出与成本上限；每次入库、规划、AI 填充和导出均计入用量；当额度接近或达到上限时展示成本友好提示、排队/稍后重试、低成本模型或无 AI 降级路径；管理员可远程调整阈值、熔断异常用量。BYOK 仅作为 Post-MVP 可选增强。
 - FR39: AI 事实引用与幻觉约束（v0.3 新增）：AI 填充生成“做什么/准备/注意”时需附事实来源（如高德热门评价标签/官方介绍/可信UGC摘要）；若无法为“做什么”找到来源，则保留文案并显式标注“注意事实核查”；前端展示引用来源短链与 why_short。
 - FR40: 计划延续与状态（v0.3 新增）：首页增加“最近行程”入口；行程单每个槽位提供“状态按钮：打卡<>已打卡”，用于旅途期间标记；该数据为后续“自动化记忆日志/数据回流”预留。
 - FR41: 酒店选择优先（v0.3 新增）：当日仅有 1 个酒店候选时，自动写入 hotel_slot；当有多个或 0 个酒店候选时，保持空白直至用户选择；一旦选择酒店，自动启用 near_hotel 早/晚弱偏好。
@@ -77,7 +79,7 @@ This document provides the complete epic and story breakdown for nomad-mvp, deco
 
 - NFR1: 国内可用三方服务优先；外部依赖需有可替代方案或降级策略。
 - NFR2: 前后端以 SSE 展示异步进度；MVP 不使用远程推送。
-- NFR3: BYOK 安全：采用 KMS/Envelope 加密存储；日志脱敏；对象存储私有读写与签名 URL。
+- NFR3: AI 安全与成本控制：平台 Provider secrets 仅在服务端管理；日志、Sentry、Langfuse 与埋点必须脱敏；对象存储私有读写与签名 URL；AI 请求具备速率限制、成本上限、异常熔断和降级策略。
 - NFR4: 性能目标（MVP）：骨架生成与 AI 填充端到端 50 分位时延设定并监测（具体阈值由架构阶段细化）。
 - NFR5: 质量指标：首次可行行程率≥目标值；“空槽一次添加成功率”≥目标值；地理消歧 Top-1/Top-3 命中率设定并监测（阈值由架构/评测方案细化）。
 - NFR6: 可观测性：Langfuse/promptfoo/Sentry 接入完备，关键漏斗（登录→入库→选择→骨架→AI 填充→导出）可埋点度量。
@@ -97,10 +99,10 @@ This document provides the complete epic and story breakdown for nomad-mvp, deco
 
 - Architecture v0.4 is authoritative through `docs/architecture/index.md`; the root architecture stub and deprecated v0.3 archive are not implementation sources.
 - OpenAPI is the API SSOT at `docs/api/openapi.yaml`; generated types live in `packages/types/src/api-types.ts` and must be regenerated, not hand-edited.
-- Backend MVP is a Fastify/TypeScript ESM service under `apps/server/src`; current routes include auth, BYOK, account export/delete, plan generation SSE, AI fill SSE, and PNG export placeholders.
+- Backend MVP is a Fastify/TypeScript ESM service under `apps/server/src`; current routes include auth, account export/delete, plan generation SSE, AI fill SSE, PNG export placeholders, and existing BYOK compatibility routes that are not part of the MVP user path.
 - Data model source is `packages/prisma/schema.prisma` plus SQL docs under `docs/db`; Postgres/PostGIS/pgvector are assumed by architecture.
 - Epic 2 tech spec defines Planner Picker, Quick/HQ generation, slot editing, feasibility repair, and export expectations.
-- Epic 3 tech spec defines one-shot AI fill, citations, observability/evaluation, Provider fallback, BYOK, and privacy/compliance expectations.
+- Epic 3 tech spec defines one-shot AI fill, citations, observability/evaluation, Provider fallback, platform quota/cost controls, and privacy/compliance expectations.
 
 ### UX Design Requirements
 
@@ -114,7 +116,7 @@ This document provides the complete epic and story breakdown for nomad-mvp, deco
 - UX-DR8: 长按编辑、撤销、最近操作与历史回滚路径需要保持可发现且不打断主流程。
 - UX-DR9: AI Fill 输出“做什么/准备/注意”必须可读、可折叠、支持引用与结果页轻编辑。
 - UX-DR10: 导出 PNG 需先给预览和冲突提示，超长按天切片。
-- UX-DR11: Settings 包含 BYOK、账号删除、数据导出和反馈入口，隐私风险解释前置。
+- UX-DR11: Settings 包含 AI 使用额度/状态、账号删除、数据导出和反馈入口，隐私与成本/额度解释前置。
 - UX-DR12: 地图不可用、HQ 失败、XHS 入库失败和 Provider 回退都必须有用户可理解的降级文案。
 
 ### FR Coverage Map
@@ -301,18 +303,18 @@ So that I can move from collected inspirations into planning quickly.
 ### Story 1.5: Settings, Feedback, and Account Entry Points
 
 As a traveler,
-I want settings for key ownership, account data, and feedback,
+I want settings for AI usage, account data, and feedback,
 So that I can trust and control my use of Nomad.
 
 **Acceptance Criteria:**
 
 **Given** the user opens Settings
 **When** the screen renders
-**Then** it shows login state, BYOK status, account deletion, data export, and feedback entry points.
+**Then** it shows login state, AI usage/quota status, account deletion, data export, and feedback entry points.
 
-**Given** BYOK is not configured
-**When** the user reaches AI quota education moments
-**Then** the app can route to BYOK education and configuration without blocking early platform-quota use.
+**Given** the user reaches AI usage or export quota education moments
+**When** platform quota is low, queued, or degraded
+**Then** the app explains remaining usage, retry/defer options, and low-cost or no-AI fallback without requiring user-provided keys.
 
 **Given** the user requests export or deletion
 **When** the action is confirmed
@@ -336,7 +338,7 @@ So that skeleton generation starts with the right city, dates, pace, and POI hin
 
 **Given** the user enters planning from Home input or a destination card
 **When** trip parameters are incomplete
-**Then** Confirm collects city, pace, travel date/day range, first-day/last-day time windows, morning start time, and smart-planning preference.
+**Then** Confirm collects city, pace, travel date/day range, first-day/last-day time windows, wake/morning start preference, hotel and hotel-change details, hotel breakfast, luggage handling, reservations/tickets, and smart-planning preference.
 
 **Given** the user reaches Picker
 **When** it renders
@@ -350,6 +352,10 @@ So that skeleton generation starts with the right city, dates, pace, and POI hin
 **When** selection changes
 **Then** card, marker, basket, must_go, time_hint, and stay_minutes_hint states remain consistent.
 
+**Given** special time-bound activities are present
+**When** the user confirms planning inputs
+**Then** dawn, sunset, night, and night-market constraints are carried forward as hard time hints.
+
 ### Story 2.1: Generate Day Skeleton with Quick and HQ Planning
 
 As a planner,
@@ -360,7 +366,7 @@ So that I can start editing immediately and upgrade if a better plan arrives.
 
 **Given** selected_items are provided or empty
 **When** `POST /plan/generate` starts
-**Then** must_go and time_hint are placed first, selected_items use item_id and optional poi_id/must_go/time_hint/stay_minutes_hint, and empty selection falls back to AnchorPool or built-in Top-50.
+**Then** must_go, time_hint, dawn/sunset/night/night-market constraints, and AMap-verified POIs are placed first; selected_items use item_id and optional poi_id/must_go/time_hint/stay_minutes_hint, and empty selection falls back to AnchorPool or built-in Top-50.
 
 **Given** pace maps to slot granularity
 **When** quick planning runs
@@ -376,7 +382,11 @@ So that I can start editing immediately and upgrade if a better plan arrives.
 
 **Given** hotel candidates exist
 **When** skeleton generation completes
-**Then** hotel_slot is display-only, near_hotel affects early/late ranking only after a hotel is selected, and it never overrides hard constraints or transport boundaries.
+**Then** hotel_slot affects early/late radius, region clustering, hotel-change buffers, luggage handling, and night activity radius, while near_hotel never overrides hard constraints or transport boundaries.
+
+**Given** a slot cannot be resolved confidently
+**When** planner needs a replacement or filler candidate
+**Then** it follows the completion path existing notes → Xiaohongshu search → AMap nearby search → ask the user if still uncertain.
 
 ### Story 2.2: Timeline Editing, Undo, and History
 
@@ -492,7 +502,7 @@ So that regressions can be debugged and prompt/provider choices can improve.
 
 **Given** planner or filler calls run
 **When** they call an LLM provider
-**Then** calls go through an OpenAI-compatible provider abstraction with api_base, model, timeout, retry, fallback, BYOK override, and Langfuse tracing.
+**Then** calls go through an OpenAI-compatible provider abstraction with api_base, model, timeout, retry, fallback, server-managed Provider secrets, quota/cost guards, and Langfuse tracing.
 
 **Given** quality evaluation is needed
 **When** promptfoo runs
@@ -506,17 +516,17 @@ So that regressions can be debugged and prompt/provider choices can improve.
 **When** operators inspect quality
 **Then** metrics include funnel conversion, seed_accept_rate, seed_conflict_rate, seed_time_ms, fallback_rate, anchors_ready coverage, citation hit/degrade rate, and export/result-sheet rates.
 
-### Story 3.3: BYOK, Account Privacy, and Compliance Controls
+### Story 3.3: Account Privacy, Quota, and Compliance Controls
 
 As a traveler,
-I want my AI key and account data handled safely,
+I want AI quota, provider usage, and account data handled safely,
 So that I can trust Nomad with sensitive travel data.
 
 **Acceptance Criteria:**
 
-**Given** a user sets BYOK
-**When** the key is stored
-**Then** KMS/Envelope encryption is used, logs are redacted, and only key references are returned.
+**Given** platform AI providers are configured
+**When** planner or filler calls run
+**Then** Provider secrets stay server-side, logs and traces are redacted, and quota/cost controls are enforced.
 
 **Given** object storage is used
 **When** media or export artifacts are accessed
@@ -525,6 +535,10 @@ So that I can trust Nomad with sensitive travel data.
 **Given** a user requests account deletion or data export
 **When** the backend queues the task
 **Then** the workflow includes stored files, account data, telemetry anonymization, and completion state.
+
+**Given** AI usage is close to quota or an abnormal spend pattern is detected
+**When** a user triggers planning, fill, or export
+**Then** the app can queue, retry later, switch to a lower-cost route, or degrade with clear user-facing copy.
 
 **Given** AMap or third-party services are displayed
 **When** the app surfaces their data

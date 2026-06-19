@@ -6,7 +6,7 @@
 - 从“灵感开始”的真实旅程，完成首条端到端用例：收集（小红书）→ 筛选 → 排期（天级骨架）→ 一次性 AI 填充 → 导出 PNG。
 - 解决灵感分散、地理消歧难、排期困难、临出行缺少可执行要点等核心痛点。
 - 移动端优先（iOS/Android），极简风格与快速动效（120–200ms）。
-- 支持 BYOK（用户自带 OpenAI Key）并安全加密存储，日志脱敏，可一键账号删除/数据导出。
+- 由平台托管 AI 调用与成本控制，提供用户可见额度、速率限制、成本监控、失败降级、账号删除与数据导出；BYOK 降级为 Post-MVP 可选增强。
 - 全链路可观测（Langfuse、promptfoo、Sentry），面向国内可用三方服务与合规要求。
 
 ### Background Context
@@ -16,8 +16,9 @@
 | Date       | Version | Description                                                     | Author |
 | ---------- | ------- | ---------------------------------------------------------------- | ------ |
 | 2025-11-01 | 0.4     | VLM 默认启用并取消流水线；新增确认页；快速版 L2 编排；后台并行高质量版；连锁抑制列表；分店≤20 且主 POI 附近 2km 裁剪；餐时分割 A/B | PM     |
+| 2026-06-19 | 0.5-correct-course | BYOK 移出 MVP；加入厦门实战验证带来的 ASR 成本控制、AMap POI 验证、来源归因、酒店/时间槽/导出要求 | PM     |
 | 2025-10-28 | 0.3-light (MVP) | 定义 MVP 范围：保留单城/near_hotel/ResultSheet 轻编辑/FR44-lite；将多城市/自动重排/历史回滚移出本版 | PM     |
-| 2025-10-28 | 0.3     | 多城市/交通/酒店槽；结果页（行程单）；BYOK 冷启动；事实引用；最近行程与打卡 | PM     |
+| 2025-10-28 | 0.3     | 多城市/交通/酒店槽；结果页（行程单）；平台额度冷启动；事实引用；最近行程与打卡 | PM     |
 | 2025-10-27 | 0.2     | Add AI 预布局(seed)与 AnchorPool；新增骨架生成 SSE 阶段/配额与降级；明确门控与回退 | PM     |
 | 2025-10-26 | 0.1     | Initial draft (MVP-focused)                                     | PM     |
 
@@ -45,14 +46,22 @@
  - hotel_slot：每日住宿信息槽（仅展示当晚入住，不参与 24h/2h 编排）。
 - result_sheet（行程单）：AI 填充后生成的只读结果页，用于浏览与导出。
 
+## MVP Correct Course（2026-06-19）
+
+本次修正来自 `/home/tong123/work/厦门旅游规划` 的真实案例验证：已跑通“小红书采集 → 多模态理解 → POI 验证 → 行程骨架 → AI 填充 → 行程单导出”。MVP 决策调整如下：
+
+- BYOK 不再作为 MVP 交付主路径；用户无需配置自己的模型 Key。MVP 由平台统一管理 Provider secrets、成本预算、速率限制、异常熔断和降级策略。
+- 已实现的 BYOK 入口可保留为内部兼容或 Post-MVP 高级能力，但不应在 MVP 用户流程中作为必要步骤出现。
+- Epic 2/3 需吸收厦门验证样本：语音检测先于 ASR、短视频高频抽帧、AMap 验证后入库、source attribution 与质量等级、酒店作为节奏/区域/行李约束、dawn/sunset/night/night-market 等强时间槽、Confirm 补问关键旅行条件、模糊 slot 的逐级补全路径，以及 `output/行程单_final.md` 作为导出格式与 QA fixture 的参考。
+
 ## Requirements
 
 ### Functional Requirements (FR)
 - FR1: 登录首屏支持手机号+短信登录；如提供第三方登录（Authing/极光一键），iOS 必须等权提供 Apple 登录；按需触发腾讯行为验证。
 - FR2: 首页顶部分段“旅行规划｜灵感库”，中部显示目的地卡片（城市聚合），底部统一输入框可识别小红书链接或行程自然语言。
 - FR3: 统一输入分流：优先判定小红书链接；否则解析自然语言行程；无法判定时给出二选一提示。
-- FR4: 小红书入库流程（单次仅处理一条链接）（更新）：异步获取作品 → 多模态 LLM 图文抽取（产 POI 名称候选列表 + 作者对该 POI 的评价线索，如有）→ 图片二次存储至 COS（禁止热链）→ AMap 标准化（判定标准 POI/坐标/文字地址）→ 高置信自动入库 / 低置信标记“待定位”；前台用 SSE 展示进度。
- 解析抽取策略（更新）：默认启用多模态 LLM（含图+文）进行抽取；输出“POI 名称候选列表 + 作者评价线索（如有）”，保留 evidence.source 与置信度；若无法可靠抽取，则降级为“仅媒体+待定位”。取消原 text→OCR→VLM 的流水线模式（不再按低置信逐级触发）。
+- FR4: 小红书入库流程（单次仅处理一条链接）（更新）：异步获取作品 → 多模态 LLM 图文抽取（产 POI 名称候选列表 + 作者对该 POI 的评价线索，如有）→ 视频按时长抽帧并先做语音检测 → 图片/关键帧二次存储至 COS（禁止热链）→ AMap 标准化与验证（判定标准 POI/坐标/文字地址/营业时间/评分/人均/电话等）→ 高置信自动入库 / 低置信标记“待定位”；前台用 SSE 展示进度。
+ 解析抽取策略（更新）：默认启用多模态 LLM（含图+文/关键帧）进行抽取；短视频（≤30 秒）应高频抽帧，长视频可按较低频率抽帧；静音或 BGM 视频跳过 ASR，含人声片段才进入 ASR；输出“POI 名称候选列表 + 作者评价线索（如有）”，保留 evidence.source、source_attribution、质量等级与置信度；若无法可靠抽取，则降级为“仅媒体+待定位”。取消原 text→OCR→VLM 的流水线模式（不再按低置信逐级触发）。
  - FR4.1: 连锁与分店规则（标准化阶段）（更新）：抑制常见连锁误解析：通过“连锁品牌抑制列表（可编辑）”限制泛化匹配（列表由 Backoffice 维护）；当无法确定具体分店时，从 AMap 检索≤20 家分店，按“主 POI 附近 2km”裁剪，仅保留 2km 内分店并进入后续流程。
 - FR5: 灵感库：按城市聚合与列表展示；“待定位”条目点击整行弹窗，提供 Top-5 候选地（名称+地址，不显示置信度），不阻塞后续流程。
 - FR6: 灵感选择页：按城市列出可勾选的“想去”条目；支持对“待定位”进行 Top-5 选择。
@@ -61,7 +70,7 @@
 - FR9: 顶部可行性校验（闭店/过远/超时）并提供一键修复方案。
 - FR10: AI 一次性填充：在用户确定骨架后，对“剩余可控块”进行一次性编排，并为“所有块”补全“做什么/准备什么/注意什么”的要点；不改变时间与顺序。
 - FR11: 导出行程 PNG（行程卡片）。
-- FR12: 设置页：展示用户登录信息；配置 BYOK（用户自带 OpenAI Key）并加密存储；提供账号删除与数据导出。
+- FR12: 设置页：展示用户登录信息、AI 使用额度/状态、账号删除、数据导出与反馈入口；MVP 不要求用户配置自己的模型 Key。
 - FR13: 观测与评测：接入 Langfuse（提示版本/调用追踪）与 promptfoo（离线 A/B 评测），前后端接入 Sentry。
 - FR14: 第三方集成（国内可用）：Authing/极光（登录）、腾讯行为验证、高德地图 SDK+Web API（POI/搜索/逆地理/距离矩阵）、腾讯云 COS+CDN（直传签名+缩略图处理）、n8n（异步编排）、友盟 U-Link+U-App（归因/分析）。
 
@@ -76,15 +85,15 @@
 - FR22: 冲突分级与进入 AI 填充门控：硬冲突（无坐标/闭店/跨日不可达）需先修复并禁用进入；软冲突（略超时/通勤略远等）允许进入但顶部保留提醒与一键修复。
 - FR23: AI 填充输出规范：每块输出“做什么（必填≤3行×≤30字/行）｜准备（可选≤3行×≤30字）｜注意（可选≤3行×≤30字）”，超长折叠；缺少“做什么”报错并回退；后端对超长硬裁并加省略号。
 - FR24: 导出 PNG 规格：长图固定宽度 1080 px（可选 1242 px），纵向不设上限；超图按天切片导出多张；优先 WebP，不兼容降级 JPEG（75–80%），尽量 ≤ 600 KB；导出接口支持 width_px 与 slice_by_day 参数并提供预览提示。
-- FR25: BYOK 引导：AI 填充页顶部灰条提示“当前使用平台额度，去配置我的 OpenAI Key”；设置首页显示配置状态；首次需自带 Key 时弹一次性教育页（用途与隐私），之后不重复打扰（远程开关控制）。
+- FR25: AI 使用额度引导：AI 填充/导出相关页面显示平台额度、生成状态、导出次数或成本友好提示；额度不足或服务降级时提供明确文案、重试/稍后继续路径与可配置远程开关，不要求用户配置 Key。
 - FR26: Planner Picker 入口路径：A) 底部输入解析得到 trip_params → 进入 Picker；B) 目的地卡“开始规划”→ 进入 Picker（传 city、place_hints 可选）。
 - FR27: Planner Picker 路由与参数：/planner/pick?city={CITY}&start={YYYY-MM-DD?}&days={N?}&source={home_input|home_card}&rec_id={CARD_ID?}。
-- FR27.1: 规划前确认页（Confirm）：在统一输入与进入编排之间新增确认页，字段包含：城市、出行节奏 pace（tight｜comfortable）、出行时间段（可选灵活天数；可选首尾两天到达/出发时间）、早上出发时间（用于确定 2h 起始时间槽）、是否启用“智能编排”。“智能编排”默认是；选择后将后台并行启动高质量编排（见 FR32.2）。
+- FR27.1: 规划前确认页（Confirm）：在统一输入与进入编排之间新增确认页，字段包含：城市、出行节奏 pace（tight｜comfortable）、出行时间段（可选灵活天数；可选首尾两天到达/出发时间）、起床/早上出发偏好（用于确定 2h/4h 起始时间槽）、酒店/换酒店信息、是否酒店早餐、行李处理方式、预约/门票/特殊活动约束、是否启用“智能编排”。“智能编排”默认是；选择后将后台并行启动高质量编排（见 FR32.2）。
 - FR28: Planner Picker 头部：标题“{城市} · {出行日期?占位} · {天数?占位}”；缺参以“待填写”灰字占位；右侧“修改参数”轻量 Sheet（日期选择器 + 天数步进器 + pace 可选）；返回保留来源上下文。
 - FR29: Planner Picker 视图结构：顶部城市 Tabs（按与目标城市中心点“直线距离”排序；仅展示灵感量 > 1 的城市）；中部卡片列表 + 地图-卡片联动（Sheet 吸附位 High→Split→Map-Full），详情统一全高 Bottom Sheet；弱网/无地图自动降级为清单视图并提示。
 - FR30: 已选篮与主按钮：吸底左“已选 N”（可展开面板：移除/必去 must_go/时段 time_hint/时长 stay_minutes_hint），右主按钮：“生成骨架”；允许在无已选时直接生成（selected_items 为空）；缺参时弹参数 Sheet 补齐后生成。
 - FR31: 选点与一致性：卡片/Marker 状态一致；卡片→Map 飞行 300ms；Map→卡片滚动并“抬升”；低置信项卡片右上“去定位”入口。
-- FR32: 生成骨架（部分填充 + AI 预布局，v0.2 更新）：POST /plan/generate 使用 selected_items 作为锚点；must_go/time_hint 优先落位；当启用 planner_autoplace_v1 时，对“无硬冲突”的候选按配额 quota=ceil(α×S_left)（默认 α=0.6，可远程配置）进行自动落位；selected_items 为空时，基于 AnchorPool 生成 Top-N 锚点并仅对“无硬冲突”条目落位；预布局不得引入硬冲突，软冲突不落位仅提示；预布局块需标记 origin=ai_seed，并提供 5–8 秒撤销与一键重置；未落位项进入“空槽→候选抽屉/AI 建议/自由活动”。
+- FR32: 生成骨架（部分填充 + AI 预布局，v0.2 更新）：POST /plan/generate 使用 selected_items 作为锚点；must_go/time_hint 与 dawn/sunset/night/night-market 等强时间约束优先落位；当启用 planner_autoplace_v1 时，对“无硬冲突”的 AMap 已验证候选按配额 quota=ceil(α×S_left)（默认 α=0.6，可远程配置）进行自动落位；selected_items 为空时，基于 AnchorPool/城市热门生成 Top-N 锚点并仅对“无硬冲突”条目落位；预布局不得引入硬冲突，软冲突不落位仅提示；预布局块需标记 origin=ai_seed，并提供 5–8 秒撤销与一键重置；未落位项进入“空槽→候选抽屉/AI 建议/AMap 搜索/自由活动”。
 - FR32.1: 快速版传统编排（L2 基础）：仅编排主景点（不纳入酒店/打卡点/餐饮）；按用户 pace 将粒度映射为 2h（tight）/4h（comfortable），2.5h 阈值对齐（≤2.5h→2h，>2.5h→4h）；当天优先安排同属同一 L1 下的其他 L2；生成结果可立即使用。
 - FR32.2: 高质量 LLM 编排（后台并行）：当确认页勾选“智能编排”或在天级骨架顶部手动启用时，后端后台生成高质量版本；前端先呈现快速版，顶部提示“后台正在生成高质量版本”，完成后通知用户并在顶部提供“切换-采用”入口；两版本并存直至用户确定切换。
 
@@ -94,16 +103,17 @@
 
 - FR35: 多城市与交通槽（Post-MVP，暂不在本版范围）：支持 multi_city 计划；当日存在跨城段时，生成 transport_slot 占用相应时段；跨城通勤约束仍采用 T_commute_max（基于总天数 D）；编排以 transport_slot 为边界分段进行，分段内独立应用配额与候选；transport_slot 不参与 AI 预布局的普通候选落位。
 
-- FR36: 酒店槽与餐饮处理（v0.4 更新）：每日生成 hotel_slot（今晚入住酒店，仅展示，不参与 2h/4h 槽编排）；hotel_slot 在时间轴 DayN 末尾固定显示，支持“更换酒店/查看地图/预订链接/备注”；未选择时显示“待选择”。餐饮按普通槽处理（是否纳入 2h/4h 由 Planner 输出决定）。
+- FR36: 酒店槽与餐饮处理（v0.5 更新）：每日生成 hotel_slot（今晚入住酒店，作为行程节奏、区域聚类、换酒店缓冲、行李处理和晚间活动半径的核心约束）；hotel_slot 在时间轴 DayN 末尾固定显示，支持“更换酒店/查看地图/预订链接/备注”；未选择时显示“待选择”。餐饮按普通槽处理（是否纳入 2h/4h 由 Planner 输出决定）；酒店早餐会影响早段安排。
 
 - FR36.1: 酒店感知的编排偏好（v0.3 新增）：当当日存在 hotel_slot 时，编排期对早/晚段采用软约束偏好：
   - 晚段靠近酒店的候选优先（near_hotel boost）；
   - 早段靠近上一晚酒店的候选优先；
+  - 换酒店日需要加入退房/交通/寄存/入住缓冲，晚间活动半径应以当晚酒店为主；
   - 该偏好仅作为排序加分，不得压过硬约束（营业覆盖/时窗/通勤/T_commute_max/transport_slot 边界）。
 
-- FR37: 结果页（行程单）（MVP 轻编辑）：展示 AI 填充后的行程与每槽位建议（why_short/引用来源）；允许对每个槽位的「做什么/准备/注意」进行轻编辑（≤3×30 字/段），编辑内容保存为 slot-level overrides；再次运行 AI 填充不覆盖 overrides，并提供“恢复 AI 内容（单槽重置）”；编辑槽位需返回“天级骨架 → AI 填充 → 结果页”的循环路径或“天级骨架 ↔ 灵感页”路径；支持导出 PNG；到达 result_sheet 视为“已完成”。
+- FR37: 结果页（行程单）（MVP 轻编辑）：展示 AI 填充后的行程与每槽位建议（why_short/引用来源/source_attribution/质量等级）；允许对每个槽位的「做什么/准备/注意」进行轻编辑（≤3×30 字/段），编辑内容保存为 slot-level overrides；再次运行 AI 填充不覆盖 overrides，并提供“恢复 AI 内容（单槽重置）”；编辑槽位需返回“天级骨架 → AI 填充 → 结果页”的循环路径或“天级骨架 ↔ 灵感页”路径；支持导出 PNG；到达 result_sheet 视为“已完成”；`/home/tong123/work/厦门旅游规划/output/行程单_final.md` 作为未来导出格式与 QA fixture 参考。
 
-- FR38: BYOK 冷启动策略（v0.3 新增）：默认提供首 10 次“导出”免费配额；每发生 1 次“入库”行为，免费次数 +1（鼓励 UGC 导入）；当免费次数 ≤ 3 时弹“入库教育”引导，免费次数 = 0 时弹出 BYOK 教育与配置入口；平台额度为默认通道，BYOK 为“可选增强”，重度用户可切换。
+- FR38: 平台 AI 额度与成本控制策略（v0.5 更新）：默认由平台托管 AI 调用；按用户/设备/workspace 设置每日请求、并发、导出与成本上限；每次入库、规划、AI 填充和导出均计入用量；当额度接近或达到上限时展示成本友好提示、排队/稍后重试、低成本模型或无 AI 降级路径；管理员可远程调整阈值、熔断异常用量。BYOK 仅作为 Post-MVP 可选增强。
 
 - FR39: AI 事实引用与幻觉约束（v0.3 新增）：AI 填充生成“做什么/准备/注意”时需附事实来源（如高德热门评价标签/官方介绍/可信UGC摘要）；若无法为“做什么”找到来源，则保留文案并显式标注“注意事实核查”；前端展示引用来源短链与 why_short。
 
@@ -132,7 +142,7 @@
 ### Non-Functional Requirements (NFR)
 - NFR1: 国内可用三方服务优先；外部依赖需有可替代方案或降级策略。
 - NFR2: 前后端以 SSE 展示异步进度；MVP 不使用远程推送。
-- NFR3: BYOK 安全：采用 KMS/Envelope 加密存储；日志脱敏；对象存储私有读写与签名 URL。
+- NFR3: AI 安全与成本控制：平台 Provider secrets 仅在服务端管理；日志、Sentry、Langfuse 与埋点必须脱敏；对象存储私有读写与签名 URL；AI 请求具备速率限制、成本上限、异常熔断和降级策略。
 - NFR4: 性能目标（MVP）：骨架生成与 AI 填充端到端 50 分位时延设定并监测（具体阈值由架构阶段细化）。
 - NFR5: 质量指标：首次可行行程率≥目标值；“空槽一次添加成功率”≥目标值；地理消歧 Top-1/Top-3 命中率设定并监测（阈值由架构/评测方案细化）。
 - NFR6: 可观测性：Langfuse/promptfoo/Sentry 接入完备，关键漏斗（登录→入库→选择→骨架→AI 填充→导出）可埋点度量。
@@ -171,7 +181,7 @@
 - 天级骨架页顶部提示（高质量版后台生成）：后台任务进行时显示“正在生成高质量版”；完成后提示并提供“切换-采用”。
 - AI 填充页（确认与应用）
 - 导出页（PNG）
-- 设置页（BYOK/账号删除/数据导出/反馈与建议）
+- 设置页（AI 使用额度/账号删除/数据导出/反馈与建议）
 
 ### Accessibility
 None（MVP 阶段按需评估）
@@ -189,9 +199,9 @@ Mobile Only（iOS/Android）。
 - Maps & Geo: 高德地图 SDK + Web API，距离矩阵/开闭店缓存 24h；去重以 canonical_url + 内容指纹。
 - Realtime/Async: SSE 前台进度；服务端任务与编排通过 n8n 与队列/DLQ。
 - Testing Requirements: Unit + Integration（目标：回归用例由 promptfoo/离线 A/B 支持）。
-- Security: KMS/Envelope 加密 BYOK；COS 私有读写 + 签名 URL；日志脱敏。
+- Security: 平台 Provider secrets 服务端托管；COS 私有读写 + 签名 URL；日志/埋点/观测脱敏；AI 用量限流、成本上限与异常熔断。
 - Observability: Langfuse、promptfoo、Sentry。
- - LLM Provider Abstraction: 统一 OpenAI 兼容调用（api_base + model），可按任务通过远程配置选择/切换不同提供商与模型；支持 BYOK 覆盖、超时/重试/限流、fallback 顺序与成本/时延埋点；所有调用接入 Langfuse 追踪。
+ - LLM Provider Abstraction: 统一 OpenAI 兼容调用（api_base + model），可按任务通过远程配置选择/切换不同提供商与模型；Provider secrets 由服务端统一管理；支持超时/重试/限流、fallback 顺序、成本预算与时延埋点；所有调用接入 Langfuse 追踪。
 
 ## Epic List
 - Epic 1: Foundation & Ingest & Home（基础能力与入库、首页/灵感库）
@@ -301,11 +311,11 @@ Acceptance Criteria
 3: 指标看板包含北极星与关键质量指标。
 4: 新增 seed_accept_rate、seed_conflict_rate、seed_time_ms、fallback_rate 指标面板；anchors_ready 覆盖率≥95%；新增 multi_city 生成时延、transport/hotel 渲染耗时、result_sheet 打开/导出率；引用命中率/降级率。（v0.3 更新）
 
-### Story 3.3 安全与合规（BYOK/KMS/隐私）
-As a user, I want my BYOK to be securely stored and my privacy respected, so that I can trust the app.
+### Story 3.3 账号隐私、额度与合规控制
+As a user, I want AI usage, account data, and privacy controls to be transparent and safe, so that I can trust the app.
 
 Acceptance Criteria
-1: BYOK 采用 KMS/Envelope 加密；COS 私有读写与签名 URL；日志脱敏。
+1: 平台 Provider secrets 仅服务端管理；AI 额度、速率限制、成本上限、异常熔断与失败降级可配置且可观测。
 2: 账号删除与数据导出闭环；高德版权标注规范。
 3: 国内依赖具备可替代/降级策略。
 
@@ -344,25 +354,31 @@ Acceptance Criteria
 ### 3) 灵感入库（XHS）流水线
 - 去重：canonical_url + 内容指纹（sha256 文本+主图）。
 - 图片二次存储：COS 直传签名；生成 WebP/AVIF 缩略图；禁止热链。
+- 视频处理：短视频（≤30 秒）高频抽帧；长视频低频抽帧；ASR 前先做语音检测，静音/BGM 跳过 ASR。
 - 任务健壮性：n8n/队列幂等（idempotency key）、指数退避重试、DLQ；状态通过 SSE 回推前端。
 - 内容安全：接入腾讯云内容安全基础能力（敏感词/违法图片）以防污染。
 
 ### 4) 地理消歧与地图配额
 - Top-K 融合：高德检索 + 规则重排（城市命中 > 名称相似 > 地址包含地标 > 连锁分店优先用户常去区域）。
+- 入库门槛：POI 必须经过 AMap 验证后才能写入标准 POI，记录标准名、地址、坐标、营业时间、评分、人均、电话等可用字段。
 - 开闭店来源：优先高德；无则缓存社区/官网解析（弱一致）。
 - 距离矩阵缓存：相同点对同日缓存 24h，避免配额打爆。
 - 定位弹窗：模糊词 + 拼音/简称；Top-5 仅展示“名称+地址”，不展示置信度。
+- 融合结果：每条推荐保留 source_attribution 与质量等级，方便解释“来自哪条笔记/图片/语音”。
 
 ### 5) 规划器（骨架与 2h/4h 槽位）（v0.4更新）
 - 时间粒度：默认 2h；允许 15min 微调；拖拽吸附 30/60 分钟刻度；跨日（23:00→01:00）正确处理。
+- 强时间槽：支持 dawn/sunset/night/night-market 等强约束槽，优先于普通候选自动落位。
 - 时区：短期以内地为主；后续跨区将 plan 固化 timezone。
 - 幂等编辑：插入/替换/移动/删除 API 幂等；提供 undo_token 实现撤销（撤销时效 8 秒，并在当日时间轴提供“最近操作”入口可再撤一条）。
-- 可行性：输出修复选项（换时/近邻/挪日），不只是报错。 
+- 可行性：输出修复选项（换时/近邻/挪日），不只是报错。
+- 模糊 slot 补全：优先使用已有笔记，再进行小红书补搜/AMap 附近搜索；仍不确定时回到用户确认，不用低置信结果静默落位。
 
 ### 5.1) 多城市与交通/酒店（v0.3 新增）
 - 交通槽：跨城日生成 transport_slot 并作为分段边界；分段内各自编排与配额计算。
 - 酒店槽：hotel_slot 仅用于展示当晚住宿，不参与 2h 槽编排；在时间轴 DayN 末尾固定显示，并在结果页显著展示。
 - 同城连住（stickiness）：在同一城市的连续天，默认沿用前一晚酒店；当活动重心明显偏移（>R_city×k）或用户主动选择新酒店时，再进行更换并可选重排（仅晚段/整日/取消）。
+- 酒店约束：酒店位置影响早晚半径、区域聚类、换酒店缓冲与行李策略；Confirm 需收集酒店、早餐、行李、到离时间与预约/门票。
 
 -### 6) 空槽大弹窗（搜索/候选/AI 建议/自由活动）
 - 顶部 AMap 文本搜索：关键字/类别，Top-5 列表（无地图）；结果以内嵌下拉展示，可加入候选或直接落位（遵循硬约束与分段边界）。
@@ -378,7 +394,7 @@ Acceptance Criteria
 - 目标块：仅“剩余的、可控的、非自由活动块”做编排；“所有块”都补齐「做什么/准备/注意」。
 - 不改时间/顺序：不合理则返回 warnings[]（用户回骨架页处理）。
 - 输出规范：做什么（必填≤3行×≤30字/行）｜准备（可选≤3行×≤30字）｜注意（可选≤3行×≤30字）；超长折叠；缺少“做什么”报错并回退；后端硬裁并省略号。
-- BYOK：后端代调用时 KMS 加密、脱敏日志；按 user_id 限速与用量统计。
+- AI 用量：平台托管 Provider secrets；按 user_id/device/workspace 限速、计费预算与用量统计；额度不足时降级到排队/低成本模型/无 AI 说明。
 - 追踪评测：Langfuse 记录 prompt_version、tool I/O 摘要；promptfoo 跑离线小集回归。
 
 ### 8) 数据层（Postgres + PostGIS + pgvector）
@@ -400,7 +416,7 @@ Acceptance Criteria
 
 ### 11) 法务与上架
 - 第三方 SDK 清单：友盟、U-Link、Authing、极验/腾讯行为验证、高德、COS、Sentry 等。
-- iOS 审核：等权 Apple 登录；“使用我的 OpenAI Key”不引导外部购买。
+- iOS 审核：等权 Apple 登录；MVP 不要求用户填写第三方模型 Key，AI 用量由平台托管并在应用内透明展示额度/降级。
 - 地图版权：高德 Logo/版权信息展示合规。
 
 ### 12) 运营与 Backoffice
@@ -417,7 +433,7 @@ Acceptance Criteria
 
 ## MVP 范围（v0.3-light）
 
-- 包含：单城市 Planner（2h/4h 槽 + 预布局）、near_hotel 软约束（在已选酒店时）、ResultSheet 轻编辑（overrides 不被 Re‑fill 覆盖/可单槽重置）、FR44‑lite 文本搜索、导出 PNG、BYOK 冷启动。（v0.4更新）
+- 包含：单城市 Planner（2h/4h 槽 + 预布局）、near_hotel 与换酒店缓冲、dawn/sunset/night/night-market 强时间槽、ResultSheet 轻编辑（overrides 不被 Re‑fill 覆盖/可单槽重置）、FR44‑lite 文本搜索、导出 PNG、平台 AI 额度/成本控制。（v0.5更新）
 - 不包含（Post‑MVP，仅记录为后续方向）：FR35 多城市/transport_slot 分段；FR42 酒店更换自动重排；FR43 历史步骤管理；完整地图内嵌搜索。
 
 ## Risks & Trade‑offs（MVP）
@@ -599,7 +615,7 @@ GeoResolver & CandidateRanker & AnchorPool 贯穿地理与候选重排；Validat
   - UI：新增“确认页”；天级“餐时分割”A/B 显示模式；后台生成提示与切换
   - Backoffice：连锁品牌抑制列表（可编辑/热更新/审计）
   - AI Workflow：并行路径 Quick/HQ
-  - 技术假设：LLM Provider 抽象（OpenAI 兼容：api_base + model，可远程切换/回退，BYOK 覆盖，Langfuse 追踪）
+  - 技术假设：LLM Provider 抽象（OpenAI 兼容：api_base + model，可远程切换/回退，服务端统一管理 Provider secrets，Langfuse 追踪）
 
 - 修改
   - FR4 改为“异步获取 → 多模态 LLM 图文抽取 → COS 二存 → AMap 标准化”；保留 SSE
@@ -624,8 +640,8 @@ GeoResolver & CandidateRanker & AnchorPool 贯穿地理与候选重排；Validat
   - 新增只读 ResultSheet；导出入口前展示 Validator 的修复建议；编辑回路“天级骨架 → AI 填充 → 结果页”（FR37，2.4）。
   - Workflow 调整为 Filler → ResultSheet，更贴近 UI 流。
 
-- BYOK 冷启动
-  - 首 10 次免费导出；每次“入库”+1 免费；≤3 弹入库教育，=0 弹 BYOK 配置；平台额度默认、BYOK 可选（FR38）。
+- 平台 AI 额度与成本控制
+  - 默认由平台托管 AI 用量；按用户/设备/workspace 配置请求、并发、导出与成本上限；接近上限时提示、排队或降级，异常用量可熔断；BYOK 移出 MVP，仅作为 Post-MVP 可选增强（FR38）。
 
 - 事实引用与提示
   - AI 输出需附来源；若“做什么”无可用来源，则保留文案并标注“注意事实核查”；NFR12 要求引用可追溯性（FR39，NFR12，3.1）。

@@ -6,7 +6,7 @@ Refs: PRD v0.3-light (`docs/prd.md`), Mobile IA (`docs/ux/mobile-ia.md`), v0.2 D
 
 ## Scope
 
-This delta specifies UX changes required for the MVP (v0.3-light). It builds on v0.2 and introduces ResultSheet, FR44‑lite search, hotel_slot (display-only), near_hotel hints, and BYOK visibility. Multi-city/transport/history timeline are not exposed.
+This delta specifies UX changes required for the MVP (v0.3-light). It builds on v0.2 and introduces ResultSheet, FR44‑lite search, hotel_slot (display-only), near_hotel hints, and platform AI quota visibility. Multi-city/transport/history timeline are not exposed.
 
 ## 1) IA & Navigation
 
@@ -22,7 +22,7 @@ This delta specifies UX changes required for the MVP (v0.3-light). It builds on 
 - Export PNG from this page; show feasibility fix summary before export.
 - Visiting ResultSheet marks plan as completed.
 - Slot Check-in：每个槽位右侧提供「打卡 <> 已打卡」切换；无网排队提示“稍后同步”；时间线与结果页一致显示状态对勾。
-- BYOK Counter：导出区域显示「免费导出次数：N」；N ≤ 3 显示软提醒；N = 0 显示 BYOK 教育条并跳转设置页。
+- AI Quota Status：导出区域显示平台额度状态；额度偏低显示软提醒；额度不足显示稍后继续/低成本生成说明并跳转设置页 AI 用量。
 
 ## 3) Skeleton
 
@@ -44,11 +44,11 @@ This delta specifies UX changes required for the MVP (v0.3-light). It builds on 
 - Hotel selection modal uses FR44‑lite search (Top‑5, no map); select writes to hotel_slot; no “留空”。
 - No auto-replan on choose/change in MVP.
 
-## 6) BYOK Visibility
+## 6) AI Quota Visibility
 
-- ResultSheet/export header bar shows free export counts; ≤3 soft reminder; 0 → BYOK education.
-- Default channel is platform credits; BYOK is optional enhancement.
-  - 文案：N ≤ 3：“剩余免费导出次数不多，建议尽快完成或配置 BYOK。”；N = 0：“已用尽免费导出次数。你可以配置 BYOK 继续导出。”
+- ResultSheet/export header bar shows platform quota state: normal / low / queued / degraded.
+- Default channel is platform-managed AI usage; BYOK is post-MVP optional and not shown in the MVP path.
+  - 文案：额度偏低：“平台额度不多，建议先导出关键行程。”；额度不足：“平台额度暂时不足，可稍后重试或使用低成本生成。”
 
 ## 7) Microcopy
 
@@ -59,13 +59,13 @@ This delta specifies UX changes required for the MVP (v0.3-light). It builds on 
 - Reasons: “时窗贴合/距离更近/人气更高/靠近酒店”。
  - Check-in："打卡" / "已打卡"
  - 最近行程入口："继续上次行程"
- - BYOK：N ≤ 3 提醒文案；N = 0 教育文案
+ - AI 额度：偏低提醒文案；不足/降级文案
 
 ## 8) Telemetry & Flags
 
 - New: resultsheet_open, resultsheet_export_click, slot_edit_apply, slot_edit_reset_ai,
   search_open, search_submit, search_result_click, candidate_reason_source,
-  slot_check_toggle, ai_fill_citation_open, ai_fill_citation_missing, byok_prompt_open, byok_prompt_confirm, recent_plan_open。
+  slot_check_toggle, ai_fill_citation_open, ai_fill_citation_missing, ai_quota_warning_show, ai_quota_retry_click, ai_quota_degrade_accept, recent_plan_open。
 - Keep: seed_*, skeleton_phase_seen, undo_toast_show/undo_apply, seed_reset_*.
 - Flags: skeleton_sse_ui=breadcrumb|toast, fr44lite_enabled=true|false.
 

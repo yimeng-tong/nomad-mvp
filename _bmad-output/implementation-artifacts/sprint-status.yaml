@@ -48,6 +48,6 @@ development_status:
   epic-3: backlog
   3-1-one-shot-ai-fill-result-sheet-and-citations: backlog
   3-2-observability-evaluation-and-provider-routing: backlog
-  3-3-byok-account-privacy-and-compliance-controls: backlog
+  3-3-account-privacy-quota-and-compliance-controls: backlog
   3-4-recent-trips-and-check-in-state: backlog
   epic-3-retrospective: optional

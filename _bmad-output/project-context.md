@@ -30,7 +30,7 @@ Nomad MVP turns travel inspiration into an executable itinerary: collect a singl
 - Keep request validation close to route boundaries with Zod or schema validators. Preserve the standard error envelope from `plugins/error-envelope.ts`.
 - SSE responses must include trace context and heartbeats; preserve idle-timeout behavior and auth guards on protected streams.
 - Fill output validation uses AJV 2020 through `ajv/dist/2020.js`; do not reintroduce unresolved JSON meta-schema imports.
-- BYOK and account operations must avoid logging secrets or PII. Key material should return references only, not plaintext.
+- AI provider secrets and account operations must avoid logging secrets or PII. Existing BYOK compatibility routes are not part of the MVP user path and must not return plaintext key material.
 - Prisma schema is in `packages/prisma/schema.prisma`; create or alter only entities needed by the story being implemented.
 - Do not commit `.env`, build outputs, logs, or local ignored backup material.
 
@@ -43,7 +43,7 @@ Nomad MVP turns travel inspiration into an executable itinerary: collect a singl
 
 ## Known Shape of the Codebase
 
-- `apps/server/src/index.ts` wires Fastify, rate limiting, helmet, CORS, cookies, trace IDs, error envelope, idempotency, queues, auth, BYOK, account routes, SSE mock flows, AI fill, and export.
+- `apps/server/src/index.ts` wires Fastify, rate limiting, helmet, CORS, cookies, trace IDs, error envelope, idempotency, queues, auth, account routes, existing BYOK compatibility routes, SSE mock flows, AI fill, and export.
 - `apps/server/src/schemas.ts` defines current Zod request bodies for ingest, plan generation, AI fill, and export.
 - `packages/types` generates TypeScript API types from OpenAPI.
 - `packages/prisma/schema.prisma` contains users, sessions, inspirations, POIs, plans, slots, fill runs/items, and export jobs.

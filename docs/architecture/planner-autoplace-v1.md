@@ -22,7 +22,7 @@ SSE: started → freeze → must_go → quota → candidates → place → valid
 1) freeze: place time_hint (immutable)
 2) must_go (not counted in quota): filter feasibility; sort tight_window/booking > sunset/weather > popularity > proximity; conflict with frozen → skip
 3) quota: S_left = S_total − S_hint − S_must; quota = ceil(α × S_left), α default 0.6; cold-start: if none placed and S_left ≥ 1, quota = max(quota, 1). (Post‑MVP 预留：多城市按 `transport_slot` 分段单独计算配额)
-4) candidates: others → near-similar (opt) → anchors; dedupe; K(d) = clamp(K_min, 3×quota+spare, K_max)
+4) candidates: others → near-similar (opt) → anchors; only AMap-verified POIs can be auto-placed; unresolved slots follow existing notes → Xiaohongshu search → AMap nearby search → ask user; dedupe; K(d) = clamp(K_min, 3×quota+spare, K_max)
 5) place: greedy + 1 swap; enforce T_commute_max; skip closed/overtime/too_short; stop at quota. Apply near_hotel soft boost（需已选酒店）:
    score += w_hotel · (1 - normalized_distance_to(hotel_of_day or prev_night)) for late/early periods; never override hard constraints or segment boundaries.
 6) validate: conflicts ∈ {closed, overtime, too_far, open_gap_short(<45m)}; too_far skip has no replacement
@@ -39,6 +39,8 @@ Feature Flags (Unleash)
 Boundaries & Fallbacks
 - open_gap_short < 45m: no auto placement
 - AnchorPool unavailable: fallback to static Top-50 and log
+- Dawn/sunset/night/night-market slots are hard time windows and outrank ordinary candidate placement.
+- Hotel changes require luggage/check-in buffers before late-day placement.
 
 Priority & Ties
 - Placement priority: time_hint > must_go > others
@@ -46,5 +48,4 @@ Priority & Ties
  - Category slots externalized: see `docs/architecture/planner-category-slots.json`（hotel is display-only and not auto-placed; dining windows remain hints only）
 
 Security & Cost Notes
-- BYOK uses local CMK env (LOCAL_KMS_CMK_B64), no cloud KMS
-
+- Provider secrets are managed server-side; planner calls obey platform quotas, concurrency limits, cost budgets, and fallback/degrade switches.

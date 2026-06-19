@@ -16,8 +16,8 @@
 - AMap SDK + Web API（POI/搜索/逆地理/距离矩阵）
 
 ## LLM & Vision
-- VLM：默认启用（图+文抽取）
-- LLM Provider 抽象：OpenAI 兼容（api_base + model），远程切换/回退；BYOK 覆盖；Langfuse 追踪
+- VLM：默认启用（图+文/关键帧抽取）；短视频高频抽帧；ASR 前先做语音检测，静音/BGM 跳过
+- LLM Provider 抽象：OpenAI 兼容（api_base + model），远程切换/回退；Provider secrets 服务端托管；平台额度/成本控制；Langfuse 追踪
 
 ## Observability & QA
 - Langfuse、Sentry、promptfoo（回归）
@@ -26,4 +26,3 @@
 ## Performance Targets
 - 交互动效 120–200ms；HQ 准备可视化
 - TTFP：5 分钟内得到可用骨架（P50）
-

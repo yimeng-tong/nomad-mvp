@@ -13,7 +13,7 @@ Date: 2025-10-26
 - API: Core endpoints defined; optimistic locking for slots; error envelope present.
 - SSE: Event payloads validated; `PingEvent.trace_id` added; `ts` unified to ms.
 - Data: Must-fix fields present (rev/lock, geom, pgvector); indexes defined.
-- Security/BYOK: Envelope flow documented; endpoints TBD.
+- Security/AI usage: Provider secrets, quota, and degradation controls documented; endpoints TBD.
 - Observability: Dashboards + synthetic probes defined.
 
 ## Action Items

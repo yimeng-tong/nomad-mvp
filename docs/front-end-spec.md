@@ -49,7 +49,7 @@ Rationale:
 ```mermaid
 graph TD
   A[Login / 首屏登录] --> B[Home / 首页<br/>顶部分段：旅行规划｜灵感库]
-  B --> C[Confirm / 确认页<br/>城市｜节奏2h/4h｜时间段｜早出发｜智能编排=是]
+  B --> C[Confirm / 确认页<br/>城市｜节奏2h/4h｜到离时间｜酒店/行李｜智能编排=是]
   B --> D[Library / 灵感库]
   C --> E[Picker / 灵感选择（上下文）]
   E --> F[Skeleton / 天级骨架<br/>2h/4h 槽位＋大弹窗＋可行性校验]
@@ -57,7 +57,7 @@ graph TD
   F --> H[AI Fill / 一次性填充]
   H --> I[Result Sheet / 结果页（导出 PNG）]
 
-  B --> J[Settings / 设置<br/>BYOK｜账号删除｜数据导出｜反馈入口]
+  B --> J[Settings / 设置<br/>AI 用量｜账号删除｜数据导出｜反馈入口]
   J --> K[Feedback WebView / 反馈与建议]
 
   %% 关键交互与降级
@@ -70,7 +70,7 @@ graph TD
 - Secondary Navigation:
   - Skeleton 顶部：D1..Dn Tabs；状态条（HQ 并行/完成可“切换-采用”）；A/B 展示开关（餐时分割）。
   - Timeline：空槽大弹窗（候选/AI 建议/自由活动）；长按编辑；顶部可行性校验与一键修复。
-  - Settings：BYOK、账号删除、数据导出、反馈入口（WebView）。
+  - Settings：AI 使用额度/状态、账号删除、数据导出、反馈入口（WebView）。
 - Breadcrumb Strategy: 移动端单页面流，面包屑不显式；通过标题/返回与 Tabs 维持定位。
 
 ## User Flows
@@ -202,22 +202,22 @@ graph TD
 
 ---
 
-### Flow: Settings → BYOK 配置
-**User Goal:** 配置个人 OpenAI Key 覆盖平台额度
+### Flow: Settings → AI 用量与额度
+**User Goal:** 查看平台 AI 使用额度、生成状态与降级策略
 
-**Entry Points:** 设置页 BYOK
+**Entry Points:** 设置页 AI 用量、AI Fill/ResultSheet 额度提示
 
-**Success Criteria:** 安全保存，后续调用走 BYOK；可随时切换/删除
+**Success Criteria:** 用户理解剩余额度、排队/降级状态与重试路径，不需要配置自己的 Key
 
 ```mermaid
 graph TD
-  A[Settings] --> B[打开 BYOK]
-  B --> C[录入/校验/保存]
-  C --> D[成功提示]
+  A[Settings] --> B[打开 AI 用量]
+  B --> C[查看额度/并发/降级状态]
+  C --> D[重试/稍后继续/低成本模式说明]
 ```
 
 **Edge Cases & Error Handling:**
-- 校验失败/失效 → 友好提示与回退到平台额度
+- 额度不足/服务繁忙 → 友好提示、排队、稍后重试或无 AI 降级路径
 
 ## Wireframes & Mockups
 
@@ -226,7 +226,7 @@ graph TD
 
 ## Component Library / Design System（提纲）
 
-- 组件清单（示例）：TopSwitch、UnifiedInput、CityCard、LocationModal、PlanTimelineMobile、FixSheet、HQStatusBar、SwitchAdoptToast、BYOKForm
+- 组件清单（示例）：TopSwitch、UnifiedInput、CityCard、LocationModal、PlanTimelineMobile、FixSheet、HQStatusBar、SwitchAdoptToast、TripConstraintForm、AIQuotaPanel
 - 状态与变体：loading/empty/error/weak-network
 
 ## Component Specifications（Mobile）
@@ -249,11 +249,15 @@ graph TD
 - Props: `value: time`，`step: 15|30`，`onChange(time)`
 - Notes: 与 2h/4h 起始对齐，影响 Timeline 起点
 
-5) SmartPlanSwitch
+5) TripConstraintForm
+- Props: `hotels[]`，`breakfastIncluded?: boolean`，`luggagePlan?: 'old_hotel'|'new_hotel'|'station'|'carry'|'unknown'`，`tickets?: Constraint[]`，`wakePreference?`
+- Notes: 酒店影响早晚活动半径、区域聚类、换酒店缓冲与行李处理；预约/门票用于生成 hard time hints
+
+6) SmartPlanSwitch
 - Props: `checked: true`（默认是），`onToggle(checked)`，`hint: string`
 - Notes: 打开即后台启动 HQ 并行；状态交由 Skeleton 顶部状态条承接
 
-6) PrimaryCTAButton
+7) PrimaryCTAButton
 - Props: `label`，`onPress`，`loading?`，`disabled?`
 
 ### Picker Components
@@ -311,8 +315,9 @@ graph TD
 - ExportButton: 反馈成功/失败；超长分天切片
 
 ### Settings & Feedback Components
-1) BYOKForm
-- Props: `value`，`onValidate(key)`，`onSave(key)`；失败回退平台额度
+1) AIQuotaPanel
+- Props: `quotaStatus`，`usageSummary`，`degradeState?`，`onRetry?`，`onOpenDetails?`
+- Behavior: 展示平台额度、生成/导出用量、并发/排队状态与降级提示；不收集用户模型 Key
 
 2) FeedbackWebView
 - Props: `url`，失败降级 `FallbackForm{text, screenshot}`（COS 上传）
@@ -335,6 +340,8 @@ graph TD
   - 城市未选："请选择城市"
   - 日期/天数缺失："请完善出行时间"
   - 早出发未设："请选择出发时间"
+  - 酒店未定："可先留空，稍后会影响早晚安排"
+  - 行李未定："换酒店日请确认行李处理"
 - 校验失败：
   - 到/离港时间无效："到/离港时间不合理，请重新选择"
   - 时间范围过短："最少 1 天，请调整"
@@ -376,10 +383,11 @@ graph TD
 - 导出成功："已导出"
 - 导出失败："导出失败 · 重试"
 
-### Settings / BYOK
-- 保存成功："已保存"
-- 校验失败："密钥无效，请检查"
-- 回退提示："已回退到平台额度"
+### Settings / AI 用量
+- 正常："当前使用平台额度"
+- 接近上限："额度不多，建议先导出关键行程"
+- 额度不足："额度暂时不足，可稍后重试"
+- 降级："已切换为低成本生成"
 
 ### Feedback WebView
 - 打开失败："页面无法内嵌，已在系统浏览器打开"
@@ -400,8 +408,10 @@ graph TD
   1) 城市选择（CityPicker）
   2) 出行节奏 Pace（Segmented: 紧凑2h｜舒适4h）
   3) 出行时间段（灵活天数/日期选择；可选首尾到/离港时间）
-  4) 早上出发时间（2h/4h 起始对齐选项）
-  5) 智能编排开关（默认是，说明“后台将生成高质量版本，可稍后切换-采用”）
+  4) 起床/早上出发偏好（2h/4h 起始对齐选项）
+  5) 酒店、是否酒店早餐、换酒店与行李处理
+  6) 预约/门票/日出/日落/夜市等强时间约束
+  7) 智能编排开关（默认是，说明“后台将生成高质量版本，可稍后切换-采用”）
 - Footer CTA: “继续（进入灵感选择）”。
 
 **Interaction Notes**: 参数校验；缺参弹 Sheet 补齐；弱网保底本地回显。
@@ -444,15 +454,15 @@ graph TD
 
 **Interaction Notes**: 超长分天切片；弱网提示重试。
 
-### Settings（设置/BYOK/反馈）
-**Purpose**: 账户与 Key 管理、反馈入口。
+### Settings（设置/AI 用量/反馈）
+**Purpose**: 账户、AI 用量、隐私与反馈入口。
 
 **Layout**
-- BYOK: 录入/校验/保存；状态显示；失败回退平台额度。
+- AI Usage: 平台额度、生成/导出用量、并发/排队状态、降级说明。
 - Account: 账号删除、数据导出。
 - Feedback: 跳 WebView（失败降级内置表单）。
 
-**Interaction Notes**: BYOK 安全提示；最小必要字段；不打断主流程。
+**Interaction Notes**: 额度/成本提示不打断主流程；仅在额度不足或降级时给清晰行动路径。
 
 ### Feedback WebView（反馈与建议）
 **Purpose**: 在内嵌环境完成官方反馈流程。
@@ -476,9 +486,9 @@ graph TD
 ## Analytics & Metrics Plan（埋点与指标方案）
 
 ### 命名规范与采集约束
-- 命名：snake_case，按页面/领域前缀（如 `confirm_*`, `picker_*`, `skeleton_*`, `aifill_*`, `export_*`, `byok_*`）。
+- 命名：snake_case，按页面/领域前缀（如 `confirm_*`, `picker_*`, `skeleton_*`, `aifill_*`, `export_*`, `ai_quota_*`）。
 - 上报：统一封装层（友盟/埋点 SDK），失败重试与离线队列；所有调用含时间戳与 session_id。
-- 隐私：不采集 PII（手机号/邮箱/Key）；BYOK 仅记录操作结果，不记录密钥明文/摘要。
+- 隐私：不采集 PII（手机号/邮箱/Key）；AI 用量事件仅记录状态、额度区间、降级原因，不记录用户输入原文或 Provider secrets。
  - 事件包头（Envelope，必携）：`event_id`（uuidv4）、`prev_event_id?`、`seq`（自增）、`timestamp_ms`、`session_id`、`journey_id?`、`plan_id?`、`trace_id?`、`span_id?`
  - ID 生成规则：
    - `journey_id`：在 `confirm_continue` 生成，贯穿 Confirm→Result 的一次完整路径；“另存为/新计划”生成新 ID。
@@ -490,7 +500,7 @@ graph TD
 - Confirm
   - `confirm_open`
   - `confirm_param_change` {field, from, to}
-  - `confirm_continue` {city, days, pace, morning_start, smart_plan:true}
+  - `confirm_continue` {city, days, pace, morning_start, hotel_count, has_luggage_plan, ticket_count, smart_plan:true}
 
 - Picker（灵感选择）
   - `picker_open` {city, tabs_count}
@@ -525,13 +535,12 @@ graph TD
   - `export_success` {time_ms}
   - `export_fail` {error_code}
 
-- Settings / BYOK
-  - `byok_open`
-  - `byok_validate_success`
-  - `byok_validate_fail` {error_code}
-  - `byok_save_success`
-  - `byok_save_fail` {error_code}
-  - `byok_revert_platform`
+- Settings / AI Quota
+  - `ai_quota_open`
+  - `ai_quota_warning_show` {reason}
+  - `ai_quota_retry_click`
+  - `ai_quota_degrade_show` {mode}
+  - `ai_quota_degrade_accept` {mode}
 
 - Feedback
   - `feedback_open` {mode:'webview|fallback_form'}
@@ -582,5 +591,3 @@ graph TD
 - 统一属性字典与事件校验（Type 定义 + 编译期校验）。
 - 失败样本采样与脱敏；关键错误附 `error_code`（与后端统一枚举）。
  - `journey_id` 生命周期：`confirm_continue` 生成→写本地→跨页面与重启恢复；深链携带 `plan_token` 以跨设备回连同一计划路径。
-
-

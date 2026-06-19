@@ -13,6 +13,7 @@ import homeRoutes from './routes/home.js';
 import libraryRoutes from './routes/library.js';
 import byokRoutes from './routes/byok.js';
 import accountRoutes from './routes/account.js';
+import feedbackRoutes from './routes/feedback.js';
 import queuesPlugin from './plugins/queues.js';
 import traceIdPlugin from './plugins/trace-id.js';
 import errorEnvelope from './plugins/error-envelope.js';
@@ -61,6 +62,7 @@ await app.register(homeRoutes);
 await app.register(libraryRoutes);
 await app.register(byokRoutes);
 await app.register(accountRoutes);
+await app.register(feedbackRoutes);
 
 // SSE helper plugin: standard ping and headers
 await app.register(fastifyPlugin(async (f) => {

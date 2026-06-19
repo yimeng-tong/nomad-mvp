@@ -179,6 +179,14 @@ export interface paths {
      */
     get: operations["getFeedbackLink"];
   };
+  "/account/export": {
+    /** Queue account data export */
+    post: operations["accountExport"];
+  };
+  "/account": {
+    /** Queue account deletion */
+    delete: operations["accountDelete"];
+  };
   "/auth/bind/apple": {
     /** Bind Apple identity */
     post: operations["bindApple"];
@@ -204,6 +212,28 @@ export interface components {
     FeedbackLinkResponse: {
       /** Format: uri */
       url: string;
+    };
+    AccountTaskResponse: {
+      task_id: string;
+      /** @enum {string} */
+      status: "queued" | "in_progress" | "done" | "failed";
+    };
+    UserKeyStatusResponse: {
+      configured: boolean;
+      provider?: string | null;
+      key_ref?: string | null;
+    };
+    ByokValidateRequest: {
+      key: string;
+    };
+    ByokValidateResponse: {
+      valid: boolean;
+      provider?: string | null;
+    };
+    ByokSaveRequest: {
+      key: string;
+      /** @enum {string|null} */
+      provider?: "openai" | null;
     };
     LoginMethod: {
       /** @enum {string} */
@@ -1294,39 +1324,36 @@ export interface operations {
   byokValidate: {
     requestBody: {
       content: {
-        "application/json": {
-          key: string;
-        };
+        "application/json": components["schemas"]["ByokValidateRequest"];
       };
     };
     responses: {
       /** @description Validation result */
       200: {
         content: {
-          "application/json": {
-            valid?: boolean;
-            provider?: string | null;
-          };
+          "application/json": components["schemas"]["ByokValidateResponse"];
         };
       };
       400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
     };
   };
   /** Save BYOK (encrypted) — alias for /user-key */
   byokSave: {
     requestBody: {
       content: {
-        "application/json": {
-          key: string;
-        };
+        "application/json": components["schemas"]["ByokSaveRequest"];
       };
     };
     responses: {
-      /** @description Saved */
-      204: {
-        content: never;
+      /** @description Saved key status */
+      200: {
+        content: {
+          "application/json": components["schemas"]["UserKeyStatusResponse"];
+        };
       };
       400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
     };
   };
   /** Text-only POI search (MVP FR44-lite) */
@@ -1536,6 +1563,30 @@ export interface operations {
       500: components["responses"]["Error500"];
     };
   };
+  /** Queue account data export */
+  accountExport: {
+    responses: {
+      /** @description Account export task */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AccountTaskResponse"];
+        };
+      };
+      401: components["responses"]["Error401"];
+    };
+  };
+  /** Queue account deletion */
+  accountDelete: {
+    responses: {
+      /** @description Account deletion task */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AccountTaskResponse"];
+        };
+      };
+      401: components["responses"]["Error401"];
+    };
+  };
   /** Bind Apple identity */
   bindApple: {
     requestBody: {
@@ -1576,28 +1627,28 @@ export interface operations {
       /** @description Key status */
       200: {
         content: {
-          "application/json": {
-            configured?: boolean;
-          };
+          "application/json": components["schemas"]["UserKeyStatusResponse"];
         };
       };
+      401: components["responses"]["Error401"];
     };
   };
   /** Set or replace BYOK (encrypted and envelope stored) */
   setUserKey: {
     requestBody: {
       content: {
-        "application/json": {
-          key: string;
-        };
+        "application/json": components["schemas"]["ByokSaveRequest"];
       };
     };
     responses: {
-      /** @description Saved */
-      204: {
-        content: never;
+      /** @description Saved key status */
+      200: {
+        content: {
+          "application/json": components["schemas"]["UserKeyStatusResponse"];
+        };
       };
       400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
     };
   };
   /** Delete BYOK */

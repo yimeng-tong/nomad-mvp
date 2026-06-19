@@ -14,7 +14,16 @@ export type AuthEventName =
   | 'library_city_tap'
   | 'library_select'
   | 'library_candidate_open'
-  | 'planner_handoff';
+  | 'planner_handoff'
+  | 'settings_view'
+  | 'settings_byok_save_success'
+  | 'settings_byok_save_fail'
+  | 'settings_byok_delete'
+  | 'account_export_start'
+  | 'account_delete_start'
+  | 'feedback_open'
+  | 'feedback_submit_success'
+  | 'feedback_submit_fail';
 
 export type AnalyticsProps = Record<string, string | number | boolean | null | undefined>;
 
@@ -30,8 +39,13 @@ const blockedKeys = new Set([
   'byok',
   'captchatoken',
   'code',
+  'content',
   'cookie',
+  'feedback',
+  'feedbackbody',
+  'feedbacktext',
   'key',
+  'message',
   'confidence',
   'distance',
   'duration',
@@ -61,7 +75,7 @@ export function sanitizeAnalyticsProps(props: AnalyticsProps = {}) {
   return Object.fromEntries(
     Object.entries(props).filter(([key]) => {
       const normalized = normalizeAnalyticsKey(key);
-      return !blockedKeys.has(normalized) && !/(confidence|distance|duration|score|rank|rating)/i.test(normalized);
+      return !blockedKeys.has(normalized) && !/(apikey|byok|confidence|distance|duration|feedback|score|rank|rating|secret|token|url)/i.test(normalized);
     }),
   ) as AnalyticsProps;
 }

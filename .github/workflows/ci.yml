@@ -60,6 +60,9 @@ jobs:
       - name: Home and Library contract probe
         run: pnpm run ci:home-library
 
+      - name: Settings contract probe
+        run: pnpm run ci:settings
+
       - name: Push Prisma schema
         run: pnpm -F nomad-prisma run db:push
 

@@ -60,6 +60,9 @@ jobs:
       - name: Home and Library contract probe
         run: pnpm run ci:home-library
 
+      - name: Planner contract probe
+        run: pnpm run ci:planner
+
       - name: Settings contract probe
         run: pnpm run ci:settings
 

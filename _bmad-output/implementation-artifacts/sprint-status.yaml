@@ -1,5 +1,5 @@
 # generated: 2026-06-17
-# last_updated: 2026-06-19
+# last_updated: 2026-06-21
 # project: nomad-mvp
 # project_key: NOKEY
 # tracking_system: file-system
@@ -24,7 +24,7 @@
 #   - done: Retrospective has been completed
 
 generated: 2026-06-17
-last_updated: 2026-06-19
+last_updated: 2026-06-21
 project: nomad-mvp
 project_key: NOKEY
 tracking_system: file-system
@@ -39,7 +39,7 @@ development_status:
   1-5-settings-feedback-and-account-entry-points: done
   epic-1-retrospective: done
   epic-2: in-progress
-  2-0-confirm-and-planner-picker: ready-for-dev
+  2-0-confirm-and-planner-picker: review
   2-1-generate-day-skeleton-with-quick-and-hq-planning: backlog
   2-2-timeline-editing-undo-and-history: backlog
   2-3-feasibility-validation-and-one-click-fixes: backlog

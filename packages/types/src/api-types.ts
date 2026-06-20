@@ -348,10 +348,13 @@ export interface components {
       item_id: string;
       poi_id?: string | null;
       /** @enum {string|null} */
-      source?: "library" | "home_card" | "home_input" | null;
-      must_go?: boolean | null;
-      /** @enum {string|null} */
-      time_hint?: "morning" | "afternoon" | "evening" | null;
+      source?: "library" | "home_card" | "home_input" | "uploaded_inspiration" | null;
+      /**
+       * @description Internal semantic for user-selected L3 planning anchors. Do not expose as must-go UI.
+       * @enum {string|null}
+       */
+      anchor_intent?: "selected_required" | null;
+      time_hint?: components["schemas"]["PlannerTimeHint"];
       stay_minutes_hint?: number | null;
     };
     PlannerHandoff: {
@@ -408,6 +411,59 @@ export interface components {
     LibraryCandidatesResponse: {
       candidates: components["schemas"]["LibraryCandidate"][];
     };
+    /** @enum {string} */
+    PlannerTimeHint: "dawn" | "morning" | "afternoon" | "sunset" | "evening" | "night" | "night_market";
+    /** @enum {string} */
+    PlannerAnchorSource: "library" | "home_card" | "home_input" | "uploaded_inspiration";
+    PlannerSelectedItem: {
+      item_id: string;
+      poi_id?: string | null;
+      source: components["schemas"]["PlannerAnchorSource"];
+      /**
+       * @description Internal semantic for user-selected L3 anchors. UI should only show selected state.
+       * @default selected_required
+       * @enum {string}
+       */
+      anchor_intent?: "selected_required";
+      time_hint?: components["schemas"]["PlannerTimeHint"];
+      stay_minutes_hint?: number | null;
+    };
+    PlannerCandidateItem: {
+      item_id: string;
+      poi_id?: string | null;
+      source: components["schemas"]["PlannerAnchorSource"];
+      time_hint?: components["schemas"]["PlannerTimeHint"];
+      stay_minutes_hint?: number | null;
+    };
+    PlanHotelConstraint: {
+      /** Format: date */
+      date: string;
+      hotel_name?: string | null;
+      /** @description AMap POI id when matched. */
+      poi_id?: string | null;
+      address?: string | null;
+      /** @default false */
+      breakfast_included?: boolean;
+      /** @default false */
+      leave_blank?: boolean;
+    };
+    PlanLuggagePlan: {
+      /**
+       * @default undecided
+       * @enum {string}
+       */
+      mode?: "carry_with_me" | "hotel_storage" | "station_storage" | "courier" | "undecided";
+      notes?: string | null;
+      /** @default false */
+      hotel_change_help_needed?: boolean;
+    };
+    PlanHardTimeHint: {
+      item_id: string;
+      poi_id?: string | null;
+      time_hint: components["schemas"]["PlannerTimeHint"];
+      /** @enum {string} */
+      source: "uploaded_inspiration" | "user_selected";
+    };
     IngestStartRequest: {
       /** @enum {string} */
       source: "xhs";
@@ -460,19 +516,22 @@ export interface components {
       /** Format: date */
       start_date: string;
       days: number;
-      /**
-       * @default normal
-       * @enum {string}
-       */
-      pace?: "slow" | "normal" | "fast";
-      selected_items?: ({
-          item_id: string;
-          poi_id?: string;
-          must_go?: boolean;
-          /** @enum {string|null} */
-          time_hint?: "morning" | "afternoon" | "evening" | null;
-          stay_minutes_hint?: number;
-        })[];
+      /** @enum {string} */
+      pace: "tight" | "comfortable";
+      /** @enum {string|null} */
+      source?: "home_input" | "home_card" | null;
+      rec_id?: string | null;
+      selected_items?: components["schemas"]["PlannerSelectedItem"][];
+      candidate_items?: components["schemas"]["PlannerCandidateItem"][];
+      hotels?: components["schemas"]["PlanHotelConstraint"][];
+      luggage_plan?: components["schemas"]["PlanLuggagePlan"];
+      wake_preference?: string | null;
+      morning_start_time?: string | null;
+      first_day_arrival_time?: string | null;
+      last_day_departure_time?: string | null;
+      /** @default true */
+      smart_planning?: boolean;
+      hard_time_hints?: components["schemas"]["PlanHardTimeHint"][];
     };
     PlanGenerateResponse: {
       plan_id: string;
@@ -733,7 +792,7 @@ export interface components {
     FixSuggestion: {
       id: string;
       conflict_type: components["schemas"]["ValidatorConflictType"];
-      /** @description Does not modify frozen/must_go/time_hint */
+      /** @description Does not modify frozen selected anchors or time hints */
       safe?: boolean;
       /** @description Needs user to pick an alternative or candidate */
       requires_user_input?: boolean;
@@ -1374,6 +1433,8 @@ export interface operations {
           };
         };
       };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
     };

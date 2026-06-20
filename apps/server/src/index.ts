@@ -11,6 +11,8 @@ import authRoutes from './routes/auth.js';
 import ingestRoutes from './routes/ingest.js';
 import homeRoutes from './routes/home.js';
 import libraryRoutes from './routes/library.js';
+import searchRoutes from './routes/search.js';
+import planRoutes from './routes/plan.js';
 import byokRoutes from './routes/byok.js';
 import accountRoutes from './routes/account.js';
 import feedbackRoutes from './routes/feedback.js';
@@ -22,10 +24,8 @@ import idempotencyRedis from './plugins/idempotency-redis.js';
 import { sentryInit, trackFillRun } from './integrations/telemetry.js';
 import { initFlags, isEnabled } from './integrations/flags.js';
 import { z } from 'zod';
-import { PlanGenerateBody, AiFillBody, ExportBody } from './schemas.js';
+import { AiFillBody, ExportBody } from './schemas.js';
 import type { components } from '../../../packages/types/src/api-types.js';
-type PlanGenerateRequest = components['schemas']['PlanGenerateRequest'];
-type PlanGenerateResponse = components['schemas']['PlanGenerateResponse'];
 type AiFillRequest = components['schemas']['AiFillRequest'];
 type AiFillResponse = components['schemas']['AiFillResponse'];
 type ExportPngRequest = components['schemas']['ExportPngRequest'];
@@ -60,6 +60,8 @@ await app.register(authRoutes);
 await app.register(ingestRoutes);
 await app.register(homeRoutes);
 await app.register(libraryRoutes);
+await app.register(searchRoutes);
+await app.register(planRoutes);
 await app.register(byokRoutes);
 await app.register(accountRoutes);
 await app.register(feedbackRoutes);
@@ -76,47 +78,6 @@ await app.register(fastifyPlugin(async (f) => {
 
 // Health
 app.get('/health', async () => ({ status: 'ok' }));
-
-// Plan generate → ACK 202 and stream phases
-app.post<{ Body: PlanGenerateRequest, Reply: PlanGenerateResponse | any }>('/plan/generate', { config: { rateLimit: { max: 60, timeWindow: 24 * 60 * 60 * 1000 } } }, async (req, reply) => {
-  const traceId = req.traceId || randomUUID();
-  const parsed = PlanGenerateBody.safeParse((req as any).body ?? {});
-  if (!parsed.success) return reply.sendError('PLAN_PARAMS_INVALID', 'invalid plan body', 400, false, { issues: parsed.error.issues });
-  const cached = await app.checkIdempotency('/plan/generate', req.body, 10 * 60 * 1000);
-  if (cached) return reply.header('X-Trace-Id', traceId).code(202).send(cached);
-  const planId = `pl_${randomUUID()}`;
-  const planJobId = `pj_${randomUUID()}`;
-  const res: PlanGenerateResponse = { plan_id: planId, plan_job_id: planJobId, sse_url: `/sse/plan/${planJobId}` };
-  await app.storeIdempotency('/plan/generate', req.body, 10 * 60 * 1000, res);
-  reply.header('X-Trace-Id', traceId).code(202).send(res);
-});
-
-app.get('/sse/plan/:jobId', { preHandler: authGuard }, async (req, reply) => {
-  const traceId = (req.headers['x-trace-id'] as string) || randomUUID();
-  reply.raw.setHeader('Cache-Control', 'no-cache');
-  reply.raw.setHeader('Content-Type', 'text/event-stream');
-  reply.raw.setHeader('Connection', 'keep-alive');
-  const jobId = (req.params as any).jobId as string;
-  const phases = ['started', 'anchor', 'cluster', 'validate', 'persist', 'done'] as const;
-  let idx = 0;
-  const tick = () => {
-    const phase = phases[idx];
-    const now = Date.now();
-    reply.sse({ event: 'plan', data: JSON.stringify({ trace_id: traceId, plan_job_id: jobId, phase, unplaced_count: 0, ts: now }) });
-    idx += 1;
-    if (idx >= phases.length) return;
-    setTimeout(tick, 1500);
-  };
-  tick();
-  const ping = setInterval(() => reply.sse({ event: 'ping', data: JSON.stringify({ trace_id: traceId, seq: Date.now(), heartbeat_ms: SSE_HEARTBEAT_MS, ts: Date.now() }) }), SSE_HEARTBEAT_MS);
-  req.raw.on('close', () => clearInterval(ping));
-});
-
-// Plan edit slot (optimistic lock placeholder)
-app.patch('/plan/slots/:slotId', async (req, reply) => {
-  const undo = `u_${randomUUID()}`;
-  reply.send({ undo_token: undo, plan_rev: 2 });
-});
 
 // AI Fill → 202 and SSE
 app.post<{ Body: AiFillRequest, Reply: AiFillResponse | any }>('/plan/ai-fill', { config: { rateLimit: { max: 10, timeWindow: 60 * 60 * 1000 } } }, async (req, reply) => {

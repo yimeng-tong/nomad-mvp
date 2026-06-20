@@ -71,8 +71,8 @@ describe('App', () => {
     fireEvent.click(await screen.findByRole('button', { name: /选择 西湖傍晚散步/ }));
     fireEvent.click(screen.getByRole('button', { name: '开始规划' }));
 
-    expect(await screen.findByRole('heading', { name: '行程选择已准备' })).toBeInTheDocument();
-    expect(screen.getByText('已带入 1 个灵感锚点')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: '确认旅行参数' })).toBeInTheDocument();
+    expect(screen.getByText('已带入 1 个灵感')).toBeInTheDocument();
   });
 
   it('opens Settings from the authenticated Home menu', async () => {

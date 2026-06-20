@@ -78,7 +78,24 @@ async function main() {
   await assertIngestStages(j1.sse_url);
   await assertKeepAlive(j1.sse_url, 'ingest');
 
-  const r2 = await fetch(`${API}/plan/generate`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ city: '杭州', start_date: '2025-11-02', days: 1 }) } as any);
+  const r2 = await fetch(`${API}/plan/generate`, {
+    method: 'POST',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      city: '杭州',
+      start_date: '2025-11-02',
+      days: 1,
+      pace: 'comfortable',
+      selected_items: [{ item_id: 'sse_anchor_1', source: 'home_input', anchor_intent: 'selected_required' }],
+      candidate_items: [{ item_id: 'sse_candidate_1', source: 'home_input' }],
+      hotels: [{ date: '2025-11-02', leave_blank: true, breakfast_included: false }],
+      luggage_plan: { mode: 'undecided', hotel_change_help_needed: false },
+      wake_preference: '08:30',
+      morning_start_time: '09:30',
+      smart_planning: true,
+    }),
+  } as any);
+  if (r2.status !== 202) throw new Error(`plan ack failed: ${r2.status} ${await r2.text()}`);
   const j2 = await r2.json() as any;
   await assertTTFU(j2.sse_url, 'plan');
   await assertKeepAlive(j2.sse_url, 'plan');

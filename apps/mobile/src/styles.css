@@ -20,6 +20,7 @@ body {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
 }
@@ -173,7 +174,8 @@ h1 {
   font-weight: 650;
 }
 
-.field input {
+.field input,
+.field select {
   width: 100%;
   min-height: 48px;
   border: 1px solid rgba(23, 33, 27, 0.14);
@@ -196,6 +198,7 @@ h1 {
 }
 
 .field input:focus-visible,
+.field select:focus-visible,
 .field textarea:focus-visible,
 button:focus-visible {
   outline: 3px solid rgba(238, 111, 86, 0.38);
@@ -441,11 +444,6 @@ button:focus-visible {
   font-weight: 760;
 }
 
-.planner-placeholder {
-  align-content: center;
-  min-height: 70vh;
-}
-
 .settings-shell {
   min-height: 100vh;
   padding: max(14px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
@@ -576,6 +574,329 @@ button:focus-visible {
   text-align: left;
   background: #f2f4ef;
   color: #17211b;
+}
+
+.planner-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  padding: max(14px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
+  background: #f8faf7;
+}
+
+.planner-header {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding-bottom: 12px;
+}
+
+.planner-param-line {
+  margin: 0;
+  color: #52605a;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.planner-text-button {
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: #edf7f4;
+  color: #247e6f;
+  font-weight: 760;
+}
+
+.planner-content {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding-bottom: 92px;
+}
+
+.planner-content h1 {
+  font-size: 26px;
+}
+
+.planner-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  gap: 10px;
+}
+
+.planner-section {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(23, 33, 27, 0.12);
+  background: #ffffff;
+}
+
+.planner-section h2 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.planner-segment {
+  width: min(100%, 240px);
+}
+
+.planner-errors {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-left: 4px solid #ee6f56;
+  background: #fff7f3;
+}
+
+.planner-errors p {
+  margin: 0;
+  color: #7a2d1f;
+  line-height: 1.45;
+}
+
+.hotel-list {
+  display: grid;
+  gap: 10px;
+}
+
+.hotel-row {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f8faf7;
+  border: 1px solid rgba(23, 33, 27, 0.1);
+}
+
+.hotel-row-actions,
+.planner-checkbox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  color: #33413a;
+  font-weight: 700;
+}
+
+.hotel-row-actions button {
+  min-height: 40px;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #edf7f4;
+  color: #247e6f;
+  font-weight: 760;
+}
+
+.hotel-match-list {
+  display: grid;
+  gap: 7px;
+}
+
+.hotel-match-list button {
+  min-height: 44px;
+  display: grid;
+  gap: 3px;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid rgba(23, 33, 27, 0.12);
+  color: #17211b;
+  text-align: left;
+}
+
+.hotel-match-list button span {
+  color: #52605a;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.planner-primary {
+  min-height: 50px;
+  border-radius: 8px;
+  background: #247e6f;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.planner-picker {
+  padding-bottom: 108px;
+}
+
+.map-sheet {
+  display: grid;
+  gap: 10px;
+  min-height: 150px;
+  padding: 12px;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(36, 126, 111, 0.14), rgba(238, 111, 86, 0.12)),
+    #ffffff;
+  border: 1px solid rgba(23, 33, 27, 0.12);
+}
+
+.map-sheet p {
+  margin: 0;
+  align-self: end;
+  color: #33413a;
+  font-weight: 800;
+}
+
+.map-sheet > button {
+  justify-self: start;
+  min-height: 40px;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #247e6f;
+  color: #ffffff;
+  font-weight: 760;
+}
+
+.map-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.map-toolbar button {
+  min-height: 36px;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #33413a;
+  font-weight: 760;
+}
+
+.map-toolbar button[aria-pressed="true"] {
+  background: #247e6f;
+  color: #ffffff;
+}
+
+.l2-list,
+.l3-list {
+  display: grid;
+  gap: 10px;
+}
+
+.l2-group {
+  display: grid;
+  gap: 8px;
+}
+
+.l2-heading {
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #ffffff;
+  border: 1px solid rgba(23, 33, 27, 0.12);
+  color: #17211b;
+  text-align: left;
+}
+
+.l2-heading span:last-child {
+  color: #52605a;
+  font-weight: 760;
+}
+
+.l2-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #aeb8b2;
+  box-shadow: 0 0 0 4px rgba(174, 184, 178, 0.18);
+}
+
+.l2-dot.selected {
+  background: #247e6f;
+  box-shadow: 0 0 0 4px rgba(36, 126, 111, 0.18);
+}
+
+.l3-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(23, 33, 27, 0.12);
+}
+
+.l3-row h2 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.l3-row p {
+  margin: 5px 0 0;
+  color: #52605a;
+  line-height: 1.4;
+}
+
+.l3-row span {
+  display: inline-flex;
+  margin-top: 7px;
+  min-height: 28px;
+  align-items: center;
+  border-radius: 8px;
+  padding: 0 8px;
+  background: #fff7f3;
+  color: #7a2d1f;
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.l3-row button {
+  min-width: 72px;
+  min-height: 44px;
+  border-radius: 8px;
+  background: #edf7f4;
+  color: #247e6f;
+  font-weight: 800;
+}
+
+.l3-row button[aria-pressed="true"] {
+  background: #247e6f;
+  color: #ffffff;
+}
+
+.planner-basket {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px max(12px, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(23, 33, 27, 0.12);
+  background: #f8faf7;
+  box-shadow: 0 -12px 24px rgba(23, 33, 27, 0.08);
+  font-weight: 800;
+}
+
+.planner-basket button {
+  min-width: 132px;
+  min-height: 48px;
+  border-radius: 8px;
+  padding: 0 14px;
+  background: #247e6f;
+  color: #ffffff;
+  font-weight: 820;
 }
 
 .legal-links {

@@ -11,6 +11,7 @@
     "ci:lint": "echo \"eslint gate placeholder\"",
     "ci:mobile": "pnpm -F nomad-mobile test",
     "ci:home-library": "pnpm -F nomad-server run test:home-library",
+    "ci:planner": "pnpm -F nomad-server run test:planner",
     "ci:settings": "pnpm -F nomad-server run test:settings",
     "ci:start-server": "node apps/server/dist/apps/server/src/index.js",
     "ci:auth": "pnpm -F nomad-server run test:auth",

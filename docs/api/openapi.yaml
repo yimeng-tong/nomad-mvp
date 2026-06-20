@@ -272,7 +272,7 @@ paths:
                     event: plan
                     data: {"trace_id":"t-1","plan_job_id":"pj_1","phase":"freeze","ts":1730000001}
                     event: plan
-                    data: {"trace_id":"t-1","plan_job_id":"pj_1","phase":"must_go","ts":1730000002}
+                    data: {"trace_id":"t-1","plan_job_id":"pj_1","phase":"selected_anchor","ts":1730000002}
                     event: plan
                     data: {"trace_id":"t-1","plan_job_id":"pj_1","phase":"quota","ts":1730000003}
                     event: plan
@@ -710,6 +710,8 @@ paths:
                   items:
                     type: array
                     items: { $ref: '#/components/schemas/SearchPoiItem' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
         '429': { $ref: '#/components/responses/Error429' }
         '500': { $ref: '#/components/responses/Error500' }
 
@@ -1243,9 +1245,11 @@ components:
       properties:
         item_id: { type: string }
         poi_id: { type: string, nullable: true }
-        source: { type: string, enum: [library, home_card, home_input], nullable: true }
-        must_go: { type: boolean, nullable: true }
-        time_hint: { type: string, enum: [morning, afternoon, evening], nullable: true }
+        source: { type: string, enum: [library, home_card, home_input, uploaded_inspiration], nullable: true }
+        anchor_intent: { type: string, enum: [selected_required], nullable: true, description: Internal semantic for user-selected L3 planning anchors. Do not expose as must-go UI. }
+        time_hint:
+          nullable: true
+          $ref: '#/components/schemas/PlannerTimeHint'
         stay_minutes_hint: { type: integer, minimum: 0, nullable: true }
 
     PlannerHandoff:
@@ -1339,6 +1343,73 @@ components:
           items:
             $ref: '#/components/schemas/LibraryCandidate'
 
+    PlannerTimeHint:
+      type: string
+      enum: [dawn, morning, afternoon, sunset, evening, night, night_market]
+
+    PlannerAnchorSource:
+      type: string
+      enum: [library, home_card, home_input, uploaded_inspiration]
+
+    PlannerSelectedItem:
+      type: object
+      required: [item_id, source]
+      properties:
+        item_id: { type: string }
+        poi_id: { type: string, nullable: true }
+        source:
+          $ref: '#/components/schemas/PlannerAnchorSource'
+        anchor_intent:
+          type: string
+          enum: [selected_required]
+          default: selected_required
+          description: Internal semantic for user-selected L3 anchors. UI should only show selected state.
+        time_hint:
+          nullable: true
+          $ref: '#/components/schemas/PlannerTimeHint'
+        stay_minutes_hint: { type: integer, minimum: 0, nullable: true }
+
+    PlannerCandidateItem:
+      type: object
+      required: [item_id, source]
+      properties:
+        item_id: { type: string }
+        poi_id: { type: string, nullable: true }
+        source:
+          $ref: '#/components/schemas/PlannerAnchorSource'
+        time_hint:
+          nullable: true
+          $ref: '#/components/schemas/PlannerTimeHint'
+        stay_minutes_hint: { type: integer, minimum: 0, nullable: true }
+
+    PlanHotelConstraint:
+      type: object
+      required: [date]
+      properties:
+        date: { type: string, format: date }
+        hotel_name: { type: string, nullable: true }
+        poi_id: { type: string, nullable: true, description: AMap POI id when matched. }
+        address: { type: string, nullable: true }
+        breakfast_included: { type: boolean, default: false }
+        leave_blank: { type: boolean, default: false }
+
+    PlanLuggagePlan:
+      type: object
+      properties:
+        mode: { type: string, enum: [carry_with_me, hotel_storage, station_storage, courier, undecided], default: undecided }
+        notes: { type: string, maxLength: 500, nullable: true }
+        hotel_change_help_needed: { type: boolean, default: false }
+
+    PlanHardTimeHint:
+      type: object
+      required: [item_id, time_hint, source]
+      properties:
+        item_id: { type: string }
+        poi_id: { type: string, nullable: true }
+        time_hint:
+          $ref: '#/components/schemas/PlannerTimeHint'
+        source: { type: string, enum: [uploaded_inspiration, user_selected] }
+
     IngestStartRequest:
       type: object
       required: [source]
@@ -1396,23 +1467,37 @@ components:
 
     PlanGenerateRequest:
       type: object
-      required: [city, start_date, days]
+      required: [city, start_date, days, pace]
       properties:
         city: { type: string }
         start_date: { type: string, format: date }
         days: { type: integer, minimum: 1 }
-        pace: { type: string, enum: [slow, normal, fast], default: normal }
+        pace: { type: string, enum: [tight, comfortable] }
+        source: { type: string, enum: [home_input, home_card], nullable: true }
+        rec_id: { type: string, nullable: true }
         selected_items:
           type: array
           items:
-            type: object
-            required: [item_id]
-            properties:
-              item_id: { type: string }
-              poi_id: { type: string }
-              must_go: { type: boolean }
-              time_hint: { type: string, enum: [morning, afternoon, evening], nullable: true }
-              stay_minutes_hint: { type: integer, minimum: 0 }
+            $ref: '#/components/schemas/PlannerSelectedItem'
+        candidate_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlannerCandidateItem'
+        hotels:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanHotelConstraint'
+        luggage_plan:
+          $ref: '#/components/schemas/PlanLuggagePlan'
+        wake_preference: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$', nullable: true }
+        morning_start_time: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$', nullable: true }
+        first_day_arrival_time: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$', nullable: true }
+        last_day_departure_time: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$', nullable: true }
+        smart_planning: { type: boolean, default: true }
+        hard_time_hints:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanHardTimeHint'
 
     PlanGenerateResponse:
       type: object
@@ -1698,7 +1783,7 @@ components:
       properties:
         id: { type: string }
         conflict_type: { $ref: '#/components/schemas/ValidatorConflictType' }
-        safe: { type: boolean, description: 'Does not modify frozen/must_go/time_hint' }
+        safe: { type: boolean, description: 'Does not modify frozen selected anchors or time hints' }
         requires_user_input: { type: boolean, description: 'Needs user to pick an alternative or candidate' }
         score: { type: number, format: double, description: 'Higher is better; deterministic tie-break' }
         actions:

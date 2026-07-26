@@ -7,7 +7,7 @@
 - SSE /ingest/{job_id}/events — stages: created|fetching|parsing|geo|storing|done
 
 ## Planner / Skeleton
-- POST /plan/generate {city,start,days,pace,selected_items[],hotels?,luggage_plan?,ticket_constraints?,hard_time_hints?}
+- POST /plan/generate {city,start_date,days,pace,selected_items[],candidate_items[],hotels?,luggage_plan?,wake_preference?,hard_time_hints?}
 - GET  /plan/{plan_id}
 - POST /plan/validate {plan_id} → {hard_cnt,soft_cnt,suggestions[]}
 - POST /plan/fix {plan_id, action}

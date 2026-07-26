@@ -11,6 +11,7 @@ import type {
   PlannerHandoffSelectedItem,
 } from './api';
 import { createHomeApiClient } from './api';
+import { inferPlannerTimeHint } from '../planner/timeHints';
 
 type Segment = 'plan' | 'library';
 type LibraryFilter = { kind: 'all' } | { kind: 'city'; city: LibraryCitySummary } | { kind: 'pending' };
@@ -35,6 +36,7 @@ function selectedAnchor(item: LibraryInspirationItem): PlannerHandoffSelectedIte
     item_id: item.id,
     poi_id: item.poi_id || undefined,
     source: 'library',
+    time_hint: inferPlannerTimeHint(`${item.title || ''} ${item.summary || ''} ${item.poi_name || ''}`),
   };
 }
 

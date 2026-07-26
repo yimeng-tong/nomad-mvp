@@ -125,7 +125,7 @@ Sync:
 - Map→Card: tap marker → scroll & "lift" card (shadow)
 Action strategy:
 - 有骨架：主CTA=加入 D{n}·{上午/下午/晚间}（可改）
-- 无骨架：主CTA=加入候选；底条“已选 N / 生成骨架”
+- 尚无计划：主 CTA=加入候选；底条“已选 N / 开始规划”
 
 ### 3.4 灵感选择页（Planner Picker）（上下文灵感选择页）
 Purpose: 在规划上下文内挑选本次要用的 UGC 素材，作为“部分填充/锚点输入”。不属于“灵感库”导航项，但复用其卡片/定位能力。
@@ -185,13 +185,13 @@ Cards & Selection
 - 主 CTA：加入候选 → 已加入（显示“已加入 · 撤销”）；低置信显示“去定位”入口，复用定位弹窗
 
 Basket & Footer
-- 已选篮（吸底左）：“已选 N”（可展开面板：移除、must_go、time_hint、stay_minutes_hint）
-- 主按钮（吸底右）：“下一步/生成骨架”；无“用热门生成骨架”动作（已删除）
+- 已选篮（吸底左）：“已选 N”（可展开面板：移除、time_hint、stay_minutes_hint）；选中 L3 自动成为 selected_required，不提供额外“必去”开关
+- 主按钮（吸底右）：“开始规划”；无“用热门生成骨架”动作（已删除）
 - 缺参补齐：点主按钮时若缺 start/days → 弹参数 Sheet 补齐后生成
 
 Generate（接口语义）
-- POST /plan/generate：selected_items 作为锚点输入生成“部分填充”骨架（must_go/time_hint 优先落位；近邻聚类仅做部分填充）
-- 未落位条目：不在骨架主视图直接展示，而是在“空槽→大弹窗”的“候选抽屉”中展示；若 Planner Picker 的 POI 已用完则提示“已用完”
+- POST /plan/generate：selected_items 作为 selected_required 锚点输入；time_hint 及上传内容派生的特殊时段为硬约束，candidate_items 供 Agent 可选补全
+- 未落位 candidate_items：不在计划主视图直接展示，而是在计划“候选”页/抽屉中展示；若 Planner Picker 的 POI 已用完则提示“已用完”
 
 Empty States
 - 无灵感：展示“热门 UGC/AI 建议”棚格；CTA 仍为加入候选/行程
@@ -267,24 +267,22 @@ FixSheet 示例数据（对齐 OpenAPI，参见 `docs/api/openapi.yaml`）
 }
 ```
 
-Hotel 单候选自动写入（FR41）
-- 当某日仅存在 1 个酒店候选时，生成骨架后自动写入至当日末尾 hotel_slot，并显示轻 Toast：“已为你选定当晚酒店 · 撤销”。
-- 撤销在 6s 内可用；撤销后恢复为空白状态。
-- 说明：MVP 不触发任何自动重排；仅当用户主动更换/首次选择酒店时才提示是否重排（仅晚段/整日/取消）。
+Hotel 明确选择与留空（FR41）
+- 仅将 Confirm 中按日期明确选择并经 AMap 匹配的酒店写入当日末尾 hotel_slot。
+- 用户选择“留空”时保持为空，不得根据灵感或单一候选静默代选酒店；用户可稍后进入酒店大弹窗补充。
+- 说明：MVP 不触发酒店更换自动重排；该能力属于 Post-MVP。
 
-Wireframe — Hotel Autoset Toast & Undo
+Wireframe — Hotel Slot
 ```
 [Timeline DayN 末尾]
 ┌──────────────────────────────┐
 │ 住宿 · {酒店名称}（展示）      │
 └──────────────────────────────┘
 
-底部轻 Toast（6s 自动消失，可手动关闭）：
+底部轻提示：
 ┌─────────────────────────────────────────────┐
-│ 已为你选定当晚酒店 · 撤销                   │
+│ 酒店可稍后补充，不影响先开始规划             │
 └─────────────────────────────────────────────┘
-
-点击“撤销”后：恢复为空白 hotel_slot；提示“已撤销”。
 ```
 
 ### 3.6 AI 填充（一键）
@@ -515,14 +513,14 @@ UI
 - 展示规则：只显示阶段状态 + 个数，不显示百分比
 
 ### 10.1b 骨架生成 SSE（v0.2）
-Phases（后端）：started → freeze → must_go → quota → candidates → place → validate → persist → done
+Phases（后端）：started → freeze → selected_anchor → quota → candidates → place → validate → persist → done
 
 呈现（两种其一，按开关实验）：
 1) Header 轻量面包屑（默认）：紧凑胶囊依次点亮（skeleton_sse_ui=breadcrumb）；
 2) 轻量 Toast（实验）：仅提示 started / place / done 三个关键节点（不叠加）（skeleton_sse_ui=toast）。
 
 文案：
-- 正在生成骨架… / 已冻结指定时段 / 必去优先落位 / 已计算预排额度 / 候选已就绪 / 正在预排推荐点 / 正在校验可行性 / 保存中 / 骨架生成完成
+- 正在生成计划… / 已冻结指定时段 / 已选地点优先安排 / 已计算预排额度 / 候选已就绪 / 正在预排推荐点 / 正在校验可行性 / 保存中 / 计划生成完成
 
 Retry & Copy
 - 自动重试：指数退避，最多 3 次（次数/结果进埋点）

@@ -9,13 +9,13 @@ Status: Draft
 
 ## 概述（Overview）
 
-本 Epic 面向“规划与编辑”的核心能力，承接 Epic 1 的“从灵感开始”，在灵感选择页（Planner Picker）内完成上下文锚点挑选，生成“部分填充”的天级骨架；在骨架上支持空槽候选/AI 建议/自由活动、长按编辑（替换/移动至 D±1/调时/删除/撤销）、顶部可行性校验与一键修复，并提供导出 PNG。并行启用“快速版（L2 粒度）→优先呈现”与“高质量 LLM 编排（后台并行，完成后可切换-采用）”。2026-06-19 correct-course 后，本 Epic 还吸收厦门实战验证：Confirm 补问起床偏好、到离时间、酒店/早餐/行李/预约；Planner 支持 dawn/sunset/night/night-market 强时间槽、酒店驱动区域聚类与换酒店缓冲、模糊 slot 补全路径。
+本 Epic 面向“规划与编辑”的核心能力，承接 Epic 1 的“从灵感开始”，在灵感选择页（Planner Picker）内完成上下文锚点挑选，生成“部分填充”的天级骨架；在骨架上支持空槽候选/AI 建议/自由活动、长按编辑（替换/移动至 D±1/调时/删除/撤销）、顶部可行性校验与一键修复，并提供导出 PNG。并行启用“快速版（L2 粒度）→优先呈现”与“高质量 LLM 编排（后台并行，完成后可切换-采用）”。2026-07-26 语义收口后，Confirm 按日期收集可留空酒店、酒店子项早餐和换酒店行李；预约/门票及 dawn/sunset/night/night-market 等强时段由上传内容证据驱动，Planner 负责酒店感知编排与模糊 slot 补全。
 权威来源：PRD（docs/prd.md）Epic 2、相关 FR/NFR、小节 3.x/5.x/6.x/7.x/9.x；架构 v0.4 分片（docs/architecture/*）；厦门验证样本（方法论总结、任务规划、skeleton_final.json、行程单_final.md）。
 
 ## 目标与范围（Objectives and Scope）
 
 - In Scope
-  - Story 2.0 Confirm + Planner Picker（起床/到离/酒店/早餐/行李/预约确认，上下文灵感选择，路由与参数、城市 Tabs + 地图联动、已选篮/CTA、生成流程）。
+  - Story 2.0 Confirm + Planner Picker（起床/到离/按日期可留空酒店及早餐子项/行李，上下文 L2/L3 灵感选择，路由与参数、城市 Tabs + 地图联动、已选篮/“开始规划” CTA）。
   - Story 2.1 生成天级骨架（2h/4h 槽，dawn/sunset/night/night-market 强时间槽，预布局 seed 及撤销、空槽大弹窗、酒店槽与酒店感知软约束、酒店选择逻辑与换酒店缓冲、multi_city 分段边界定义在 Post‑MVP）。
   - Story 2.2 长按编辑与撤销（替换/移动 D±1/调时/删除；8 秒撤销与最近操作入口；步进与吸附；seed 操作优先撤销；历史步骤管理与回滚）。
   - Story 2.3 可行性校验与一键修复（硬/软冲突分类、修复提案、进入 AI 填充门控）。
@@ -28,7 +28,7 @@ Status: Draft
 
 - Planner 双路：Quick（L2、2h/4h、同 L1 优先、2.5h 阈值对齐）先呈现；HQ（后台并行）完成后可“切换-采用”。［backend-architecture.md、PRD 3.x/5.x］
 - 服务模块：Router/Library/Planner/Validator/Suggester/Export/HQ 控制面。［backend-architecture.md、frontend-architecture.md］
-- 旅行约束：Confirm 输出 hotels、breakfast、luggage_plan、ticket_constraints、wake_preference 与 hard_time_hints，Planner 必须把酒店与强时间槽作为输入约束。
+- 旅行约束：Confirm 输出 per-date hotels（含 breakfast_included/leave_blank）、luggage_plan、wake_preference 与 hard_time_hints；预约/门票和特殊时段从上传内容证据派生，不使用独立 Confirm 输入。Planner 必须把明确酒店与强时间槽作为输入约束。
 - 远程配置：Unleash/Env 提供 planner_autoplace_v1、alpha_autoplace、K_min/K_max 及 mmr_lambda 等。［PRD 3.3］
 - 观察性：Langfuse、promptfoo、Sentry；关键漏斗（登录→入库→选择→骨架→AI 填充→导出）。［PRD NFR6、FR13］
 
@@ -37,7 +37,7 @@ Status: Draft
 ### 服务与模块（Services and Modules）
 
 - Planner
-  - 生成：根据 {city,start_date,days,pace?,selected_items[],hotels?,luggage_plan?,ticket_constraints?,hard_time_hints?} 输出骨架（2h/4h）；支持 seed 预布局配额 quota=ceil(α×S_left) 与撤销；Quick 结果先呈现，HQ 后台并行。
+  - 生成：根据 {city,start_date,days,pace,selected_items[],candidate_items[],hotels?,luggage_plan?,wake_preference?,hard_time_hints?} 输出骨架（2h/4h）；selected_items 均为 selected_required，candidate_items 仅供可选补全；支持 seed 预布局配额 quota=ceil(α×S_left) 与撤销；Quick 结果先呈现，HQ 后台并行。
   - 维护：支持空槽弹窗候选与 AI 建议构建、自由活动插入、酒店槽写入；dawn/sunset/night/night-market 强时间槽不可被普通候选挤占。
   - 模糊 slot 补全：已有笔记 → 小红书补搜 → AMap 附近搜索 → 仍不确定则询问用户；不得静默落位低置信结果。
 - Validator
@@ -63,7 +63,7 @@ Status: Draft
 ### API 与接口（APIs and Interfaces）
 
 - Planner / Skeleton
-  - POST /plan/generate {city,start,days,pace,selected_items[]} → {plan_id, slots[]}
+  - POST /plan/generate {city,start_date,days,pace,selected_items[],candidate_items[],hotels?,luggage_plan?,hard_time_hints?} → 202 {plan_id,plan_job_id,sse_url}
   - GET  /plan/{plan_id}
   - POST /plan/validate {plan_id} → {hard_cnt,soft_cnt,suggestions[]}
   - POST /plan/fix {plan_id, action} → 应用修复提案
@@ -77,8 +77,8 @@ Status: Draft
 
 ### 工作流与时序（Workflows and Sequencing）
 
-- Confirm（起床/到离/酒店/早餐/行李/预约）→ Picker → Generate（Quick 先呈现；HQ 后台并行）→ 空槽候选/AI 建议/AMap 搜索/自由活动 → 长按编辑/撤销 → 顶部校验与一键修复 → 预览导出。
-- Seed 预布局：started→freeze→must_go→quota→candidates→place→validate→persist→done；origin=ai_seed，支持 5–8 秒撤销与“一键重置预布局”。［PRD 3.1、3.2、3.3、5.x、7.x、9.x］
+- Confirm（起床/到离/按日期可留空酒店及早餐子项/行李）→ Picker → “开始规划”（Quick 先呈现；HQ 后台并行）→ 空槽候选/AI 建议/AMap 搜索/自由活动 → 长按编辑/撤销 → 顶部校验与一键修复 → 预览导出。
+- Seed 预布局：started→freeze→selected_anchor→quota→candidates→place→validate→persist→done；origin=ai_seed，支持 5–8 秒撤销与“一键重置预布局”。［PRD 3.1、3.2、3.3、5.x、7.x、9.x］
 - 酒店感知：hotel_slot 展示住宿信息，同时作为早晚半径、区域聚类、换酒店缓冲、行李处理和夜间活动半径的输入；near_hotel 加分不突破硬约束；选择/更换酒店可提示是否重排（仅晚段/整日/取消）。［PRD 5.1/6.1/2.1/2.4/2.5/2.6］
 
 ## 非功能需求（Non-Functional Requirements）
@@ -104,14 +104,14 @@ Status: Draft
 
 - E2‑AC0（Story 2.0 Planner Picker）
   1) 入口与路由：/planner/pick?city&start&days&source&rec_id。
-  2) Confirm 参数：城市/日期/天数、pace、起床/早出发、到离时间、酒店/早餐、换酒店行李处理、预约/门票、智能编排。
+  2) Confirm 参数：城市/日期/天数、pace、起床/早出发、到离时间、按日期可留空酒店及早餐子项、换酒店行李处理、智能编排；预约/门票与特殊时段由上传内容证据派生。
   3) 视图结构：城市 Tabs（按距离排序，灵感量>1 才展示）+ 卡片 + 地图联动（Sheet 吸附位 High→Split→Map‑Full；弱网回退清单）。
-  4) 已选篮与 CTA：吸底“已选 N｜生成骨架”；允许 0 选生成；参数缺失弹 Sheet 补齐后生成。
+  4) 已选篮与 CTA：吸底“已选 N｜开始规划”；仅 L3 可选，选中即为 selected_required，L2 仅显示选中子项数量；允许 0 选规划。
 - E2‑AC1（Story 2.1 生成天级骨架）
-  1) 2h/4h 槽位（pace 映射）；must_go/time_hint 与 dawn/sunset/night/night-market 优先；transport_slot 作为分段边界；AI 预布局 quota；空选时基于 AnchorPool。
+  1) 2h/4h 槽位（pace 映射）；selected_required/time_hint 与 dawn/sunset/night/night-market 优先；transport_slot 作为分段边界；AI 预布局 quota；空选时基于 AnchorPool。
   2) 空槽弹窗：候选抽屉（时窗/距离/vibe 重排，含“未落位”）、AI 建议、自由活动。
   3) seed 块 origin=ai_seed，5–8s 撤销与“一键重置”；硬冲突不落位、软冲突仅提示。
-  4) hotel_slot 展示且参与早晚半径、区域聚类、换酒店缓冲、行李处理；酒店选择逻辑与可选重排（仅晚段/整日/取消），生成历史快照。
+  4) 仅明确选择的 per-date hotel 写入 hotel_slot 并参与早晚半径、区域聚类、换酒店缓冲和行李处理；用户选择留空时不得静默代选。酒店更换自动重排与历史快照属于 Post-MVP。
   5) 模糊 slot 按已有笔记 → 小红书补搜 → AMap 附近搜索 → 询问用户的顺序补全。
 - E2‑AC2（Story 2.2 编辑与撤销）
   1) 长按编辑：替换/移动至 D±1/调时/删除；
@@ -159,7 +159,6 @@ Status: Draft
 - 集成（P0）
   - 生成→校验→修复链路；HQ 后台完成与切换；导出参数/切片与预览。
 - 端到端（P1）
-  - Confirm→Picker→Quick→编辑→校验→导出；覆盖酒店/早餐/行李/预约与 dawn/sunset/night/night-market；弱网地图降级。
+  - Confirm→Picker→Quick→编辑→校验→导出；覆盖可留空酒店/早餐子项/行李与上传内容派生的 dawn/sunset/night/night-market；弱网地图降级。
 - 观察性与性能（P1）
   - 漏斗事件覆盖；Langfuse/promptfoo；交互 120–200ms 与缓存命中。
-

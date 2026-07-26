@@ -41,5 +41,6 @@ material is needed.
 
 ## Next Step
 
-Use BMAD 6.8 skills to rebuild the sprint/story queue from the existing planning
-inputs, then select the first small implementation story.
+The sprint/story queue has been rebuilt. Use `../CURRENT.md` as the recovery
+entry and continue the ready-for-dev Story 2.1 from
+`../_bmad-output/implementation-artifacts/`.

@@ -1,5 +1,7 @@
 # nomad-mvp Product Requirements Document (PRD) — v1.0 Draft
 
+> Historical/Post-MVP draft. It is not an authority for the current MVP. Use `CURRENT.md` and `docs/prd.md`.
+
 ## Change Log
 | Date       | Version | Description                                     | Author |
 | ---------- | ------- | ----------------------------------------------- | ------ |

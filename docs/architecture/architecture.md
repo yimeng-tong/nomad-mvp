@@ -47,8 +47,8 @@ infra/               # IaC, CI/CD, monitoring
 
 ### Planner Autoplace v1（MVP）
 - See `docs/architecture/planner-autoplace-v1.md`
-- SSE phases: started → freeze → must_go → quota → candidates → place → validate → persist → done
-- Priority: time_hint > must_go > others; cold-start quota ensures ≥1 auto placement when enabled
+- SSE phases: started → freeze → selected_anchor → quota → candidates → place → validate → persist → done
+- Priority: hard time_hint > selected_required > candidate_items; cold-start quota ensures ≥1 auto placement when enabled
 - Hotel policy: `hotel_slot` display-only（DayN end & ResultSheet）；仅作为 near_hotel 加分参与 place 阶段
 - Post‑MVP 预留：`transport_slot` 分段配额与编排（v1.0）
 
@@ -161,7 +161,7 @@ Details: see API `ValidatorConflictType` and `ValidatorConflict` schemas.
 - suggest_insert_candidate → guidance only（需要用户选择候选；不自动创建槽）
 - set_hotel（边界修复） → PATCH /plan/days/{day}/hotel
 
-所有修复均遵循安全网：不修改冻结槽（time_hint）、must_go 优先、先重排/微调再替换/挪日，失败可撤销。
+所有修复均遵循安全网：不修改冻结槽（time_hint）、selected_required 优先、先重排/微调再替换/挪日，失败可撤销。
 
 ### Fix Scoring（选择 Top‑1）
 目标函数（越大越优）：

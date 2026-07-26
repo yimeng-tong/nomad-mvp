@@ -182,7 +182,7 @@ describe('HomeScreen', () => {
     expect(onPlannerHandoff).toHaveBeenCalledWith(
       expect.objectContaining({
         route: expect.stringContaining('/planner/pick?'),
-        selected_items: [expect.objectContaining({ item_id: 'ins-resolved', poi_id: 'poi-west-lake', source: 'library' })],
+        selected_items: [expect.objectContaining({ item_id: 'ins-resolved', poi_id: 'poi-west-lake', source: 'library', time_hint: 'evening' })],
       }),
     );
   });

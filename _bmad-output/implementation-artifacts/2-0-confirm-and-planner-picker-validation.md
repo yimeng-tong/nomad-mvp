@@ -1,5 +1,7 @@
 # Story Validation Report: Story 2.0
 
+> Historical pre-development validation snapshot. Story 2.0 is now `done`; use `CURRENT.md` and `sprint-status.yaml` for current state.
+
 Generated: 2026-06-19
 Updated: 2026-06-20
 

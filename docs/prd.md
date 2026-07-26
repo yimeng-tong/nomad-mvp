@@ -29,9 +29,10 @@
 - 簇（cluster）：同城内按半径聚类的空间簇，半径 R_city（城区 1.5–2km；郊区 3–4km）。
 - 槽（slot）：默认 2h 粒度的时间块。
 - time_hint：用户明确指定的时间块（冻结）。
-- must_go：用户标记或系统阈值认定的“必去”点。
-- 其余候选：用户已选灵感但尚未落位的 POI。
+- selected_required：用户在 Picker 中选中的 L3 POI；选中即表示必须纳入计划，不再提供额外“必去”开关或标签。API 内部使用 `anchor_intent=selected_required` 表达该语义。
+- 其余候选：用户未选中的 L3 POI；Agent 可用于补全计划，未被编排的条目进入计划的“候选”页/抽屉。
 - 热门锚点（anchors）：离线维护的城市×季节×时段×品类 Top-K 候选。
+- 兼容说明：本文历史段落中的 `must_go` 一律按 `selected_required` 的旧称理解，不得据此恢复用户侧“必去”开关；“骨架”仅是内部实现术语，用户界面统一称“计划”。
 
 ## 术语扩展（v0.4 补充）
 
@@ -88,16 +89,16 @@
 - FR25: AI 使用额度引导：AI 填充/导出相关页面显示平台额度、生成状态、导出次数或成本友好提示；额度不足或服务降级时提供明确文案、重试/稍后继续路径与可配置远程开关，不要求用户配置 Key。
 - FR26: Planner Picker 入口路径：A) 底部输入解析得到 trip_params → 进入 Picker；B) 目的地卡“开始规划”→ 进入 Picker（传 city、place_hints 可选）。
 - FR27: Planner Picker 路由与参数：/planner/pick?city={CITY}&start={YYYY-MM-DD?}&days={N?}&source={home_input|home_card}&rec_id={CARD_ID?}。
-- FR27.1: 规划前确认页（Confirm）：在统一输入与进入编排之间新增确认页，字段包含：城市、出行节奏 pace（tight｜comfortable）、出行时间段（可选灵活天数；可选首尾两天到达/出发时间）、起床/早上出发偏好（用于确定 2h/4h 起始时间槽）、酒店/换酒店信息、是否酒店早餐、行李处理方式、预约/门票/特殊活动约束、是否启用“智能编排”。“智能编排”默认是；选择后将后台并行启动高质量编排（见 FR32.2）。
+- FR27.1: 规划前确认页（Confirm）：在统一输入与进入编排之间新增确认页，字段包含：城市、出行节奏 pace（tight｜comfortable）、出行时间段（可选灵活天数；可选首尾两天到达/出发时间）、起床/早上出发偏好（用于确定 2h/4h 起始时间槽）、按日期设置且允许留空的酒店、酒店子项“含早餐”、换酒店时的行李处理方式，以及是否启用“智能编排”。酒店名称支持自由输入并通过 AMap POI 匹配。预约、门票及 dawn/sunset/night/night-market 等特殊时段不单列为 Confirm 开关；上传内容存在相关证据时由 Agent 推导并用于编排。“智能编排”默认是；选择后将后台并行启动高质量编排（见 FR32.2）。
 - FR28: Planner Picker 头部：标题“{城市} · {出行日期?占位} · {天数?占位}”；缺参以“待填写”灰字占位；右侧“修改参数”轻量 Sheet（日期选择器 + 天数步进器 + pace 可选）；返回保留来源上下文。
 - FR29: Planner Picker 视图结构：顶部城市 Tabs（按与目标城市中心点“直线距离”排序；仅展示灵感量 > 1 的城市）；中部卡片列表 + 地图-卡片联动（Sheet 吸附位 High→Split→Map-Full），详情统一全高 Bottom Sheet；弱网/无地图自动降级为清单视图并提示。
-- FR30: 已选篮与主按钮：吸底左“已选 N”（可展开面板：移除/必去 must_go/时段 time_hint/时长 stay_minutes_hint），右主按钮：“生成骨架”；允许在无已选时直接生成（selected_items 为空）；缺参时弹参数 Sheet 补齐后生成。
+- FR30: 已选篮与主按钮：吸底左“已选 N”（可展开面板：移除/时段 time_hint/时长 stay_minutes_hint），右主按钮：“开始规划”；选中的 L3 自动作为 selected_required 锚点，不额外展示“必去”标签或开关；允许在无已选时直接规划（selected_items 为空）；缺参时弹参数 Sheet 补齐后规划。
 - FR31: 选点与一致性：卡片/Marker 状态一致；卡片→Map 飞行 300ms；Map→卡片滚动并“抬升”；低置信项卡片右上“去定位”入口。
-- FR32: 生成骨架（部分填充 + AI 预布局，v0.2 更新）：POST /plan/generate 使用 selected_items 作为锚点；must_go/time_hint 与 dawn/sunset/night/night-market 等强时间约束优先落位；当启用 planner_autoplace_v1 时，对“无硬冲突”的 AMap 已验证候选按配额 quota=ceil(α×S_left)（默认 α=0.6，可远程配置）进行自动落位；selected_items 为空时，基于 AnchorPool/城市热门生成 Top-N 锚点并仅对“无硬冲突”条目落位；预布局不得引入硬冲突，软冲突不落位仅提示；预布局块需标记 origin=ai_seed，并提供 5–8 秒撤销与一键重置；未落位项进入“空槽→候选抽屉/AI 建议/AMap 搜索/自由活动”。
+- FR32: 生成日计划（内部为部分填充骨架 + AI 预布局）：POST /plan/generate 使用 selected_items 作为 selected_required 锚点并优先落位；time_hint 与从上传内容推导的 dawn/sunset/night/night-market 等强时间约束优先于普通候选。当启用 planner_autoplace_v1 时，对 candidate_items 中“无硬冲突”的 AMap 已验证候选按配额 quota=ceil(α×S_left)（默认 α=0.6，可远程配置）进行自动落位；selected_items 为空时，基于 AnchorPool/城市热门生成 Top-N 锚点并仅对“无硬冲突”条目落位。预布局不得引入硬冲突，软冲突不落位仅提示；预布局块需标记 origin=ai_seed，并提供 5–8 秒撤销与一键重置；未落位 candidate_items 进入计划的“候选”页/抽屉。
 - FR32.1: 快速版传统编排（L2 基础）：仅编排主景点（不纳入酒店/打卡点/餐饮）；按用户 pace 将粒度映射为 2h（tight）/4h（comfortable），2.5h 阈值对齐（≤2.5h→2h，>2.5h→4h）；当天优先安排同属同一 L1 下的其他 L2；生成结果可立即使用。
 - FR32.2: 高质量 LLM 编排（后台并行）：当确认页勾选“智能编排”或在天级骨架顶部手动启用时，后端后台生成高质量版本；前端先呈现快速版，顶部提示“后台正在生成高质量版本”，完成后通知用户并在顶部提供“切换-采用”入口；两版本并存直至用户确定切换。
 
-- FR33: AI 预布局可控性（v0.2 新增）：提供远程开关 enable_ai_seed/planner_autoplace_v1；出现超时/配额/错误时自动降级为“无预布局”的骨架并提示；SSE 事件流 started→freeze→must_go→quota→candidates→place→validate→persist→done；埋点 seed_accept_rate/seed_conflict_rate/seed_time_ms/fallback_rate。
+- FR33: AI 预布局可控性（v0.5 更新）：提供远程开关 enable_ai_seed/planner_autoplace_v1；出现超时/配额/错误时自动降级为 Quick 计划并提示；SSE 事件流 started→freeze→selected_anchor→quota→candidates→place→validate→persist→done；埋点 seed_accept_rate/seed_conflict_rate/seed_time_ms/fallback_rate。
 
 - FR34: AnchorPool（离线锚点，v0.2 新增）：使用离线 AnchorPool（city×season×tod×category）作为候选来源；不可用时回退内置 Top-50 并记录日志；进入骨架页并行 anchors.prepare 读取池并在线轻量重排，可用时可推送 anchors_ready（SSE）。
 
@@ -119,7 +120,7 @@
 
 - FR40: 计划延续与状态（v0.3 新增）：首页增加“最近行程”入口；行程单每个槽位提供“状态按钮：打卡<>已打卡”，用于旅途期间标记；该数据为后续“自动化记忆日志/数据回流”预留。
 
-- FR41: 酒店选择优先（v0.3 新增）：当日仅有 1 个酒店候选时，自动写入 hotel_slot；当有多个或 0 个酒店候选时，保持空白直至用户选择；一旦选择酒店，自动启用 near_hotel 早/晚弱偏好。
+- FR41: 酒店选择优先（v0.5 更新）：优先使用 Confirm 中按日期明确选择并经 AMap 匹配的酒店；用户选择留空时保持 hotel_slot 空白，不根据灵感候选静默代选酒店。仅在酒店已明确时启用 near_hotel 早/晚弱偏好。
 
 - FR42: 酒店更改与重排确认（Post-MVP，暂不在本版范围）：当用户“更换/首次选择”酒店时，弹窗询问是否对当日（或分段）进行重排；重排范围选项：仅晚段、整日、取消；默认“仅晚段”。
 
@@ -127,7 +128,7 @@
 
 - FR44-lite: 文本快速搜索（MVP）：
   - 行程槽大弹窗：顶部提供 AMap keyword 文本搜索（仅列表，无地图），返回 Top-5；结果项含 名称/地址/距离估计；操作：加入候选｜直接落位（遵循硬约束/分段边界）。
-  - 酒店槽大弹窗：同样为文本搜索（Top-5 列表，无地图）；选择即写入 hotel_slot；不提供“留空”。
+  - 酒店槽大弹窗：同样为文本搜索（Top-5 列表，无地图）；选择即写入 hotel_slot，同时始终提供“留空/稍后决定”。
   - 手动录入（兜底最小化）：名称 + 地址/坐标（可选）→ 地理编码 → 入候选（低置信标记“待定位”）。
   - 弱网/配额失败：提示“搜索暂不可用，请稍后重试”；不提供外部跳转/粘贴分享解析。
 
@@ -245,14 +246,14 @@ Acceptance Criteria
 1: 入口与路由：支持路径 A（底部输入解析 trip_params）与路径 B（目的地卡“开始规划”）；/planner/pick 参数含 city/start/days/source/rec_id。
 2: 头部参数：标题显示“{城市} · {出行日期?} · {天数?}”，缺参显示“待填写”；右侧“修改参数” Sheet（日期选择器/天数步进器/pace）。
 3: 视图结构：城市 Tabs（按目标城市中心点直线距离排序，且仅展示灵感量>1 的城市）；卡片列表 + 地图联动（Sheet 吸附位 High→Split→Map-Full）；详情统一全高 Bottom Sheet；弱网/无地图自动降级为清单视图。
-4: 已选篮与 CTA：吸底显示“已选 N | 生成骨架”；已选面板支持移除/必去 must_go/时段 time_hint/时长 stay_minutes_hint；允许 0 选生成（selected_items 可为空）。
-5: 生成：缺参弹参数 Sheet；确认后 POST /plan/generate，selected_items 元素包含 item_id、可选 poi_id/must_go/time_hint/stay_minutes_hint，成功后进入骨架页。
+4: 已选篮与 CTA：吸底显示“已选 N | 开始规划”；已选面板支持移除/时段 time_hint/时长 stay_minutes_hint；选中的 L3 自动作为 selected_required 锚点，允许 0 选规划（selected_items 可为空）。
+5: 规划：缺参弹参数 Sheet；确认后 POST /plan/generate，selected_items 元素包含 item_id、可选 poi_id/anchor_intent/time_hint/stay_minutes_hint，candidate_items 携带未选 L3，成功后进入日计划页。
 
 ### Story 2.1 生成天级骨架（2 小时/4 小时槽位，部分填充）
 As a planner, I want to generate a day-level timeline with 2-hour/4-hour slots, so that I can quickly structure my day.
 
 Acceptance Criteria
-1: 默认 2 小时/4 小时槽位（依据 pace 映射）；must_go/time_hint 优先落位；存在 transport_slot 时，以其为边界对分段分别应用 quota 与候选；启用 AI 预布局时在 quota=ceil(α×S_left) 范围内对“无硬冲突”候选自动落位；selected_items 为空时基于 AnchorPool 生成 Top-N 锚点并仅对“无硬冲突”条目落位；未落位项进入“空槽→候选抽屉/AI 建议/自由活动”。（v0.4 更新）
+1: 默认 2 小时/4 小时槽位（依据 pace 映射）；selected_required 与 time_hint 优先落位；存在 transport_slot 时，以其为边界对分段分别应用 quota 与候选；启用 AI 预布局时在 quota=ceil(α×S_left) 范围内对“无硬冲突”候选自动落位；selected_items 为空时基于 AnchorPool 生成 Top-N 锚点并仅对“无硬冲突”条目落位；未落位 candidate_items 进入计划“候选”页/抽屉。（v0.5 更新）
 2: 空槽弹出大弹窗，含“候选抽屉（按时窗/距离/vibe 重排，含‘未落位’子区）｜AI 建议｜自由活动”。
 3: 预布局块标记 origin=ai_seed，提供 5–8 秒撤销与一键重置；硬冲突不落位，软冲突仅提示；生成后可进入编辑环节。（v0.2 更新）
 4: 生成 hotel_slot（仅用于展示当晚住宿，不与 24h 时间轴共用）；不纳入 2h/4h 槽编排；酒店信息在结果页可见。（v0.4 更新）
@@ -378,7 +379,7 @@ Acceptance Criteria
 - 交通槽：跨城日生成 transport_slot 并作为分段边界；分段内各自编排与配额计算。
 - 酒店槽：hotel_slot 仅用于展示当晚住宿，不参与 2h 槽编排；在时间轴 DayN 末尾固定显示，并在结果页显著展示。
 - 同城连住（stickiness）：在同一城市的连续天，默认沿用前一晚酒店；当活动重心明显偏移（>R_city×k）或用户主动选择新酒店时，再进行更换并可选重排（仅晚段/整日/取消）。
-- 酒店约束：酒店位置影响早晚半径、区域聚类、换酒店缓冲与行李策略；Confirm 需收集酒店、早餐、行李、到离时间与预约/门票。
+- 酒店约束：酒店位置影响早晚半径、区域聚类、换酒店缓冲与行李策略；Confirm 按日期收集可留空酒店、酒店子项早餐、行李与到离时间。预约/门票和特殊时段由上传内容证据驱动，不设独立输入开关。
 
 -### 6) 空槽大弹窗（搜索/候选/AI 建议/自由活动）
 - 顶部 AMap 文本搜索：关键字/类别，Top-5 列表（无地图）；结果以内嵌下拉展示，可加入候选或直接落位（遵循硬约束与分段边界）。
@@ -387,7 +388,7 @@ Acceptance Criteria
 - 冷启动城市：候选 fallback 到“城市热门 UGC”，标注来源。
 
 -### 6.1) 酒店槽大弹窗（搜索/候选/AI 推荐）
-- 顶部 AMap 文本搜索（Top-5，无地图）与“候选/AI 推荐”页签；选择即写入 hotel_slot；不提供“留空”。
+- 顶部 AMap 文本搜索（Top-5，无地图）与“候选/AI 推荐”页签；选择即写入 hotel_slot，并提供“留空/稍后决定”。
 - 选择/更换后弹窗确认是否重排（仅晚段/整日/取消）；确认后执行并生成历史快照。
 
 ### 7) 一次性 AI 填充（终版定义）
@@ -467,11 +468,11 @@ Acceptance Criteria
 
 ### 3.1 阶段流程（逐日执行）
 
-- 事件流（SSE）：started → freeze → must_go → quota → candidates → place → validate → persist → done（各阶段回传已落位计数与剩余槽位）。
+- 事件流（SSE）：started → freeze → selected_anchor → quota → candidates → place → validate → persist → done（各阶段回传已落位计数与剩余槽位）。
 
 - freeze：冻结 time_hint 槽（不可改动）。
 
-- must_go（不计入比例）：
+- selected_required（不计入比例）：
   - 先做可行性筛选（营业覆盖 ∧ 最小时长 ∧ 簇内合理 ∧ 通勤可达），排序：紧约束（窗口窄/预约）＞日落/天气相关＞人气＞就近。
   - 与 freeze 冲突则不落位；不得挤掉已冻结槽。
 
@@ -552,7 +553,7 @@ Acceptance Criteria
 - Library（灵感库）：城市聚合；按 城市/标签/定位状态 过滤列表。
 - GeoResolver（地理消歧，更新）：AMap/Places 检索、去重、融合重排；维护 CanonicalPOI；距离矩阵/开闭店时间；当无法确定具体分店时检索≤20 家并按“主 POI 附近 2km”裁剪，仅保留 2km 内分店。
 - AnchorPool（离线锚点，v0.2 新增）：周期性产出 city×season×tod×category 的 Top-K；服务 anchors.prepare(city, season, tod) 在线轻量重排并可通过 SSE 推送 anchors_ready；不可用则回退内置 Top-50（记录日志）。
-- Planner（骨架/校验/编辑）：根据 {city,start_date,days,pace?,selected_items[]} 生成骨架（默认 2h）；支持 AI 预布局（started→freeze→must_go→quota→candidates→place→validate→persist→done）；Validator 检测冲突；编辑 API 幂等。（v0.2 更新）
+- Planner（骨架/校验/编辑）：根据 {city,start_date,days,pace,selected_items[],candidate_items[],hotels?,luggage_plan?,hard_time_hints?} 生成内部骨架；支持 AI 预布局（started→freeze→selected_anchor→quota→candidates→place→validate→persist→done）；Validator 检测冲突；编辑 API 幂等。（v0.5 更新）
 - Planner（新增）：快速版传统编排（L2 基础，仅主景点；pace→2h/4h；2.5h 阈值对齐；同 L1 优先）。
 - Planner（新增）：高质量 LLM 编排后台任务（SSE/轮询状态），完成后返回与快速版可二选一的版本。
 - Filler（AI 一次性）：仅“剩余可控非自由活动块”编排；为所有块补齐说明；输出 warnings[]。
@@ -571,7 +572,7 @@ Acceptance Criteria
 - 左上侧边栏：最近规划（已完成|未完成）。
 - 底部统一输入：占位文案“粘贴小红书分享链接，或输入：杭州 11/2 起 3天”。
 - 首页目的地卡：开始规划/查看灵感；不额外提示条。
-- 灵感选择页：双栏大图 feed；底部“已选 N / 生成骨架”；可空选继续。
+- 灵感选择页：双栏大图 feed；底部“已选 N / 开始规划”；选中 L3 即为 required anchor，可空选继续。
 - 天级骨架页：Tabs D1..Dn；时间线按 2h/4h 槽；“空槽”大弹窗（候选/AI 建议/自由活动）；长按编辑；主 CTA=进入 AI 填充。
 - AI 填充页：预览只读；“应用全部”写回 notes/attachments；失败与降级策略。
 
@@ -595,7 +596,7 @@ Acceptance Criteria
  - 预布局撤销（v0.2）：已应用 · 撤销 · 重置
 
 ## AI Workflow 编排（概述）
-Router → (HomeInput.parseQuery) → Planner Picker → Planner(seed: started→freeze→must_go→quota→candidates→place→validate→persist→done；multi_city: transport_slot 分段编排) → (SlotSuggester/Validator/Explainer) → Filler → ResultSheet；（v0.3 更新）
+Router → (HomeInput.parseQuery) → Planner Picker → Planner(seed: started→freeze→selected_anchor→quota→candidates→place→validate→persist→done；multi_city: transport_slot 分段编排) → (SlotSuggester/Validator/Explainer) → Filler → ResultSheet；（v0.5 更新）
 GeoResolver & CandidateRanker & AnchorPool 贯穿地理与候选重排；Validator 输出可修复建议供导出前提示；near_hotel 作为 place 阶段的排序加分参与。（v0.3 更新）
 
 - 并行路径（v0.4）：Quick（L2 传统编排）先呈现；HQ（高质量 LLM 编排）后台生成，完成后提示并可“切换-采用”。
@@ -662,9 +663,9 @@ GeoResolver & CandidateRanker & AnchorPool 贯穿地理与候选重排；Validat
 ### PR 变更摘要（PRD v0.2）
 版本: 0.2（2025-10-27）
 主要变化
-新增“术语 & 输入”：D、T_commute_max、cluster、slot、time_hint、must_go、Anchor 定义。
+新增“术语 & 输入”：D、T_commute_max、cluster、slot、time_hint、selected_required、Anchor 定义。
 新增 AnchorPool（离线 POI 编排）v1：city×season×tod×category 分桶；离线产出 Top-K；前端进入骨架页并行 anchors.prepare，SSE anchors_ready；不可用回退 Top-50。
-新增“天级骨架 AI 预排（在线）v1”：SSE 阶段 started→freeze→must_go→quota→candidates→place→validate→persist→done；配额 quota=ceil(α×S_left)，默认 α=0.6；冷启动强制至少 1 个；候选构建顺序（用户候选→近邻→AnchorPool）；贪心落位+一次换位；硬冲突不落位；persist 标记 origin=ai_seed，支持 5–8s 撤销与一键重置。
+新增“天级骨架 AI 预排（在线）v1”：SSE 阶段 started→freeze→selected_anchor→quota→candidates→place→validate→persist→done；配额 quota=ceil(α×S_left)，默认 α=0.6；冷启动强制至少 1 个；候选构建顺序（用户候选→近邻→AnchorPool）；贪心落位+一次换位；硬冲突不落位；persist 标记 origin=ai_seed，支持 5–8s 撤销与一键重置。
 FR/NFR 更新
 FR32 更新为“部分填充 + AI 预布局”；FR33（预布局可控性/开关/降级/埋点）；FR34（AnchorPool作为候选来源）。
 NFR10（预布局安全性）：硬冲突禁止、T_commute_max 约束、软冲突仅提示、撤销与重置。

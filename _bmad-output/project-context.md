@@ -20,6 +20,7 @@ Nomad MVP turns travel inspiration into an executable itinerary: collect a singl
 - Work in WSL Ubuntu at `/home/tong123/work/nomad-mvp`; do not use Windows-native Node/pnpm and do not copy from old E-drive migration images.
 - BMAD 6.8 is authoritative through `_bmad/`, `_bmad-output/`, and `.agents/skills/`; old `bmad/`, `.cursor/rules/bmad/`, and `.bmad-core` references are not authoritative.
 - The repo is a pnpm monorepo with a Fastify TypeScript backend, generated OpenAPI types, Prisma schema, promptfoo assets, and docs as planning source.
+- `CURRENT.md` is the single recovery entry. Story 2.0 is done; Story 2.1 is the next story and is ready for development.
 
 ## Implementation Rules for AI Agents
 
@@ -51,5 +52,13 @@ Nomad MVP turns travel inspiration into an executable itinerary: collect a singl
 ## Developer Guardrails
 
 - Prefer scoped stories that build on existing backend contracts before broad UI work.
-- If a story needs a new frontend/mobile package, create it inside the WSL monorepo and document the chosen package path in the story/dev record.
+- The React/Vite mobile app exists under `apps/mobile`; extend its authenticated shell and feature folders instead of creating another frontend package.
 - Keep changes story-sized: each story should update only the contracts, models, routes, UI surfaces, and tests needed for that user outcome.
+
+## Current Planning Semantics
+
+- Only L3 POIs are selectable. Selection maps to `anchor_intent=selected_required`; never restore a user-facing `must_go`/“必去” toggle.
+- L2 is an area or route grouping and communicates child selection through dot color and selected L3 count.
+- Hotels are optional per date, support AMap matching, and may remain blank. Breakfast is hotel child data.
+- Reservations, tickets, and dawn/sunset/night/night-market constraints come from uploaded inspiration evidence and Agent planning, not standalone Confirm controls.
+- User-facing planning language uses “计划” and “开始规划”; “骨架” is an internal implementation term.

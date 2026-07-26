@@ -52,15 +52,15 @@ Correct-course note (2026-06-19): BYOK is removed from the MVP delivery path and
 - FR25: AI 使用额度引导：AI 填充/导出相关页面显示平台额度、生成状态、导出次数或成本友好提示；额度不足或服务降级时提供明确文案、重试/稍后继续路径与可配置远程开关，不要求用户配置 Key。
 - FR26: Planner Picker 入口路径：A) 底部输入解析得到 trip_params → 进入 Picker；B) 目的地卡“开始规划”→ 进入 Picker（传 city、place_hints 可选）。
 - FR27: Planner Picker 路由与参数：/planner/pick?city={CITY}&start={YYYY-MM-DD?}&days={N?}&source={home_input|home_card}&rec_id={CARD_ID?}。
-- FR27.1: 规划前确认页（Confirm）：在统一输入与进入编排之间新增确认页，字段包含：城市、出行节奏 pace（tight｜comfortable）、出行时间段（可选灵活天数；可选首尾两天到达/出发时间）、起床/早上出发偏好、酒店/换酒店信息、是否酒店早餐、行李处理方式、预约/门票/特殊活动约束、是否启用“智能编排”。“智能编排”默认是；选择后将后台并行启动高质量编排（见 FR32.2）。
+- FR27.1: 规划前确认页（Confirm）：字段包含城市、pace、出行日期/天数、首尾日到离时间、起床/早出发偏好、按日期可留空并支持 AMap 匹配的酒店、酒店子项早餐、换酒店行李处理和智能编排。预约/门票及特殊时段由上传内容证据派生，不提供独立开关。
 - FR28: Planner Picker 头部：标题“{城市} · {出行日期?占位} · {天数?占位}”；缺参以“待填写”灰字占位；右侧“修改参数”轻量 Sheet（日期选择器 + 天数步进器 + pace 可选）；返回保留来源上下文。
 - FR29: Planner Picker 视图结构：顶部城市 Tabs（按与目标城市中心点“直线距离”排序；仅展示灵感量 > 1 的城市）；中部卡片列表 + 地图-卡片联动（Sheet 吸附位 High→Split→Map-Full），详情统一全高 Bottom Sheet；弱网/无地图自动降级为清单视图并提示。
-- FR30: 已选篮与主按钮：吸底左“已选 N”（可展开面板：移除/必去 must_go/时段 time_hint/时长 stay_minutes_hint），右主按钮：“生成骨架”；允许在无已选时直接生成（selected_items 为空）；缺参时弹参数 Sheet 补齐后生成。
+- FR30: 已选篮与主按钮：吸底左“已选 N”（可展开面板：移除/时段 time_hint/时长 stay_minutes_hint），右主按钮：“开始规划”；选中的 L3 自动作为 selected_required 锚点，不展示额外“必去”标签或开关；允许空选规划。
 - FR31: 选点与一致性：卡片/Marker 状态一致；卡片→Map 飞行 300ms；Map→卡片滚动并“抬升”；低置信项卡片右上“去定位”入口。
-- FR32: 生成骨架（部分填充 + AI 预布局，v0.2 更新）：POST /plan/generate 使用 selected_items 作为锚点；must_go/time_hint 与 dawn/sunset/night/night-market 等强时间约束优先落位；当启用 planner_autoplace_v1 时，对“无硬冲突”的 AMap 已验证候选按配额 quota=ceil(α×S_left)（默认 α=0.6，可远程配置）进行自动落位；selected_items 为空时，基于 AnchorPool/城市热门生成 Top-N 锚点并仅对“无硬冲突”条目落位；未落位项进入“空槽→候选抽屉/AI 建议/AMap 搜索/自由活动”。
+- FR32: 生成日计划（内部为部分填充骨架 + AI 预布局）：selected_items 是 selected_required 锚点并优先落位；time_hint 与上传内容推导出的 dawn/sunset/night/night-market 等强时间约束优先于普通候选；candidate_items 可由 Agent 补全，未落位项进入计划“候选”页/抽屉。空选时回退 AnchorPool/城市热门，且任何自动落位不得引入硬冲突。
 - FR32.1: 快速版传统编排（L2 基础）：仅编排主景点（不纳入酒店/打卡点/餐饮）；按用户 pace 将粒度映射为 2h（tight）/4h（comfortable），2.5h 阈值对齐（≤2.5h→2h，>2.5h→4h）；当天优先安排同属同一 L1 下的其他 L2；生成结果可立即使用。
 - FR32.2: 高质量 LLM 编排（后台并行）：当确认页勾选“智能编排”或在天级骨架顶部手动启用时，后端后台生成高质量版本；前端先呈现快速版，顶部提示“后台正在生成高质量版本”，完成后通知用户并在顶部提供“切换-采用”入口；两版本并存直至用户确定切换。
-- FR33: AI 预布局可控性（v0.2 新增）：提供远程开关 enable_ai_seed/planner_autoplace_v1；出现超时/配额/错误时自动降级为“无预布局”的骨架并提示；SSE 事件流 started→freeze→must_go→quota→candidates→place→validate→persist→done；埋点 seed_accept_rate/seed_conflict_rate/seed_time_ms/fallback_rate。
+- FR33: AI 预布局可控性：提供远程开关 enable_ai_seed/planner_autoplace_v1；出现超时/配额/错误时自动降级为 Quick 计划并提示；SSE 事件流 started→freeze→selected_anchor→quota→candidates→place→validate→persist→done；埋点 seed_accept_rate/seed_conflict_rate/seed_time_ms/fallback_rate。
 - FR34: AnchorPool（离线锚点，v0.2 新增）：使用离线 AnchorPool（city×season×tod×category）作为候选来源；不可用时回退内置 Top-50 并记录日志；进入骨架页并行 anchors.prepare 读取池并在线轻量重排，可用时可推送 anchors_ready（SSE）。
 - FR35: 多城市与交通槽（Post-MVP，暂不在本版范围）：支持 multi_city 计划；当日存在跨城段时，生成 transport_slot 占用相应时段；跨城通勤约束仍采用 T_commute_max（基于总天数 D）；编排以 transport_slot 为边界分段进行，分段内独立应用配额与候选；transport_slot 不参与 AI 预布局的普通候选落位。
 - FR36: 酒店槽与餐饮处理（v0.5 更新）：每日生成 hotel_slot（今晚入住酒店，作为行程节奏、区域聚类、换酒店缓冲、行李处理和晚间活动半径的核心约束）；hotel_slot 在时间轴 DayN 末尾固定显示，支持“更换酒店/查看地图/预订链接/备注”；未选择时显示“待选择”。餐饮按普通槽处理；酒店早餐影响早段安排。
@@ -72,7 +72,7 @@ Correct-course note (2026-06-19): BYOK is removed from the MVP delivery path and
 - FR41: 酒店选择优先（v0.3 新增）：当日仅有 1 个酒店候选时，自动写入 hotel_slot；当有多个或 0 个酒店候选时，保持空白直至用户选择；一旦选择酒店，自动启用 near_hotel 早/晚弱偏好。
 - FR42: 酒店更改与重排确认（Post-MVP，暂不在本版范围）：当用户“更换/首次选择”酒店时，弹窗询问是否对当日（或分段）进行重排；重排范围选项：仅晚段、整日、取消；默认“仅晚段”。
 - FR43: 历史步骤管理（Post-MVP，暂不在本版范围）：在 8 秒撤销之外，提供“历史步骤时间轴”，用户可回退到任一自动重排前的版本；每次自动重排/手动大改均生成快照（含 near_hotel 开/关信息）。
-- FR44: -lite: 文本快速搜索（MVP）： - 行程槽大弹窗：顶部提供 AMap keyword 文本搜索（仅列表，无地图），返回 Top-5；结果项含 名称/地址/距离估计；操作：加入候选｜直接落位（遵循硬约束/分段边界）。 - 酒店槽大弹窗：同样为文本搜索（Top-5 列表，无地图）；选择即写入 hotel_slot；不提供“留空”。 - 手动录入（兜底最小化）：名称 + 地址/坐标（可选）→ 地理编码 → 入候选（低置信标记“待定位”）。 - 弱网/配额失败：提示“搜索暂不可用，请稍后重试”；不提供外部跳转/粘贴分享解析。
+- FR44-lite: 文本快速搜索（MVP）：行程槽提供 AMap Top-5 文本结果，可加入候选或直接落位；酒店槽提供同样的 POI 匹配并始终允许留空/稍后决定；弱网或配额失败时诚实提示，不伪造结果。
 - FR45: 用户反馈（兔小巢集成，MVP） - 入口：设置页与侧边栏提供“反馈与建议”入口；结果页异常时提供二级入口。 - 跳转：使用官方产品链接 `https://support.qq.com/product/{PRODUCT_ID}`（注意是 product 不是 products），在内嵌 WebView 打开；若站点禁止内嵌（X-Frame-Options/CSP），回退系统浏览器。 - WebView 要求：开启 JavaScript 与 DOM Storage 以保障页面正常运行。 - 登录态：默认不传登录态则由平台分配随机头像/昵称；如需展示本产品登录态（头像/昵称/ID），按兔小巢“产品自己的用户登录态”官方参数规范传递，最小化字段，不自研 SSO 协议。 - 降级：页面加载失败时，展示内置极简表单（文本+可选截图，截图上传 COS），由我们侧落库/转发，不阻断反馈闭环。 - 可选增强：支持自定义参数（环境/来源）、微信回复通知、Webhooks（反馈通知）、用户反馈数据 API（拉取数据）。
 
 ### NonFunctional Requirements
@@ -332,13 +332,13 @@ Goal: turn selected or empty inspirations into an editable, validated day-level 
 
 As a planner,
 I want to confirm trip parameters and select inspiration anchors in context,
-So that skeleton generation starts with the right city, dates, pace, and POI hints.
+So that planning starts with the right city, dates, pace, hotel context, and POI hints.
 
 **Acceptance Criteria:**
 
 **Given** the user enters planning from Home input or a destination card
 **When** trip parameters are incomplete
-**Then** Confirm collects city, pace, travel date/day range, first-day/last-day time windows, wake/morning start preference, hotel and hotel-change details, hotel breakfast, luggage handling, reservations/tickets, and smart-planning preference.
+**Then** Confirm collects city, pace, travel date/day range, first-day/last-day time windows, wake/morning start preference, per-date optional hotel inputs with AMap matching, hotel breakfast as a hotel child item, luggage handling, and smart-planning preference.
 
 **Given** the user reaches Picker
 **When** it renders
@@ -348,13 +348,17 @@ So that skeleton generation starts with the right city, dates, pace, and POI hin
 **When** Picker displays city tabs
 **Then** tabs are sorted by straight-line distance to the target city center and only cities with inspiration count > 1 are shown.
 
-**Given** the user selects cards or markers
+**Given** the user selects L3 POI child items
 **When** selection changes
-**Then** card, marker, basket, must_go, time_hint, and stay_minutes_hint states remain consistent.
+**Then** the L3 item, marker, parent L2 selected-count state, basket, selected-required anchor state, time_hint, and stay_minutes_hint remain consistent; L2 itself is never selectable.
 
-**Given** special time-bound activities are present
+**Given** uploaded inspirations imply special time-bound activities
 **When** the user confirms planning inputs
-**Then** dawn, sunset, night, and night-market constraints are carried forward as hard time hints.
+**Then** dawn, sunset, night, and night-market constraints are derived from inspiration evidence and carried forward without a manual special-time toggle.
+
+**Given** the user proceeds from Picker
+**When** the primary action is shown
+**Then** the user-facing CTA is “开始规划”; internal terms such as “生成骨架”, `must_go`, and “必去” are not exposed.
 
 ### Story 2.1: Generate Day Skeleton with Quick and HQ Planning
 
@@ -366,7 +370,7 @@ So that I can start editing immediately and upgrade if a better plan arrives.
 
 **Given** selected_items are provided or empty
 **When** `POST /plan/generate` starts
-**Then** must_go, time_hint, dawn/sunset/night/night-market constraints, and AMap-verified POIs are placed first; selected_items use item_id and optional poi_id/must_go/time_hint/stay_minutes_hint, and empty selection falls back to AnchorPool or built-in Top-50.
+**Then** selected_items are treated as selected_required anchors and placed before ordinary candidates, while time_hint and derived dawn/sunset/night/night-market constraints remain hard; selected_items use item_id and optional poi_id/anchor_intent/time_hint/stay_minutes_hint, candidate_items remain optional, and empty selection falls back to AnchorPool or built-in Top-50.
 
 **Given** pace maps to slot granularity
 **When** quick planning runs
@@ -382,7 +386,7 @@ So that I can start editing immediately and upgrade if a better plan arrives.
 
 **Given** hotel candidates exist
 **When** skeleton generation completes
-**Then** hotel_slot affects early/late radius, region clustering, hotel-change buffers, luggage handling, and night activity radius, while near_hotel never overrides hard constraints or transport boundaries.
+**Then** only per-date hotels explicitly selected in Confirm populate hotel_slot and affect early/late radius, region clustering, hotel-change buffers, luggage handling, and night activity radius; an intentionally blank hotel remains blank, and near_hotel never overrides hard constraints or transport boundaries.
 
 **Given** a slot cannot be resolved confidently
 **When** planner needs a replacement or filler candidate

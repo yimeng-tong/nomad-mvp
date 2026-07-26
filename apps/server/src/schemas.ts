@@ -22,7 +22,25 @@ export const SearchPoiQuery = z.object({
   topk: z.coerce.number().int().min(1).max(10).optional()
 }).strict();
 
-const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+export const MAX_PLAN_DAYS = 14;
+
+function isRealIsoDate(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+}
+
+function addIsoDays(value: string, offset: number) {
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day + offset));
+  return date.toISOString().slice(0, 10);
+}
+
+const IsoDate = z.string().refine(isRealIsoDate, 'invalid calendar date');
 const TimeOfDay = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
 const PlannerTimeHint = z.enum(['dawn', 'morning', 'afternoon', 'sunset', 'evening', 'night', 'night_market']);
 const PlannerAnchorSource = z.enum(['library', 'home_card', 'home_input', 'uploaded_inspiration']);
@@ -71,7 +89,7 @@ const PlanHardTimeHint = z.object({
 export const PlanGenerateBody = z.object({
   city: z.string().trim().min(1),
   start_date: IsoDate,
-  days: z.number().int().min(1),
+  days: z.number().int().min(1).max(MAX_PLAN_DAYS),
   pace: z.enum(['tight', 'comfortable']),
   source: z.enum(['home_input', 'home_card']).nullable().optional(),
   rec_id: NullableString,
@@ -85,7 +103,58 @@ export const PlanGenerateBody = z.object({
   last_day_departure_time: TimeOfDay.nullable().optional(),
   smart_planning: z.boolean().optional(),
   hard_time_hints: z.array(PlanHardTimeHint).optional()
-}).strict();
+}).strict().superRefine((value, ctx) => {
+  const selectedIds = value.selected_items?.map((item) => item.item_id) ?? [];
+  const candidateIds = value.candidate_items?.map((item) => item.item_id) ?? [];
+  const duplicateSelected = selectedIds.find((id, index) => selectedIds.indexOf(id) !== index);
+  const duplicateCandidate = candidateIds.find((id, index) => candidateIds.indexOf(id) !== index);
+  const overlap = selectedIds.find((id) => candidateIds.includes(id));
+
+  if (duplicateSelected) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['selected_items'], message: `duplicate selected item: ${duplicateSelected}` });
+  }
+  if (duplicateCandidate) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['candidate_items'], message: `duplicate candidate item: ${duplicateCandidate}` });
+  }
+  if (overlap) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['candidate_items'], message: `item cannot be selected and candidate: ${overlap}` });
+  }
+
+  const tripDates = isRealIsoDate(value.start_date)
+    ? new Set(Array.from({ length: value.days }, (_, index) => addIsoDays(value.start_date, index)))
+    : new Set<string>();
+  const hotelDates = new Set<string>();
+  value.hotels?.forEach((hotel, index) => {
+    if (hotelDates.has(hotel.date)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['hotels', index, 'date'], message: 'duplicate hotel date' });
+    }
+    hotelDates.add(hotel.date);
+    if (tripDates.size > 0 && !tripDates.has(hotel.date)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['hotels', index, 'date'], message: 'hotel date is outside trip range' });
+    }
+    if (hotel.leave_blank && (hotel.hotel_name || hotel.poi_id || hotel.address || hotel.breakfast_included)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['hotels', index], message: 'blank hotel cannot include hotel details or breakfast' });
+    }
+  });
+
+  if (
+    value.days === 1
+    && value.first_day_arrival_time
+    && value.last_day_departure_time
+    && value.first_day_arrival_time > value.last_day_departure_time
+  ) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['last_day_departure_time'], message: 'departure must not be earlier than arrival for a one-day trip' });
+  }
+
+  const distinctHotels = new Set(
+    (value.hotels ?? [])
+      .filter((hotel) => !hotel.leave_blank && (hotel.poi_id || hotel.hotel_name))
+      .map((hotel) => hotel.poi_id || hotel.hotel_name)
+  );
+  if (distinctHotels.size > 1 && (!value.luggage_plan?.mode || value.luggage_plan.mode === 'undecided')) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['luggage_plan', 'mode'], message: 'luggage handling must be resolved for hotel changes' });
+  }
+});
 
 export const AiFillBody = z.object({
   plan_id: z.string(),

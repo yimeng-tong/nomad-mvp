@@ -6,7 +6,7 @@ Terms & Inputs
 - cluster: geo cluster (city 1.5–2km; suburb 3–4km)
 - slot: 2h block (activity timeline)
 - time_hint: frozen slot
-- must_go: user/system designated must-visit
+- selected_required: a user-selected L3 POI; selection itself is the required intent and no separate user-facing must-go toggle exists
 - others: user-selected but not placed
 - anchors: offline city×season×tod×category Top-K
 
@@ -17,10 +17,10 @@ Offline Anchor Pool (72h refresh)
 - Store: AnchorPool(topk_json[{poi_id, score, tags[], why_short}])
 
 Online Daily Flow (per day; MVP single-city)
-SSE: started → freeze → must_go → quota → candidates → place → validate → persist → done
+SSE: started → freeze → selected_anchor → quota → candidates → place → validate → persist → done
 
 1) freeze: place time_hint (immutable)
-2) must_go (not counted in quota): filter feasibility; sort tight_window/booking > sunset/weather > popularity > proximity; conflict with frozen → skip
+2) selected_anchor (not counted in quota): place selected_required L3 anchors by hard-time evidence and feasibility; if a hard conflict prevents placement, preserve it as unresolved_required with an explanation rather than silently dropping it
 3) quota: S_left = S_total − S_hint − S_must; quota = ceil(α × S_left), α default 0.6; cold-start: if none placed and S_left ≥ 1, quota = max(quota, 1). (Post‑MVP 预留：多城市按 `transport_slot` 分段单独计算配额)
 4) candidates: others → near-similar (opt) → anchors; only AMap-verified POIs can be auto-placed; unresolved slots follow existing notes → Xiaohongshu search → AMap nearby search → ask user; dedupe; K(d) = clamp(K_min, 3×quota+spare, K_max)
 5) place: greedy + 1 swap; enforce T_commute_max; skip closed/overtime/too_short; stop at quota. Apply near_hotel soft boost（需已选酒店）:
@@ -43,8 +43,8 @@ Boundaries & Fallbacks
 - Hotel changes require luggage/check-in buffers before late-day placement.
 
 Priority & Ties
-- Placement priority: time_hint > must_go > others
-- First must_go without time_hint: category heuristics (sightseeing 10–12, F&B 12–14/18–20, nightlife 20–22) → earliest feasible; shift to D2 if needed
+- Placement priority: hard time_hint > selected_required > candidate_items
+- First selected_required without time_hint: category heuristics (sightseeing 10–12, F&B 12–14/18–20, nightlife 20–22) → earliest feasible; shift to D2 if needed
  - Category slots externalized: see `docs/architecture/planner-category-slots.json`（hotel is display-only and not auto-placed; dining windows remain hints only）
 
 Security & Cost Notes

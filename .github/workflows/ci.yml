@@ -51,6 +51,9 @@ jobs:
       - name: Generate OpenAPI types
         run: pnpm run ci:types
 
+      - name: Validate BMAD handoff
+        run: pnpm run ci:handoff
+
       - name: Build workspace
         run: pnpm run ci:build
 

@@ -3,6 +3,8 @@ import type { Analytics } from '../auth/analytics';
 import { createNoopAnalytics, sanitizeAnalyticsProps } from '../auth/analytics';
 import type { LibraryCitySummary, LibraryInspirationItem, PlannerHandoff, PlannerHandoffSelectedItem } from '../home/api';
 import { createPlannerApiClient, type PlanGenerateRequest, type PlannerApiClient, type PlannerTimeHint, type SearchPoiItem } from './api';
+import type { PlanGenerateResponse } from './api';
+import { DayPlanScreen } from './DayPlanScreen';
 import { inferPlannerTimeHint } from './timeHints';
 
 type PlannerScreenProps = {
@@ -265,6 +267,7 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
   const [activeCity, setActiveCity] = useState(routeParams.city);
   const [activeL2, setActiveL2] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [planStart, setPlanStart] = useState<PlanGenerateResponse | null>(null);
   const [confirm, setConfirm] = useState<ConfirmState>(() => ({
     city: routeParams.city,
     startDate: routeParams.startDate,
@@ -503,13 +506,24 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
     });
     try {
       const response = await client.generatePlan(payload);
-      setNotice(`规划已开始：${response.sse_url || response.plan_job_id}`);
+      setPlanStart(response);
     } catch {
       setNotice('开始规划失败，请稍后重试');
     } finally {
       setSubmitting(false);
     }
   };
+
+  if (planStart) {
+    return (
+      <DayPlanScreen
+        start={planStart}
+        apiClient={client}
+        analytics={tracker}
+        onBack={() => setPlanStart(null)}
+      />
+    );
+  }
 
   return (
     <main className="planner-shell" aria-labelledby={viewMode === 'confirm' ? 'planner-confirm-title' : 'planner-picker-title'}>

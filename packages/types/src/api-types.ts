@@ -79,8 +79,24 @@ export interface paths {
     get: operations["getResultSheet"];
   };
   "/plan/{plan_id}": {
-    /** Get plan (alias of result-sheet for convenience) */
+    /** Get the current Quick/HQ day-plan summary */
     get: operations["getPlan"];
+  };
+  "/plan/{plan_id}/versions/{version_id}": {
+    /** Get an owned Quick or HQ plan version for preview */
+    get: operations["getPlanVersion"];
+  };
+  "/plan/{plan_id}/slots/{slot_id}/resolve": {
+    /** Fill an empty slot from a candidate or mark it as free activity */
+    post: operations["resolveEmptyPlanSlot"];
+  };
+  "/plan/{plan_id}/seed/reset": {
+    /** Reset only AI-seed placements */
+    post: operations["resetPlanSeed"];
+  };
+  "/plan/{plan_id}/seed/undo": {
+    /** Undo the latest seed placement within its short undo window */
+    post: operations["undoPlanSeed"];
   };
   "/plan/slots/{slot_id}/status": {
     /** Toggle or set slot status (checked) */
@@ -537,7 +553,203 @@ export interface components {
       plan_id: string;
       plan_job_id: string;
       /** @example /sse/plan/pj_1 */
-      sse_url?: string;
+      sse_url: string;
+    };
+    /** @enum {string} */
+    PlanJobPhase: "started" | "freeze" | "selected_anchor" | "quota" | "candidates" | "place" | "validate" | "persist" | "done" | "failed";
+    PlanJobEvent: {
+      trace_id: string;
+      plan_id: string;
+      plan_job_id: string;
+      phase: components["schemas"]["PlanJobPhase"];
+      placed_count?: number;
+      remaining_count?: number;
+      quick_version_id?: string | null;
+      hq_job_id?: string | null;
+      error_code?: string | null;
+      error_message?: string | null;
+      retriable?: boolean | null;
+      /** Format: int64 */
+      ts: number;
+    };
+    PlanEvidenceConstraint: {
+      item_id: string;
+      poi_id?: string | null;
+      /** Format: date */
+      date?: string | null;
+      start_local?: string | null;
+      end_local?: string | null;
+      /** @example Asia/Shanghai */
+      timezone: string;
+      time_hint: components["schemas"]["PlannerTimeHint"];
+      /** @enum {string} */
+      source: "uploaded_inspiration" | "reservation" | "ticket";
+      evidence_ref: string;
+      source_attribution?: string | null;
+      /** @enum {string} */
+      quality: "verified" | "high" | "medium" | "low";
+    };
+    DayPlanPoi: {
+      poi_id: string;
+      amap_id?: string | null;
+      name: string;
+      address?: string | null;
+      /** Format: double */
+      latitude?: number | null;
+      /** Format: double */
+      longitude?: number | null;
+      verified: boolean;
+      /** @enum {string|null} */
+      quality?: "verified" | "high" | "medium" | "low" | null;
+      source_attribution?: string | null;
+    };
+    DayPlanSlot: {
+      slot_id: string;
+      day_index: number;
+      slot_index: number;
+      start_local: string;
+      end_local: string;
+      /** @enum {string} */
+      type: "place" | "free" | "hotel" | "unresolved";
+      /** @enum {string} */
+      origin: "selected_required" | "ai_seed" | "hand" | "hotel" | "free";
+      title?: string | null;
+      poi?: components["schemas"]["DayPlanPoi"] | null;
+      inspiration_id?: string | null;
+      constraint?: components["schemas"]["PlanEvidenceConstraint"] | null;
+      warning_codes?: string[];
+    };
+    DayPlanHotel: {
+      /** Format: date */
+      date: string;
+      leave_blank: boolean;
+      breakfast_included?: boolean;
+      poi?: components["schemas"]["DayPlanPoi"] | null;
+    };
+    DayPlanDay: {
+      day_index: number;
+      /** Format: date */
+      date: string;
+      slots: components["schemas"]["DayPlanSlot"][];
+      hotel: components["schemas"]["DayPlanHotel"];
+    };
+    DayPlanCandidate: {
+      candidate_id: string;
+      item_id: string;
+      poi?: components["schemas"]["DayPlanPoi"] | null;
+      /** @enum {string} */
+      status: "available" | "requires_location" | "used";
+      /** @enum {string} */
+      source: "user_candidate" | "anchor_pool" | "built_in" | "amap" | "ai";
+      reason: string;
+      /** @enum {string|null} */
+      quality?: "verified" | "high" | "medium" | "low" | null;
+      source_attribution?: string | null;
+    };
+    DayPlanWarning: {
+      code: string;
+      /** @enum {string} */
+      severity: "soft" | "hard";
+      message: string;
+      slot_id?: string | null;
+      item_id?: string | null;
+    };
+    UnresolvedRequiredItem: {
+      item_id: string;
+      poi_id?: string | null;
+      /** @enum {string} */
+      reason_code: "requires_location" | "hard_time_conflict" | "closed" | "outside_trip" | "unavailable";
+      message: string;
+    };
+    PlanVersionSummary: {
+      version_id: string;
+      /** @enum {string} */
+      kind: "quick" | "hq";
+      /** @enum {string} */
+      state: "running" | "ready" | "failed" | "adopted";
+      /** Format: date-time */
+      created_at: string;
+    };
+    HqJobSummary: {
+      hq_job_id: string;
+      /** @enum {string} */
+      state: "running" | "done" | "failed";
+      version_id?: string | null;
+      error_code?: string | null;
+    };
+    DayPlanResponse: {
+      plan_id: string;
+      city: string;
+      /** Format: date */
+      start_date: string;
+      days: number;
+      /** @enum {string} */
+      pace: "tight" | "comfortable";
+      plan_rev: number;
+      current_version_id: string;
+      quick_version: components["schemas"]["PlanVersionSummary"];
+      hq_job?: components["schemas"]["HqJobSummary"] | null;
+      versions: components["schemas"]["PlanVersionSummary"][];
+      day_plans: components["schemas"]["DayPlanDay"][];
+      candidates: components["schemas"]["DayPlanCandidate"][];
+      warnings: components["schemas"]["DayPlanWarning"][];
+      unresolved_required: components["schemas"]["UnresolvedRequiredItem"][];
+      seed_undo_token?: string | null;
+      /** Format: date-time */
+      seed_undo_expires_at?: string | null;
+    };
+    EmptySlotResolveRequest: OneOf<[{
+      /** @enum {string} */
+      op: "fill_empty_slot_with_candidate";
+      expected_plan_rev: number;
+      candidate_id: string;
+    }, {
+      /** @enum {string} */
+      op: "set_free_activity";
+      expected_plan_rev: number;
+    }]>;
+    EmptySlotResolveResponse: {
+      plan_id: string;
+      plan_rev: number;
+      slot: components["schemas"]["DayPlanSlot"];
+    };
+    PlanRevisionRequest: {
+      expected_plan_rev: number;
+    };
+    SeedUndoRequest: {
+      expected_plan_rev: number;
+      undo_token: string;
+    };
+    PlanMutationResponse: {
+      plan_id: string;
+      plan_rev: number;
+    };
+    HqStartRequest: {
+      plan_id: string;
+    };
+    HqStartResponse: {
+      hq_job_id: string;
+      /** @enum {string} */
+      state: "running" | "done" | "failed";
+    };
+    HqStatusResponse: {
+      hq_job_id: string;
+      /** @enum {string} */
+      state: "running" | "done" | "failed";
+      plan_id?: string;
+      version_id?: string | null;
+      error_code?: string | null;
+      retriable?: boolean | null;
+    };
+    HqAdoptRequest: {
+      plan_id: string;
+      hq_job_id: string;
+      expected_plan_rev: number;
+    };
+    HqAdoptResponse: {
+      plan_id: string;
+      plan_rev: number;
+      current_version_id: string;
     };
     SlotPatchRequest: {
       /** @enum {string} */
@@ -643,6 +855,10 @@ export interface components {
       name: string;
       address: string;
       distance_m?: number | null;
+      /** Format: double */
+      latitude?: number | null;
+      /** Format: double */
+      longitude?: number | null;
     };
     CandidateAddRequest: {
       name: string;
@@ -1027,6 +1243,12 @@ export interface operations {
   };
   /** Generate day-level skeleton (partial fill) asynchronously */
   planGenerate: {
+    parameters: {
+      header?: {
+        /** @description Reuse only when retrying the same planning submission. */
+        "Idempotency-Key"?: string;
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["PlanGenerateRequest"];
@@ -1157,7 +1379,7 @@ export interface operations {
       404: components["responses"]["Error400"];
     };
   };
-  /** Get plan (alias of result-sheet for convenience) */
+  /** Get the current Quick/HQ day-plan summary */
   getPlan: {
     parameters: {
       path: {
@@ -1165,14 +1387,108 @@ export interface operations {
       };
     };
     responses: {
-      /** @description Plan (result-sheet payload) */
+      /** @description Current day plan */
       200: {
         content: {
-          "application/json": components["schemas"]["ResultSheetResponse"];
+          "application/json": components["schemas"]["DayPlanResponse"];
         };
       };
       401: components["responses"]["Error401"];
-      404: components["responses"]["Error400"];
+      404: components["responses"]["Error404"];
+    };
+  };
+  /** Get an owned Quick or HQ plan version for preview */
+  getPlanVersion: {
+    parameters: {
+      path: {
+        plan_id: string;
+        version_id: string;
+      };
+    };
+    responses: {
+      /** @description Requested plan version */
+      200: {
+        content: {
+          "application/json": components["schemas"]["DayPlanResponse"];
+        };
+      };
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
+    };
+  };
+  /** Fill an empty slot from a candidate or mark it as free activity */
+  resolveEmptyPlanSlot: {
+    parameters: {
+      path: {
+        plan_id: string;
+        slot_id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["EmptySlotResolveRequest"];
+      };
+    };
+    responses: {
+      /** @description Empty slot resolved */
+      200: {
+        content: {
+          "application/json": components["schemas"]["EmptySlotResolveResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
+    };
+  };
+  /** Reset only AI-seed placements */
+  resetPlanSeed: {
+    parameters: {
+      path: {
+        plan_id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlanRevisionRequest"];
+      };
+    };
+    responses: {
+      /** @description Seed placements reset */
+      200: {
+        content: {
+          "application/json": components["schemas"]["PlanMutationResponse"];
+        };
+      };
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
+    };
+  };
+  /** Undo the latest seed placement within its short undo window */
+  undoPlanSeed: {
+    parameters: {
+      path: {
+        plan_id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SeedUndoRequest"];
+      };
+    };
+    responses: {
+      /** @description Seed placement undone */
+      200: {
+        content: {
+          "application/json": components["schemas"]["PlanMutationResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
     };
   };
   /** Toggle or set slot status (checked) */
@@ -1321,18 +1637,14 @@ export interface operations {
   hqStart: {
     requestBody: {
       content: {
-        "application/json": {
-          plan_id: string;
-        };
+        "application/json": components["schemas"]["HqStartRequest"];
       };
     };
     responses: {
       /** @description HQ job started */
       202: {
         content: {
-          "application/json": {
-            hq_job_id?: string;
-          };
+          "application/json": components["schemas"]["HqStartResponse"];
         };
       };
       400: components["responses"]["Error400"];
@@ -1350,10 +1662,7 @@ export interface operations {
       /** @description HQ status */
       200: {
         content: {
-          "application/json": {
-            /** @enum {string} */
-            state?: "running" | "done" | "failed";
-          };
+          "application/json": components["schemas"]["HqStatusResponse"];
         };
       };
       400: components["responses"]["Error400"];
@@ -1364,16 +1673,15 @@ export interface operations {
   hqAdopt: {
     requestBody: {
       content: {
-        "application/json": {
-          plan_id: string;
-          hq_job_id: string;
-        };
+        "application/json": components["schemas"]["HqAdoptRequest"];
       };
     };
     responses: {
-      /** @description Adopted */
+      /** @description HQ version adopted */
       200: {
-        content: never;
+        content: {
+          "application/json": components["schemas"]["HqAdoptResponse"];
+        };
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];

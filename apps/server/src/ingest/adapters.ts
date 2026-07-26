@@ -129,7 +129,7 @@ export async function standardizeCandidates(candidates: ExtractedCandidate[]): P
     lon: 120.13,
     distanceMeters: index * 120,
     confidence: candidate.confidence,
-    cityName: '杭州',
+    cityName: process.env.AMAP_STUB_CITY?.trim() || '杭州',
   }));
 
   if (process.env.AMAP_STUB_HIGH_CONFIDENCE === 'true') {

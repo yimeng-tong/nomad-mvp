@@ -3,6 +3,8 @@ export type AmapPoiSearchItem = {
   name: string;
   address: string;
   distance_m: number | null;
+  latitude: number | null;
+  longitude: number | null;
 };
 
 type AmapPoi = {
@@ -10,6 +12,7 @@ type AmapPoi = {
   name?: unknown;
   address?: unknown;
   distance?: unknown;
+  location?: unknown;
 };
 
 type AmapPoiResponse = {
@@ -34,6 +37,26 @@ function text(value: unknown) {
 function distance(value: unknown) {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed >= 0 ? Math.round(parsed) : null;
+}
+
+function location(value: unknown) {
+  const [longitudeText, latitudeText, ...rest] = text(value).split(',');
+  if (rest.length > 0 || !longitudeText || !latitudeText) {
+    return { latitude: null, longitude: null };
+  }
+  const longitude = Number(longitudeText);
+  const latitude = Number(latitudeText);
+  if (
+    !Number.isFinite(longitude) ||
+    !Number.isFinite(latitude) ||
+    longitude < -180 ||
+    longitude > 180 ||
+    latitude < -90 ||
+    latitude > 90
+  ) {
+    return { latitude: null, longitude: null };
+  }
+  return { latitude, longitude };
 }
 
 export async function searchAmapPoi(city: string, query: string, topk: number): Promise<AmapPoiSearchItem[]> {
@@ -71,12 +94,17 @@ export async function searchAmapPoi(city: string, query: string, topk: number): 
   }
 
   return (body.pois as AmapPoi[])
-    .map((poi) => ({
-      poi_id: text(poi.id),
-      name: text(poi.name),
-      address: text(poi.address),
-      distance_m: distance(poi.distance),
-    }))
+    .map((poi) => {
+      const coordinates = location(poi.location);
+      return {
+        poi_id: text(poi.id),
+        name: text(poi.name),
+        address: text(poi.address),
+        distance_m: distance(poi.distance),
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+      };
+    })
     .filter((poi) => poi.poi_id && poi.name && poi.address)
     .slice(0, topk);
 }

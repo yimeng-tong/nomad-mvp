@@ -109,6 +109,12 @@ export const PlanGenerateBody = z.object({
   const duplicateSelected = selectedIds.find((id, index) => selectedIds.indexOf(id) !== index);
   const duplicateCandidate = candidateIds.find((id, index) => candidateIds.indexOf(id) !== index);
   const overlap = selectedIds.find((id) => candidateIds.includes(id));
+  const plannerItems = new Map(
+    [...(value.selected_items ?? []), ...(value.candidate_items ?? [])]
+      .map((item) => [item.item_id, item] as const),
+  );
+  const hardHintIds = value.hard_time_hints?.map((hint) => hint.item_id) ?? [];
+  const duplicateHardHint = hardHintIds.find((id, index) => hardHintIds.indexOf(id) !== index);
 
   if (duplicateSelected) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['selected_items'], message: `duplicate selected item: ${duplicateSelected}` });
@@ -119,6 +125,25 @@ export const PlanGenerateBody = z.object({
   if (overlap) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['candidate_items'], message: `item cannot be selected and candidate: ${overlap}` });
   }
+  if (duplicateHardHint) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['hard_time_hints'], message: `duplicate hard-time hint: ${duplicateHardHint}` });
+  }
+  value.hard_time_hints?.forEach((hint, index) => {
+    const item = plannerItems.get(hint.item_id);
+    if (!item) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['hard_time_hints', index, 'item_id'],
+        message: 'hard-time hint must reference a selected or candidate item',
+      });
+    } else if (hint.poi_id && item.poi_id && hint.poi_id !== item.poi_id) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['hard_time_hints', index, 'poi_id'],
+        message: 'hard-time hint POI must match its planner item',
+      });
+    }
+  });
 
   const tripDates = isRealIsoDate(value.start_date)
     ? new Set(Array.from({ length: value.days }, (_, index) => addIsoDays(value.start_date, index)))
@@ -155,6 +180,41 @@ export const PlanGenerateBody = z.object({
     ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['luggage_plan', 'mode'], message: 'luggage handling must be resolved for hotel changes' });
   }
 });
+
+export const EmptySlotResolveBody = z.discriminatedUnion('op', [
+  z.object({
+    op: z.literal('fill_empty_slot_with_candidate'),
+    expected_plan_rev: z.number().int().positive(),
+    candidate_id: z.string().min(1),
+  }).strict(),
+  z.object({
+    op: z.literal('set_free_activity'),
+    expected_plan_rev: z.number().int().positive(),
+  }).strict(),
+]);
+
+export const PlanRevisionBody = z.object({
+  expected_plan_rev: z.number().int().positive()
+}).strict();
+
+export const SeedUndoBody = z.object({
+  expected_plan_rev: z.number().int().positive(),
+  undo_token: z.string().min(1)
+}).strict();
+
+export const HqStartBody = z.object({
+  plan_id: z.string().min(1)
+}).strict();
+
+export const HqStatusQuery = z.object({
+  hq_job_id: z.string().min(1)
+}).strict();
+
+export const HqAdoptBody = z.object({
+  plan_id: z.string().min(1),
+  hq_job_id: z.string().min(1),
+  expected_plan_rev: z.number().int().positive()
+}).strict();
 
 export const AiFillBody = z.object({
   plan_id: z.string(),

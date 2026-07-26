@@ -1,6 +1,7 @@
 import { isSuppressedChain, selectBranchCandidates } from './branch-rules.js';
 import { extractPoiCandidates, fetchXhsPost, rehostMedia, standardizeCandidates } from './adapters.js';
 import { appendIngestEvent, getJob, persistIngestOutput } from './store.js';
+import { extractTimeEvidence } from './evidence.js';
 import type { ExtractedCandidate, RehostedAsset, StandardizedCandidate, XhsFetchedPost } from './adapters.js';
 
 const runningJobs = new Set<string>();
@@ -109,6 +110,7 @@ export async function runIngestPipeline(jobId: string) {
       assets,
       highConfidence: degraded ? undefined : highConfidence,
       candidates: branchCandidates,
+      timeEvidence: extractTimeEvidence(post, job.sourceUrl),
     });
 
     await appendIngestEvent(jobId, {

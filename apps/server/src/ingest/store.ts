@@ -1,7 +1,14 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { Prisma } from '@prisma/client';
 import { getPrisma } from '../db/prisma.js';
+import { refreshAnchorPoolForCity } from '../planner/anchor-pool.js';
+import {
+  resolveCityTimezone,
+  UnsupportedPlannerCityError,
+} from '../planner/city-timezones.js';
 import type { RankedBranchCandidate } from './branch-rules.js';
 import type { RehostedAsset, StandardizedCandidate, XhsFetchedPost } from './adapters.js';
+import type { ExtractedTimeEvidence } from './evidence.js';
 import type { IngestEvent, IngestJobRecord, IngestStage, IngestWarning, StoredInspirationResult } from './types.js';
 
 type Subscriber = (event: IngestEvent) => void;
@@ -232,13 +239,24 @@ export async function persistIngestOutput(input: {
   assets: RehostedAsset[];
   highConfidence?: StandardizedCandidate;
   candidates: RankedBranchCandidate[];
+  timeEvidence: ExtractedTimeEvidence[];
 }): Promise<StoredInspirationResult> {
   const prisma = getPrisma();
-  const locateStatus = input.highConfidence ? 'resolved' : 'pending';
+  let highConfidence = input.highConfidence;
+  let cityTimezone: string | null = null;
+  if (highConfidence) {
+    try {
+      cityTimezone = resolveCityTimezone(highConfidence.cityName || '杭州');
+    } catch (error) {
+      if (!(error instanceof UnsupportedPlannerCityError)) throw error;
+      highConfidence = undefined;
+    }
+  }
+  const locateStatus = highConfidence ? 'resolved' : 'pending';
   const inspirationId = `mem_${input.job.id}`;
 
   if (!prisma) {
-    const cityName = input.highConfidence?.cityName || null;
+    const cityName = highConfidence?.cityName || null;
     memoryInspirations.set(inspirationId, {
       id: inspirationId,
       user_id: input.job.userId,
@@ -247,9 +265,9 @@ export async function persistIngestOutput(input: {
       locate_status: locateStatus,
       city_id: cityName ? `mem_city_${createHash('sha1').update(cityName).digest('hex').slice(0, 10)}` : null,
       city_name: cityName,
-      poi_id: input.highConfidence ? `mem_poi_${createHash('sha1').update(input.highConfidence.amapId || input.highConfidence.name).digest('hex').slice(0, 10)}` : null,
-      poi_name: input.highConfidence?.name ?? null,
-      poi_address: input.highConfidence?.address ?? null,
+      poi_id: highConfidence ? `mem_poi_${createHash('sha1').update(highConfidence.amapId || highConfidence.name).digest('hex').slice(0, 10)}` : null,
+      poi_name: highConfidence?.name ?? null,
+      poi_address: highConfidence?.address ?? null,
       asset_count: input.assets.length,
       candidate_count: input.candidates.length,
       created_at: new Date().toISOString(),
@@ -267,34 +285,56 @@ export async function persistIngestOutput(input: {
     };
   }
 
-  let cityId: string | undefined;
-  let poiId: string | undefined;
-  if (input.highConfidence) {
-    const city = await prisma.city.upsert({
-      where: { id: uuidFromStableId(`city:${input.highConfidence.cityName || '杭州'}`) },
-      update: {},
-      create: { id: uuidFromStableId(`city:${input.highConfidence.cityName || '杭州'}`), name: input.highConfidence.cityName || '杭州' },
-    });
-    cityId = city.id;
-    const poi = await prisma.canonicalPOI.upsert({
-      where: { id: uuidFromStableId(`poi:${input.highConfidence.amapId || input.highConfidence.name}`) },
-      update: {
-        name: input.highConfidence.name,
-        address: input.highConfidence.address,
-        amapId: input.highConfidence.amapId,
-      },
-      create: {
-        id: uuidFromStableId(`poi:${input.highConfidence.amapId || input.highConfidence.name}`),
-        cityId,
-        name: input.highConfidence.name,
-        address: input.highConfidence.address,
-        amapId: input.highConfidence.amapId,
-      },
-    });
-    poiId = poi.id;
-  }
+  return prisma.$transaction(async (tx) => {
+    let cityId: string | undefined;
+    let poiId: string | undefined;
+    if (highConfidence && cityTimezone) {
+    const cityName = highConfidence.cityName || '杭州';
+    const cities = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+      INSERT INTO "City" (id, name, tz)
+      VALUES (${uuidFromStableId(`city:${cityName}`)}::uuid, ${cityName}, ${cityTimezone})
+      ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
+      RETURNING id
+    `);
+    cityId = cities[0]!.id;
+    const canonicalId = uuidFromStableId(
+      `poi:${highConfidence.amapId || highConfidence.name}`,
+    );
+    const poiRows = highConfidence.amapId
+      ? await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+          INSERT INTO "CanonicalPOI" (
+            id, "cityId", name, address, amap_id, created_at, updated_at
+          )
+          VALUES (
+            ${canonicalId}::uuid, ${cityId}::uuid, ${highConfidence.name},
+            ${highConfidence.address}, ${highConfidence.amapId}, NOW(), NOW()
+          )
+          ON CONFLICT (amap_id) DO UPDATE
+          SET name = EXCLUDED.name,
+              address = EXCLUDED.address,
+              "cityId" = EXCLUDED."cityId",
+              updated_at = NOW()
+          RETURNING id
+        `)
+      : await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+          INSERT INTO "CanonicalPOI" (
+            id, "cityId", name, address, created_at, updated_at
+          )
+          VALUES (
+            ${canonicalId}::uuid, ${cityId}::uuid, ${highConfidence.name},
+            ${highConfidence.address}, NOW(), NOW()
+          )
+          ON CONFLICT (id) DO UPDATE
+          SET name = EXCLUDED.name,
+              address = EXCLUDED.address,
+              "cityId" = EXCLUDED."cityId",
+              updated_at = NOW()
+          RETURNING id
+        `);
+      poiId = poiRows[0]!.id;
+    }
 
-  const inspiration = await prisma.inspiration.upsert({
+    const inspiration = await tx.inspiration.upsert({
     where: { sourceHash: `${input.job.sourceHash}:inspiration` },
     update: {
       jobId: input.job.dbId,
@@ -319,9 +359,9 @@ export async function persistIngestOutput(input: {
     } as any,
   });
 
-  await prisma.asset.deleteMany({ where: { inspirationId: inspiration.id } });
-  for (const asset of input.assets) {
-    await prisma.asset.create({
+    await tx.asset.deleteMany({ where: { inspirationId: inspiration.id } });
+    for (const asset of input.assets) {
+      await tx.asset.create({
       data: {
         inspirationId: inspiration.id,
         kind: asset.kind,
@@ -334,13 +374,13 @@ export async function persistIngestOutput(input: {
     });
   }
 
-  if (input.highConfidence || input.candidates.length === 0) {
-    await prisma.locateCandidate.deleteMany({ where: { inspirationId: inspiration.id } });
-  }
+    if (highConfidence || input.candidates.length === 0) {
+      await tx.locateCandidate.deleteMany({ where: { inspirationId: inspiration.id } });
+    }
 
-  if (!input.highConfidence) {
-    for (const candidate of input.candidates) {
-      await prisma.locateCandidate.upsert({
+    if (!highConfidence) {
+      for (const candidate of input.candidates) {
+        await tx.locateCandidate.upsert({
         where: { inspirationId_rank: { inspirationId: inspiration.id, rank: candidate.rank } },
         update: { poiSnapshot: candidate },
         create: {
@@ -350,20 +390,68 @@ export async function persistIngestOutput(input: {
         },
       });
     }
-    await prisma.locateCandidate.deleteMany({
+      await tx.locateCandidate.deleteMany({
       where: {
         inspirationId: inspiration.id,
         rank: { notIn: input.candidates.map((candidate) => candidate.rank) },
       },
     });
-  }
+    }
 
-  return {
-    inspirationId: inspiration.id,
-    locateStatus,
-    assetCount: input.assets.length,
-    candidateCount: input.candidates.length,
-  };
+    if (poiId && cityId && highConfidence) {
+      await tx.$executeRaw(Prisma.sql`
+        UPDATE "CanonicalPOI"
+        SET latitude = ${highConfidence.lat ?? null},
+            longitude = ${highConfidence.lon ?? null},
+            provider = 'amap',
+            verified = TRUE,
+            verified_at = NOW(),
+            provider_snapshot_json = ${JSON.stringify(highConfidence)}::jsonb,
+            quality_grade = 'verified'::"QualityGrade",
+            source_attribution = 'amap:ingest',
+            updated_at = NOW()
+        WHERE id = ${poiId}::uuid
+      `);
+    }
+    await tx.$executeRaw(Prisma.sql`
+      DELETE FROM "InspirationEvidence"
+      WHERE inspiration_id = ${inspiration.id}::uuid
+    `);
+    for (const evidence of cityTimezone ? input.timeEvidence : []) {
+      const evidenceRef = `${inspiration.id}:${evidence.evidenceRef}`;
+      await tx.$executeRaw(Prisma.sql`
+        INSERT INTO "InspirationEvidence" (
+          id, inspiration_id, "poiId", date, start_local, end_local,
+          timezone, time_hint, source,
+          evidence_ref, source_attribution, quality, created_at, updated_at
+        )
+        VALUES (
+          ${uuidFromStableId(evidenceRef)}::uuid, ${inspiration.id}::uuid,
+          ${poiId ?? null}::uuid,
+          ${evidence.date ? new Date(`${evidence.date}T00:00:00.000Z`) : null},
+          ${evidence.startLocal}, ${evidence.endLocal}, ${cityTimezone},
+          ${evidence.timeHint}::"PlannerTimeHint",
+          ${evidence.source}::"EvidenceSource",
+          ${evidenceRef}, ${input.job.sourceUrl},
+          ${highConfidence ? 'high' : 'medium'}::"QualityGrade",
+          NOW(), NOW()
+        )
+      `);
+    }
+    if (cityId && poiId) await refreshAnchorPoolForCity(tx as any, cityId);
+    await tx.$executeRaw(Prisma.sql`
+      UPDATE "IngestJob"
+      SET status = 'done'::"IngestStatus", updated_at = NOW()
+      WHERE id = ${input.job.dbId}::uuid
+    `);
+
+    return {
+      inspirationId: inspiration.id,
+      locateStatus,
+      assetCount: input.assets.length,
+      candidateCount: input.candidates.length,
+    };
+  });
 }
 
 export function clearIngestStateForTests() {

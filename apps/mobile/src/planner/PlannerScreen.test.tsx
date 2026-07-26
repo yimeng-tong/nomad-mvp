@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Analytics } from '../auth/analytics';
 import type { LibraryCitySummary, LibraryInspirationItem, LibraryInspirationsResponse, PlannerHandoff } from '../home/api';
 import { PlannerScreen } from './PlannerScreen';
-import type { PlannerApiClient, SearchPoiItem } from './api';
+import type { DayPlanResponse, PlannerApiClient, SearchPoiItem } from './api';
 
 const cities: LibraryCitySummary[] = [
   { city_id: 'city-xm', name: '厦门', inspiration_count: 4, pending_count: 0 },
@@ -79,6 +79,32 @@ function createHandoff(route = '/planner/pick?city=%E5%8E%A6%E9%97%A8&start=2026
 }
 
 function createApiClient(overrides: Partial<PlannerApiClient> = {}): PlannerApiClient {
+  const plan: DayPlanResponse = {
+    plan_id: 'pl_123',
+    city: '厦门',
+    start_date: '2026-07-02',
+    days: 1,
+    pace: 'comfortable',
+    plan_rev: 1,
+    current_version_id: 'pv_quick',
+    quick_version: {
+      version_id: 'pv_quick',
+      kind: 'quick',
+      state: 'ready',
+      created_at: '2026-07-02T00:00:00.000Z',
+    },
+    hq_job: null,
+    versions: [{ version_id: 'pv_quick', kind: 'quick', state: 'ready', created_at: '2026-07-02T00:00:00.000Z' }],
+    day_plans: [{
+      day_index: 0,
+      date: '2026-07-02',
+      slots: [],
+      hotel: { date: '2026-07-02', leave_blank: true },
+    }],
+    candidates: [],
+    warnings: [],
+    unresolved_required: [],
+  };
   return {
     getCities: vi.fn(async () => ({ cities, unlocated_count: 0 })),
     getInspirations: vi.fn(async () => ({ items: inspirations })),
@@ -86,6 +112,31 @@ function createApiClient(overrides: Partial<PlannerApiClient> = {}): PlannerApiC
       items: [{ poi_id: 'amap-hotel-1', name: q, address: `${city} · 待用户确认地址`, distance_m: null }],
     })),
     generatePlan: vi.fn(async () => ({ plan_id: 'pl_123', plan_job_id: 'pj_123', sse_url: '/sse/plan/pj_123' })),
+    watchPlanJob: vi.fn(() => () => undefined),
+    getPlan: vi.fn(async () => plan),
+    getPlanVersion: vi.fn(async () => plan),
+    resolveEmptySlot: vi.fn(async (_planId, slotId) => ({
+      plan_id: 'pl_123',
+      plan_rev: 2,
+      slot: {
+        slot_id: slotId,
+        day_index: 0,
+        slot_index: 0,
+        start_local: '09:00',
+        end_local: '11:00',
+        type: 'free' as const,
+        origin: 'free' as const,
+      },
+    })),
+    resetSeed: vi.fn(async () => ({ plan_id: 'pl_123', plan_rev: 2 })),
+    undoSeed: vi.fn(async () => ({ plan_id: 'pl_123', plan_rev: 2 })),
+    getHqStatus: vi.fn(async () => ({
+      hq_job_id: 'hq_123',
+      state: 'done' as const,
+      plan_id: 'pl_123',
+      version_id: 'pv_hq',
+    })),
+    adoptHq: vi.fn(async () => ({ plan_id: 'pl_123', plan_rev: 2, current_version_id: 'pv_hq' })),
     ...overrides,
   };
 }
@@ -155,7 +206,7 @@ describe('PlannerScreen', () => {
     });
     expect(payload.candidate_items?.some((item) => item.item_id === 'ins-night-market')).toBe(true);
     expect(payload.hard_time_hints).toContainEqual(expect.objectContaining({ item_id: 'ins-night-market', time_hint: 'night_market' }));
-    expect(await screen.findByText('规划已开始：/sse/plan/pj_123')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: '正在准备计划' })).toBeInTheDocument();
     expect(vi.mocked(analytics.track).mock.calls.some(([event]) => event === 'picker_generate_skeleton')).toBe(true);
   });
 

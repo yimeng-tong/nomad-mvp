@@ -93,7 +93,7 @@ describe('App', () => {
     expect(screen.getByText('平台额度可继续使用')).toBeInTheDocument();
   });
 
-  it('routes AI quota education moments to BYOK configuration', async () => {
+  it('keeps platform-managed AI quota on the MVP home path', async () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
       if (url.endsWith('/me')) return jsonResponse(currentUser);
@@ -106,8 +106,7 @@ describe('App', () => {
 
     render(<App />);
 
-    fireEvent.click(await screen.findByRole('button', { name: '配置我的 OpenAI Key' }));
-    expect(await screen.findByRole('heading', { name: '设置' })).toBeInTheDocument();
-    expect(screen.getByLabelText('OpenAI Key')).toBeInTheDocument();
+    expect(await screen.findByText('AI 规划由平台额度提供，额度与生成状态会在计划中显示。')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '配置我的 OpenAI Key' })).not.toBeInTheDocument();
   });
 });

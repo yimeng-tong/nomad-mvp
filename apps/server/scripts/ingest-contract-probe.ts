@@ -8,7 +8,12 @@ import ingestRoutes from '../src/routes/ingest.js';
 import { parseXhsInput } from '../src/ingest/link-parser.js';
 import { selectBranchCandidates } from '../src/ingest/branch-rules.js';
 import { runIngestPipeline } from '../src/ingest/pipeline.js';
-import { clearIngestStateForTests, createOrGetIngestJob, getJob } from '../src/ingest/store.js';
+import {
+  clearIngestStateForTests,
+  createOrGetIngestJob,
+  getJob,
+  listLibraryInspirationsForUser,
+} from '../src/ingest/store.js';
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -118,6 +123,29 @@ async function main() {
   for (const expected of ['INGEST_XHS_FETCH_DEGRADED', 'INGEST_EXTRACTION_DEGRADED', 'INGEST_GEO_DEGRADED', 'INGEST_REHOST_DEGRADED']) {
     assert(failedCodes.includes(expected), `degraded pipeline should record ${expected}`);
   }
+
+  process.env.AMAP_STUB_HIGH_CONFIDENCE = 'true';
+  process.env.AMAP_STUB_CITY = '未知测试城市';
+  const unsupportedCityJob = await createOrGetIngestJob({
+    userId: 'user-a',
+    sourceUrl: 'https://www.xiaohongshu.com/explore/unsupported-city',
+    traceId: 'trace-pipeline-unsupported-city',
+  });
+  await runIngestPipeline(unsupportedCityJob.id);
+  delete process.env.AMAP_STUB_HIGH_CONFIDENCE;
+  delete process.env.AMAP_STUB_CITY;
+  assert(
+    getJob(unsupportedCityJob.id)?.status === 'done',
+    'an unsupported city timezone should degrade to pending instead of failing ingest',
+  );
+  const unsupportedInspiration = (await listLibraryInspirationsForUser('user-a'))
+    .find((item) => item.id === `mem_${unsupportedCityJob.id}`);
+  assert(
+    unsupportedInspiration?.locate_status === 'pending' &&
+      unsupportedInspiration.city_id === null &&
+      unsupportedInspiration.poi_id === null,
+    'unsupported-city inspiration should remain visible and pending location',
+  );
 
   const app = await buildIngestApp();
   try {

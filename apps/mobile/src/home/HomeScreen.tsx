@@ -362,10 +362,7 @@ export function HomeScreen({ apiClient, analytics, onPlannerHandoff, onOpenSetti
         ) : (
           <section className="plan-panel" aria-label="规划入口">
             <p>从目的地卡或底部输入开始。</p>
-            <p className="status-text">平台额度可先用，需要更高额度时可配置我的 OpenAI Key。</p>
-            <button type="button" onClick={onOpenSettings}>
-              配置我的 OpenAI Key
-            </button>
+            <p className="status-text">AI 规划由平台额度提供，额度与生成状态会在计划中显示。</p>
             {selectedItems.length > 0 ? <p>已选 {selectedItems.length} 个灵感作为锚点。</p> : null}
           </section>
         )}

@@ -21,15 +21,16 @@ enum IngestStatus {
 }
 
 enum PlanPace {
-  slow
-  normal
-  fast
+  tight
+  comfortable
 }
 
 enum SlotType {
   place
   free
   other
+  hotel
+  unresolved
 }
 
 enum Conflict {
@@ -45,6 +46,88 @@ enum FillValidation {
   missing_do
 }
 
+enum QualityGrade {
+  verified
+  high
+  medium
+  low
+}
+
+enum PlannerTimeHint {
+  dawn
+  morning
+  afternoon
+  sunset
+  evening
+  night
+  night_market
+}
+
+enum SlotOrigin {
+  selected_required
+  ai_seed
+  hand
+  hotel
+  free
+}
+
+enum PlanJobState {
+  queued
+  running
+  done
+  failed
+}
+
+enum PlanJobPhase {
+  started
+  freeze
+  selected_anchor
+  quota
+  candidates
+  place
+  validate
+  persist
+  done
+  failed
+}
+
+enum PlanVersionKind {
+  quick
+  hq
+}
+
+enum PlanVersionState {
+  running
+  ready
+  failed
+  adopted
+}
+
+enum HqJobState {
+  running
+  done
+  failed
+}
+
+enum WarningSeverity {
+  soft
+  hard
+}
+
+enum UnresolvedReason {
+  requires_location
+  hard_time_conflict
+  closed
+  outside_trip
+  unavailable
+}
+
+enum EvidenceSource {
+  uploaded_inspiration
+  reservation
+  ticket
+}
+
 model User {
   id           String          @id @default(uuid()) @db.Uuid
   phone        String?         @unique
@@ -57,6 +140,8 @@ model User {
   ingestJobs   IngestJob[]
   inspirations Inspiration[]
   plans        Plan[]
+  planJobs     PlanJob[]
+  hqJobs       HqJob[]
 }
 
 model OAuthIdentity {
@@ -82,7 +167,7 @@ model Session {
 model UserSettings {
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String   @id @db.Uuid
-  pace     PlanPace @default(normal) @map("pace_default")
+  pace     PlanPace @default(comfortable) @map("pace_default")
   startAt  DateTime @default(dbgenerated("'1970-01-01 09:00:00+00'::timestamptz")) @map("start_time_default")
   units    String   @default("metric")
   mapStyle String?
@@ -99,25 +184,99 @@ model UserKey {
 
 model City {
   id           String         @id @default(uuid()) @db.Uuid
-  name         String
+  name         String         @unique
   tz           String         @default("Asia/Shanghai")
   pois         CanonicalPOI[]
+  l1Areas      L1Area[]
   inspirations Inspiration[]
   plans        Plan[]
+  anchorPool   AnchorPoolEntry[]
+  builtInPois  BuiltInPoiEntry[]
 }
 
 model CanonicalPOI {
-  id           String        @id @default(uuid()) @db.Uuid
-  city         City          @relation(fields: [cityId], references: [id], onDelete: Cascade)
-  cityId       String        @db.Uuid
-  name         String
-  address      String?
-  amapId       String?       @map("amap_id")
-  openHours    Json?         @map("open_hours_json")
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @default(now()) @map("updated_at")
-  inspirations Inspiration[]
-  planSlots    PlanSlot[]
+  id                String                   @id @default(uuid()) @db.Uuid
+  city              City                     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId            String                   @db.Uuid
+  name              String
+  address           String?
+  amapId            String?                  @unique @map("amap_id")
+  latitude          Decimal?                 @db.Decimal(9, 6)
+  longitude         Decimal?                 @db.Decimal(9, 6)
+  provider          String                   @default("amap")
+  verified          Boolean                  @default(false)
+  verifiedAt        DateTime?                @map("verified_at")
+  providerSnapshot  Json?                    @map("provider_snapshot_json")
+  quality           QualityGrade?            @map("quality_grade")
+  sourceAttribution String?                  @map("source_attribution")
+  openHours         Json?                    @map("open_hours_json")
+  createdAt         DateTime                 @default(now()) @map("created_at")
+  updatedAt         DateTime                 @default(now()) @map("updated_at")
+  inspirations      Inspiration[]
+  planSlots         PlanSlot[]
+  memberships       PoiMembership[]
+  hotelConstraints  PlanHotelConstraint[]
+  hotelSlots        PlanHotelSlot[]
+  evidence          PlanEvidenceConstraint[]
+  inspirationEvidence InspirationEvidence[]
+  anchorPool        AnchorPoolEntry[]
+  unresolvedItems   UnresolvedRequiredItem[]
+  slotCandidates    SlotCandidate[]
+  builtInEntries    BuiltInPoiEntry[]
+}
+
+model L1Area {
+  id                String    @id @default(uuid()) @db.Uuid
+  city              City      @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId            String    @db.Uuid
+  name              String
+  centroidLatitude  Decimal?  @map("centroid_latitude") @db.Decimal(9, 6)
+  centroidLongitude Decimal?  @map("centroid_longitude") @db.Decimal(9, 6)
+  seasonality       String[]  @default([])
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @default(now()) @map("updated_at")
+  groups            L2Group[]
+
+  @@unique([cityId, name])
+  @@index([cityId])
+}
+
+model L2Group {
+  id                String          @id @default(uuid()) @db.Uuid
+  l1Area            L1Area          @relation(fields: [l1AreaId], references: [id], onDelete: Cascade)
+  l1AreaId          String          @db.Uuid
+  name              String
+  centroidLatitude  Decimal?        @map("centroid_latitude") @db.Decimal(9, 6)
+  centroidLongitude Decimal?        @map("centroid_longitude") @db.Decimal(9, 6)
+  entryNodes        Json?           @map("entry_nodes_json")
+  exitNodes         Json?           @map("exit_nodes_json")
+  rules             Json?           @map("rules_json")
+  duration          Json?           @map("duration_json")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @default(now()) @map("updated_at")
+  memberships       PoiMembership[]
+
+  @@unique([l1AreaId, name])
+  @@index([l1AreaId])
+}
+
+model PoiMembership {
+  poi                    CanonicalPOI      @relation(fields: [poiId], references: [id], onDelete: Cascade)
+  poiId                  String            @db.Uuid
+  l2Group                L2Group           @relation(fields: [l2GroupId], references: [id], onDelete: Cascade)
+  l2GroupId              String            @db.Uuid
+  role                   String?
+  proximity              Decimal?          @db.Decimal(8, 3)
+  priority               Int               @default(0)
+  hoursFit               Json?             @map("hours_fit_json")
+  multiAttach            Boolean           @default(false) @map("multi_attach")
+  bestTimeOfDay          PlannerTimeHint[] @default([]) @map("best_time_of_day")
+  recommendedDurationMin Int?              @map("recommended_duration_min")
+  createdAt              DateTime          @default(now()) @map("created_at")
+  updatedAt              DateTime          @default(now()) @map("updated_at")
+
+  @@id([poiId, l2GroupId])
+  @@index([l2GroupId, role])
 }
 
 model IngestJob {
@@ -137,25 +296,29 @@ model IngestJob {
 }
 
 model Inspiration {
-  id           String            @id @default(uuid()) @db.Uuid
-  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String            @db.Uuid
-  job          IngestJob?        @relation(fields: [jobId], references: [id])
-  jobId        String?           @db.Uuid
-  title        String?
-  text         String?
-  tags         String[]
-  canonicalUrl String?           @map("canonical_url")
-  locateStatus String            @default("pending") @map("locate_status")
-  poi          CanonicalPOI?     @relation(fields: [poiId], references: [id])
-  poiId        String?           @db.Uuid
-  city         City?             @relation(fields: [cityId], references: [id])
-  cityId       String?           @db.Uuid
-  sourceHash   String            @unique @map("source_hash")
-  createdAt    DateTime          @default(now()) @map("created_at")
-  assets       Asset[]
-  candidates   LocateCandidate[]
-  planSlots    PlanSlot[]
+  id                  String                   @id @default(uuid()) @db.Uuid
+  user                User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId              String                   @db.Uuid
+  job                 IngestJob?               @relation(fields: [jobId], references: [id])
+  jobId               String?                  @db.Uuid
+  title               String?
+  text                String?
+  tags                String[]
+  canonicalUrl        String?                  @map("canonical_url")
+  locateStatus        String                   @default("pending") @map("locate_status")
+  poi                 CanonicalPOI?            @relation(fields: [poiId], references: [id])
+  poiId               String?                  @db.Uuid
+  city                City?                    @relation(fields: [cityId], references: [id])
+  cityId              String?                  @db.Uuid
+  sourceHash          String                   @unique @map("source_hash")
+  createdAt           DateTime                 @default(now()) @map("created_at")
+  assets              Asset[]
+  candidates          LocateCandidate[]
+  planSlots           PlanSlot[]
+  evidenceConstraints PlanEvidenceConstraint[]
+  sourceEvidence      InspirationEvidence[]
+  unresolvedItems     UnresolvedRequiredItem[]
+  slotCandidates      SlotCandidate[]
 }
 
 model Asset {
@@ -182,61 +345,357 @@ model LocateCandidate {
   @@unique([inspirationId, rank])
 }
 
+model InspirationEvidence {
+  id                String          @id @default(uuid()) @db.Uuid
+  inspiration       Inspiration     @relation(fields: [inspirationId], references: [id], onDelete: Cascade)
+  inspirationId     String          @map("inspiration_id") @db.Uuid
+  poi               CanonicalPOI?   @relation(fields: [poiId], references: [id], onDelete: SetNull)
+  poiId             String?         @db.Uuid
+  date              DateTime?       @db.Date
+  startLocal        String?         @map("start_local") @db.VarChar(5)
+  endLocal          String?         @map("end_local") @db.VarChar(5)
+  timezone          String          @default("Asia/Shanghai")
+  timeHint          PlannerTimeHint @map("time_hint")
+  source            EvidenceSource
+  evidenceRef       String          @unique @map("evidence_ref")
+  sourceAttribution String?         @map("source_attribution")
+  quality           QualityGrade
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @default(now()) @map("updated_at")
+
+  @@index([inspirationId, timeHint])
+}
+
+model AnchorPoolEntry {
+  id          String       @id @default(uuid()) @db.Uuid
+  city        City         @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId      String       @db.Uuid
+  poi         CanonicalPOI @relation(fields: [poiId], references: [id], onDelete: Cascade)
+  poiId       String       @db.Uuid
+  rank        Int          @default(0)
+  active      Boolean      @default(true)
+  refreshedAt DateTime     @default(now()) @map("refreshed_at")
+  expiresAt   DateTime     @map("expires_at")
+
+  @@unique([cityId, poiId])
+  @@index([cityId, active, expiresAt, rank])
+}
+
+model BuiltInPoiEntry {
+  id          String        @id @default(uuid()) @db.Uuid
+  city        City          @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId      String        @db.Uuid
+  dataVersion String        @map("data_version")
+  rank        Int
+  name        String
+  poi         CanonicalPOI? @relation(fields: [poiId], references: [id], onDelete: SetNull)
+  poiId       String?       @db.Uuid
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @default(now()) @map("updated_at")
+
+  @@unique([cityId, dataVersion, rank])
+  @@unique([cityId, dataVersion, name])
+  @@index([cityId, dataVersion, poiId])
+}
+
 model Plan {
-  id             String          @id @default(uuid()) @db.Uuid
-  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String          @db.Uuid
-  city           City            @relation(fields: [cityId], references: [id])
-  cityId         String          @db.Uuid
-  tz             String          @default("Asia/Shanghai")
-  startDate      DateTime        @map("start_date")
-  days           Int
-  pace           PlanPace        @default(normal)
-  status         String          @default("draft")
-  rev            Int             @default(1)
-  isLocked       Boolean         @default(false) @map("is_locked")
-  lockedAt       DateTime?       @map("locked_at")
-  createdAt      DateTime        @default(now()) @map("created_at")
-  updatedAt      DateTime        @default(now()) @map("updated_at")
-  daysRel        PlanDay[]
-  editEvents     EditEvent[]
-  slotCandidates SlotCandidate[]
-  fillRuns       FillRun[]
-  exportJobs     ExportJob[]
+  id                    String                   @id @default(uuid()) @db.Uuid
+  user                  User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                String                   @db.Uuid
+  city                  City                     @relation(fields: [cityId], references: [id])
+  cityId                String                   @db.Uuid
+  requestHash           String?                  @map("request_hash")
+  tz                    String                   @default("Asia/Shanghai")
+  startDate             DateTime                 @map("start_date")
+  days                  Int
+  pace                  PlanPace                 @default(comfortable)
+  status                String                   @default("draft")
+  rev                   Int                      @default(1)
+  smartPlanning         Boolean                  @default(false) @map("smart_planning")
+  luggageMode           String                   @default("undecided") @map("luggage_mode")
+  luggageNotes          String?                  @map("luggage_notes")
+  hotelChangeHelpNeeded Boolean                  @default(false) @map("hotel_change_help_needed")
+  wakePreference        String?                  @map("wake_preference")
+  inputSnapshot         Json?                    @map("input_snapshot_json")
+  currentVersion        PlanVersion?             @relation("CurrentPlanVersion", fields: [currentVersionId], references: [id], onDelete: SetNull)
+  currentVersionId      String?                  @map("current_version_id") @db.Uuid
+  seedUndoToken         String?                  @map("seed_undo_token")
+  seedUndoExpiresAt     DateTime?                @map("seed_undo_expires_at")
+  isLocked              Boolean                  @default(false) @map("is_locked")
+  lockedAt              DateTime?                @map("locked_at")
+  createdAt             DateTime                 @default(now()) @map("created_at")
+  updatedAt             DateTime                 @default(now()) @map("updated_at")
+  daysRel               PlanDay[]
+  editEvents            EditEvent[]
+  slotCandidates        SlotCandidate[]
+  fillRuns              FillRun[]
+  exportJobs            ExportJob[]
+  jobs                  PlanJob[]
+  versions              PlanVersion[]            @relation("PlanVersions")
+  hqJobs                HqJob[]
+  hotelConstraints      PlanHotelConstraint[]
+  evidenceConstraints   PlanEvidenceConstraint[]
+  warnings              PlanWarning[]
+  unresolvedRequired    UnresolvedRequiredItem[]
+
+  @@unique([userId, requestHash])
 }
 
 model PlanDay {
   id             String          @id @default(uuid()) @db.Uuid
   plan           Plan            @relation(fields: [planId], references: [id], onDelete: Cascade)
   planId         String          @db.Uuid
+  version        PlanVersion?    @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  versionId      String?         @map("version_id") @db.Uuid
   dayIndex       Int             @map("day_index")
   date           DateTime
   slots          PlanSlot[]
+  hotelSlot      PlanHotelSlot?
   slotCandidates SlotCandidate[]
 
-  @@unique([planId, dayIndex])
+  @@unique([planId, versionId, dayIndex])
+  @@index([versionId])
 }
 
 model PlanSlot {
-  id               String        @id @default(uuid()) @db.Uuid
-  day              PlanDay       @relation(fields: [dayId], references: [id], onDelete: Cascade)
-  dayId            String        @db.Uuid
-  slotIndex        Int           @map("slot_index")
-  startAt          DateTime      @map("start_at")
-  endAt            DateTime      @map("end_at")
-  type             SlotType
-  poi              CanonicalPOI? @relation(fields: [poiId], references: [id])
-  poiId            String?       @db.Uuid
-  inspiration      Inspiration?  @relation(fields: [inspirationId], references: [id])
-  inspirationId    String?       @db.Uuid
-  notes            Json?         @map("notes_json")
-  conflict         Conflict      @default(none)
-  appliedFillRunId String?       @map("applied_fill_run_id")
-  createdAt        DateTime      @default(now()) @map("created_at")
-  updatedAt        DateTime      @default(now()) @map("updated_at")
-  fillItems        FillItem[]
+  id                 String                  @id @default(uuid()) @db.Uuid
+  day                PlanDay                 @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  dayId              String                  @db.Uuid
+  slotIndex          Int                     @map("slot_index")
+  startAt            DateTime                @map("start_at")
+  endAt              DateTime                @map("end_at")
+  startLocal         String?                 @map("start_local") @db.VarChar(5)
+  endLocal           String?                 @map("end_local") @db.VarChar(5)
+  timezone           String                  @default("Asia/Shanghai")
+  type               SlotType
+  origin             SlotOrigin              @default(hand)
+  title              String?
+  poi                CanonicalPOI?           @relation(fields: [poiId], references: [id])
+  poiId              String?                 @db.Uuid
+  inspiration        Inspiration?            @relation(fields: [inspirationId], references: [id])
+  inspirationId      String?                 @db.Uuid
+  candidateMetadata  Json?                   @map("candidate_metadata_json")
+  notes              Json?                   @map("notes_json")
+  conflict           Conflict                @default(none)
+  appliedFillRunId   String?                 @map("applied_fill_run_id")
+  createdAt          DateTime                @default(now()) @map("created_at")
+  updatedAt          DateTime                @default(now()) @map("updated_at")
+  fillItems          FillItem[]
+  evidenceConstraint PlanEvidenceConstraint?
+  warnings           PlanWarning[]
+  usedByCandidates   SlotCandidate[]         @relation("UsedPlanSlot")
 
   @@unique([dayId, slotIndex])
+}
+
+model PlanJob {
+  id              String               @id @default(uuid()) @db.Uuid
+  user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String               @db.Uuid
+  actorId         String               @map("external_user_id")
+  plan            Plan                 @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId          String               @unique @db.Uuid
+  requestHash     String               @map("request_hash")
+  requestSnapshot Json                 @map("request_snapshot_json")
+  attempt         Int                  @default(1)
+  state           PlanJobState         @default(queued)
+  phase           PlanJobPhase         @default(started)
+  traceId         String?              @map("trace_id")
+  placedCount     Int                  @default(0) @map("placed_count")
+  remainingCount  Int                  @default(0) @map("remaining_count")
+  quickVersion    PlanVersion?         @relation("PlanJobQuickVersion", fields: [quickVersionId], references: [id], onDelete: SetNull)
+  quickVersionId  String?              @map("quick_version_id") @db.Uuid
+  hqJob           HqJob?               @relation("PlanJobHqJob", fields: [hqJobId], references: [id], onDelete: SetNull)
+  hqJobId         String?              @map("hq_job_id") @db.Uuid
+  errorCode       String?              @map("error_code")
+  errorMessage    String?              @map("error_message")
+  retriable       Boolean?
+  terminalAt      DateTime?            @map("terminal_at")
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @default(now()) @map("updated_at")
+  events          PlanJobEventRecord[]
+
+  @@unique([userId, requestHash])
+  @@index([state, updatedAt])
+}
+
+model PlanJobEventRecord {
+  id        String       @id @default(uuid()) @db.Uuid
+  job       PlanJob      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobId     String       @map("job_id") @db.Uuid
+  sequence  Int
+  phase     PlanJobPhase
+  payload   Json         @map("payload_json")
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  @@unique([jobId, sequence])
+  @@index([jobId, createdAt])
+}
+
+model PlanVersion {
+  id              String                   @id @default(uuid()) @db.Uuid
+  plan            Plan                     @relation("PlanVersions", fields: [planId], references: [id], onDelete: Cascade)
+  planId          String                   @db.Uuid
+  versionNumber   Int                      @map("version_number")
+  kind            PlanVersionKind
+  state           PlanVersionState         @default(running)
+  payload         Json                     @map("payload_json")
+  configSnapshot  Json?                    @map("config_snapshot_json")
+  resultHash      String?                  @map("result_hash")
+  failureCode     String?                  @map("failure_code")
+  createdAt       DateTime                 @default(now()) @map("created_at")
+  updatedAt       DateTime                 @default(now()) @map("updated_at")
+  readyAt         DateTime?                @map("ready_at")
+  adoptedAt       DateTime?                @map("adopted_at")
+  days            PlanDay[]
+  currentForPlans Plan[]                   @relation("CurrentPlanVersion")
+  hqJob           HqJob?
+  quickForJobs    PlanJob[]                @relation("PlanJobQuickVersion")
+  slotCandidates  SlotCandidate[]
+  hotelSlots      PlanHotelSlot[]
+  evidence        PlanEvidenceConstraint[]
+  warnings        PlanWarning[]
+  unresolvedItems UnresolvedRequiredItem[]
+
+  @@unique([planId, versionNumber])
+  @@index([planId, kind, state])
+}
+
+model HqJob {
+  id           String       @id @default(uuid()) @db.Uuid
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String       @db.Uuid
+  actorId      String       @map("external_user_id")
+  plan         Plan         @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId       String       @db.Uuid
+  baseVersionId String      @map("base_version_id") @db.Uuid
+  requestHash  String       @map("request_hash")
+  version      PlanVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+  versionId    String?      @unique @map("version_id") @db.Uuid
+  state        HqJobState   @default(running)
+  attempt      Int          @default(1)
+  provider     String?
+  traceId      String?      @map("trace_id")
+  errorCode    String?      @map("error_code")
+  errorMessage String?      @map("error_message")
+  retriable    Boolean?
+  startedAt    DateTime     @default(now()) @map("started_at")
+  finishedAt   DateTime?    @map("finished_at")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @default(now()) @map("updated_at")
+  planJobs     PlanJob[]    @relation("PlanJobHqJob")
+
+  @@unique([userId, requestHash])
+  @@index([planId, state])
+}
+
+model PlanHotelConstraint {
+  id                String          @id @default(uuid()) @db.Uuid
+  plan              Plan            @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId            String          @db.Uuid
+  date              DateTime        @db.Date
+  hotelName         String?         @map("hotel_name")
+  address           String?
+  poi               CanonicalPOI?   @relation(fields: [poiId], references: [id], onDelete: SetNull)
+  poiId             String?         @db.Uuid
+  leaveBlank        Boolean         @default(false) @map("leave_blank")
+  breakfastIncluded Boolean         @default(false) @map("breakfast_included")
+  providerSnapshot  Json?           @map("provider_snapshot_json")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @default(now()) @map("updated_at")
+  hotelSlots        PlanHotelSlot[]
+
+  @@unique([planId, date])
+}
+
+model PlanHotelSlot {
+  id                String               @id @default(uuid()) @db.Uuid
+  day               PlanDay              @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  dayId             String               @unique @db.Uuid
+  version           PlanVersion          @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  versionId         String               @db.Uuid
+  constraint        PlanHotelConstraint? @relation(fields: [constraintId], references: [id], onDelete: SetNull)
+  constraintId      String?              @map("constraint_id") @db.Uuid
+  date              DateTime             @db.Date
+  leaveBlank        Boolean              @default(false) @map("leave_blank")
+  breakfastIncluded Boolean              @default(false) @map("breakfast_included")
+  poi               CanonicalPOI?        @relation(fields: [poiId], references: [id], onDelete: SetNull)
+  poiId             String?              @db.Uuid
+  providerSnapshot  Json?                @map("provider_snapshot_json")
+  createdAt         DateTime             @default(now()) @map("created_at")
+  updatedAt         DateTime             @default(now()) @map("updated_at")
+
+  @@unique([versionId, date])
+  @@index([constraintId])
+}
+
+model PlanEvidenceConstraint {
+  id                String          @id @default(uuid()) @db.Uuid
+  plan              Plan            @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId            String          @db.Uuid
+  version           PlanVersion?    @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  versionId         String?         @map("version_id") @db.Uuid
+  itemId            String          @map("item_id")
+  inspiration       Inspiration?    @relation(fields: [inspirationId], references: [id], onDelete: SetNull)
+  inspirationId     String?         @map("inspiration_id") @db.Uuid
+  poi               CanonicalPOI?   @relation(fields: [poiId], references: [id], onDelete: SetNull)
+  poiId             String?         @db.Uuid
+  date              DateTime?       @db.Date
+  startLocal        String?         @map("start_local") @db.VarChar(5)
+  endLocal          String?         @map("end_local") @db.VarChar(5)
+  timezone          String
+  timeHint          PlannerTimeHint @map("time_hint")
+  source            EvidenceSource
+  evidenceRef       String          @map("evidence_ref")
+  sourceAttribution String?         @map("source_attribution")
+  quality           QualityGrade
+  slot              PlanSlot?       @relation(fields: [slotId], references: [id], onDelete: SetNull)
+  slotId            String?         @unique @map("slot_id") @db.Uuid
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @default(now()) @map("updated_at")
+
+  @@index([planId, versionId])
+  @@index([itemId])
+}
+
+model PlanWarning {
+  id        String          @id @default(uuid()) @db.Uuid
+  plan      Plan            @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId    String          @db.Uuid
+  version   PlanVersion?    @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  versionId String?         @map("version_id") @db.Uuid
+  slot      PlanSlot?       @relation(fields: [slotId], references: [id], onDelete: SetNull)
+  slotId    String?         @map("slot_id") @db.Uuid
+  itemId    String?         @map("item_id")
+  code      String
+  severity  WarningSeverity
+  message   String
+  metadata  Json?           @map("metadata_json")
+  createdAt DateTime        @default(now()) @map("created_at")
+
+  @@index([planId, versionId])
+  @@index([slotId])
+}
+
+model UnresolvedRequiredItem {
+  id            String           @id @default(uuid()) @db.Uuid
+  plan          Plan             @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId        String           @db.Uuid
+  version       PlanVersion?     @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  versionId     String?          @map("version_id") @db.Uuid
+  itemId        String           @map("item_id")
+  inspiration   Inspiration?     @relation(fields: [inspirationId], references: [id], onDelete: SetNull)
+  inspirationId String?          @map("inspiration_id") @db.Uuid
+  poi           CanonicalPOI?    @relation(fields: [poiId], references: [id], onDelete: SetNull)
+  poiId         String?          @db.Uuid
+  reasonCode    UnresolvedReason @map("reason_code")
+  message       String
+  metadata      Json?            @map("metadata_json")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  resolvedAt    DateTime?        @map("resolved_at")
+
+  @@index([planId, versionId])
+  @@index([itemId])
 }
 
 model EditEvent {
@@ -249,16 +708,33 @@ model EditEvent {
 }
 
 model SlotCandidate {
-  id        String   @id @default(uuid()) @db.Uuid
-  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
-  planId    String   @db.Uuid
-  day       PlanDay? @relation(fields: [dayId], references: [id])
-  dayId     String?  @db.Uuid
-  slotIndex Int?     @map("slot_index")
-  source    String
-  poiSnap   Json     @map("poi_snapshot_json")
-  reason    String?  @map("reason_short")
-  createdAt DateTime @default(now()) @map("created_at")
+  id                String        @id @default(uuid()) @db.Uuid
+  plan              Plan          @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId            String        @db.Uuid
+  version           PlanVersion?  @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  versionId         String?       @map("version_id") @db.Uuid
+  day               PlanDay?      @relation(fields: [dayId], references: [id])
+  dayId             String?       @db.Uuid
+  slotIndex         Int?          @map("slot_index")
+  itemId            String?       @map("item_id")
+  inspiration       Inspiration?  @relation(fields: [inspirationId], references: [id], onDelete: SetNull)
+  inspirationId     String?       @map("inspiration_id") @db.Uuid
+  poi               CanonicalPOI? @relation(fields: [poiId], references: [id], onDelete: SetNull)
+  poiId             String?       @db.Uuid
+  status            String        @default("available")
+  source            String
+  poiSnap           Json          @map("poi_snapshot_json")
+  reason            String?       @map("reason_short")
+  quality           QualityGrade? @map("quality_grade")
+  sourceAttribution String?       @map("source_attribution")
+  metadata          Json?         @map("metadata_json")
+  usedSlot          PlanSlot?     @relation("UsedPlanSlot", fields: [usedSlotId], references: [id], onDelete: SetNull)
+  usedSlotId        String?       @map("used_slot_id") @db.Uuid
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @default(now()) @map("updated_at")
+
+  @@index([planId, versionId, status])
+  @@index([poiId])
 }
 
 model FillRun {

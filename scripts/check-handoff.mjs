@@ -9,14 +9,12 @@ const context = read('_bmad-output/project-context.md');
 const sprint = read('_bmad-output/implementation-artifacts/sprint-status.yaml');
 const story20 = read('_bmad-output/implementation-artifacts/2-0-confirm-and-planner-picker.md');
 const story21 = read('_bmad-output/implementation-artifacts/2-1-generate-day-skeleton-with-quick-and-hq-planning.md');
-const story21Validation = read(
-  '_bmad-output/implementation-artifacts/2-1-generate-day-skeleton-with-quick-and-hq-planning-validation.md',
-);
 
 assert.match(current, /^current_epic: 2$/m);
-assert.match(current, /^last_completed_story: 2-0-confirm-and-planner-picker$/m);
-assert.match(current, /^next_story: 2-1-generate-day-skeleton-with-quick-and-hq-planning$/m);
-assert.match(current, /^next_story_status: ready-for-dev$/m);
+assert.match(current, /^last_completed_story: 2-1-generate-day-skeleton-with-quick-and-hq-planning$/m);
+assert.match(current, /^next_story: 2-2-timeline-editing-undo-and-history$/m);
+assert.match(current, /^next_story_status: backlog$/m);
+assert.match(current, /^next_bmad_action: bmad-create-story$/m);
 
 for (const [name, text] of [
   ['README.md', readme],
@@ -35,10 +33,10 @@ for (const [name, text] of [
 }
 
 assert.match(story20, /^Status: done$/m);
-assert.match(story21, /^Status: ready-for-dev$/m);
-assert.match(story21Validation, /^PASS - ready-for-dev$/m);
+assert.match(story21, /^Status: done$/m);
 assert.match(sprint, /^\s+2-0-confirm-and-planner-picker: done$/m);
-assert.match(sprint, /^\s+2-1-generate-day-skeleton-with-quick-and-hq-planning: ready-for-dev$/m);
+assert.match(sprint, /^\s+2-1-generate-day-skeleton-with-quick-and-hq-planning: done$/m);
+assert.match(sprint, /^\s+2-2-timeline-editing-undo-and-history: backlog$/m);
 
 const currentPlanningFiles = [
   'docs/prd.md',
@@ -65,4 +63,4 @@ for (const path of currentPlanningFiles) {
   }
 }
 
-console.log('BMAD handoff check passed: Story 2.0 done, Story 2.1 ready-for-dev.');
+console.log('BMAD handoff check passed: Story 2.1 done, Story 2.2 awaits create-story.');

@@ -1,24 +1,7 @@
 import fp from 'fastify-plugin';
-import { createHash } from 'node:crypto';
 import { authGuard } from '../plugins/auth.js';
+import { AmapSearchUnavailableError, searchAmapPoi } from '../integrations/amap.js';
 import { SearchPoiQuery } from '../schemas.js';
-import type { components } from '../../../../packages/types/src/api-types.js';
-
-type SearchPoiItem = components['schemas']['SearchPoiItem'];
-
-function stablePoiId(city: string, query: string, index: number) {
-  return `amap_${createHash('sha1').update(`${city}:${query}:${index}`).digest('hex').slice(0, 12)}`;
-}
-
-function searchPoiStub(city: string, query: string, topk: number): SearchPoiItem[] {
-  const normalized = query.trim();
-  return Array.from({ length: topk }, (_, index) => ({
-    poi_id: stablePoiId(city, normalized, index),
-    name: index === 0 ? normalized : `${normalized} ${index + 1}`,
-    address: `${city}${index === 0 ? '' : `候选${index + 1}`} · 待用户确认地址`,
-    distance_m: index === 0 ? null : index * 180,
-  }));
-}
 
 export default fp(async (app) => {
   app.get('/search/poi', { preHandler: authGuard }, async (req: any, reply: any) => {
@@ -28,6 +11,14 @@ export default fp(async (app) => {
     }
 
     const { city, q, topk = 5 } = parsed.data;
-    return { items: searchPoiStub(city, q, topk) };
+    try {
+      return { items: await searchAmapPoi(city, q, topk) };
+    } catch (error) {
+      if (error instanceof AmapSearchUnavailableError) {
+        req.log?.warn({ error_code: 'AMAP_SEARCH_UNAVAILABLE' }, 'AMap POI search unavailable');
+        return reply.sendError('SEARCH_POI_UNAVAILABLE', '酒店匹配暂时不可用，请稍后重试', 503, true);
+      }
+      throw error;
+    }
   });
 });

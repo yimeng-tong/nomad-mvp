@@ -1,4 +1,6 @@
-# Workflow Status
+# Legacy Workflow Status
+# Historical BMAD pre-6.8 snapshot. Do not use this file to select current work.
+# Current status: ../CURRENT.md and ../_bmad-output/implementation-artifacts/sprint-status.yaml
 # generated: 2025-11-03
 # project: nomad-mvp
 # project_type: software
@@ -27,5 +29,4 @@ workflow_status:
 
   # Phase 4: Implementation
   sprint-planning: required
-
 

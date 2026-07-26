@@ -250,8 +250,8 @@ graph TD
 - Notes: 与 2h/4h 起始对齐，影响 Timeline 起点
 
 5) TripConstraintForm
-- Props: `hotels[]`，`breakfastIncluded?: boolean`，`luggagePlan?: 'old_hotel'|'new_hotel'|'station'|'carry'|'unknown'`，`tickets?: Constraint[]`，`wakePreference?`
-- Notes: 酒店影响早晚活动半径、区域聚类、换酒店缓冲与行李处理；预约/门票用于生成 hard time hints
+- Props: `hotels: {date,hotelName?,poiId?,address?,breakfastIncluded?,leaveBlank?}[]`，`luggagePlan?: 'carry_with_me'|'hotel_storage'|'station_storage'|'courier'|'undecided'`，`wakePreference?`
+- Notes: 酒店按日期设置且允许留空，自由输入名称后通过 AMap POI 匹配；早餐是酒店子项。酒店影响早晚活动半径、区域聚类、换酒店缓冲与行李处理。预约/门票和特殊时段从上传内容证据派生，不单列输入。
 
 6) SmartPlanSwitch
 - Props: `checked: true`（默认是），`onToggle(checked)`，`hint: string`
@@ -272,7 +272,8 @@ graph TD
 - Props: `mode: 'High'|'Split'|'MapFull'`，`onModeChange(m)`；与卡片联动高亮
 
 4) SelectedBasketPanel
-- Props: `items: Selected[]`（含 `must_go,time_hint,stay_minutes_hint`），`onUpdate(item)`，`onRemove(id)`，`onGenerate()`
+- Props: `items: SelectedL3[]`（含 `anchor_intent: 'selected_required',time_hint,stay_minutes_hint`），`onUpdate(item)`，`onRemove(id)`，`onStartPlanning()`
+- Notes: 仅 L3 可选；选中即表示需要纳入计划，不显示额外“必去”开关。L2 只用点色和选中 L3 数量表达状态。
 
 5) LocationModal (Top-5)
 - Props: `candidates: {name,address}[]`，`onSelect(i)`，`onClose()`
@@ -409,20 +410,19 @@ graph TD
   2) 出行节奏 Pace（Segmented: 紧凑2h｜舒适4h）
   3) 出行时间段（灵活天数/日期选择；可选首尾到/离港时间）
   4) 起床/早上出发偏好（2h/4h 起始对齐选项）
-  5) 酒店、是否酒店早餐、换酒店与行李处理
-  6) 预约/门票/日出/日落/夜市等强时间约束
-  7) 智能编排开关（默认是，说明“后台将生成高质量版本，可稍后切换-采用”）
+  5) 按日期设置的酒店（可留空、支持 AMap 匹配）、酒店子项早餐、换酒店与行李处理
+  6) 智能编排开关（默认是，说明“后台将生成高质量版本，可稍后切换-采用”）
 - Footer CTA: “继续（进入灵感选择）”。
 
 **Interaction Notes**: 参数校验；缺参弹 Sheet 补齐；弱网保底本地回显。
 
 ### Picker（灵感选择-上下文）
-**Purpose**: 选择 must_go/候选作为骨架输入，支持空选继续。
+**Purpose**: 选择希望纳入计划的 L3 POI；未选 L3 保留为 Agent 可用候选，并支持空选继续。
 
 **Layout**
 - Header: 城市/日期/天数概览 + “修改参数”入口。
 - Content: 卡片列表 + 地图联动（High→Split→Map-Full），弱网降级清单。
-- Basket: 吸底“已选 N | 生成骨架”；面板含 must_go / time_hint / stay_minutes_hint。
+- Basket: 吸底“已选 N | 开始规划”；面板含移除 / time_hint / stay_minutes_hint，不显示“必去”标签或开关。
 
 **Interaction Notes**: 卡片与 Marker 一致；飞行/滚动联动；Top-5 定位弹窗。
 
@@ -508,7 +508,7 @@ graph TD
   - `picker_remove_inspiration` {item_id}
   - `picker_locate_open` {item_id}
   - `picker_locate_select` {item_id, choice_idx}
-  - `picker_generate_skeleton` {selected_count, must_go_count}
+  - `picker_generate_skeleton` {selected_count, selected_required_count}（保留事件名兼容既有漏斗，用户界面不暴露 skeleton）
 
 - Skeleton（天级骨架）
   - `skeleton_open` {days, pace, slot_minutes}

@@ -1,5 +1,7 @@
 # nomad-mvp Product Requirements Document (PRD)
 
+> Historical snapshot. It is not an authority for current planning. Use `CURRENT.md` and `docs/prd.md`.
+
 ## Goals and Background Context
 
 ### Goals

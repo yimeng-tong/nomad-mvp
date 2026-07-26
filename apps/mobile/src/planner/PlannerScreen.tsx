@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Analytics } from '../auth/analytics';
 import { createNoopAnalytics, sanitizeAnalyticsProps } from '../auth/analytics';
 import type { LibraryCitySummary, LibraryInspirationItem, PlannerHandoff, PlannerHandoffSelectedItem } from '../home/api';
 import { createPlannerApiClient, type PlanGenerateRequest, type PlannerApiClient, type PlannerTimeHint, type SearchPoiItem } from './api';
+import { inferPlannerTimeHint } from './timeHints';
 
 type PlannerScreenProps = {
   handoff: PlannerHandoff;
@@ -58,6 +59,9 @@ type HotelMatchState = {
   items?: SearchPoiItem[];
 };
 
+const MAX_PLAN_DAYS = 14;
+const HARD_TIME_HINTS = new Set<PlannerTimeHint>(['dawn', 'sunset', 'night', 'night_market']);
+
 const cityCenters: Record<string, { lat: number; lng: number }> = {
   厦门: { lat: 24.4798, lng: 118.0894 },
   泉州: { lat: 24.8741, lng: 118.6759 },
@@ -78,7 +82,17 @@ function parsePlannerRoute(route: string) {
 }
 
 function isIsoDate(value: string) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value);
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+}
+
+function isTimeOfDay(value: string) {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
 }
 
 function addDays(isoDate: string, offset: number) {
@@ -89,7 +103,7 @@ function addDays(isoDate: string, offset: number) {
 }
 
 function hotelRows(startDate: string, dayCount: number, existing: HotelInput[] = []) {
-  const days = Math.max(1, Math.min(dayCount || 1, 14));
+  const days = Math.max(1, Math.min(dayCount || 1, MAX_PLAN_DAYS));
   return Array.from({ length: days }, (_, index) => {
     const date = isIsoDate(startDate) ? addDays(startDate, index) : '';
     const current = existing[index];
@@ -104,27 +118,32 @@ function hotelRows(startDate: string, dayCount: number, existing: HotelInput[] =
   });
 }
 
-function textForTimeHint(item: LibraryInspirationItem) {
-  return `${item.title || ''} ${item.summary || ''} ${item.poi_name || ''}`.toLowerCase();
+function hasHotelChange(hotels: HotelInput[]) {
+  const identities = hotels
+    .filter((hotel) => !hotel.leaveBlank && (hotel.poiId || hotel.hotelName.trim()))
+    .map((hotel) => hotel.poiId || hotel.hotelName.trim());
+  return new Set(identities).size > 1;
 }
 
 function inferTimeHint(item: LibraryInspirationItem | Pick<PickerItem, 'name' | 'summary'>): PlannerTimeHint | undefined {
-  const text = 'title' in item ? textForTimeHint(item) : `${item.name} ${item.summary}`.toLowerCase();
-  if (/日出|清晨|dawn|sunrise/u.test(text)) return 'dawn';
-  if (/日落|黄昏|sunset/u.test(text)) return 'sunset';
-  if (/夜市|night market/u.test(text)) return 'night_market';
-  if (/夜景|夜间|晚上|night/u.test(text)) return 'night';
-  if (/上午|早上|morning/u.test(text)) return 'morning';
-  return undefined;
+  const text = 'title' in item
+    ? `${item.title || ''} ${item.summary || ''} ${item.poi_name || ''}`
+    : `${item.name} ${item.summary}`;
+  return inferPlannerTimeHint(text);
 }
 
 function areaFor(item: LibraryInspirationItem | Pick<PickerItem, 'name' | 'summary' | 'cityName'>) {
   const text = 'poi_name' in item ? `${item.poi_name || ''} ${item.title || ''} ${item.summary || ''}` : `${item.name} ${item.summary}`;
-  if (/日光岩|菽庄|最美转角|鼓浪屿/u.test(text)) return '鼓浪屿';
-  if (/黄厝|环岛|曾厝垵|沙滩|海滩/u.test(text)) return '环岛路';
-  if (/中山|骑楼|八市|夜市/u.test(text)) return '中山路';
-  if (/沙坡尾|艺术西区/u.test(text)) return '沙坡尾';
-  return ('cityName' in item ? item.cityName : item.city_name) || '附近灵感';
+  const cityName = ('cityName' in item ? item.cityName : item.city_name) || null;
+  if (cityName === '厦门') {
+    if (/日光岩|菽庄|最美转角|鼓浪屿/u.test(text)) return '鼓浪屿';
+    if (/黄厝|环岛|曾厝垵|沙滩|海滩/u.test(text)) return '环岛路';
+    if (/中山|骑楼|八市|夜市/u.test(text)) return '中山路';
+    if (/沙坡尾|艺术西区/u.test(text)) return '沙坡尾';
+  }
+  const address = 'poi_address' in item ? item.poi_address || '' : item.summary;
+  const district = address.match(/([\p{Script=Han}]{2,8}(?:区|县|镇|街道))/u)?.[1];
+  return district || cityName || '附近灵感';
 }
 
 function titleFor(item: LibraryInspirationItem) {
@@ -158,7 +177,7 @@ function mapHandoffItem(item: PlannerHandoffSelectedItem, cityName: string, inde
     cityName,
     l2: cityName || '附近灵感',
     source: item.source || 'home_input',
-    timeHint: item.time_hint,
+    timeHint: item.time_hint ?? undefined,
     stayMinutesHint: item.stay_minutes_hint ?? 90,
   };
   return { ...fallback, l2: areaFor(fallback) };
@@ -191,20 +210,27 @@ function sortedTabs(cities: LibraryCitySummary[], targetCity: string) {
 }
 
 function groupItems(items: PickerItem[]) {
-  return items.reduce<Record<string, PickerItem[]>>((groups, item) => {
-    groups[item.l2] = [...(groups[item.l2] || []), item];
-    return groups;
-  }, {});
+  const groups = new Map<string, PickerItem[]>();
+  items.forEach((item) => groups.set(item.l2, [...(groups.get(item.l2) || []), item]));
+  return Array.from(groups.entries());
 }
 
-function deriveHardTimeHints(items: PickerItem[]): NonNullable<PlanGenerateRequest['hard_time_hints']> {
+function deriveHardTimeHints(items: PickerItem[], selectedIds: Set<string>): NonNullable<PlanGenerateRequest['hard_time_hints']> {
+  const seen = new Set<string>();
   return items
-    .filter((item) => item.timeHint && ['dawn', 'sunset', 'night', 'night_market'].includes(item.timeHint))
+    .filter((item) => item.timeHint && HARD_TIME_HINTS.has(item.timeHint))
+    .filter((item) => item.source === 'library' || item.source === 'uploaded_inspiration' || selectedIds.has(item.itemId))
+    .filter((item) => {
+      const key = `${item.itemId}:${item.timeHint}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
     .map((item) => ({
       item_id: item.itemId,
       poi_id: item.poiId || null,
       time_hint: item.timeHint as PlannerTimeHint,
-      source: 'uploaded_inspiration' as const,
+      source: selectedIds.has(item.itemId) ? 'user_selected' as const : 'uploaded_inspiration' as const,
     }));
 }
 
@@ -229,8 +255,10 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
   const [stretchMode, setStretchMode] = useState<StretchMode>('nearby');
   const [cities, setCities] = useState<LibraryCitySummary[]>([]);
   const [inspirations, setInspirations] = useState<LibraryInspirationItem[]>([]);
+  const [libraryLoading, setLibraryLoading] = useState(true);
   const [networkFallback, setNetworkFallback] = useState(false);
   const [hotelMatches, setHotelMatches] = useState<Record<number, HotelMatchState>>({});
+  const hotelSearchVersions = useRef<Record<number, number>>({});
   const [notice, setNotice] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>(() => handoff.selected_items.map((item) => item.item_id));
@@ -264,16 +292,16 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
   useEffect(() => {
     track('confirm_open', { source: routeParams.source, selected_count: handoff.selected_items.length });
     let cancelled = false;
-    Promise.all([client.getCities(), client.getInspirations()])
-      .then(([cityResponse, inspirationResponse]) => {
+    setLibraryLoading(true);
+    void Promise.allSettled([client.getCities(), client.getInspirations()])
+      .then(([cityResult, inspirationResult]) => {
         if (cancelled) return;
-        setCities(cityResponse.cities);
-        setInspirations(inspirationResponse.items);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setNetworkFallback(true);
-        setNotice('网络较差，已切换为清单模式');
+        if (cityResult.status === 'fulfilled') setCities(cityResult.value.cities);
+        if (inspirationResult.status === 'fulfilled') setInspirations(inspirationResult.value.items);
+        const degraded = cityResult.status === 'rejected' || inspirationResult.status === 'rejected';
+        setNetworkFallback(degraded);
+        if (degraded) setNotice('网络较差，已切换为清单模式');
+        setLibraryLoading(false);
       });
     return () => {
       cancelled = true;
@@ -283,22 +311,35 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
   useEffect(() => {
     const timers = confirm.hotels.map((hotel, index) => {
       const q = hotel.hotelName.trim();
-      if (!confirm.city.trim() || hotel.leaveBlank || q.length < 2) return undefined;
+      const version = (hotelSearchVersions.current[index] ?? 0) + 1;
+      hotelSearchVersions.current[index] = version;
+      if (!confirm.city.trim() || hotel.leaveBlank || hotel.poiId || q.length < 2) {
+        setHotelMatches((current) => {
+          if (!current[index]) return current;
+          const next = { ...current };
+          delete next[index];
+          return next;
+        });
+        return undefined;
+      }
       setHotelMatches((current) => ({ ...current, [index]: { ...(current[index] || {}), loading: true, error: null } }));
       return window.setTimeout(() => {
         void client
           .searchPoi({ city: confirm.city.trim(), q, topk: 3 })
           .then((response) => {
+            if (hotelSearchVersions.current[index] !== version) return;
             setHotelMatches((current) => ({ ...current, [index]: { loading: false, items: response.items || [], error: null } }));
           })
           .catch(() => {
+            if (hotelSearchVersions.current[index] !== version) return;
             setHotelMatches((current) => ({ ...current, [index]: { loading: false, items: [], error: '酒店匹配暂时不可用' } }));
           });
       }, 250);
     });
     return () => {
-      timers.forEach((timer) => {
+      timers.forEach((timer, index) => {
         if (timer) window.clearTimeout(timer);
+        hotelSearchVersions.current[index] = (hotelSearchVersions.current[index] ?? 0) + 1;
       });
     };
   }, [client, confirm.city, confirm.hotels]);
@@ -306,19 +347,28 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
   const targetCity = confirm.city || activeCity;
   const cityTabs = useMemo(() => sortedTabs(cities, targetCity), [cities, targetCity]);
   const libraryItems = useMemo(() => inspirations.map(mapLibraryItem), [inspirations]);
-  const visibleLibraryItems = useMemo(() => {
+  const allPickerItems = useMemo(() => {
+    const byId = new Map(libraryItems.map((item) => [item.itemId, item]));
+    handoff.selected_items.forEach((item, index) => {
+      const fallback = mapHandoffItem(item, targetCity, index);
+      const known = byId.get(item.item_id);
+      byId.set(item.item_id, known ? {
+        ...known,
+        poiId: item.poi_id || known.poiId,
+        source: item.source || known.source,
+        timeHint: item.time_hint || known.timeHint,
+        stayMinutesHint: item.stay_minutes_hint ?? known.stayMinutesHint,
+      } : fallback);
+    });
+    return Array.from(byId.values());
+  }, [handoff.selected_items, libraryItems, targetCity]);
+  const pickerItems = useMemo(() => {
     const cityName = activeCity || targetCity;
-    const filtered = libraryItems.filter((item) => !cityName || item.cityName === cityName);
-    return filtered.length > 0 ? filtered : libraryItems;
-  }, [activeCity, libraryItems, targetCity]);
-  const missingHandoffItems = useMemo(() => {
-    const knownIds = new Set(visibleLibraryItems.map((item) => item.itemId));
-    return handoff.selected_items.filter((item) => !knownIds.has(item.item_id)).map((item, index) => mapHandoffItem(item, targetCity, index));
-  }, [handoff.selected_items, targetCity, visibleLibraryItems]);
-  const pickerItems = useMemo(() => [...visibleLibraryItems, ...missingHandoffItems], [missingHandoffItems, visibleLibraryItems]);
+    return allPickerItems.filter((item) => !cityName || item.cityName === cityName || (!item.cityName && selectedIds.includes(item.itemId)));
+  }, [activeCity, allPickerItems, selectedIds, targetCity]);
   const groupedItems = useMemo(() => groupItems(pickerItems), [pickerItems]);
-  const selectedItems = useMemo(() => pickerItems.filter((item) => selectedIds.includes(item.itemId)), [pickerItems, selectedIds]);
-  const activeArea = activeL2 || Object.keys(groupedItems)[0] || '附近灵感';
+  const selectedItems = useMemo(() => allPickerItems.filter((item) => selectedIds.includes(item.itemId)), [allPickerItems, selectedIds]);
+  const activeArea = activeL2 || groupedItems[0]?.[0] || '附近灵感';
 
   const updateConfirm = (patch: Partial<ConfirmState>) => {
     setConfirm((current) => {
@@ -349,9 +399,16 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
 
   const validateConfirm = () => {
     const nextErrors: string[] = [];
+    const days = Number(confirm.days);
     if (!confirm.city.trim()) nextErrors.push('请选择城市');
-    if (!isIsoDate(confirm.startDate) || !Number.isInteger(Number(confirm.days)) || Number(confirm.days) < 1) nextErrors.push('请完善出行时间');
+    if (!isIsoDate(confirm.startDate) || !Number.isInteger(days) || days < 1 || days > MAX_PLAN_DAYS) nextErrors.push('请完善出行时间');
     if (!confirm.firstDayArrivalTime) nextErrors.push('请选择出发时间');
+    const timeValues = [confirm.wakePreference, confirm.morningStartTime, confirm.firstDayArrivalTime, confirm.lastDayDepartureTime].filter(Boolean);
+    if (timeValues.some((value) => !isTimeOfDay(value))) nextErrors.push('请填写有效时间');
+    if (days === 1 && confirm.firstDayArrivalTime && confirm.lastDayDepartureTime && confirm.firstDayArrivalTime > confirm.lastDayDepartureTime) {
+      nextErrors.push('单日行程的离开时间不能早于到达时间');
+    }
+    if (hasHotelChange(confirm.hotels) && confirm.luggageMode === 'undecided') nextErrors.push('换酒店时请选择行李处理方式');
     setErrors(nextErrors);
     return nextErrors.length === 0;
   };
@@ -385,9 +442,12 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
 
   const buildGeneratePayload = (): PlanGenerateRequest => {
     const selectedSet = new Set(selectedIds);
-    const sourceItems = pickerItems.length > 0 ? pickerItems : missingHandoffItems;
-    const selected = sourceItems.filter((item) => selectedSet.has(item.itemId));
-    const candidates = sourceItems.filter((item) => !selectedSet.has(item.itemId));
+    const selected = allPickerItems.filter((item) => selectedSet.has(item.itemId));
+    const candidates = allPickerItems.filter((item) => {
+      if (selectedSet.has(item.itemId)) return false;
+      return !targetCity || item.cityName === targetCity || item.cityName === null;
+    });
+    const contextItems = Array.from(new Map([...selected, ...candidates].map((item) => [item.itemId, item])).values());
     return {
       city: confirm.city,
       start_date: confirm.startDate,
@@ -428,7 +488,7 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
       first_day_arrival_time: confirm.firstDayArrivalTime || null,
       last_day_departure_time: confirm.lastDayDepartureTime || null,
       smart_planning: confirm.smartPlanning,
-      hard_time_hints: deriveHardTimeHints(sourceItems),
+      hard_time_hints: deriveHardTimeHints(contextItems, selectedSet),
     };
   };
 
@@ -496,11 +556,11 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
             </label>
             <label className="field">
               <span>出行日期</span>
-              <input value={confirm.startDate} onChange={(event) => updateConfirm({ startDate: event.target.value })} placeholder="2026-07-02" />
+              <input type="date" value={confirm.startDate} onChange={(event) => updateConfirm({ startDate: event.target.value })} placeholder="2026-07-02" />
             </label>
             <label className="field">
               <span>天数</span>
-              <input inputMode="numeric" value={confirm.days} onChange={(event) => updateConfirm({ days: event.target.value })} placeholder="3" />
+              <input type="number" inputMode="numeric" min="1" max={MAX_PLAN_DAYS} value={confirm.days} onChange={(event) => updateConfirm({ days: event.target.value })} placeholder="3" />
             </label>
           </div>
 
@@ -521,19 +581,19 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
             <div className="planner-form-grid">
               <label className="field">
                 <span>起床时间</span>
-                <input value={confirm.wakePreference} onChange={(event) => updateConfirm({ wakePreference: event.target.value })} placeholder="08:30" />
+                <input type="time" value={confirm.wakePreference} onChange={(event) => updateConfirm({ wakePreference: event.target.value })} placeholder="08:30" />
               </label>
               <label className="field">
                 <span>上午出发</span>
-                <input value={confirm.morningStartTime} onChange={(event) => updateConfirm({ morningStartTime: event.target.value })} placeholder="09:30" />
+                <input type="time" value={confirm.morningStartTime} onChange={(event) => updateConfirm({ morningStartTime: event.target.value })} placeholder="09:30" />
               </label>
               <label className="field">
                 <span>首日到达</span>
-                <input value={confirm.firstDayArrivalTime} onChange={(event) => updateConfirm({ firstDayArrivalTime: event.target.value })} placeholder="11:20" />
+                <input type="time" value={confirm.firstDayArrivalTime} onChange={(event) => updateConfirm({ firstDayArrivalTime: event.target.value })} placeholder="11:20" />
               </label>
               <label className="field">
                 <span>末日离开</span>
-                <input value={confirm.lastDayDepartureTime} onChange={(event) => updateConfirm({ lastDayDepartureTime: event.target.value })} placeholder="18:45" />
+                <input type="time" value={confirm.lastDayDepartureTime} onChange={(event) => updateConfirm({ lastDayDepartureTime: event.target.value })} placeholder="18:45" />
               </label>
             </div>
           </section>
@@ -556,13 +616,20 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
                     <label>
                       <input
                         checked={hotel.breakfastIncluded}
+                        disabled={hotel.leaveBlank}
                         type="checkbox"
                         onChange={(event) => updateHotel(index, { breakfastIncluded: event.target.checked })}
                       />
                       含早餐
                     </label>
-                    <button type="button" onClick={() => updateHotel(index, { hotelName: '', poiId: null, address: null, leaveBlank: true })}>
-                      留空
+                    <button
+                      type="button"
+                      aria-pressed={hotel.leaveBlank}
+                      onClick={() => updateHotel(index, hotel.leaveBlank
+                        ? { leaveBlank: false }
+                        : { hotelName: '', poiId: null, address: null, breakfastIncluded: false, leaveBlank: true })}
+                    >
+                      {hotel.leaveBlank ? '填写酒店' : '留空'}
                     </button>
                   </div>
                   {hotel.hotelName && !hotel.leaveBlank ? (
@@ -622,6 +689,7 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
       ) : (
         <section className="planner-content planner-picker" aria-label="灵感选择">
           <h1 id="planner-picker-title">选择灵感</h1>
+          {libraryLoading ? <p className="status-text" role="status">正在加载灵感</p> : null}
 
           <div className="city-chip-row" aria-label="城市灵感">
             {cityTabs.map((city) => (
@@ -664,7 +732,7 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
           {pickerItems.length === 0 ? <p className="empty-state">暂无可用灵感，试试更换城市或关键词</p> : null}
 
           <div className="l2-list">
-            {Object.entries(groupedItems).map(([l2, items]) => {
+            {groupedItems.map(([l2, items]) => {
               const selectedCount = items.filter((item) => selectedIds.includes(item.itemId)).length;
               return (
                 <section className="l2-group" key={l2} aria-label={`${l2} 已选 ${selectedCount} 个L3`}>
@@ -697,8 +765,8 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
 
           <aside className="planner-basket" aria-label="已选灵感">
             <span>已选 {selectedItems.length}</span>
-            <button type="button" disabled={submitting || !confirm.city || !confirm.startDate || !confirm.days} onClick={() => void startPlanning()}>
-              {submitting ? '规划中' : '开始规划'}
+            <button type="button" disabled={submitting || libraryLoading || !confirm.city || !confirm.startDate || !confirm.days} onClick={() => void startPlanning()}>
+              {submitting ? '规划中' : libraryLoading ? '加载中' : '开始规划'}
             </button>
           </aside>
         </section>

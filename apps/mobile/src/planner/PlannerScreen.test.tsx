@@ -1,9 +1,9 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Analytics } from '../auth/analytics';
-import type { LibraryCitySummary, LibraryInspirationItem, PlannerHandoff } from '../home/api';
+import type { LibraryCitySummary, LibraryInspirationItem, LibraryInspirationsResponse, PlannerHandoff } from '../home/api';
 import { PlannerScreen } from './PlannerScreen';
-import type { PlannerApiClient } from './api';
+import type { PlannerApiClient, SearchPoiItem } from './api';
 
 const cities: LibraryCitySummary[] = [
   { city_id: 'city-xm', name: '厦门', inspiration_count: 4, pending_count: 0 },
@@ -185,6 +185,137 @@ describe('PlannerScreen', () => {
     expect(within(sunlightRow as HTMLElement).getByRole('button', { name: '已选' })).toBeInTheDocument();
   });
 
+  it('preserves selected anchors and basket state across city tabs', async () => {
+    const apiClient = createApiClient();
+    render(<PlannerScreen handoff={createHandoff()} apiClient={apiClient} onBack={vi.fn()} />);
+
+    await continueFromConfirm();
+    const sunlightRow = screen.getByText('日光岩').closest('article') as HTMLElement;
+    fireEvent.click(within(sunlightRow).getByRole('button', { name: '选择' }));
+    fireEvent.click(screen.getByRole('button', { name: '泉州 2' }));
+    const westStreetRow = await screen.findByText('西街');
+    fireEvent.click(within(westStreetRow.closest('article') as HTMLElement).getByRole('button', { name: '选择' }));
+
+    expect(screen.getByText('已选 2')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '开始规划' }));
+
+    await waitFor(() => expect(apiClient.generatePlan).toHaveBeenCalledTimes(1));
+    const payload = vi.mocked(apiClient.generatePlan).mock.calls[0][0];
+    expect(payload.selected_items?.map((item) => item.item_id)).toEqual(expect.arrayContaining(['ins-sunlight-rock', 'ins-quanzhou']));
+    expect(payload.hard_time_hints).toContainEqual(expect.objectContaining({
+      item_id: 'ins-quanzhou',
+      time_hint: 'night',
+      source: 'user_selected',
+    }));
+  });
+
+  it('shows a target-city empty state instead of mixing in other cities', async () => {
+    render(
+      <PlannerScreen
+        handoff={createHandoff('/planner/pick?city=%E6%9D%AD%E5%B7%9E&start=2026-07-02&days=3&source=home_input')}
+        apiClient={createApiClient()}
+        onBack={vi.fn()}
+      />,
+    );
+
+    await continueFromConfirm();
+
+    expect(screen.getByText('暂无可用灵感，试试更换城市或关键词')).toBeInTheDocument();
+    expect(screen.queryByText('日光岩')).not.toBeInTheDocument();
+    expect(screen.queryByText('西街')).not.toBeInTheDocument();
+  });
+
+  it('keeps successful inspiration data when city summaries fail', async () => {
+    const apiClient = createApiClient({
+      getCities: vi.fn(async () => {
+        throw new Error('network');
+      }),
+    });
+    render(<PlannerScreen handoff={createHandoff()} apiClient={apiClient} onBack={vi.fn()} />);
+
+    expect(await screen.findByText('网络较差，已切换为清单模式')).toBeInTheDocument();
+    await continueFromConfirm();
+
+    expect(screen.getByText('日光岩')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '仅列表继续' })).toBeInTheDocument();
+  });
+
+  it('blocks planning until Picker data loading settles', async () => {
+    let resolveInspirations: (value: LibraryInspirationsResponse) => void = () => undefined;
+    const apiClient = createApiClient({
+      getInspirations: vi.fn(() => new Promise<LibraryInspirationsResponse>((resolve) => {
+        resolveInspirations = resolve;
+      })),
+    });
+    render(<PlannerScreen handoff={createHandoff()} apiClient={apiClient} onBack={vi.fn()} />);
+
+    await continueFromConfirm();
+    expect(screen.getByRole('button', { name: '加载中' })).toBeDisabled();
+
+    resolveInspirations({ items: inspirations });
+    expect(await screen.findByRole('button', { name: '开始规划' })).toBeEnabled();
+  });
+
+  it('makes blank hotel rows reversible and clears incompatible breakfast state', async () => {
+    render(<PlannerScreen handoff={createHandoff()} apiClient={createApiClient()} onBack={vi.fn()} />);
+
+    const breakfast = (await screen.findAllByLabelText('含早餐'))[0];
+    fireEvent.click(breakfast);
+    fireEvent.click(screen.getAllByRole('button', { name: '留空' })[0]);
+
+    expect(breakfast).not.toBeChecked();
+    expect(breakfast).toBeDisabled();
+    fireEvent.click(screen.getAllByRole('button', { name: '填写酒店' })[0]);
+    expect(breakfast).toBeEnabled();
+  });
+
+  it('ignores stale hotel search responses', async () => {
+    let resolveOld: (value: { items?: SearchPoiItem[] }) => void = () => undefined;
+    let resolveNew: (value: { items?: SearchPoiItem[] }) => void = () => undefined;
+    const apiClient = createApiClient({
+      searchPoi: vi.fn(({ q }) => new Promise<{ items?: SearchPoiItem[] }>((resolve) => {
+        if (q === '旧酒店') resolveOld = resolve;
+        else resolveNew = resolve;
+      })),
+    });
+    render(<PlannerScreen handoff={createHandoff()} apiClient={apiClient} onBack={vi.fn()} />);
+
+    const input = (await screen.findAllByPlaceholderText('输入酒店名称，高德匹配'))[0];
+    fireEvent.change(input, { target: { value: '旧酒店' } });
+    await waitFor(() => expect(apiClient.searchPoi).toHaveBeenCalledWith({ city: '厦门', q: '旧酒店', topk: 3 }));
+    fireEvent.change(input, { target: { value: '新酒店' } });
+    await waitFor(() => expect(apiClient.searchPoi).toHaveBeenCalledWith({ city: '厦门', q: '新酒店', topk: 3 }));
+
+    resolveNew({ items: [{ poi_id: 'new', name: '新酒店结果', address: '新地址', distance_m: null }] });
+    expect(await screen.findByText('新酒店结果')).toBeInTheDocument();
+    resolveOld({ items: [{ poi_id: 'old', name: '旧酒店结果', address: '旧地址', distance_m: null }] });
+    await waitFor(() => expect(screen.queryByText('旧酒店结果')).not.toBeInTheDocument());
+  });
+
+  it('validates the MVP day limit, one-day chronology, and hotel-change luggage', async () => {
+    render(<PlannerScreen handoff={createHandoff()} apiClient={createApiClient()} onBack={vi.fn()} />);
+
+    fireEvent.change(await screen.findByLabelText('天数'), { target: { value: '15' } });
+    fireEvent.change(screen.getByLabelText('首日到达'), { target: { value: '11:20' } });
+    fireEvent.click(screen.getByRole('button', { name: '继续选择灵感' }));
+    expect(await screen.findByText('请完善出行时间')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('天数'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('首日到达'), { target: { value: '18:00' } });
+    fireEvent.change(screen.getByLabelText('末日离开'), { target: { value: '09:00' } });
+    fireEvent.click(screen.getByRole('button', { name: '继续选择灵感' }));
+    expect(await screen.findByText('单日行程的离开时间不能早于到达时间')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('天数'), { target: { value: '2' } });
+    fireEvent.change(screen.getByLabelText('首日到达'), { target: { value: '11:20' } });
+    fireEvent.change(screen.getByLabelText('末日离开'), { target: { value: '18:00' } });
+    const hotelInputs = screen.getAllByPlaceholderText('输入酒店名称，高德匹配');
+    fireEvent.change(hotelInputs[0], { target: { value: '酒店 A' } });
+    fireEvent.change(hotelInputs[1], { target: { value: '酒店 B' } });
+    fireEvent.click(screen.getByRole('button', { name: '继续选择灵感' }));
+    expect(await screen.findByText('换酒店时请选择行李处理方式')).toBeInTheDocument();
+  });
+
   it('falls back to list mode on weak network without blocking selection', async () => {
     const apiClient = createApiClient({
       getCities: vi.fn(async () => {
@@ -204,5 +335,59 @@ describe('PlannerScreen', () => {
     expect(screen.getByText('已选灵感 1')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '仅列表继续' })).toBeInTheDocument();
     expect(screen.getByText('已选 1')).toBeInTheDocument();
+  });
+
+  it('preserves selected hard-time evidence in a complete weak-network fallback', async () => {
+    const apiClient = createApiClient({
+      getCities: vi.fn(async () => {
+        throw new Error('network');
+      }),
+      getInspirations: vi.fn(async () => {
+        throw new Error('network');
+      }),
+    });
+    const handoff = createHandoff();
+    handoff.selected_items = [{ item_id: 'ins-offline-night', source: 'home_input', time_hint: 'night_market' }];
+    render(<PlannerScreen handoff={handoff} apiClient={apiClient} onBack={vi.fn()} />);
+
+    expect(await screen.findByText('网络较差，已切换为清单模式')).toBeInTheDocument();
+    await continueFromConfirm();
+    fireEvent.click(screen.getByRole('button', { name: '开始规划' }));
+
+    await waitFor(() => expect(apiClient.generatePlan).toHaveBeenCalledTimes(1));
+    expect(vi.mocked(apiClient.generatePlan).mock.calls[0][0].hard_time_hints).toContainEqual({
+      item_id: 'ins-offline-night',
+      poi_id: null,
+      time_hint: 'night_market',
+      source: 'user_selected',
+    });
+  });
+
+  it('uses neutral non-Xiamen L2 grouping and safely handles prototype-like names', async () => {
+    const unusual: LibraryInspirationItem[] = [
+      {
+        ...inspirations[3],
+        id: 'ins-prototype',
+        city_id: 'city-prototype',
+        city_name: '__proto__',
+        poi_name: '夜市',
+        poi_address: '',
+      },
+    ];
+    const apiClient = createApiClient({
+      getCities: vi.fn(async () => ({ cities: [{ city_id: 'city-prototype', name: '__proto__', inspiration_count: 2, pending_count: 0 }], unlocated_count: 0 })),
+      getInspirations: vi.fn(async () => ({ items: unusual })),
+    });
+    render(
+      <PlannerScreen
+        handoff={createHandoff('/planner/pick?city=__proto__&start=2026-07-02&days=3&source=home_input')}
+        apiClient={apiClient}
+        onBack={vi.fn()}
+      />,
+    );
+
+    await continueFromConfirm();
+    expect(screen.getByLabelText('__proto__ 已选 0 个L3')).toBeInTheDocument();
+    expect(screen.queryByLabelText('中山路 已选 0 个L3')).not.toBeInTheDocument();
   });
 });

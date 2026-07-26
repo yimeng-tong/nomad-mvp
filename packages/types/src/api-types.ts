@@ -354,7 +354,7 @@ export interface components {
        * @enum {string|null}
        */
       anchor_intent?: "selected_required" | null;
-      time_hint?: components["schemas"]["PlannerTimeHint"];
+      time_hint?: components["schemas"]["PlannerTimeHint"] | null;
       stay_minutes_hint?: number | null;
     };
     PlannerHandoff: {
@@ -425,14 +425,14 @@ export interface components {
        * @enum {string}
        */
       anchor_intent?: "selected_required";
-      time_hint?: components["schemas"]["PlannerTimeHint"];
+      time_hint?: components["schemas"]["PlannerTimeHint"] | null;
       stay_minutes_hint?: number | null;
     };
     PlannerCandidateItem: {
       item_id: string;
       poi_id?: string | null;
       source: components["schemas"]["PlannerAnchorSource"];
-      time_hint?: components["schemas"]["PlannerTimeHint"];
+      time_hint?: components["schemas"]["PlannerTimeHint"] | null;
       stay_minutes_hint?: number | null;
     };
     PlanHotelConstraint: {
@@ -1437,6 +1437,7 @@ export interface operations {
       401: components["responses"]["Error401"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error500"];
     };
   };
   /** Manually add a candidate by name/address/coords (MVP minimal) */

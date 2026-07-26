@@ -260,8 +260,8 @@ graph TD
 - Notes: 与 2h/4h 起始对齐，影响 Timeline 起点
 
 5) TripConstraintForm
-- Props: `hotels[]`，`breakfastIncluded?: boolean`，`luggagePlan?: 'old_hotel'|'new_hotel'|'station'|'carry'|'unknown'`，`tickets?: Constraint[]`，`wakePreference?`
-- Notes: 酒店影响早晚活动半径、区域聚类、换酒店缓冲与行李处理；预约/门票用于生成 hard time hints
+- Props: `hotels: {date,hotelName?,poiId?,address?,breakfastIncluded?,leaveBlank?}[]`，`luggagePlan?: 'carry_with_me'|'hotel_storage'|'station_storage'|'courier'|'undecided'`，`wakePreference?`
+- Notes: 酒店按日期设置且允许留空，自由输入名称后通过 AMap POI 匹配；早餐是酒店子项。酒店影响早晚活动半径、区域聚类、换酒店缓冲与行李处理。预约/门票和特殊时段从上传内容证据派生，不单列输入。
 
 6) SmartPlanSwitch
 - Props: `checked: true`（默认是），`onToggle(checked)`，`hint: string`
@@ -282,7 +282,8 @@ graph TD
 - Props: `mode: 'High'|'Split'|'MapFull'`，`onModeChange(m)`；与卡片联动高亮
 
 4) SelectedBasketPanel
-- Props: `items: Selected[]`（含 `must_go,time_hint,stay_minutes_hint`），`onUpdate(item)`，`onRemove(id)`，`onGenerate()`
+- Props: `items: SelectedL3[]`（含 `anchor_intent: 'selected_required',time_hint,stay_minutes_hint`），`onUpdate(item)`，`onRemove(id)`，`onStartPlanning()`
+- Notes: 仅 L3 可选；选中即表示需要纳入计划，不显示额外“必去”开关。L2 只用点色和选中 L3 数量表达状态。
 
 5) LocationModal (Top-5)
 - Props: `candidates: {name,address}[]`，`onSelect(i)`，`onClose()`
@@ -419,20 +420,19 @@ graph TD
   2) 出行节奏 Pace（Segmented: 紧凑2h｜舒适4h）
   3) 出行时间段（灵活天数/日期选择；可选首尾到/离港时间）
   4) 起床/早上出发偏好（2h/4h 起始对齐选项）
-  5) 酒店、是否酒店早餐、换酒店与行李处理
-  6) 预约/门票/日出/日落/夜市等强时间约束
-  7) 智能编排开关（默认是，说明“后台将生成高质量版本，可稍后切换-采用”）
+  5) 按日期设置的酒店（可留空、支持 AMap 匹配）、酒店子项早餐、换酒店与行李处理
+  6) 智能编排开关（默认是，说明“后台将生成高质量版本，可稍后切换-采用”）
 - Footer CTA: “继续（进入灵感选择）”。
 
 **Interaction Notes**: 参数校验；缺参弹 Sheet 补齐；弱网保底本地回显。
 
 ### Picker（灵感选择-上下文）
-**Purpose**: 选择 must_go/候选作为骨架输入，支持空选继续。
+**Purpose**: 选择希望纳入计划的 L3 POI；未选 L3 保留为 Agent 可用候选，并支持空选继续。
 
 **Layout**
 - Header: 城市/日期/天数概览 + “修改参数”入口。
 - Content: 卡片列表 + 地图联动（High→Split→Map-Full），弱网降级清单。
-- Basket: 吸底“已选 N | 生成骨架”；面板含 must_go / time_hint / stay_minutes_hint。
+- Basket: 吸底“已选 N | 开始规划”；面板含移除 / time_hint / stay_minutes_hint，不显示“必去”标签或开关。
 
 **Interaction Notes**: 卡片与 Marker 一致；飞行/滚动联动；Top-5 定位弹窗。
 
@@ -518,7 +518,7 @@ graph TD
   - `picker_remove_inspiration` {item_id}
   - `picker_locate_open` {item_id}
   - `picker_locate_select` {item_id, choice_idx}
-  - `picker_generate_skeleton` {selected_count, must_go_count}
+  - `picker_generate_skeleton` {selected_count, selected_required_count}（保留事件名兼容既有漏斗，用户界面不暴露 skeleton）
 
 - Skeleton（天级骨架）
   - `skeleton_open` {days, pace, slot_minutes}
@@ -734,7 +734,7 @@ Sync:
 - Map→Card: tap marker → scroll & "lift" card (shadow)
 Action strategy:
 - 有骨架：主CTA=加入 D{n}·{上午/下午/晚间}（可改）
-- 无骨架：主CTA=加入候选；底条“已选 N / 生成骨架”
+- 尚无计划：主 CTA=加入候选；底条“已选 N / 开始规划”
 
 ### 3.4 灵感选择页（Planner Picker）（上下文灵感选择页）
 Purpose: 在规划上下文内挑选本次要用的 UGC 素材，作为“部分填充/锚点输入”。不属于“灵感库”导航项，但复用其卡片/定位能力。
@@ -794,13 +794,13 @@ Cards & Selection
 - 主 CTA：加入候选 → 已加入（显示“已加入 · 撤销”）；低置信显示“去定位”入口，复用定位弹窗
 
 Basket & Footer
-- 已选篮（吸底左）：“已选 N”（可展开面板：移除、must_go、time_hint、stay_minutes_hint）
-- 主按钮（吸底右）：“下一步/生成骨架”；无“用热门生成骨架”动作（已删除）
+- 已选篮（吸底左）：“已选 N”（可展开面板：移除、time_hint、stay_minutes_hint）；选中 L3 自动成为 selected_required，不提供额外“必去”开关
+- 主按钮（吸底右）：“开始规划”；无“用热门生成骨架”动作（已删除）
 - 缺参补齐：点主按钮时若缺 start/days → 弹参数 Sheet 补齐后生成
 
 Generate（接口语义）
-- POST /plan/generate：selected_items 作为锚点输入生成“部分填充”骨架（must_go/time_hint 优先落位；近邻聚类仅做部分填充）
-- 未落位条目：不在骨架主视图直接展示，而是在“空槽→大弹窗”的“候选抽屉”中展示；若 Planner Picker 的 POI 已用完则提示“已用完”
+- POST /plan/generate：selected_items 作为 selected_required 锚点输入生成“部分填充”骨架；time_hint 及上传内容派生的特殊时段为硬约束，candidate_items 供 Agent 可选补全
+- 未落位 candidate_items：不在计划主视图直接展示，而是在计划“候选”页/抽屉中展示；若 Planner Picker 的 POI 已用完则提示“已用完”
 
 Empty States
 - 无灵感：展示“热门 UGC/AI 建议”棚格；CTA 仍为加入候选/行程
@@ -876,24 +876,22 @@ FixSheet 示例数据（对齐 OpenAPI，参见 `docs/api/openapi.yaml`）
 }
 ```
 
-Hotel 单候选自动写入（FR41）
-- 当某日仅存在 1 个酒店候选时，生成骨架后自动写入至当日末尾 hotel_slot，并显示轻 Toast：“已为你选定当晚酒店 · 撤销”。
-- 撤销在 6s 内可用；撤销后恢复为空白状态。
-- 说明：MVP 不触发任何自动重排；仅当用户主动更换/首次选择酒店时才提示是否重排（仅晚段/整日/取消）。
+Hotel 明确选择与留空（FR41）
+- 仅将 Confirm 中按日期明确选择并经 AMap 匹配的酒店写入当日末尾 hotel_slot。
+- 用户选择“留空”时保持为空，不得根据灵感或单一候选静默代选酒店；用户可稍后进入酒店大弹窗补充。
+- 说明：MVP 不触发酒店更换自动重排；该能力属于 Post-MVP。
 
-Wireframe — Hotel Autoset Toast & Undo
+Wireframe — Hotel Slot
 ```
 [Timeline DayN 末尾]
 ┌──────────────────────────────┐
 │ 住宿 · {酒店名称}（展示）      │
 └──────────────────────────────┘
 
-底部轻 Toast（6s 自动消失，可手动关闭）：
+底部轻提示：
 ┌─────────────────────────────────────────────┐
-│ 已为你选定当晚酒店 · 撤销                   │
+│ 酒店可稍后补充，不影响先开始规划             │
 └─────────────────────────────────────────────┘
-
-点击“撤销”后：恢复为空白 hotel_slot；提示“已撤销”。
 ```
 
 ### 3.6 AI 填充（一键）
@@ -1124,14 +1122,14 @@ UI
 - 展示规则：只显示阶段状态 + 个数，不显示百分比
 
 ### 10.1b 骨架生成 SSE（v0.2）
-Phases（后端）：started → freeze → must_go → quota → candidates → place → validate → persist → done
+Phases（后端）：started → freeze → selected_anchor → quota → candidates → place → validate → persist → done
 
 呈现（两种其一，按开关实验）：
 1) Header 轻量面包屑（默认）：紧凑胶囊依次点亮（skeleton_sse_ui=breadcrumb）；
 2) 轻量 Toast（实验）：仅提示 started / place / done 三个关键节点（不叠加）（skeleton_sse_ui=toast）。
 
 文案：
-- 正在生成骨架… / 已冻结指定时段 / 必去优先落位 / 已计算预排额度 / 候选已就绪 / 正在预排推荐点 / 正在校验可行性 / 保存中 / 骨架生成完成
+- 正在生成计划… / 已冻结指定时段 / 已选地点优先安排 / 已计算预排额度 / 候选已就绪 / 正在预排推荐点 / 正在校验可行性 / 保存中 / 计划生成完成
 
 Retry & Copy
 - 自动重试：指数退避，最多 3 次（次数/结果进埋点）
@@ -1282,7 +1280,7 @@ Trigger: POST /plan/generate with `selected_items=[]` and `S_left ≥ 1`.
 
 ## 5) Skeleton SSE Progress (User Transparency)
 
-Phases: `started → freeze → must_go → quota → candidates → place → validate → persist → done`
+Phases: `started → freeze → selected_anchor → quota → candidates → place → validate → persist → done`
 
 UI Options (choose one per experiment flag):
 
@@ -1291,15 +1289,15 @@ UI Options (choose one per experiment flag):
 
 Copy mapping:
 
-- started: “正在生成骨架…”
+- started: “正在生成计划…”
 - freeze: “已冻结指定时段”
-- must_go: “必去优先落位”
+- selected_anchor: “已选地点优先安排”
 - quota: “已计算预排额度”
 - candidates: “候选已就绪”
 - place: “正在预排推荐点”
 - validate: “正在校验可行性”
 - persist: “保存中”
-- done: “骨架生成完成”
+- done: “计划生成完成”
 
 Rules:
 

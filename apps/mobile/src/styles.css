@@ -272,7 +272,7 @@ button:focus-visible {
   display: grid;
   grid-template-columns: 1fr 1fr;
   width: min(210px, 62vw);
-  min-height: 46px;
+  min-height: 52px;
   padding: 3px;
   border: 1px solid rgba(23, 33, 27, 0.12);
   border-radius: 8px;
@@ -280,6 +280,7 @@ button:focus-visible {
 }
 
 .segment-control button {
+  min-height: 44px;
   border-radius: 6px;
   background: transparent;
   color: #52605a;
@@ -355,7 +356,7 @@ button:focus-visible {
 
 .city-chip-row button,
 .muted-chip {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 12px;
   border-radius: 8px;
   background: #edf7f4;
@@ -602,7 +603,7 @@ button:focus-visible {
 }
 
 .planner-text-button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 10px;
   border-radius: 8px;
   background: #edf7f4;
@@ -632,10 +633,9 @@ button:focus-visible {
 .planner-section {
   display: grid;
   gap: 10px;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(23, 33, 27, 0.12);
-  background: #ffffff;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(23, 33, 27, 0.12);
+  background: transparent;
 }
 
 .planner-section h2 {
@@ -687,7 +687,7 @@ button:focus-visible {
 }
 
 .hotel-row-actions button {
-  min-height: 40px;
+  min-height: 44px;
   border-radius: 8px;
   padding: 0 12px;
   background: #edf7f4;
@@ -751,7 +751,7 @@ button:focus-visible {
 
 .map-sheet > button {
   justify-self: start;
-  min-height: 40px;
+  min-height: 44px;
   border-radius: 8px;
   padding: 0 12px;
   background: #247e6f;
@@ -766,7 +766,7 @@ button:focus-visible {
 }
 
 .map-toolbar button {
-  min-height: 36px;
+  min-height: 44px;
   border-radius: 8px;
   padding: 0 12px;
   background: rgba(255, 255, 255, 0.82);
@@ -874,9 +874,10 @@ button:focus-visible {
 
 .planner-basket {
   position: fixed;
-  left: 0;
-  right: 0;
+  left: 50%;
+  width: min(100%, 720px);
   bottom: 0;
+  transform: translateX(-50%);
   z-index: 4;
   display: flex;
   align-items: center;

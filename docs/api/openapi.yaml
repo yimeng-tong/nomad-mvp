@@ -714,6 +714,7 @@ paths:
         '401': { $ref: '#/components/responses/Error401' }
         '429': { $ref: '#/components/responses/Error429' }
         '500': { $ref: '#/components/responses/Error500' }
+        '503': { $ref: '#/components/responses/Error500' }
 
   /plans/{plan_id}/candidates:
     post:
@@ -1249,7 +1250,8 @@ components:
         anchor_intent: { type: string, enum: [selected_required], nullable: true, description: Internal semantic for user-selected L3 planning anchors. Do not expose as must-go UI. }
         time_hint:
           nullable: true
-          $ref: '#/components/schemas/PlannerTimeHint'
+          allOf:
+            - $ref: '#/components/schemas/PlannerTimeHint'
         stay_minutes_hint: { type: integer, minimum: 0, nullable: true }
 
     PlannerHandoff:
@@ -1366,7 +1368,8 @@ components:
           description: Internal semantic for user-selected L3 anchors. UI should only show selected state.
         time_hint:
           nullable: true
-          $ref: '#/components/schemas/PlannerTimeHint'
+          allOf:
+            - $ref: '#/components/schemas/PlannerTimeHint'
         stay_minutes_hint: { type: integer, minimum: 0, nullable: true }
 
     PlannerCandidateItem:
@@ -1379,7 +1382,8 @@ components:
           $ref: '#/components/schemas/PlannerAnchorSource'
         time_hint:
           nullable: true
-          $ref: '#/components/schemas/PlannerTimeHint'
+          allOf:
+            - $ref: '#/components/schemas/PlannerTimeHint'
         stay_minutes_hint: { type: integer, minimum: 0, nullable: true }
 
     PlanHotelConstraint:
@@ -1471,7 +1475,7 @@ components:
       properties:
         city: { type: string }
         start_date: { type: string, format: date }
-        days: { type: integer, minimum: 1 }
+        days: { type: integer, minimum: 1, maximum: 14 }
         pace: { type: string, enum: [tight, comfortable] }
         source: { type: string, enum: [home_input, home_card], nullable: true }
         rec_id: { type: string, nullable: true }
@@ -1489,10 +1493,10 @@ components:
             $ref: '#/components/schemas/PlanHotelConstraint'
         luggage_plan:
           $ref: '#/components/schemas/PlanLuggagePlan'
-        wake_preference: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$', nullable: true }
-        morning_start_time: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$', nullable: true }
-        first_day_arrival_time: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$', nullable: true }
-        last_day_departure_time: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$', nullable: true }
+        wake_preference: { type: string, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$', nullable: true }
+        morning_start_time: { type: string, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$', nullable: true }
+        first_day_arrival_time: { type: string, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$', nullable: true }
+        last_day_departure_time: { type: string, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$', nullable: true }
         smart_planning: { type: boolean, default: true }
         hard_time_hints:
           type: array

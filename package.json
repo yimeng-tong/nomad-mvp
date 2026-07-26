@@ -10,6 +10,7 @@
     "ci:build": "pnpm -r build",
     "ci:lint": "echo \"eslint gate placeholder\"",
     "ci:mobile": "pnpm -F nomad-mobile test",
+    "ci:handoff": "node scripts/check-handoff.mjs",
     "ci:home-library": "pnpm -F nomad-server run test:home-library",
     "ci:planner": "pnpm -F nomad-server run test:planner",
     "ci:settings": "pnpm -F nomad-server run test:settings",

@@ -1,5 +1,7 @@
 # Implementation Readiness Report
 
+> Historical snapshot: do not use this report to select current work. Resume from `CURRENT.md`; current sprint and story state live in `_bmad-output/implementation-artifacts/`.
+
 Generated: 2026-06-17
 Project: nomad-mvp
 Assessor: BMAD 6.8 readiness workflow

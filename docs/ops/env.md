@@ -6,6 +6,12 @@ SEARCH_TOPK=5
 SSE_IDLE_TIMEOUT_MS=30000
 SSE_HEARTBEAT_MS=10000
 
+# AMap Web Service
+# Required for authenticated GET /search/poi. Never commit the real key.
+AMAP_WEB_SERVICE_KEY=
+# Optional override for a compatible proxy or test endpoint.
+AMAP_POI_SEARCH_URL=https://restapi.amap.com/v3/place/text
+
 # Feature Flags (can be mirrored in Unleash/OpenFeature)
 NEAR_HOTEL_ENABLED=true
 RESULT_SHEET_LIGHT_EDIT_ENABLED=true

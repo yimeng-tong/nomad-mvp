@@ -17,6 +17,25 @@ function parseJson(response: { body: string }) {
 
 const USER_A = '00000000-0000-4000-8000-000000000201';
 const USER_B = '00000000-0000-4000-8000-000000000202';
+const originalFetch = globalThis.fetch;
+const previousAmapKey = process.env.AMAP_WEB_SERVICE_KEY;
+
+process.env.AMAP_WEB_SERVICE_KEY = 'planner-probe-key';
+globalThis.fetch = async (input) => {
+  const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input : input.url);
+  assert(url.hostname === 'restapi.amap.com', 'POI search should call the AMap Web API');
+  assert(url.searchParams.get('key') === 'planner-probe-key', 'POI search should use the configured AMap key');
+  assert(url.searchParams.get('city') === '厦门', 'POI search should pass the requested city');
+  assert(url.searchParams.get('keywords') === '中山路酒店', 'POI search should pass the requested keywords');
+  return new Response(JSON.stringify({
+    status: '1',
+    pois: [
+      { id: 'B02500A001', name: '厦门中山路酒店', address: '思明区中山路 1 号', distance: '120' },
+      { id: 'B02500A002', name: '厦门中山路酒店二店', address: '思明区中山路 2 号', distance: '260' },
+      { id: 'B02500A003', name: '厦门中山路酒店三店', address: '思明区中山路 3 号', distance: [] },
+    ],
+  }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+};
 
 function authHeaders(userId = USER_A) {
   return {
@@ -113,11 +132,18 @@ async function main() {
     assert(hotelPoi.statusCode === 200, 'hotel POI search should succeed');
     const hotelItems = parseJson(hotelPoi).items as any[];
     assert(hotelItems.length === 3, 'hotel POI search should respect topk');
-    assert(hotelItems[0].poi_id?.startsWith('amap_'), 'hotel POI search should return AMap-shaped poi ids');
+    assert(hotelItems[0].poi_id === 'B02500A001', 'hotel POI search should return provider POI ids');
+    assert(hotelItems[0].distance_m === 120, 'hotel POI search should normalize provider distance');
     assert(hotelItems.every((item) => item.name && item.address), 'hotel POI search should return name and address');
 
     const invalidPoi = await app.inject({ method: 'GET', url: '/search/poi?city=厦门&q=中山路酒店&topk=99', headers: authHeaders() });
     assert(invalidPoi.statusCode === 400, 'invalid POI topk should be rejected');
+
+    delete process.env.AMAP_WEB_SERVICE_KEY;
+    const unavailablePoi = await app.inject({ method: 'GET', url: '/search/poi?city=厦门&q=中山路酒店', headers: authHeaders() });
+    assert(unavailablePoi.statusCode === 503, 'POI search should degrade honestly when AMap is not configured');
+    assert(parseJson(unavailablePoi).error_code === 'SEARCH_POI_UNAVAILABLE', 'unavailable POI search should use a stable error code');
+    process.env.AMAP_WEB_SERVICE_KEY = 'planner-probe-key';
 
     const valid = await app.inject({ method: 'POST', url: '/plan/generate', headers: authHeaders(), payload: validStory20Payload });
     assert(valid.statusCode === 202, `Story 2.0 planner payload should be accepted, got ${valid.statusCode}: ${valid.body}`);
@@ -166,8 +192,111 @@ async function main() {
       payload: { ...validStory20Payload, days: 0 },
     });
     assert(badDays.statusCode === 400, 'invalid day count should be rejected');
+
+    const tooManyDays = await app.inject({
+      method: 'POST',
+      url: '/plan/generate',
+      headers: authHeaders(),
+      payload: { ...validStory20Payload, days: 15 },
+    });
+    assert(tooManyDays.statusCode === 400, 'trips over the 14-day MVP limit should be rejected');
+
+    const invalidDate = await app.inject({
+      method: 'POST',
+      url: '/plan/generate',
+      headers: authHeaders(),
+      payload: { ...validStory20Payload, start_date: '2026-02-31', hotels: [] },
+    });
+    assert(invalidDate.statusCode === 400, 'nonexistent calendar dates should be rejected');
+
+    const invalidTime = await app.inject({
+      method: 'POST',
+      url: '/plan/generate',
+      headers: authHeaders(),
+      payload: { ...validStory20Payload, wake_preference: '25:00' },
+    });
+    assert(invalidTime.statusCode === 400, 'invalid time-of-day values should be rejected');
+
+    const impossibleOneDay = await app.inject({
+      method: 'POST',
+      url: '/plan/generate',
+      headers: authHeaders(),
+      payload: {
+        ...validStory20Payload,
+        days: 1,
+        hotels: [{ ...validStory20Payload.hotels[0], date: validStory20Payload.start_date }],
+        first_day_arrival_time: '18:00',
+        last_day_departure_time: '09:00',
+      },
+    });
+    assert(impossibleOneDay.statusCode === 400, 'one-day departure should not precede arrival');
+
+    const overlappingItems = await app.inject({
+      method: 'POST',
+      url: '/plan/generate',
+      headers: authHeaders(),
+      payload: {
+        ...validStory20Payload,
+        candidate_items: [{ item_id: 'ins-sunlight-rock', source: 'library' }],
+      },
+    });
+    assert(overlappingItems.statusCode === 400, 'selected and candidate item roles should be disjoint');
+
+    const duplicateHotelDates = await app.inject({
+      method: 'POST',
+      url: '/plan/generate',
+      headers: authHeaders(),
+      payload: {
+        ...validStory20Payload,
+        hotels: [
+          validStory20Payload.hotels[0],
+          { ...validStory20Payload.hotels[0], hotel_name: '另一家酒店', poi_id: 'B02500A099' },
+        ],
+      },
+    });
+    assert(duplicateHotelDates.statusCode === 400, 'duplicate hotel dates should be rejected');
+
+    const outOfRangeHotel = await app.inject({
+      method: 'POST',
+      url: '/plan/generate',
+      headers: authHeaders(),
+      payload: {
+        ...validStory20Payload,
+        hotels: [{ ...validStory20Payload.hotels[0], date: '2026-07-20' }],
+      },
+    });
+    assert(outOfRangeHotel.statusCode === 400, 'hotel dates outside the trip should be rejected');
+
+    const contradictoryBlankHotel = await app.inject({
+      method: 'POST',
+      url: '/plan/generate',
+      headers: authHeaders(),
+      payload: {
+        ...validStory20Payload,
+        hotels: [{ date: '2026-07-02', leave_blank: true, breakfast_included: true }],
+      },
+    });
+    assert(contradictoryBlankHotel.statusCode === 400, 'blank hotels should not retain breakfast or matched details');
+
+    const unresolvedHotelChange = await app.inject({
+      method: 'POST',
+      url: '/plan/generate',
+      headers: authHeaders(),
+      payload: {
+        ...validStory20Payload,
+        hotels: [
+          { ...validStory20Payload.hotels[0], date: '2026-07-02' },
+          { ...validStory20Payload.hotels[0], date: '2026-07-03', hotel_name: '另一家酒店', poi_id: 'B02500A099' },
+        ],
+        luggage_plan: { mode: 'undecided' },
+      },
+    });
+    assert(unresolvedHotelChange.statusCode === 400, 'hotel changes should require resolved luggage handling');
   } finally {
     await app.close();
+    globalThis.fetch = originalFetch;
+    if (previousAmapKey === undefined) delete process.env.AMAP_WEB_SERVICE_KEY;
+    else process.env.AMAP_WEB_SERVICE_KEY = previousAmapKey;
   }
 
   console.log('planner contract probe ok');

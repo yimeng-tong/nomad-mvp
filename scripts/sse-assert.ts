@@ -19,13 +19,36 @@ function assertKeepAlive(url: string, label: string, maxGapMs = 12000, testDurat
   return new Promise<void>((resolve, reject) => {
     const es = new EventSource(`${API}${url}`, { headers: headers as any });
     let last = Date.now();
-    const onAny = () => { last = Date.now(); };
-    const interval = setInterval(() => {
+    let settled = false;
+    let interval: NodeJS.Timeout | undefined;
+    let duration: NodeJS.Timeout | undefined;
+    const finish = (error?: Error) => {
+      if (settled) return;
+      settled = true;
+      if (interval) clearInterval(interval);
+      if (duration) clearTimeout(duration);
+      es.close();
+      if (error) reject(error);
+      else resolve();
+    };
+    const onAny = (event: any) => {
+      last = Date.now();
+      if (!event?.data) return;
+      try {
+        const data = JSON.parse(event.data);
+        if (data.phase === 'done' || data.phase === 'failed' || data.state === 'done' || data.state === 'failed') {
+          finish();
+        }
+      } catch {
+        // Ping payloads and future event shapes still count as stream activity.
+      }
+    };
+    interval = setInterval(() => {
       if (Date.now() - last > maxGapMs) {
-        clearInterval(interval); es.close(); reject(new Error(`${label} keepalive gap`));
+        finish(new Error(`${label} keepalive gap`));
       }
     }, 1000);
-    setTimeout(() => { clearInterval(interval); es.close(); resolve(); }, testDurationMs);
+    duration = setTimeout(() => finish(), testDurationMs);
     es.addEventListener('ping', onAny);
     es.addEventListener('ingest', onAny);
     es.addEventListener('plan', onAny);

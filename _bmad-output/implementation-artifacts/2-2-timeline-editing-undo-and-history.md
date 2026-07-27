@@ -59,7 +59,7 @@ so that I can refine the generated plan without fear.
 - [ ] Add focused automated, visual, and staging coverage (AC: 1-9)
   - [x] Unit test each pure mutation, candidate transitions, seed-to-hand behavior, D1/Dn bounds, 15-minute validation, overnight duration, hard-constraint rejection, and non-mutation on failure.
   - [x] Integration test owner-only edits, idempotent operation IDs, stale revisions, durable recent actions, 8-second token expiry, one-more undo, replay rejection, and seed reset compatibility.
-  - [ ] Exercise create-plan → edit → undo → service readback against CI/staging PostgreSQL so raw SQL column mappings and materialized versions are tested outside the in-memory repository.
+  - [x] Exercise create-plan → edit → undo → service readback against CI/staging PostgreSQL so raw SQL column mappings and materialized versions are tested outside the in-memory repository.
   - [x] Mobile test long-press/accessibility entry, all edit surfaces, disabled/loading/error states, countdown expiry, recent-action undo, copy, and 44px touch targets.
   - [ ] Run generated-contract, focused server/mobile, full build, diff, browser layout, and real staging planner regression checks.
 
@@ -81,7 +81,7 @@ so that I can refine the generated plan without fear.
 - [x] [Review][Patch] Select only an editable unconstrained slot in the staging synthetic probe [scripts/synthetic-probe.ts]
 - [x] [Review][Patch] Align recent-actions OpenAPI maximum and 400 response with server validation [docs/api/openapi.yaml]
 - [x] [Review][Patch] Use the specified user-facing “重置预布局” copy [apps/mobile/src/planner/DayPlanScreen.tsx]
-- [ ] [Review][Patch] Finish real PostgreSQL, browser, and staging AC9 evidence [scripts/synthetic-probe.ts]
+- [ ] [Review][Patch] Finish browser and PVE staging AC9 evidence [scripts/synthetic-probe.ts]
 
 ## Scope Exclusions
 
@@ -215,6 +215,7 @@ GPT-5 Codex
 - 2026-07-27: `pnpm -F nomad-server exec tsc -p tsconfig.json --noEmit` - passed.
 - 2026-07-27: `pnpm -r build`, Prisma validate, generated types, handoff check, shell syntax, and `git diff --check` - passed.
 - 2026-07-27: BMAD Blind/Edge/Acceptance review - 16 code/document findings fixed; real staging evidence remains.
+- 2026-07-27: GitHub Actions run `30237041596` - PostgreSQL/Redis migrations, build, 72 mobile tests, strict synthetic edit/readback/undo, and SSE checks passed.
 
 ### Completion Notes List
 
@@ -222,7 +223,7 @@ GPT-5 Codex
 - Implemented plan-scoped replace, D±1 content moves, retime, delete, durable idempotent edit events, immutable undo versions, and a single additional recent-action undo.
 - Added accessible mobile long-press/action-button editing, server-expiry undo UI, resilient revision/error handling, focus containment, and privacy-safe analytics.
 - Hardened review edges including semantic undo lineage, selected-required exclusions, overnight boundaries, exact-position moves, candidate restoration, and deterministic idempotent responses.
-- Local generated-contract, focused server/mobile, full build, and static gates pass. PostgreSQL/browser/staging evidence is pending only because the PVE host is offline.
+- Local generated-contract, focused server/mobile, full build, and static gates pass. CI PostgreSQL and strict synthetic/SSE probes pass; browser/PVE staging evidence is pending only because the PVE host is offline.
 
 ### File List
 

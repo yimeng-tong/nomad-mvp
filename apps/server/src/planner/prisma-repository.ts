@@ -866,7 +866,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
       }
       await client.$executeRaw(Prisma.sql`
         INSERT INTO "PlanHotelSlot" (
-          id, "dayId", version_id, date, leave_blank, breakfast_included,
+          id, "dayId", "versionId", date, leave_blank, breakfast_included,
           "poiId", provider_snapshot_json, created_at, updated_at
         )
         VALUES (

@@ -36,7 +36,9 @@ function assertKeepAlive(url: string, label: string, maxGapMs = 12000, testDurat
       if (!event?.data) return;
       try {
         const data = JSON.parse(event.data);
-        if (data.phase === 'done' || data.phase === 'failed' || data.state === 'done' || data.state === 'failed') {
+        if (data.phase === 'failed' || data.state === 'failed') {
+          finish(new Error(`${label} failed: ${data.error_code ?? 'unknown'}`));
+        } else if (data.phase === 'done' || data.state === 'done') {
           finish();
         }
       } catch {
@@ -53,6 +55,40 @@ function assertKeepAlive(url: string, label: string, maxGapMs = 12000, testDurat
     es.addEventListener('ingest', onAny);
     es.addEventListener('plan', onAny);
     es.addEventListener('fill', onAny);
+  });
+}
+
+function assertPlanStages(url: string, timeoutMs = 10_000) {
+  return new Promise<void>((resolve, reject) => {
+    const es = new EventSource(`${API}${url}`, { headers: headers as any });
+    const phases: string[] = [];
+    const timer = setTimeout(() => {
+      es.close();
+      reject(new Error(`plan stage timeout: ${phases.join(',')}`));
+    }, timeoutMs);
+    es.addEventListener('plan', (event: any) => {
+      const data = JSON.parse(event.data);
+      phases.push(data.phase);
+      if (data.phase === 'failed') {
+        clearTimeout(timer);
+        es.close();
+        reject(new Error(`plan failed: ${data.error_code ?? 'unknown'}`));
+        return;
+      }
+      if (data.phase === 'done') {
+        clearTimeout(timer);
+        es.close();
+        const required = ['started', 'freeze', 'selected_anchor', 'quota', 'candidates', 'place', 'validate', 'persist', 'done'];
+        const missing = required.filter((phase) => !phases.includes(phase));
+        if (missing.length > 0) reject(new Error(`plan missing stages: ${missing.join(',')}`));
+        else resolve();
+      }
+    });
+    es.addEventListener('error', () => {
+      clearTimeout(timer);
+      es.close();
+      reject(new Error('plan SSE error'));
+    });
   });
 }
 
@@ -95,7 +131,7 @@ function assertIngestStages(url: string, timeoutMs = 5000) {
 
 async function main() {
   // derive URLs by triggering ack first (ingest)
-  const r1 = await fetch(`${API}/ingest/xhs`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ url: 'https://www.xiaohongshu.com/explore/sse' }) } as any);
+  const r1 = await fetch(`${API}/ingest/xhs`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ url: `https://www.xiaohongshu.com/explore/${traceId}` }) } as any);
   const j1 = await r1.json() as any;
   await assertTTFU(j1.sse_url, 'ingest');
   await assertIngestStages(j1.sse_url);
@@ -109,8 +145,7 @@ async function main() {
       start_date: '2025-11-02',
       days: 1,
       pace: 'comfortable',
-      selected_items: [{ item_id: 'sse_anchor_1', source: 'home_input', anchor_intent: 'selected_required' }],
-      candidate_items: [{ item_id: 'sse_candidate_1', source: 'home_input' }],
+      rec_id: traceId,
       hotels: [{ date: '2025-11-02', leave_blank: true, breakfast_included: false }],
       luggage_plan: { mode: 'undecided', hotel_change_help_needed: false },
       wake_preference: '08:30',
@@ -121,6 +156,7 @@ async function main() {
   if (r2.status !== 202) throw new Error(`plan ack failed: ${r2.status} ${await r2.text()}`);
   const j2 = await r2.json() as any;
   await assertTTFU(j2.sse_url, 'plan');
+  await assertPlanStages(j2.sse_url);
   await assertKeepAlive(j2.sse_url, 'plan');
 
   const r3 = await fetch(`${API}/plan/ai-fill`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ plan_id: j2.plan_id }) } as any);

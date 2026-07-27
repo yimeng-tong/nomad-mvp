@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import EventSource from 'eventsource';
 
 const API = process.env.API_BASE || 'http://localhost:3000';
 const traceId = `syn_${Date.now()}`;
@@ -13,7 +14,9 @@ async function probeIngest() {
   const r = await fetch(`${API}/ingest/xhs`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ share_text: 'https://xhslink.com/123 https://www.xiaohongshu.com/explore/456' }),
+    body: JSON.stringify({
+      share_text: `https://xhslink.com/${traceId} https://www.xiaohongshu.com/explore/${traceId}-extra`,
+    }),
   });
   if (r.status !== 202) throw new Error('ingest ack failed');
   const j = (await r.json()) as { sse_url?: string; warning?: { code?: string } };
@@ -24,7 +27,7 @@ async function probeIngest() {
   const legacy = await fetch(`${API}/ingest/start`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ source: 'xhs', url: 'https://www.xiaohongshu.com/explore/legacy' }),
+    body: JSON.stringify({ source: 'xhs', url: `https://www.xiaohongshu.com/explore/${traceId}-legacy` }),
   });
   if (legacy.status !== 202) throw new Error('legacy ingest ack failed');
   const legacyJson = (await legacy.json()) as { sse_url?: string };
@@ -41,8 +44,7 @@ async function probePlan() {
       start_date: '2025-11-02',
       days: 3,
       pace: 'comfortable',
-      selected_items: [{ item_id: 'syn_anchor_1', source: 'home_input', anchor_intent: 'selected_required' }],
-      candidate_items: [{ item_id: 'syn_candidate_1', source: 'home_input' }],
+      rec_id: traceId,
       hotels: [{ date: '2025-11-02', leave_blank: true, breakfast_included: false }],
       luggage_plan: { mode: 'undecided', hotel_change_help_needed: false },
       wake_preference: '08:30',
@@ -51,9 +53,49 @@ async function probePlan() {
     }),
   });
   if (r.status !== 202) throw new Error('plan ack failed');
-  const j = (await r.json()) as { plan_id: string };
+  const j = (await r.json()) as { plan_id: string; sse_url: string };
   console.log('plan ack', j);
+  await waitForPlanDone(j.sse_url);
+
+  const ready = await fetch(`${API}/plan/${j.plan_id}`, { headers });
+  if (ready.status !== 200) {
+    throw new Error(`plan result failed (${ready.status}): ${await ready.text()}`);
+  }
+  const plan = (await ready.json()) as { day_plans?: unknown[] };
+  if (!Array.isArray(plan.day_plans) || plan.day_plans.length !== 3) {
+    throw new Error('plan result is missing persisted day plans');
+  }
   return j;
+}
+
+function waitForPlanDone(sseUrl: string, timeoutMs = 15_000) {
+  return new Promise<void>((resolve, reject) => {
+    const source = new EventSource(`${API}${sseUrl}`, { headers: headers as any });
+    let connectionErrors = 0;
+    const timer = setTimeout(() => {
+      source.close();
+      reject(new Error(`plan terminal event timeout after ${connectionErrors} connection errors`));
+    }, timeoutMs);
+    source.addEventListener('plan', (event: any) => {
+      const data = JSON.parse(event.data) as {
+        phase?: string;
+        error_code?: string;
+        error_message?: string;
+      };
+      if (data.phase === 'failed') {
+        clearTimeout(timer);
+        source.close();
+        reject(new Error(`plan failed: ${data.error_code ?? 'unknown'} ${data.error_message ?? ''}`.trim()));
+      } else if (data.phase === 'done') {
+        clearTimeout(timer);
+        source.close();
+        resolve();
+      }
+    });
+    source.addEventListener('error', () => {
+      connectionErrors += 1;
+    });
+  });
 }
 
 async function probeFill(planId: string) {

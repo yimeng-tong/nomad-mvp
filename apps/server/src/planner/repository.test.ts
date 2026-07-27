@@ -323,3 +323,299 @@ test('current plan mutations create a new version and reject stale revisions', a
     PlannerRepositoryConflict,
   );
 });
+
+test('timeline edits are idempotent, durable, and undo into a new immutable version', async () => {
+  const repository = new InMemoryPlannerRepository();
+  const created = await repository.createOrGetJob({
+    userId: USER_A,
+    requestHash: 'timeline-edit',
+    request: { city: '厦门', start_date: '2026-08-01', days: 1, pace: 'tight' },
+    traceId: 'trace-edit',
+  });
+  const quick = await repository.saveQuickVersion(created.job.id, created.job.attempt, {
+    city: '厦门',
+    start_date: '2026-08-01',
+    days: 1,
+    pace: 'tight',
+    day_plans: [{
+      day_index: 0,
+      date: '2026-08-01',
+      slots: [{
+        slot_id: 'slot-a',
+        day_index: 0,
+        slot_index: 0,
+        start_local: '09:00',
+        end_local: '11:00',
+        type: 'place',
+        origin: 'ai_seed',
+        title: '鼓浪屿',
+        poi: null,
+        inspiration_id: null,
+        constraint: null,
+        warning_codes: [],
+      }],
+      hotel: { date: '2026-08-01', leave_blank: true, breakfast_included: false, poi: null },
+    }],
+    candidates: [],
+    warnings: [],
+    unresolved_required: [],
+  });
+
+  const editInput = {
+    planId: created.job.planId,
+    userId: USER_A,
+    expectedPlanRev: 1,
+    operationId: 'operation-edit-1',
+    requestHash: 'request-hash-edit-1',
+    kind: 'delete' as const,
+    slotId: 'slot-a',
+    undoTokenHash: 'hash-1',
+    undoTtlMs: 8_000,
+    mutate: (payload: typeof quick.payload) => {
+      const next = structuredClone(payload);
+      next.day_plans[0]!.slots[0]!.type = 'unresolved';
+      next.day_plans[0]!.slots[0]!.title = null;
+      return { payload: next, dayIndex: 0 };
+    },
+  };
+  const first = await repository.applyEdit(editInput);
+  const duplicate = await repository.applyEdit({ ...editInput, expectedPlanRev: 1 });
+
+  assert.equal(first.editEvent.id, duplicate.editEvent.id);
+  assert.equal(first.version.id, duplicate.version.id);
+  assert.equal(first.planRev, 2);
+  assert.equal((await repository.getPlan(created.job.planId, USER_A))?.versions.length, 2);
+  assert.equal(
+    (await repository.getRecentEdit(created.job.planId, USER_A))?.event?.id,
+    first.editEvent.id,
+  );
+  assert.equal(await repository.getRecentEdit(created.job.planId, USER_B), null);
+  await assert.rejects(
+    repository.applyEdit({
+      ...editInput,
+      requestHash: 'different-request-hash',
+      kind: 'retime',
+    }),
+    PlannerRepositoryConflict,
+  );
+
+  const undone = await repository.undoEdit({
+    planId: created.job.planId,
+    userId: USER_A,
+    expectedPlanRev: 2,
+    undoTokenHash: 'hash-1',
+  });
+  assert.equal(undone.undoneEditEventId, first.editEvent.id);
+  assert.equal(undone.planRev, 3);
+  assert.notEqual(undone.version.id, quick.id);
+  assert.equal(undone.version.payload.day_plans[0]!.slots[0]!.title, '鼓浪屿');
+  assert.equal((await repository.getRecentEdit(created.job.planId, USER_A))?.event, null);
+
+  await assert.rejects(
+    repository.undoEdit({
+      planId: created.job.planId,
+      userId: USER_A,
+      expectedPlanRev: 3,
+      editEventId: first.editEvent.id,
+    }),
+    PlannerRepositoryConflict,
+  );
+});
+
+test('timeline edit toast tokens expire but the latest recent action remains eligible by event id', async () => {
+  const repository = new InMemoryPlannerRepository();
+  const created = await repository.createOrGetJob({
+    userId: USER_A,
+    requestHash: 'timeline-expiry',
+    request: { city: '厦门', start_date: '2026-08-01', days: 1, pace: 'tight' },
+    traceId: 'trace-expiry',
+  });
+  await repository.saveQuickVersion(created.job.id, created.job.attempt, {
+    city: '厦门',
+    start_date: '2026-08-01',
+    days: 1,
+    pace: 'tight',
+    day_plans: [],
+    candidates: [],
+    warnings: [],
+    unresolved_required: [],
+  });
+  const edit = await repository.applyEdit({
+    planId: created.job.planId,
+    userId: USER_A,
+    expectedPlanRev: 1,
+    operationId: 'operation-expired',
+    requestHash: 'request-hash-expired',
+    kind: 'retime',
+    slotId: 'slot-a',
+    undoTokenHash: 'expired-hash',
+    undoTtlMs: -1,
+    mutate: (payload) => ({ payload, dayIndex: 0 }),
+  });
+
+  await assert.rejects(
+    repository.undoEdit({
+      planId: created.job.planId,
+      userId: USER_A,
+      expectedPlanRev: 2,
+      undoTokenHash: 'expired-hash',
+    }),
+    PlannerRepositoryConflict,
+  );
+  const recentUndo = await repository.undoEdit({
+    planId: created.job.planId,
+    userId: USER_A,
+    expectedPlanRev: 2,
+    editEventId: edit.editEvent.id,
+  });
+  assert.equal(recentUndo.planRev, 3);
+});
+
+test('a non-edit version change invalidates older edit undo without losing the newer state', async () => {
+  const repository = new InMemoryPlannerRepository();
+  const created = await repository.createOrGetJob({
+    userId: USER_A,
+    requestHash: 'timeline-lineage',
+    request: { city: '厦门', start_date: '2026-08-01', days: 1, pace: 'tight' },
+    traceId: 'trace-lineage',
+  });
+  await repository.saveQuickVersion(created.job.id, created.job.attempt, {
+    city: '厦门',
+    start_date: '2026-08-01',
+    days: 1,
+    pace: 'tight',
+    day_plans: [],
+    candidates: [],
+    warnings: [],
+    unresolved_required: [],
+  });
+  const edit = await repository.applyEdit({
+    planId: created.job.planId,
+    userId: USER_A,
+    expectedPlanRev: 1,
+    operationId: 'operation-before-reset',
+    requestHash: 'request-before-reset',
+    kind: 'delete',
+    slotId: 'slot-a',
+    undoTokenHash: 'lineage-hash',
+    undoTtlMs: 8_000,
+    mutate: (payload) => ({
+      payload: {
+        ...payload,
+        warnings: [...payload.warnings, {
+          code: 'EDITED',
+          severity: 'soft',
+          message: 'edited',
+        }],
+      },
+      dayIndex: 0,
+    }),
+  });
+  const reset = await repository.updateCurrentVersion({
+    planId: created.job.planId,
+    userId: USER_A,
+    expectedPlanRev: edit.planRev,
+    mutate: (payload) => ({
+      ...payload,
+      warnings: [...payload.warnings, {
+        code: 'RESET_AFTER_EDIT',
+        severity: 'soft',
+        message: 'newer change',
+      }],
+    }),
+  });
+
+  assert.equal((await repository.getRecentEdit(created.job.planId, USER_A))?.event, null);
+  await assert.rejects(
+    repository.undoEdit({
+      planId: created.job.planId,
+      userId: USER_A,
+      expectedPlanRev: reset.planRev,
+      editEventId: edit.editEvent.id,
+    }),
+    (error: unknown) =>
+      error instanceof PlannerRepositoryConflict
+      && error.code === 'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+  );
+  const current = await repository.getPlan(created.job.planId, USER_A);
+  assert.equal(current?.planRev, reset.planRev);
+  assert.ok(
+    current?.versions
+      .find((version) => version.id === current.currentVersionId)
+      ?.payload.warnings.some((warning) => warning.code === 'RESET_AFTER_EDIT'),
+  );
+});
+
+test('undo lineage survives a new edit while recent action permits only one additional undo', async () => {
+  const repository = new InMemoryPlannerRepository();
+  const created = await repository.createOrGetJob({
+    userId: USER_A,
+    requestHash: 'timeline-undo-lineage',
+    request: { city: '厦门', start_date: '2026-08-01', days: 1, pace: 'tight' },
+    traceId: 'trace-undo-lineage',
+  });
+  await repository.saveQuickVersion(created.job.id, created.job.attempt, {
+    city: '厦门',
+    start_date: '2026-08-01',
+    days: 1,
+    pace: 'tight',
+    day_plans: [],
+    candidates: [],
+    warnings: [],
+    unresolved_required: [],
+  });
+  const edit = async (expectedPlanRev: number, suffix: string) =>
+    repository.applyEdit({
+      planId: created.job.planId,
+      userId: USER_A,
+      expectedPlanRev,
+      operationId: `operation-${suffix}`,
+      requestHash: `request-${suffix}`,
+      kind: 'retime',
+      slotId: 'slot-a',
+      undoTokenHash: `hash-${suffix}`,
+      undoTtlMs: 8_000,
+      mutate: (payload) => ({
+        payload: {
+          ...payload,
+          warnings: [...payload.warnings, {
+            code: suffix.toUpperCase(),
+            severity: 'soft',
+            message: suffix,
+          }],
+        },
+        dayIndex: 0,
+      }),
+    });
+
+  const zeroth = await edit(1, 'zeroth');
+  const first = await edit(zeroth.planRev, 'first');
+  const second = await edit(first.planRev, 'second');
+  const undoSecond = await repository.undoEdit({
+    planId: created.job.planId,
+    userId: USER_A,
+    expectedPlanRev: second.planRev,
+    undoTokenHash: 'hash-second',
+  });
+  const third = await edit(undoSecond.planRev, 'third');
+  const undoThird = await repository.undoEdit({
+    planId: created.job.planId,
+    userId: USER_A,
+    expectedPlanRev: third.planRev,
+    undoTokenHash: 'hash-third',
+  });
+  const recent = await repository.getRecentEdit(created.job.planId, USER_A, 0);
+  assert.equal(recent?.event?.id, first.editEvent.id);
+
+  const recentUndo = await repository.undoEdit({
+    planId: created.job.planId,
+    userId: USER_A,
+    expectedPlanRev: undoThird.planRev,
+    editEventId: first.editEvent.id,
+  });
+  assert.equal(recentUndo.undoneEditEventId, first.editEvent.id);
+  assert.equal(
+    (await repository.getRecentEdit(created.job.planId, USER_A, 0))?.event,
+    null,
+  );
+});

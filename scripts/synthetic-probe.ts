@@ -61,11 +61,99 @@ async function probePlan() {
   if (ready.status !== 200) {
     throw new Error(`plan result failed (${ready.status}): ${await ready.text()}`);
   }
-  const plan = (await ready.json()) as { day_plans?: unknown[] };
+  const plan = (await ready.json()) as {
+    plan_rev: number;
+    day_plans?: Array<{
+      slots: Array<{
+        slot_id: string;
+        type: string;
+        title?: string | null;
+        constraint?: unknown | null;
+      }>;
+    }>;
+  };
   if (!Array.isArray(plan.day_plans) || plan.day_plans.length !== 3) {
     throw new Error('plan result is missing persisted day plans');
   }
-  return j;
+  return { ...j, plan };
+}
+
+async function probePlanEdit(input: Awaited<ReturnType<typeof probePlan>>) {
+  let plan = input.plan;
+  let slot = plan.day_plans?.flatMap((day) => day.slots)
+    .find((candidate) =>
+      candidate.type !== 'hotel'
+      && candidate.type !== 'unresolved'
+      && !candidate.constraint,
+    );
+  if (!slot) {
+    slot = plan.day_plans?.flatMap((day) => day.slots)
+      .find((candidate) => candidate.type === 'unresolved');
+  }
+  if (!slot) throw new Error('plan edit probe has no editable or resolvable timeline slot');
+  if (slot.type === 'unresolved') {
+    const resolved = await fetch(`${API}/plan/${input.plan_id}/slots/${slot.slot_id}/resolve`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        op: 'set_free_activity',
+        expected_plan_rev: plan.plan_rev,
+      }),
+    });
+    if (resolved.status !== 200) {
+      throw new Error(`plan edit setup failed (${resolved.status}): ${await resolved.text()}`);
+    }
+    const refreshed = await fetch(`${API}/plan/${input.plan_id}`, { headers });
+    plan = await refreshed.json() as typeof plan;
+    slot = plan.day_plans?.flatMap((day) => day.slots)
+      .find((candidate) => candidate.slot_id === slot!.slot_id);
+  }
+  if (!slot) throw new Error('plan edit probe lost its timeline slot');
+  const beforeType = slot.type;
+  const edit = await fetch(`${API}/plan/${input.plan_id}/slots/${slot.slot_id}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({
+      op: 'delete',
+      expected_plan_rev: plan.plan_rev,
+      operation_id: `synthetic-edit-${traceId}`,
+    }),
+  });
+  if (edit.status !== 200) {
+    throw new Error(`plan edit failed (${edit.status}): ${await edit.text()}`);
+  }
+  const editBody = await edit.json() as {
+    plan_rev: number;
+    edit_event_id: string;
+    undo_token: string;
+    changed_slot: { type: string };
+  };
+  if (editBody.changed_slot.type !== 'unresolved') {
+    throw new Error('plan delete did not preserve an unresolved timeline position');
+  }
+  const editedRead = await fetch(`${API}/plan/${input.plan_id}`, { headers });
+  const editedPlan = await editedRead.json() as typeof plan;
+  const editedSlot = editedPlan.day_plans?.flatMap((day) => day.slots)
+    .find((candidate) => candidate.slot_id === slot!.slot_id);
+  if (editedSlot?.type !== 'unresolved') throw new Error('persisted plan edit readback failed');
+
+  const undo = await fetch(`${API}/plan/${input.plan_id}/edits/undo`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      expected_plan_rev: editBody.plan_rev,
+      undo_token: editBody.undo_token,
+    }),
+  });
+  if (undo.status !== 200) {
+    throw new Error(`plan edit undo failed (${undo.status}): ${await undo.text()}`);
+  }
+  const restoredRead = await fetch(`${API}/plan/${input.plan_id}`, { headers });
+  const restoredPlan = await restoredRead.json() as typeof plan;
+  const restoredSlot = restoredPlan.day_plans?.flatMap((day) => day.slots)
+    .find((candidate) => candidate.slot_id === slot!.slot_id);
+  if (restoredSlot?.type !== beforeType) throw new Error('persisted plan edit undo readback failed');
+  console.log('plan edit undo ok', editBody.edit_event_id);
 }
 
 function waitForPlanDone(sseUrl: string, timeoutMs = 15_000) {
@@ -128,6 +216,7 @@ async function probeExport(planId: string) {
 async function main() {
   await probeIngest();
   const plan = await probePlan();
+  await probePlanEdit(plan);
   await probeFill(plan.plan_id);
   await probeExport(plan.plan_id);
   console.log('synthetic probe ok');

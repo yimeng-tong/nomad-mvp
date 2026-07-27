@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomUUID } from 'node:crypto';
 import type { FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
 import { getPrisma } from '../db/prisma.js';
@@ -8,9 +8,14 @@ import {
   HqAdoptBody,
   HqStartBody,
   HqStatusQuery,
+  PlanIdParams,
+  PlanEditUndoBody,
   PlanGenerateBody,
+  PlanRecentActionQuery,
   PlanRevisionBody,
   SeedUndoBody,
+  PlanSlotParams,
+  SlotEditBody,
 } from '../schemas.js';
 import { PrismaPlannerRepository } from '../planner/prisma-repository.js';
 import {
@@ -35,6 +40,7 @@ import {
   type PlannerSourceRepository,
 } from '../planner/resolver.js';
 import { runQuickPlannerJob } from '../planner/service.js';
+import { applySlotEdit, PlannerEditError } from '../planner/edit.js';
 import { getPlannerSourceRepository } from '../planner/source.js';
 import {
   resolveCityTimezone,
@@ -46,6 +52,8 @@ type PlanGenerateResponse = components['schemas']['PlanGenerateResponse'];
 type EmptySlotResolveRequest = components['schemas']['EmptySlotResolveRequest'];
 type PlanRevisionRequest = components['schemas']['PlanRevisionRequest'];
 type SeedUndoRequest = components['schemas']['SeedUndoRequest'];
+type SlotEditRequest = components['schemas']['SlotEditRequest'];
+type PlanEditUndoRequest = components['schemas']['PlanEditUndoRequest'];
 
 export type PlannerRouteOptions = {
   repository?: PlannerRepository;
@@ -81,6 +89,26 @@ function requestHash(request: PlanGenerateRequest, idempotencyKey?: string) {
     .update(idempotencyKey ? `idempotency:${idempotencyKey}` : stableJson(request))
     .digest('hex');
 }
+
+function undoToken(planId: string, operationId: string) {
+  const configuredSecret = process.env.PLANNER_UNDO_SECRET;
+  if (!configuredSecret && ['production', 'staging'].includes(process.env.NODE_ENV ?? '')) {
+    throw new Error('PLANNER_UNDO_SECRET is required outside local/test environments');
+  }
+  const secret = configuredSecret || 'nomad-local-planner-undo';
+  return `u_${createHmac('sha256', secret).update(`${planId}:${operationId}`).digest('base64url')}`;
+}
+
+function tokenHash(token: string) {
+  return createHash('sha256').update(token).digest('hex');
+}
+
+const editLabels: Record<components['schemas']['PlanRecentAction']['kind'], string> = {
+  replace: '替换了一个安排',
+  move_day: '移动了一个安排',
+  retime: '调整了时间',
+  delete: '删除了一个安排',
+};
 
 function versionSummary(version: PlannerVersionRecord): components['schemas']['PlanVersionSummary'] {
   return {
@@ -171,7 +199,11 @@ function resolveEmptySlot(
 
 function mutationError(reply: FastifyReply, error: unknown) {
   if (error instanceof PlannerRepositoryConflict) {
-    return reply.sendError('PLAN_REVISION_CONFLICT', error.message, 409, false);
+    return reply.sendError(error.code, error.message, 409, false);
+  }
+  if (error instanceof PlannerEditError) {
+    const status = error.code === 'PLAN_SLOT_NOT_FOUND' ? 404 : 409;
+    return reply.sendError(error.code, error.message, status, false);
   }
   if (error instanceof PlannerMutationError) {
     const status = error.code.endsWith('NOT_FOUND') ? 404 : error.code === 'PLAN_NOT_READY' ? 409 : 409;
@@ -503,6 +535,149 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
     },
   );
 
+  app.patch<{ Body: SlotEditRequest }>(
+    '/plan/:planId/slots/:slotId',
+    { preHandler: authGuard },
+    async (req, reply) => {
+      const parsedParams = PlanSlotParams.safeParse(req.params);
+      if (!parsedParams.success) {
+        return reply.sendError('PLAN_PARAMS_INVALID', 'invalid plan or slot id', 400, false);
+      }
+      const parsed = SlotEditBody.safeParse(req.body);
+      if (!parsed.success) {
+        return reply.sendError('PLAN_PARAMS_INVALID', 'invalid slot edit operation', 400, false, {
+          issues: parsed.error.issues,
+        });
+      }
+      const params = parsedParams.data;
+      const owned = await repository.getPlan(params.planId, req.user!.id);
+      if (!owned) return reply.sendError('PLAN_NOT_FOUND', 'plan not found', 404, false);
+      const token = undoToken(params.planId, parsed.data.operation_id);
+      let changedSlotId = params.slotId;
+      if (
+        (parsed.data.op === 'move_day' || parsed.data.op === 'retime')
+        && parsed.data.target_day_index >= 0
+      ) {
+        const current = owned.versions.find(
+          (version) => version.id === owned.currentVersionId,
+        );
+        const source = current?.payload.day_plans
+          .flatMap((day) => day.slots.map((slot, index) => ({ day, slot, index })))
+          .find((entry) => entry.slot.slot_id === params.slotId);
+        if (source && source.day.day_index !== parsed.data.target_day_index) {
+          changedSlotId = current?.payload.day_plans[parsed.data.target_day_index]
+            ?.slots[source.index]?.slot_id ?? params.slotId;
+        }
+      }
+      try {
+        const result = await repository.applyEdit({
+          planId: params.planId,
+          userId: req.user!.id,
+          expectedPlanRev: parsed.data.expected_plan_rev,
+          operationId: parsed.data.operation_id,
+          requestHash: createHash('sha256').update(stableJson(parsed.data)).digest('hex'),
+          kind: parsed.data.op,
+          slotId: params.slotId,
+          undoTokenHash: tokenHash(token),
+          undoTtlMs: 8_000,
+          mutate: (payload) => {
+            const edited = applySlotEdit(payload, params.slotId, parsed.data as SlotEditRequest);
+            changedSlotId = edited.changedSlot.slot_id;
+            return { payload: edited.payload, dayIndex: edited.dayIndex };
+          },
+        });
+        const changedSlot = result.version.payload.day_plans
+          .flatMap((day) => day.slots)
+          .find((slot) => slot.slot_id === changedSlotId);
+        if (!changedSlot) {
+          throw new PlannerMutationError('PLAN_SLOT_NOT_FOUND', 'edited slot not found');
+        }
+        return reply.send({
+          plan_id: params.planId,
+          plan_rev: result.planRev,
+          current_version_id: result.version.id,
+          edit_event_id: result.editEvent.id,
+          undo_token: token,
+          undo_expires_at: result.editEvent.undoExpiresAt,
+          changed_slot: changedSlot,
+        });
+      } catch (error) {
+        return mutationError(reply, error);
+      }
+    },
+  );
+
+  app.get('/plan/:planId/recent-actions', { preHandler: authGuard }, async (req, reply) => {
+    const parsedParams = PlanIdParams.safeParse(req.params);
+    if (!parsedParams.success) {
+      return reply.sendError('PLAN_PARAMS_INVALID', 'invalid plan id', 400, false);
+    }
+    const parsed = PlanRecentActionQuery.safeParse(req.query);
+    if (!parsed.success) {
+      return reply.sendError('PLAN_PARAMS_INVALID', 'invalid recent action query', 400, false);
+    }
+    const planId = parsedParams.data.planId;
+    const snapshot = await repository.getRecentEdit(
+      planId,
+      req.user!.id,
+      parsed.data.day_index,
+    );
+    if (!snapshot) return reply.sendError('PLAN_NOT_FOUND', 'plan not found', 404, false);
+    const event = snapshot.event;
+    return reply.send({
+      plan_id: planId,
+      plan_rev: snapshot.planRev,
+      action: event && event.kind !== 'undo'
+        ? {
+            edit_event_id: event.id,
+            kind: event.kind,
+            day_index: event.dayIndex,
+            slot_id: event.slotId,
+            label: editLabels[event.kind],
+            can_undo: true,
+            created_at: event.createdAt,
+          }
+        : null,
+    });
+  });
+
+  app.post<{ Body: PlanEditUndoRequest }>(
+    '/plan/:planId/edits/undo',
+    { preHandler: authGuard },
+    async (req, reply) => {
+      const parsedParams = PlanIdParams.safeParse(req.params);
+      if (!parsedParams.success) {
+        return reply.sendError('PLAN_PARAMS_INVALID', 'invalid plan id', 400, false);
+      }
+      const parsed = PlanEditUndoBody.safeParse(req.body);
+      if (!parsed.success) {
+        return reply.sendError('PLAN_PARAMS_INVALID', 'invalid edit undo request', 400, false);
+      }
+      const planId = parsedParams.data.planId;
+      const plan = await repository.getPlan(planId, req.user!.id);
+      if (!plan) return reply.sendError('PLAN_NOT_FOUND', 'plan not found', 404, false);
+      try {
+        const result = await repository.undoEdit({
+          planId,
+          userId: req.user!.id,
+          expectedPlanRev: parsed.data.expected_plan_rev,
+          ...('undo_token' in parsed.data
+            ? { undoTokenHash: tokenHash(parsed.data.undo_token) }
+            : { editEventId: parsed.data.edit_event_id }),
+        });
+        return reply.send({
+          plan_id: planId,
+          plan_rev: result.planRev,
+          current_version_id: result.version.id,
+          undo_event_id: result.undoEventId,
+          undone_edit_event_id: result.undoneEditEventId,
+        });
+      } catch (error) {
+        return mutationError(reply, error);
+      }
+    },
+  );
+
   app.post<{ Body: PlanRevisionRequest }>(
     '/plan/:planId/seed/reset',
     { preHandler: authGuard },
@@ -619,8 +794,4 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
     }
   });
 
-  app.patch('/plan/slots/:slotId', { preHandler: authGuard }, async (_req, reply) => {
-    const undo = `u_${randomUUID()}`;
-    reply.send({ undo_token: undo, plan_rev: 2 });
-  });
 });

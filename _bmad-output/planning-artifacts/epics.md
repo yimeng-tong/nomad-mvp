@@ -412,9 +412,9 @@ So that I can refine the generated plan without fear.
 **When** the time crosses day boundaries
 **Then** 15-minute stepping, 30/60-minute snapping, and cross-day state are handled correctly.
 
-**Given** automatic rerank or hotel change creates a snapshot
-**When** the user opens history
-**Then** they can return to a previous snapshot without destroying the rollback point.
+**Given** an edit is undone from the toast
+**When** the current day's recent-action entry is shown
+**Then** it can undo the next latest effective edit through a new immutable version, while the complete history timeline, hotel-change snapshots, and arbitrary rollback remain Post-MVP and are not exposed.
 
 ### Story 2.3: Feasibility Validation and One-Click Fixes
 

@@ -12,6 +12,12 @@ export type EmptySlotResolveRequest = components['schemas']['EmptySlotResolveReq
 export type EmptySlotResolveResponse = components['schemas']['EmptySlotResolveResponse'];
 export type HqStatusResponse = components['schemas']['HqStatusResponse'];
 export type HqAdoptResponse = components['schemas']['HqAdoptResponse'];
+export type SlotEditRequest = components['schemas']['SlotEditRequest'];
+export type SlotEditResponse = components['schemas']['SlotEditResponse'];
+export type PlanRecentAction = components['schemas']['PlanRecentAction'];
+export type PlanRecentActionResponse = components['schemas']['PlanRecentActionResponse'];
+export type PlanEditUndoRequest = components['schemas']['PlanEditUndoRequest'];
+export type PlanEditUndoResponse = components['schemas']['PlanEditUndoResponse'];
 
 export type PlannerApiClient = {
   getCities: () => Promise<LibraryCitiesResponse>;
@@ -30,6 +36,9 @@ export type PlannerApiClient = {
     slotId: string,
     request: EmptySlotResolveRequest,
   ) => Promise<EmptySlotResolveResponse>;
+  editSlot: (planId: string, slotId: string, request: SlotEditRequest) => Promise<SlotEditResponse>;
+  getRecentAction: (planId: string, dayIndex: number) => Promise<PlanRecentActionResponse>;
+  undoEdit: (planId: string, request: PlanEditUndoRequest) => Promise<PlanEditUndoResponse>;
   resetSeed: (planId: string, expectedPlanRev: number) => Promise<{ plan_id: string; plan_rev: number }>;
   undoSeed: (
     planId: string,
@@ -108,6 +117,23 @@ export function createPlannerApiClient(baseUrl = getApiBaseUrl()): PlannerApiCli
       requestJson<EmptySlotResolveResponse>(
         baseUrl,
         `/plan/${encodeURIComponent(planId)}/slots/${encodeURIComponent(slotId)}/resolve`,
+        { method: 'POST', body: JSON.stringify(body) },
+      ),
+    editSlot: (planId, slotId, body) =>
+      requestJson<SlotEditResponse>(
+        baseUrl,
+        `/plan/${encodeURIComponent(planId)}/slots/${encodeURIComponent(slotId)}`,
+        { method: 'PATCH', body: JSON.stringify(body) },
+      ),
+    getRecentAction: (planId, dayIndex) =>
+      requestJson<PlanRecentActionResponse>(
+        baseUrl,
+        `/plan/${encodeURIComponent(planId)}/recent-actions?day_index=${dayIndex}`,
+      ),
+    undoEdit: (planId, body) =>
+      requestJson<PlanEditUndoResponse>(
+        baseUrl,
+        `/plan/${encodeURIComponent(planId)}/edits/undo`,
         { method: 'POST', body: JSON.stringify(body) },
       ),
     resetSeed: (planId, expectedPlanRev) =>

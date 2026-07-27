@@ -10,6 +10,7 @@ export type PlannerVersionPayload = Pick<
 > & {
   seed_undo_token?: string | null;
   seed_undo_expires_at?: string | null;
+  user_excluded_item_ids?: string[];
 };
 
 export type PlannerJobRecord = {
@@ -63,6 +64,46 @@ export type PlannerHqJobRecord = {
   retriable: boolean | null;
   createdAt: string;
   updatedAt: string;
+};
+
+export type PlannerEditKind = 'replace' | 'move_day' | 'retime' | 'delete';
+
+export type PlannerEditEventRecord = {
+  id: string;
+  planId: string;
+  kind: PlannerEditKind | 'undo';
+  operationId: string;
+  requestHash: string;
+  slotId: string | null;
+  dayIndex: number | null;
+  baseVersionId: string;
+  resultVersionId: string;
+  resultPlanRev: number;
+  undoTokenHash: string | null;
+  undoExpiresAt: string | null;
+  targetEventId: string | null;
+  undoneByEventId: string | null;
+  createdAt: string;
+};
+
+export type PlannerRecentEditSnapshot = {
+  planRev: number;
+  event: PlannerEditEventRecord | null;
+};
+
+export type ApplyPlannerEditInput = {
+  planId: string;
+  userId: string;
+  expectedPlanRev: number;
+  operationId: string;
+  requestHash: string;
+  kind: PlannerEditKind;
+  slotId: string;
+  undoTokenHash: string;
+  undoTtlMs: number;
+  mutate: (
+    payload: PlannerVersionPayload,
+  ) => { payload: PlannerVersionPayload; dayIndex: number };
 };
 
 export type CreatePlannerJobInput = {
@@ -122,6 +163,28 @@ export interface PlannerRepository {
     expectedPlanRev: number;
     mutate: (payload: PlannerVersionPayload) => PlannerVersionPayload;
   }): Promise<{ planRev: number; version: PlannerVersionRecord }>;
+  applyEdit(input: ApplyPlannerEditInput): Promise<{
+    planRev: number;
+    version: PlannerVersionRecord;
+    editEvent: PlannerEditEventRecord;
+  }>;
+  getRecentEdit(
+    planId: string,
+    userId: string,
+    dayIndex?: number,
+  ): Promise<PlannerRecentEditSnapshot | null>;
+  undoEdit(input: {
+    planId: string;
+    userId: string;
+    expectedPlanRev: number;
+    undoTokenHash?: string;
+    editEventId?: string;
+  }): Promise<{
+    planRev: number;
+    version: PlannerVersionRecord;
+    undoEventId: string;
+    undoneEditEventId: string;
+  }>;
   adoptHqVersion(input: {
     planId: string;
     hqVersionId: string;
@@ -132,7 +195,10 @@ export interface PlannerRepository {
 }
 
 export class PlannerRepositoryConflict extends Error {
-  constructor(message: string) {
+  constructor(
+    message: string,
+    readonly code = 'PLAN_REVISION_CONFLICT',
+  ) {
     super(message);
     this.name = 'PlannerRepositoryConflict';
   }

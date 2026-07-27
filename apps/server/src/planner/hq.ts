@@ -136,6 +136,7 @@ const payloadSchema = z.object({
   }).strict()),
   seed_undo_token: nullableString,
   seed_undo_expires_at: nullableString,
+  user_excluded_item_ids: z.array(z.string().min(1)).optional(),
 }).strict();
 
 function localMinutes(value: string) {
@@ -197,7 +198,9 @@ export function validateHqPayload(
     result.start_date !== baseline.start_date ||
     result.days !== baseline.days ||
     result.pace !== baseline.pace ||
-    result.day_plans.length !== baseline.day_plans.length
+    result.day_plans.length !== baseline.day_plans.length ||
+    stableStringArray(result.user_excluded_item_ids) !==
+      stableStringArray(baseline.user_excluded_item_ids)
   ) {
     throw new HqPlanningError('HQ_OUTPUT_INVALID', 'HQ provider changed immutable trip parameters', true);
   }
@@ -231,8 +234,10 @@ export function validateHqPayload(
     }
   }
 
+  const excludedItemIds = new Set(baseline.user_excluded_item_ids ?? []);
   const outputRequired = new Set<string>();
   const outputHardConstraints = new Map<string, string>();
+  let previousDayCarryEnd = -1;
   for (let dayIndex = 0; dayIndex < result.day_plans.length; dayIndex += 1) {
     const day = result.day_plans[dayIndex]!;
     const baselineDay = baseline.day_plans[dayIndex]!;
@@ -252,15 +257,29 @@ export function validateHqPayload(
       throw new HqPlanningError('HQ_OUTPUT_INVALID', 'HQ provider changed an explicit hotel constraint', true);
     }
     const orderedSlots = [...day.slots].sort((left, right) => left.slot_index - right.slot_index);
-    let previousEnd = -1;
+    let previousEnd = previousDayCarryEnd;
     for (const slot of orderedSlots) {
       const start = localMinutes(slot.start_local);
       const end = localMinutes(slot.end_local);
-      if (slot.day_index !== day.day_index || start >= end || start < previousEnd) {
+      if (end < start && dayIndex === result.day_plans.length - 1) {
+        throw new HqPlanningError(
+          'HQ_OUTPUT_INVALID',
+          'HQ provider returned an overnight slot beyond the trip',
+          true,
+        );
+      }
+      const normalizedEnd = end < start ? end + 24 * 60 : end;
+      if (slot.day_index !== day.day_index || start === end || start < previousEnd) {
         throw new HqPlanningError('HQ_OUTPUT_INVALID', 'HQ provider returned overlapping slots', true);
       }
-      previousEnd = end;
+      previousEnd = normalizedEnd;
       if (!slot.poi) continue;
+      if (
+        excludedItemIds.has(slot.inspiration_id ?? '')
+        || excludedItemIds.has(slot.poi.poi_id)
+      ) {
+        throw new HqPlanningError('HQ_OUTPUT_INVALID', 'HQ provider restored a user-excluded item', true);
+      }
       if (
         !knownPoiIds.has(slot.poi.poi_id) ||
         !slot.poi.verified ||
@@ -277,6 +296,7 @@ export function validateHqPayload(
         outputHardConstraints.set(evidenceRef, hardConstraintFingerprint(day.date, slot)!);
       }
     }
+    previousDayCarryEnd = previousEnd >= 24 * 60 ? previousEnd - 24 * 60 : -1;
   }
   for (const poiId of requiredPoiIds) {
     if (!outputRequired.has(poiId)) {
@@ -346,6 +366,10 @@ export function validateHqPayload(
     }
   }
   return result;
+}
+
+function stableStringArray(value: string[] | undefined) {
+  return JSON.stringify([...(value ?? [])].sort());
 }
 
 const dailyUsage = new Map<string, number>();

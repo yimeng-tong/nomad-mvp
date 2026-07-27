@@ -58,9 +58,17 @@ export interface paths {
     /** SSE stream for plan generation events */
     get: operations["ssePlan"];
   };
-  "/plan/slots/{slot_id}": {
-    /** Edit a slot (move/retime/replace/delete) with optimistic locking */
-    patch: operations["editSlot"];
+  "/plan/{plan_id}/slots/{slot_id}": {
+    /** Edit an owned timeline slot with optimistic locking */
+    patch: operations["editPlanSlot"];
+  };
+  "/plan/{plan_id}/recent-actions": {
+    /** Get the latest effective edit available from the recent-actions entry */
+    get: operations["getPlanRecentAction"];
+  };
+  "/plan/{plan_id}/edits/undo": {
+    /** Undo the latest eligible timeline edit */
+    post: operations["undoPlanEdit"];
   };
   "/plan/ai-fill": {
     /**
@@ -751,17 +759,71 @@ export interface components {
       plan_rev: number;
       current_version_id: string;
     };
-    SlotPatchRequest: {
+    SlotEditRequest: OneOf<[{
       /** @enum {string} */
-      op: "move" | "retime" | "replace" | "delete";
-      new_day?: number;
-      new_start?: string;
-      new_end?: string;
-      replace_with_poi_id?: string;
-    };
-    SlotPatchResponse: {
-      undo_token: string;
+      op: "replace";
+      expected_plan_rev: number;
+      operation_id: string;
+      candidate_id: string;
+    }, {
+      /** @enum {string} */
+      op: "move_day";
+      expected_plan_rev: number;
+      operation_id: string;
+      target_day_index: number;
+    }, {
+      /** @enum {string} */
+      op: "retime";
+      expected_plan_rev: number;
+      operation_id: string;
+      target_day_index: number;
+      start_local: string;
+      end_local: string;
+    }, {
+      /** @enum {string} */
+      op: "delete";
+      expected_plan_rev: number;
+      operation_id: string;
+    }]>;
+    SlotEditResponse: {
+      plan_id: string;
       plan_rev: number;
+      current_version_id: string;
+      edit_event_id: string;
+      undo_token: string;
+      /** Format: date-time */
+      undo_expires_at: string;
+      changed_slot: components["schemas"]["DayPlanSlot"];
+    };
+    PlanRecentAction: {
+      edit_event_id: string;
+      /** @enum {string} */
+      kind: "replace" | "move_day" | "retime" | "delete";
+      day_index: number;
+      slot_id: string;
+      label: string;
+      can_undo: boolean;
+      /** Format: date-time */
+      created_at: string;
+    };
+    PlanRecentActionResponse: {
+      plan_id: string;
+      plan_rev: number;
+      action?: components["schemas"]["PlanRecentAction"] | null;
+    };
+    PlanEditUndoRequest: OneOf<[{
+      expected_plan_rev: number;
+      undo_token: string;
+    }, {
+      expected_plan_rev: number;
+      edit_event_id: string;
+    }]>;
+    PlanEditUndoResponse: {
+      plan_id: string;
+      plan_rev: number;
+      current_version_id: string;
+      undo_event_id: string;
+      undone_edit_event_id: string;
     };
     AiFillRequest: {
       plan_id: string;
@@ -1287,34 +1349,77 @@ export interface operations {
       };
     };
   };
-  /** Edit a slot (move/retime/replace/delete) with optimistic locking */
-  editSlot: {
+  /** Edit an owned timeline slot with optimistic locking */
+  editPlanSlot: {
     parameters: {
-      header: {
-        /** @description Current plan revision for optimistic concurrency */
-        "If-Match-Rev": number;
-      };
       path: {
+        plan_id: string;
         slot_id: string;
       };
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SlotPatchRequest"];
+        "application/json": components["schemas"]["SlotEditRequest"];
       };
     };
     responses: {
       /** @description Slot edited */
       200: {
         content: {
-          "application/json": components["schemas"]["SlotPatchResponse"];
+          "application/json": components["schemas"]["SlotEditResponse"];
         };
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
       409: components["responses"]["Error409"];
-      429: components["responses"]["Error429"];
-      500: components["responses"]["Error500"];
+    };
+  };
+  /** Get the latest effective edit available from the recent-actions entry */
+  getPlanRecentAction: {
+    parameters: {
+      query?: {
+        day_index?: number;
+      };
+      path: {
+        plan_id: string;
+      };
+    };
+    responses: {
+      /** @description Latest eligible recent action, if any */
+      200: {
+        content: {
+          "application/json": components["schemas"]["PlanRecentActionResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
+    };
+  };
+  /** Undo the latest eligible timeline edit */
+  undoPlanEdit: {
+    parameters: {
+      path: {
+        plan_id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlanEditUndoRequest"];
+      };
+    };
+    responses: {
+      /** @description Edit undone into a new immutable plan version */
+      200: {
+        content: {
+          "application/json": components["schemas"]["PlanEditUndoResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
     };
   };
   /**

@@ -1055,6 +1055,8 @@ button:focus-visible {
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid rgba(23, 33, 27, 0.12);
+  touch-action: pan-y;
+  user-select: none;
 }
 
 .day-slot time {
@@ -1096,6 +1098,12 @@ button:focus-visible {
   font-weight: 600;
 }
 
+.day-slot > .slot-edit-button {
+  background: transparent;
+  color: #33413a;
+  font-size: 24px;
+}
+
 .slot-unresolved strong {
   color: #67736c;
 }
@@ -1127,6 +1135,36 @@ button:focus-visible {
   margin-top: 10px;
   padding: 10px 0;
   border-top: 2px solid #395f89;
+}
+
+.recent-action {
+  min-height: 60px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(23, 33, 27, 0.12);
+}
+
+.recent-action div {
+  display: grid;
+  gap: 3px;
+}
+
+.recent-action span {
+  color: #67736c;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.recent-action button {
+  min-width: 64px;
+  min-height: 44px;
+  border-radius: 8px;
+  background: #edf7f4;
+  color: #247e6f;
+  font-weight: 800;
 }
 
 .day-hotel > span {
@@ -1209,6 +1247,13 @@ button:focus-visible {
   box-shadow: 0 -16px 40px rgba(23, 33, 27, 0.18);
 }
 
+.slot-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 7;
+  background: rgba(23, 33, 27, 0.28);
+}
+
 .slot-sheet-handle {
   width: 42px;
   height: 4px;
@@ -1227,6 +1272,16 @@ button:focus-visible {
 .slot-sheet h2 {
   margin: 0;
   font-size: 19px;
+}
+
+.slot-edit-sheet header > div {
+  min-width: 0;
+}
+
+.slot-edit-sheet header p {
+  margin: 4px 0 0;
+  color: #52605a;
+  overflow-wrap: anywhere;
 }
 
 .slot-sheet header button {
@@ -1265,6 +1320,138 @@ button:focus-visible {
   font-weight: 800;
 }
 
+.slot-edit-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.slot-edit-actions > button {
+  min-height: 58px;
+  display: grid;
+  gap: 3px;
+  align-content: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #f2f4ef;
+  color: #17211b;
+  text-align: left;
+}
+
+.slot-edit-actions > button span {
+  color: #52605a;
+  font-size: 13px;
+}
+
+.slot-edit-actions > .slot-delete-action {
+  background: #fff3ef;
+  color: #9a3c2d;
+}
+
+.slot-day-actions,
+.slot-snap-actions,
+.slot-delete-confirm > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.slot-day-actions button,
+.slot-snap-actions button,
+.slot-sheet-back,
+.slot-delete-confirm button {
+  min-height: 44px;
+  border-radius: 8px;
+  padding: 0 10px;
+  background: #edf7f4;
+  color: #247e6f;
+  font-weight: 780;
+}
+
+.slot-sheet-back {
+  justify-self: start;
+}
+
+.slot-retime-form,
+.slot-delete-confirm {
+  display: grid;
+  gap: 12px;
+}
+
+.slot-time-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.slot-time-fields label {
+  display: grid;
+  gap: 6px;
+  color: #33413a;
+  font-weight: 750;
+}
+
+.slot-time-fields input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid rgba(23, 33, 27, 0.18);
+  border-radius: 8px;
+  padding: 0 10px;
+  background: #ffffff;
+  color: #17211b;
+}
+
+.slot-edit-hint,
+.slot-edit-error,
+.slot-delete-confirm p {
+  margin: 0;
+  color: #52605a;
+  line-height: 1.45;
+}
+
+.slot-edit-error {
+  color: #9a3c2d;
+}
+
+.slot-edit-submit {
+  min-height: 48px;
+  border-radius: 8px;
+  background: #247e6f;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.slot-delete-confirm button:last-child {
+  background: #a8402e;
+  color: #ffffff;
+}
+
+.edit-undo-toast {
+  position: fixed;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 9;
+  min-height: 52px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px 4px 16px;
+  border-radius: 8px;
+  background: #17211b;
+  color: #ffffff;
+  box-shadow: 0 10px 28px rgba(23, 33, 27, 0.24);
+  font-weight: 760;
+}
+
+.edit-undo-toast button {
+  min-width: 64px;
+  min-height: 44px;
+  border-radius: 8px;
+  background: transparent;
+  color: #8ee0cd;
+  font-weight: 820;
+}
+
 .legal-links {
   display: flex;
   justify-content: center;
@@ -1291,5 +1478,9 @@ button:focus-visible {
 
   .plan-progress {
     animation: none;
+  }
+
+  .edit-undo-toast {
+    transition: none;
   }
 }

@@ -305,6 +305,139 @@ describe('HQ planning lifecycle', () => {
     );
   });
 
+  it('accepts an overnight hand edit and carries overlap checks into the next day', () => {
+    const overnight = {
+      city: '厦门',
+      start_date: '2026-08-01',
+      days: 2,
+      pace: 'tight' as const,
+      day_plans: [
+        {
+          day_index: 0,
+          date: '2026-08-01',
+          slots: [{
+            slot_id: 'overnight-slot',
+            day_index: 0,
+            slot_index: 0,
+            start_local: '23:00',
+            end_local: '01:00',
+            type: 'free' as const,
+            origin: 'free' as const,
+            title: '夜间安排',
+          }],
+          hotel: { date: '2026-08-01', leave_blank: true },
+        },
+        {
+          day_index: 1,
+          date: '2026-08-02',
+          slots: [{
+            slot_id: 'morning-slot',
+            day_index: 1,
+            slot_index: 0,
+            start_local: '09:00',
+            end_local: '10:00',
+            type: 'free' as const,
+            origin: 'free' as const,
+            title: '上午安排',
+          }],
+          hotel: { date: '2026-08-02', leave_blank: true },
+        },
+      ],
+      candidates: [],
+      warnings: [],
+      unresolved_required: [],
+    };
+
+    assert.doesNotThrow(() => validateHqPayload(overnight, overnight));
+    assert.throws(
+      () => validateHqPayload(overnight, {
+        ...overnight,
+        day_plans: [
+          overnight.day_plans[0],
+          {
+            ...overnight.day_plans[1],
+            slots: [{
+              ...overnight.day_plans[1]!.slots[0],
+              start_local: '00:30',
+            }],
+          },
+        ],
+      }),
+      (error: unknown) => error instanceof HqPlanningError && error.code === 'HQ_OUTPUT_INVALID',
+    );
+    assert.throws(
+      () => validateHqPayload(overnight, {
+        ...overnight,
+        day_plans: [
+          {
+            ...overnight.day_plans[0],
+            slots: [],
+          },
+          {
+            ...overnight.day_plans[1],
+            slots: [{
+              ...overnight.day_plans[1]!.slots[0],
+              start_local: '23:00',
+              end_local: '01:00',
+            }],
+          },
+        ],
+      }),
+      (error: unknown) => error instanceof HqPlanningError && error.code === 'HQ_OUTPUT_INVALID',
+    );
+  });
+
+  it('rejects an HQ output that silently restores a user-excluded required item', () => {
+    const excludedPoi = { poi_id: 'poi-excluded', name: '已删除地点', verified: true };
+    const baseline = {
+      city: '厦门',
+      start_date: '2026-08-01',
+      days: 1,
+      pace: 'tight' as const,
+      day_plans: [{
+        day_index: 0,
+        date: '2026-08-01',
+        slots: [],
+        hotel: { date: '2026-08-01', leave_blank: true },
+      }],
+      candidates: [{
+        candidate_id: 'candidate-excluded',
+        item_id: 'item-excluded',
+        poi: excludedPoi,
+        status: 'available' as const,
+        source: 'user_candidate' as const,
+        reason: '用户已从当前计划删除',
+      }],
+      warnings: [],
+      unresolved_required: [],
+      user_excluded_item_ids: ['item-excluded'],
+    };
+    const restored = {
+      ...baseline,
+      day_plans: [{
+        ...baseline.day_plans[0],
+        slots: [{
+          slot_id: 'restored-slot',
+          day_index: 0,
+          slot_index: 0,
+          start_local: '09:00',
+          end_local: '10:00',
+          type: 'place' as const,
+          origin: 'ai_seed' as const,
+          title: excludedPoi.name,
+          poi: excludedPoi,
+          inspiration_id: 'item-excluded',
+        }],
+      }],
+      candidates: [{ ...baseline.candidates[0], status: 'used' as const }],
+    };
+
+    assert.throws(
+      () => validateHqPayload(baseline, restored),
+      (error: unknown) => error instanceof HqPlanningError && error.code === 'HQ_OUTPUT_INVALID',
+    );
+  });
+
   it('creates an independent version and keeps Quick current until adoption', async () => {
     const { repository, created, quick } = await quickFixture();
     const started = await startHqPlanning({

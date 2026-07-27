@@ -22,15 +22,27 @@ type PlanJobEvent = components['schemas']['PlanJobEvent'];
 type DayPlanResponse = components['schemas']['DayPlanResponse'];
 type EmptySlotResolveRequest = components['schemas']['EmptySlotResolveRequest'];
 type HqStatusResponse = components['schemas']['HqStatusResponse'];
+type SlotEditRequest = components['schemas']['SlotEditRequest'];
+type PlanRecentActionResponse = components['schemas']['PlanRecentActionResponse'];
 
 void (null as unknown as PlanJobEvent);
 void (null as unknown as DayPlanResponse);
 void (null as unknown as EmptySlotResolveRequest);
 void (null as unknown as HqStatusResponse);
+void (null as unknown as SlotEditRequest);
+void (null as unknown as PlanRecentActionResponse);
 
 function assertGeneratedPlannerContracts() {
   const generated = readFileSync(new URL('../../../packages/types/src/api-types.ts', import.meta.url), 'utf8');
-  for (const schema of ['PlanJobEvent', 'DayPlanResponse', 'EmptySlotResolveRequest', 'HqStatusResponse']) {
+  for (const schema of [
+    'PlanJobEvent',
+    'DayPlanResponse',
+    'EmptySlotResolveRequest',
+    'HqStatusResponse',
+    'SlotEditRequest',
+    'PlanRecentActionResponse',
+    'PlanEditUndoRequest',
+  ]) {
     assert(generated.includes(`${schema}: `), `generated OpenAPI types should include ${schema}`);
   }
 }
@@ -436,6 +448,293 @@ async function main() {
     });
     assert(setFree.statusCode === 200, 'an empty slot should support free activity');
     assert(parseJson(setFree).slot.type === 'free', 'empty slot response should contain the resolved slot');
+
+    const editablePlan = parseJson(await app.inject({
+      method: 'GET',
+      url: `/plan/${validBody.plan_id}`,
+      headers: authHeaders(),
+    }));
+    const editableSlot = editablePlan.day_plans
+      .flatMap((day: any) => day.slots)
+      .find((slot: any) => slot.type === 'place' && !slot.constraint);
+    const replacement = editablePlan.candidates.find(
+      (candidate: any) => candidate.status === 'available' && candidate.poi,
+    );
+    assert(editableSlot && replacement, 'planner fixture should expose an editable slot and replacement candidate');
+
+    for (const request of [
+      {
+        method: 'PATCH' as const,
+        url: `/plan/not-a-uuid/slots/${editableSlot.slot_id}`,
+        payload: {
+          op: 'delete',
+          expected_plan_rev: editablePlan.plan_rev,
+          operation_id: 'probe-edit-malformed',
+        },
+      },
+      {
+        method: 'GET' as const,
+        url: '/plan/not-a-uuid/recent-actions?day_index=0',
+      },
+      {
+        method: 'POST' as const,
+        url: '/plan/not-a-uuid/edits/undo',
+        payload: {
+          expected_plan_rev: editablePlan.plan_rev,
+          edit_event_id: '00000000-0000-4000-8000-000000000099',
+        },
+      },
+    ]) {
+      const malformed = await app.inject({ ...request, headers: authHeaders() });
+      assert(malformed.statusCode === 400, 'malformed plan ids should return a typed 400');
+      assert(
+        parseJson(malformed).error_code === 'PLAN_PARAMS_INVALID',
+        'malformed plan ids should use PLAN_PARAMS_INVALID',
+      );
+    }
+
+    const unauthEdit = await app.inject({
+      method: 'PATCH',
+      url: `/plan/${validBody.plan_id}/slots/${editableSlot.slot_id}`,
+      payload: {
+        op: 'replace',
+        expected_plan_rev: editablePlan.plan_rev,
+        operation_id: 'probe-edit-replace',
+        candidate_id: replacement.candidate_id,
+      },
+    });
+    assert(unauthEdit.statusCode === 401, 'slot editing should require auth');
+    const hiddenEdit = await app.inject({
+      method: 'PATCH',
+      url: `/plan/${validBody.plan_id}/slots/${editableSlot.slot_id}`,
+      headers: authHeaders(USER_B),
+      payload: {
+        op: 'delete',
+        expected_plan_rev: editablePlan.plan_rev,
+        operation_id: 'probe-edit-hidden',
+      },
+    });
+    assert(hiddenEdit.statusCode === 404, 'slot editing should hide another user plan');
+
+    const replacePayload = {
+      op: 'replace',
+      expected_plan_rev: editablePlan.plan_rev,
+      operation_id: 'probe-edit-replace',
+      candidate_id: replacement.candidate_id,
+    };
+    const replace = await app.inject({
+      method: 'PATCH',
+      url: `/plan/${validBody.plan_id}/slots/${editableSlot.slot_id}`,
+      headers: authHeaders(),
+      payload: replacePayload,
+    });
+    assert(replace.statusCode === 200, `slot replacement should succeed: ${replace.body}`);
+    const replaceBody = parseJson(replace);
+    assert(replaceBody.changed_slot.poi?.poi_id === replacement.poi.poi_id, 'replacement should use the owned candidate');
+    assert(replaceBody.changed_slot.origin === 'hand', 'replacement should become a hand edit');
+    assert(Date.parse(replaceBody.undo_expires_at) > Date.now(), 'edit response should expose an 8-second undo window');
+
+    const duplicateReplace = await app.inject({
+      method: 'PATCH',
+      url: `/plan/${validBody.plan_id}/slots/${editableSlot.slot_id}`,
+      headers: authHeaders(),
+      payload: replacePayload,
+    });
+    assert(
+      parseJson(duplicateReplace).edit_event_id === replaceBody.edit_event_id
+      && parseJson(duplicateReplace).plan_rev === replaceBody.plan_rev,
+      'an operation-id retry should return the original edit result',
+    );
+    const operationCollision = await app.inject({
+      method: 'PATCH',
+      url: `/plan/${validBody.plan_id}/slots/${editableSlot.slot_id}`,
+      headers: authHeaders(),
+      payload: {
+        op: 'delete',
+        expected_plan_rev: replaceBody.plan_rev,
+        operation_id: replacePayload.operation_id,
+      },
+    });
+    assert(operationCollision.statusCode === 409, 'an operation id reused for another edit should conflict');
+    assert(
+      parseJson(operationCollision).error_code === 'PLAN_EDIT_IDEMPOTENCY_CONFLICT',
+      'operation collisions should use a stable edit idempotency error',
+    );
+    const staleEdit = await app.inject({
+      method: 'PATCH',
+      url: `/plan/${validBody.plan_id}/slots/${editableSlot.slot_id}`,
+      headers: authHeaders(),
+      payload: {
+        op: 'delete',
+        expected_plan_rev: editablePlan.plan_rev,
+        operation_id: 'probe-edit-stale',
+      },
+    });
+    assert(staleEdit.statusCode === 409, 'a stale edit revision should be rejected');
+
+    const replacedPlan = parseJson(await app.inject({
+      method: 'GET',
+      url: `/plan/${validBody.plan_id}`,
+      headers: authHeaders(),
+    }));
+    const retime = await app.inject({
+      method: 'PATCH',
+      url: `/plan/${validBody.plan_id}/slots/${editableSlot.slot_id}`,
+      headers: authHeaders(),
+      payload: {
+        op: 'retime',
+        expected_plan_rev: replacedPlan.plan_rev,
+        operation_id: 'probe-edit-retime',
+        target_day_index: replaceBody.changed_slot.day_index,
+        start_local: '09:15',
+        end_local: '11:15',
+      },
+    });
+    assert(retime.statusCode === 200, `15-minute retiming should succeed: ${retime.body}`);
+    const retimeBody = parseJson(retime);
+    const deletion = await app.inject({
+      method: 'PATCH',
+      url: `/plan/${validBody.plan_id}/slots/${editableSlot.slot_id}`,
+      headers: authHeaders(),
+      payload: {
+        op: 'delete',
+        expected_plan_rev: retimeBody.plan_rev,
+        operation_id: 'probe-edit-delete',
+      },
+    });
+    assert(deletion.statusCode === 200, 'slot deletion should leave an unresolved timeline position');
+    const deletionBody = parseJson(deletion);
+    assert(deletionBody.changed_slot.type === 'unresolved', 'delete should preserve the timeline position');
+
+    const badEditUndo = await app.inject({
+      method: 'POST',
+      url: `/plan/${validBody.plan_id}/edits/undo`,
+      headers: authHeaders(),
+      payload: { expected_plan_rev: deletionBody.plan_rev, undo_token: 'wrong-token' },
+    });
+    assert(badEditUndo.statusCode === 409, 'an invalid edit undo token should be rejected');
+    assert(
+      parseJson(badEditUndo).error_code === 'PLAN_EDIT_UNDO_INVALID',
+      'invalid edit undo tokens should not masquerade as revision conflicts',
+    );
+    const tokenUndo = await app.inject({
+      method: 'POST',
+      url: `/plan/${validBody.plan_id}/edits/undo`,
+      headers: authHeaders(),
+      payload: {
+        expected_plan_rev: deletionBody.plan_rev,
+        undo_token: deletionBody.undo_token,
+      },
+    });
+    assert(tokenUndo.statusCode === 200, `the latest edit should undo by token: ${tokenUndo.body}`);
+    const afterTokenUndo = parseJson(await app.inject({
+      method: 'GET',
+      url: `/plan/${validBody.plan_id}`,
+      headers: authHeaders(),
+    }));
+    assert(
+      afterTokenUndo.day_plans.flatMap((day: any) => day.slots)
+        .find((slot: any) => slot.slot_id === editableSlot.slot_id)?.start_local === '09:15',
+      'token undo should restore the state before delete',
+    );
+
+    const recent = await app.inject({
+      method: 'GET',
+      url: `/plan/${validBody.plan_id}/recent-actions?day_index=${replaceBody.changed_slot.day_index}`,
+      headers: authHeaders(),
+    });
+    assert(recent.statusCode === 200, 'recent action should be readable by the owner');
+    const recentBody = parseJson(recent);
+    assert(recentBody.action?.edit_event_id === retimeBody.edit_event_id, 'recent action should expose the next eligible edit');
+    const recentUndo = await app.inject({
+      method: 'POST',
+      url: `/plan/${validBody.plan_id}/edits/undo`,
+      headers: authHeaders(),
+      payload: {
+        expected_plan_rev: afterTokenUndo.plan_rev,
+        edit_event_id: recentBody.action.edit_event_id,
+      },
+    });
+    assert(recentUndo.statusCode === 200, 'recent actions should allow one more latest-effective undo');
+    const doubleUndo = await app.inject({
+      method: 'POST',
+      url: `/plan/${validBody.plan_id}/edits/undo`,
+      headers: authHeaders(),
+      payload: {
+        expected_plan_rev: parseJson(recentUndo).plan_rev,
+        edit_event_id: recentBody.action.edit_event_id,
+      },
+    });
+    assert(doubleUndo.statusCode === 409, 'an already-undone edit should not replay');
+    assert(
+      parseJson(doubleUndo).error_code === 'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+      'replayed edit undo should use a stable eligibility error',
+    );
+    const exhaustedRecent = parseJson(await app.inject({
+      method: 'GET',
+      url: `/plan/${validBody.plan_id}/recent-actions?day_index=${replaceBody.changed_slot.day_index}`,
+      headers: authHeaders(),
+    }));
+    assert(
+      exhaustedRecent.action === null,
+      'one recent-action undo should exhaust the additional MVP undo entry',
+    );
+
+    const movePlanStart = await app.inject({
+      method: 'POST',
+      url: '/plan/generate',
+      headers: { ...authHeaders(), 'idempotency-key': 'planner-move-replay' },
+      payload: { ...validStory20Payload, rec_id: 'city-xm-move-replay' },
+    });
+    const movePlanStartBody = parseJson(movePlanStart);
+    await waitForTerminal(repository, movePlanStartBody.plan_job_id);
+    const movePlan = parseJson(await app.inject({
+      method: 'GET',
+      url: `/plan/${movePlanStartBody.plan_id}`,
+      headers: authHeaders(),
+    }));
+    let moveSource: any = null;
+    let moveTargetDay = -1;
+    for (let dayIndex = 0; dayIndex < movePlan.day_plans.length - 1 && !moveSource; dayIndex += 1) {
+      const nextDay = movePlan.day_plans[dayIndex + 1];
+      moveSource = movePlan.day_plans[dayIndex].slots.find((slot: any) => {
+        const target = nextDay.slots[slot.slot_index];
+        return (
+          slot.type !== 'hotel'
+          && slot.type !== 'unresolved'
+          && !slot.constraint
+          && target
+          && target.type !== 'hotel'
+          && !target.constraint
+        );
+      });
+      if (moveSource) moveTargetDay = dayIndex + 1;
+    }
+    assert(moveSource && moveTargetDay >= 0, 'move replay fixture should expose matching editable positions');
+    const movePayload = {
+      op: 'move_day',
+      expected_plan_rev: movePlan.plan_rev,
+      operation_id: 'probe-edit-move-replay',
+      target_day_index: moveTargetDay,
+    };
+    const firstMove = await app.inject({
+      method: 'PATCH',
+      url: `/plan/${movePlan.plan_id}/slots/${moveSource.slot_id}`,
+      headers: authHeaders(),
+      payload: movePayload,
+    });
+    const replayMove = await app.inject({
+      method: 'PATCH',
+      url: `/plan/${movePlan.plan_id}/slots/${moveSource.slot_id}`,
+      headers: authHeaders(),
+      payload: movePayload,
+    });
+    assert(firstMove.statusCode === 200 && replayMove.statusCode === 200, 'move replay should succeed');
+    assert(
+      parseJson(firstMove).changed_slot.slot_id === parseJson(replayMove).changed_slot.slot_id,
+      'move replay should return the original changed slot',
+    );
+
     const beforeAdopt = parseJson(await app.inject({
       method: 'GET',
       url: `/plan/${validBody.plan_id}`,

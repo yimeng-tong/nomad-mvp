@@ -5,8 +5,10 @@ import { dbUserIdFor } from '../ingest/store.js';
 import {
   PlannerExecutionLeaseLost,
   PlannerRepositoryConflict,
+  type ApplyPlannerEditInput,
   type CreatePlannerJobInput,
   type PlanJobEvent,
+  type PlannerEditEventRecord,
   type PlannerHqJobRecord,
   type PlannerJobRecord,
   type PlannerPlanRecord,
@@ -18,6 +20,12 @@ import { zonedLocalToUtc } from './time-windows.js';
 import { resolveCityTimezone } from './city-timezones.js';
 
 type SqlClient = Pick<PrismaClient, '$queryRaw' | '$executeRaw'>;
+
+function nextDate(date: string) {
+  const value = new Date(`${date}T00:00:00.000Z`);
+  value.setUTCDate(value.getUTCDate() + 1);
+  return value.toISOString().slice(0, 10);
+}
 
 type JobRow = {
   id: string;
@@ -61,6 +69,24 @@ type HqJobRow = {
   updated_at: Date;
 };
 
+type EditEventRow = {
+  id: string;
+  plan_id: string;
+  kind: PlannerEditEventRecord['kind'];
+  operation_id: string;
+  request_hash: string;
+  api_slot_id: string | null;
+  day_index: number | null;
+  base_version_id: string;
+  result_version_id: string;
+  result_plan_rev: number;
+  undo_token_hash: string | null;
+  undo_expires_at: Date | null;
+  target_event_id: string | null;
+  undone_by_event_id: string | null;
+  created_at: Date;
+};
+
 function jobRecord(row: JobRow, userId: string): PlannerJobRecord {
   return {
     id: row.id,
@@ -87,6 +113,26 @@ function versionRecord(row: VersionRow): PlannerVersionRecord {
     kind: row.kind,
     state: row.state,
     payload: row.payload_json as unknown as PlannerVersionPayload,
+    createdAt: row.created_at.toISOString(),
+  };
+}
+
+function editEventRecord(row: EditEventRow): PlannerEditEventRecord {
+  return {
+    id: row.id,
+    planId: row.plan_id,
+    kind: row.kind,
+    operationId: row.operation_id,
+    requestHash: row.request_hash,
+    slotId: row.api_slot_id,
+    dayIndex: row.day_index,
+    baseVersionId: row.base_version_id,
+    resultVersionId: row.result_version_id,
+    resultPlanRev: row.result_plan_rev,
+    undoTokenHash: row.undo_token_hash,
+    undoExpiresAt: row.undo_expires_at?.toISOString() ?? null,
+    targetEventId: row.target_event_id,
+    undoneByEventId: row.undone_by_event_id,
     createdAt: row.created_at.toISOString(),
   };
 }
@@ -723,6 +769,315 @@ export class PrismaPlannerRepository implements PlannerRepository {
     });
   }
 
+  async applyEdit(input: ApplyPlannerEditInput) {
+    return this.prisma.$transaction(async (tx) => {
+      const plans = await tx.$queryRaw<Array<{ rev: number; current_version_id: string | null }>>(Prisma.sql`
+        SELECT rev, current_version_id
+        FROM "Plan"
+        WHERE id = ${input.planId}::uuid AND "userId" = ${dbUserIdFor(input.userId)}::uuid
+        FOR UPDATE
+      `);
+      if (!plans[0]) throw new Error('plan not found');
+
+      const existing = await tx.$queryRaw<EditEventRow[]>(Prisma.sql`
+        SELECT id, "planId" AS plan_id, kind, operation_id, request_hash, api_slot_id, day_index,
+               base_version_id, result_version_id, result_plan_rev, undo_token_hash,
+               undo_expires_at, target_event_id, undone_by_event_id, created_at
+        FROM "EditEvent"
+        WHERE "planId" = ${input.planId}::uuid AND operation_id = ${input.operationId}
+        LIMIT 1
+      `);
+      if (existing[0]) {
+        if (
+          existing[0].request_hash !== input.requestHash
+          || existing[0].kind !== input.kind
+          || existing[0].api_slot_id !== input.slotId
+        ) {
+          throw new PlannerRepositoryConflict(
+            'operation id was already used for another edit',
+            'PLAN_EDIT_IDEMPOTENCY_CONFLICT',
+          );
+        }
+        const versions = await tx.$queryRaw<VersionRow[]>(Prisma.sql`
+          SELECT id, "planId" AS plan_id, kind, state, payload_json, created_at
+          FROM "PlanVersion"
+          WHERE id = ${existing[0].result_version_id}::uuid
+          LIMIT 1
+        `);
+        if (!versions[0]) throw new Error('edit result version not found');
+        return {
+          planRev: existing[0].result_plan_rev,
+          version: versionRecord(versions[0]),
+          editEvent: editEventRecord(existing[0]),
+        };
+      }
+
+      if (plans[0].rev !== input.expectedPlanRev) {
+        throw new PlannerRepositoryConflict('plan revision changed');
+      }
+      if (!plans[0].current_version_id) throw new Error('current plan version not found');
+      const currentRows = await tx.$queryRaw<VersionRow[]>(Prisma.sql`
+        SELECT id, "planId" AS plan_id, kind, state, payload_json, created_at
+        FROM "PlanVersion"
+        WHERE id = ${plans[0].current_version_id}::uuid
+        LIMIT 1
+      `);
+      if (!currentRows[0]) throw new Error('current plan version not found');
+      const mutated = input.mutate(
+        currentRows[0].payload_json as unknown as PlannerVersionPayload,
+      );
+      const version = await this.insertReadyVersion(
+        tx,
+        input.planId,
+        currentRows[0].kind,
+        mutated.payload,
+      );
+      const resultPlanRev = input.expectedPlanRev + 1;
+      const undoExpiresAt = new Date(Date.now() + input.undoTtlMs);
+      const eventBaseVersionId = await this.resolveEffectiveVersionId(
+        tx,
+        input.planId,
+        currentRows[0].id,
+      );
+      const eventId = randomUUID();
+      const eventRows = await tx.$queryRaw<EditEventRow[]>(Prisma.sql`
+        INSERT INTO "EditEvent" (
+          id, "planId", kind, operation_id, request_hash, api_slot_id, day_index,
+          base_version_id, result_version_id, result_plan_rev,
+          undo_token_hash, undo_expires_at, payload_json, created_at
+        )
+        VALUES (
+          ${eventId}::uuid, ${input.planId}::uuid, ${input.kind},
+          ${input.operationId}, ${input.requestHash}, ${input.slotId}, ${mutated.dayIndex},
+          ${eventBaseVersionId}::uuid, ${version.id}::uuid, ${resultPlanRev},
+          ${input.undoTokenHash}, ${undoExpiresAt},
+          ${JSON.stringify({})}::jsonb, NOW()
+        )
+        RETURNING id, "planId" AS plan_id, kind, operation_id, request_hash, api_slot_id, day_index,
+                  base_version_id, result_version_id, result_plan_rev, undo_token_hash,
+                  undo_expires_at, target_event_id, undone_by_event_id, created_at
+      `);
+      await tx.$executeRaw(Prisma.sql`
+        UPDATE "Plan"
+        SET current_version_id = ${version.id}::uuid, rev = ${resultPlanRev}, updated_at = NOW()
+        WHERE id = ${input.planId}::uuid
+      `);
+      return {
+        planRev: resultPlanRev,
+        version: versionRecord(version),
+        editEvent: editEventRecord(eventRows[0]!),
+      };
+    });
+  }
+
+  async getRecentEdit(planId: string, userId: string, dayIndex?: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const plans = await tx.$queryRaw<Array<{ rev: number; current_version_id: string | null }>>(Prisma.sql`
+        SELECT rev, current_version_id
+        FROM "Plan"
+        WHERE id = ${planId}::uuid AND "userId" = ${dbUserIdFor(userId)}::uuid
+        LIMIT 1
+      `);
+      if (!plans[0]) return null;
+      if (!plans[0].current_version_id) {
+        return { planRev: plans[0].rev, event: null };
+      }
+      const effectiveVersionId = await this.resolveEffectiveVersionId(
+        tx,
+        planId,
+        plans[0].current_version_id,
+      );
+      const currentUndo = await tx.$queryRaw<Array<{ operation_id: string }>>(Prisma.sql`
+        SELECT operation_id
+        FROM "EditEvent"
+        WHERE "planId" = ${planId}::uuid
+          AND kind = 'undo'
+          AND result_version_id = ${plans[0].current_version_id}::uuid
+        LIMIT 1
+      `);
+      const rows = await tx.$queryRaw<EditEventRow[]>(Prisma.sql`
+        SELECT id, "planId" AS plan_id, kind, operation_id, request_hash, api_slot_id,
+               day_index, base_version_id, result_version_id, result_plan_rev,
+               undo_token_hash, undo_expires_at, target_event_id, undone_by_event_id,
+               created_at
+        FROM "EditEvent"
+        WHERE "planId" = ${planId}::uuid
+          AND kind <> 'undo'
+          AND undone_by_event_id IS NULL
+          AND base_version_id IS NOT NULL
+          AND result_version_id IS NOT NULL
+          AND result_plan_rev IS NOT NULL
+          AND operation_id IS NOT NULL
+          AND request_hash IS NOT NULL
+        ORDER BY result_plan_rev DESC, created_at DESC, id DESC
+        LIMIT 1
+      `);
+      const event = rows[0] ? editEventRecord(rows[0]) : null;
+      const eligible = event
+        && effectiveVersionId === event.resultVersionId
+        && !currentUndo[0]?.operation_id.startsWith('undo:recent:')
+        && (dayIndex === undefined || event.dayIndex === dayIndex)
+          ? event
+          : null;
+      return { planRev: plans[0].rev, event: eligible };
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
+  }
+
+  async undoEdit(input: {
+    planId: string;
+    userId: string;
+    expectedPlanRev: number;
+    undoTokenHash?: string;
+    editEventId?: string;
+  }) {
+    return this.prisma.$transaction(async (tx) => {
+      const plans = await tx.$queryRaw<Array<{ rev: number; current_version_id: string | null }>>(Prisma.sql`
+        SELECT rev, current_version_id
+        FROM "Plan"
+        WHERE id = ${input.planId}::uuid AND "userId" = ${dbUserIdFor(input.userId)}::uuid
+        FOR UPDATE
+      `);
+      if (!plans[0]) throw new Error('plan not found');
+      if (plans[0].rev !== input.expectedPlanRev) {
+        throw new PlannerRepositoryConflict('plan revision changed');
+      }
+      if (!plans[0].current_version_id) throw new Error('current plan version not found');
+
+      const targets = await tx.$queryRaw<EditEventRow[]>(Prisma.sql`
+        SELECT id, "planId" AS plan_id, kind, operation_id, request_hash, api_slot_id, day_index,
+               base_version_id, result_version_id, result_plan_rev, undo_token_hash,
+               undo_expires_at, target_event_id, undone_by_event_id, created_at
+        FROM "EditEvent"
+        WHERE "planId" = ${input.planId}::uuid
+          AND kind <> 'undo'
+          AND undone_by_event_id IS NULL
+          AND base_version_id IS NOT NULL
+          AND result_version_id IS NOT NULL
+          AND result_plan_rev IS NOT NULL
+          AND operation_id IS NOT NULL
+          AND request_hash IS NOT NULL
+        ORDER BY result_plan_rev DESC, created_at DESC, id DESC
+        LIMIT 1
+        FOR UPDATE
+      `);
+      const target = targets[0];
+      if (!target) {
+        throw new PlannerRepositoryConflict(
+          'no edit is eligible for undo',
+          'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+        );
+      }
+      if (input.editEventId) {
+        if (input.editEventId !== target.id) {
+          throw new PlannerRepositoryConflict(
+            'only the latest effective edit can be undone',
+            'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+          );
+        }
+      } else {
+        const expiresAt = target.undo_expires_at?.getTime() ?? Number.NaN;
+        if (
+          !input.undoTokenHash
+          || input.undoTokenHash !== target.undo_token_hash
+          || !Number.isFinite(expiresAt)
+          || expiresAt <= Date.now()
+        ) {
+          throw new PlannerRepositoryConflict(
+            'undo token is invalid or expired',
+            'PLAN_EDIT_UNDO_INVALID',
+          );
+        }
+      }
+
+      const currentRows = await tx.$queryRaw<VersionRow[]>(Prisma.sql`
+        SELECT id, "planId" AS plan_id, kind, state, payload_json, created_at
+        FROM "PlanVersion"
+        WHERE id = ${plans[0].current_version_id}::uuid
+        LIMIT 1
+      `);
+      const baseRows = await tx.$queryRaw<VersionRow[]>(Prisma.sql`
+        SELECT id, "planId" AS plan_id, kind, state, payload_json, created_at
+        FROM "PlanVersion"
+        WHERE id = ${target.base_version_id}::uuid AND "planId" = ${input.planId}::uuid
+        LIMIT 1
+      `);
+      if (!currentRows[0] || !baseRows[0]) throw new Error('edit version not found');
+      const effectiveVersionId = await this.resolveEffectiveVersionId(
+        tx,
+        input.planId,
+        currentRows[0].id,
+      );
+      const currentUndoRows = await tx.$queryRaw<Array<{ operation_id: string }>>(Prisma.sql`
+        SELECT operation_id
+        FROM "EditEvent"
+        WHERE "planId" = ${input.planId}::uuid
+          AND kind = 'undo'
+          AND result_version_id = ${currentRows[0].id}::uuid
+        LIMIT 1
+      `);
+      if (
+        input.editEventId
+        && currentUndoRows[0]?.operation_id.startsWith('undo:recent:')
+      ) {
+        throw new PlannerRepositoryConflict(
+          'the additional recent-action undo was already used',
+          'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+        );
+      }
+      if (effectiveVersionId !== target.result_version_id) {
+        throw new PlannerRepositoryConflict(
+          'the current plan has changes after this edit',
+          'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+        );
+      }
+      const version = await this.insertReadyVersion(
+        tx,
+        input.planId,
+        currentRows[0].kind,
+        baseRows[0].payload_json as unknown as PlannerVersionPayload,
+      );
+      const resultPlanRev = input.expectedPlanRev + 1;
+      const undoEventId = randomUUID();
+      await tx.$executeRaw(Prisma.sql`
+        INSERT INTO "EditEvent" (
+          id, "planId", kind, operation_id, request_hash, api_slot_id, day_index,
+          base_version_id, result_version_id, result_plan_rev,
+          target_event_id, payload_json, created_at
+        )
+        VALUES (
+          ${undoEventId}::uuid, ${input.planId}::uuid, 'undo',
+          ${`undo:${input.editEventId ? 'recent' : 'token'}:${target.id}`},
+          ${`undo:${input.editEventId ? 'recent' : 'token'}:${target.id}`},
+          ${target.api_slot_id}, ${target.day_index},
+          ${currentRows[0].id}::uuid, ${version.id}::uuid, ${resultPlanRev},
+          ${target.id}::uuid, ${JSON.stringify({})}::jsonb, NOW()
+        )
+      `);
+      const updated = await tx.$executeRaw(Prisma.sql`
+        UPDATE "EditEvent"
+        SET undone_by_event_id = ${undoEventId}::uuid
+        WHERE id = ${target.id}::uuid AND undone_by_event_id IS NULL
+      `);
+      if (updated !== 1) {
+        throw new PlannerRepositoryConflict(
+          'edit was already undone',
+          'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+        );
+      }
+      await tx.$executeRaw(Prisma.sql`
+        UPDATE "Plan"
+        SET current_version_id = ${version.id}::uuid, rev = ${resultPlanRev}, updated_at = NOW()
+        WHERE id = ${input.planId}::uuid
+      `);
+      return {
+        planRev: resultPlanRev,
+        version: versionRecord(version),
+        undoEventId,
+        undoneEditEventId: target.id,
+      };
+    });
+  }
+
   async adoptHqVersion(input: {
     planId: string;
     hqVersionId: string;
@@ -765,6 +1120,30 @@ export class PrismaPlannerRepository implements PlannerRepository {
       `);
       return { planRev: input.expectedPlanRev + 1, currentVersionId: input.hqVersionId };
     });
+  }
+
+  private async resolveEffectiveVersionId(
+    client: SqlClient,
+    planId: string,
+    versionId: string,
+  ) {
+    let effective = versionId;
+    const visited = new Set<string>();
+    while (!visited.has(effective)) {
+      visited.add(effective);
+      const rows = await client.$queryRaw<Array<{ base_version_id: string }>>(Prisma.sql`
+        SELECT target.base_version_id
+        FROM "EditEvent" undo_event
+        JOIN "EditEvent" target ON target.id = undo_event.target_event_id
+        WHERE undo_event."planId" = ${planId}::uuid
+          AND undo_event.kind = 'undo'
+          AND undo_event.result_version_id = ${effective}::uuid
+        LIMIT 1
+      `);
+      if (!rows[0]) return effective;
+      effective = rows[0].base_version_id;
+    }
+    throw new Error('planner undo lineage contains a cycle');
   }
 
   private async insertReadyVersion(
@@ -820,6 +1199,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
       `);
       for (const slot of day.slots) {
         const slotId = randomUUID();
+        const endDate = slot.end_local < slot.start_local ? nextDate(day.date) : day.date;
         slotIds.set(slot.slot_id, slotId);
         await client.$executeRaw(Prisma.sql`
           INSERT INTO "PlanSlot" (
@@ -831,7 +1211,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
           VALUES (
             ${slotId}::uuid, ${dayId}::uuid, ${slot.slot_index},
             ${zonedLocalToUtc(day.date, slot.start_local, timezone)},
-            ${zonedLocalToUtc(day.date, slot.end_local, timezone)},
+            ${zonedLocalToUtc(endDate, slot.end_local, timezone)},
             ${slot.start_local}, ${slot.end_local}, ${timezone},
             ${slot.type}::"SlotType", ${slot.origin}::"SlotOrigin", ${slot.title ?? null},
             (SELECT id FROM "CanonicalPOI" WHERE id::text = ${slot.poi?.poi_id ?? ''} LIMIT 1),

@@ -18,6 +18,10 @@ RESULT_SHEET_LIGHT_EDIT_ENABLED=true
 PLANNER_AUTOPLACE_V1=true
 HOTEL_STICKINESS_ENABLED=true
 
+# Required server-only HMAC secret for deterministic, idempotent edit undo tokens.
+# Generate a random value per environment; never expose it to the client or commit it.
+PLANNER_UNDO_SECRET=
+
 # Post‑MVP placeholders (keep false/off in MVP)
 MULTI_CITY_ENABLED=false
 HOTEL_AUTO_REPLAN_ENABLED=false

@@ -20,6 +20,7 @@ import {
   type HqPlannerAdapter,
 } from '../planner/hq.js';
 import {
+  PlannerExecutionLeaseLost,
   PlannerRepositoryConflict,
   type DayPlanResponse,
   type PlanGenerateRequest,
@@ -28,7 +29,11 @@ import {
   type PlannerVersionPayload,
   type PlannerVersionRecord,
 } from '../planner/repository.js';
-import { resolvePlannerInput, type PlannerSourceRepository } from '../planner/resolver.js';
+import {
+  PlannerInputError,
+  resolvePlannerInput,
+  type PlannerSourceRepository,
+} from '../planner/resolver.js';
 import { runQuickPlannerJob } from '../planner/service.js';
 import { getPlannerSourceRepository } from '../planner/source.js';
 import {
@@ -200,6 +205,26 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
   const sseHeartbeatMs = Number(process.env.SSE_HEARTBEAT_MS || 10000);
   const pollMs = options.pollMs ?? 100;
   const leaseMs = Math.max(10_000, Number(process.env.PLANNER_JOB_LEASE_MS || 60_000));
+  const reportQuickPlannerResult = (
+    result: Awaited<ReturnType<typeof runQuickPlannerJob>>,
+    job: { id: string; planId: string; attempt: number },
+  ) => {
+    if (result.ok) return;
+    const context = {
+      err: result.error,
+      planJobId: job.id,
+      planId: job.planId,
+      attempt: job.attempt,
+    };
+    if (
+      result.error instanceof PlannerInputError
+      || result.error instanceof PlannerExecutionLeaseLost
+    ) {
+      app.log.warn(context, 'quick planner job stopped');
+    } else {
+      app.log.error(context, 'quick planner job failed');
+    }
+  };
 
   let recoveryRunning = false;
   const recoverPlannerJobs = async () => {
@@ -209,13 +234,14 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
       const staleBefore = new Date(Date.now() - leaseMs).toISOString();
       const quickJobs = await repository.claimRecoverableJobs(staleBefore, 20);
       for (const job of quickJobs) {
-        await runQuickPlannerJob({
+        const result = await runQuickPlannerJob({
           job,
           repository,
           resolveInput: () =>
             resolvePlannerInput(job.userId, job.planId, job.request, source),
           startHq,
         });
+        reportQuickPlannerResult(result, job);
       }
       const hqJobs = await repository.claimRecoverableHqJobs(staleBefore, 20);
       for (const job of hqJobs) {
@@ -324,7 +350,16 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
             resolveInput: () =>
               resolvePlannerInput(userId, result.job.planId, result.job.request, source),
             startHq,
-          });
+          })
+            .then((runResult) => reportQuickPlannerResult(runResult, result.job))
+            .catch((error) => {
+              app.log.error({
+                err: error,
+                planJobId: result.job.id,
+                planId: result.job.planId,
+                attempt: result.job.attempt,
+              }, 'quick planner job execution crashed');
+            });
         });
       }
       const response: PlanGenerateResponse = {

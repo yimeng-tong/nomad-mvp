@@ -15,3 +15,6 @@ pnpm -F nomad-prisma exec prisma migrate deploy
 
 The Story 2.1 migration maps `fast` pace to `tight`; `normal` and `slow` map to
 `comfortable`.
+
+The Story 2.2 migration makes timeline edits durable and idempotent by adding
+version, revision, undo, and operation-key metadata to `EditEvent`.

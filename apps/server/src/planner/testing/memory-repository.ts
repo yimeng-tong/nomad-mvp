@@ -3,6 +3,8 @@ import {
   PlannerExecutionLeaseLost,
   PlannerRepositoryConflict,
   type CreatePlannerJobInput,
+  type ApplyPlannerEditInput,
+  type PlannerEditEventRecord,
   type PlannerJobRecord,
   type PlannerHqJobRecord,
   type PlannerPlanRecord,
@@ -31,6 +33,28 @@ function stableJson(value: unknown): string {
   return JSON.stringify(value);
 }
 
+function directUndoForVersion(events: PlannerEditEventRecord[], versionId: string | null) {
+  return versionId
+    ? [...events].reverse().find(
+        (event) => event.kind === 'undo' && event.resultVersionId === versionId,
+      ) ?? null
+    : null;
+}
+
+function effectiveVersionId(events: PlannerEditEventRecord[], versionId: string) {
+  let effective = versionId;
+  const visited = new Set<string>();
+  while (!visited.has(effective)) {
+    visited.add(effective);
+    const undo = directUndoForVersion(events, effective);
+    if (!undo?.targetEventId) return effective;
+    const target = events.find((event) => event.id === undo.targetEventId);
+    if (!target) return effective;
+    effective = target.baseVersionId;
+  }
+  throw new Error('planner undo lineage contains a cycle');
+}
+
 export class InMemoryPlannerRepository implements PlannerRepository {
   private readonly jobs = new Map<string, PlannerJobRecord>();
   private readonly jobsByRequest = new Map<string, string>();
@@ -38,6 +62,7 @@ export class InMemoryPlannerRepository implements PlannerRepository {
   private readonly events = new Map<string, PlanJobEvent[]>();
   private readonly hqJobs = new Map<string, PlannerHqJobRecord>();
   private readonly hqJobsByRequest = new Map<string, string>();
+  private readonly editEvents = new Map<string, PlannerEditEventRecord[]>();
 
   async createOrGetJob(input: CreatePlannerJobInput) {
     const requestKey = `${input.userId}:${input.requestHash}`;
@@ -62,7 +87,7 @@ export class InMemoryPlannerRepository implements PlannerRepository {
     }
 
     const createdAt = nowIso();
-    const planId = `pl_${randomUUID()}`;
+    const planId = randomUUID();
     const job: PlannerJobRecord = {
       id: `pj_${randomUUID()}`,
       planId,
@@ -92,6 +117,7 @@ export class InMemoryPlannerRepository implements PlannerRepository {
       updatedAt: createdAt,
     });
     this.events.set(job.id, []);
+    this.editEvents.set(planId, []);
     return { job: clone(job), created: true };
   }
 
@@ -314,6 +340,176 @@ export class InMemoryPlannerRepository implements PlannerRepository {
     plan.planRev += 1;
     plan.updatedAt = nowIso();
     return { planRev: plan.planRev, version: clone(version) };
+  }
+
+  async applyEdit(input: ApplyPlannerEditInput) {
+    const plan = this.plans.get(input.planId);
+    if (!plan || plan.userId !== input.userId) throw new Error('plan not found');
+    const events = this.editEvents.get(input.planId) ?? [];
+    const duplicate = events.find((event) => event.operationId === input.operationId);
+    if (duplicate) {
+      if (
+        duplicate.requestHash !== input.requestHash
+        || duplicate.kind !== input.kind
+        || duplicate.slotId !== input.slotId
+      ) {
+        throw new PlannerRepositoryConflict(
+          'operation id was already used for another edit',
+          'PLAN_EDIT_IDEMPOTENCY_CONFLICT',
+        );
+      }
+      const version = plan.versions.find((item) => item.id === duplicate.resultVersionId);
+      if (!version) throw new Error('edit result version not found');
+      return {
+        planRev: duplicate.resultPlanRev,
+        version: clone(version),
+        editEvent: clone(duplicate),
+      };
+    }
+    if (plan.planRev !== input.expectedPlanRev) {
+      throw new PlannerRepositoryConflict('plan revision changed');
+    }
+    const current = plan.versions.find((version) => version.id === plan.currentVersionId);
+    if (!current) throw new Error('current plan version not found');
+    const mutated = input.mutate(clone(current.payload));
+    const version = this.createVersion(input.planId, current.kind, mutated.payload);
+    const createdAt = nowIso();
+    const undoExpiresAt = new Date(Date.now() + input.undoTtlMs).toISOString();
+    const editEvent: PlannerEditEventRecord = {
+      id: `edit_${randomUUID()}`,
+      planId: input.planId,
+      kind: input.kind,
+      operationId: input.operationId,
+      requestHash: input.requestHash,
+      slotId: input.slotId,
+      dayIndex: mutated.dayIndex,
+      baseVersionId: effectiveVersionId(events, current.id),
+      resultVersionId: version.id,
+      resultPlanRev: plan.planRev + 1,
+      undoTokenHash: input.undoTokenHash,
+      undoExpiresAt,
+      targetEventId: null,
+      undoneByEventId: null,
+      createdAt,
+    };
+    plan.currentVersionId = version.id;
+    plan.planRev += 1;
+    plan.updatedAt = createdAt;
+    events.push(editEvent);
+    this.editEvents.set(input.planId, events);
+    return { planRev: plan.planRev, version: clone(version), editEvent: clone(editEvent) };
+  }
+
+  async getRecentEdit(planId: string, userId: string, dayIndex?: number) {
+    const plan = this.plans.get(planId);
+    if (!plan || plan.userId !== userId) return null;
+    const events = this.editEvents.get(planId) ?? [];
+    if (!plan.currentVersionId) return { planRev: plan.planRev, event: null };
+    const latest = [...events]
+      .reverse()
+      .find((event) => event.kind !== 'undo' && !event.undoneByEventId);
+    const currentUndo = directUndoForVersion(events, plan.currentVersionId);
+    const eligible = latest
+      && (!currentUndo || !currentUndo.operationId.startsWith('undo:recent:'))
+      && effectiveVersionId(events, plan.currentVersionId) === latest.resultVersionId
+      && (dayIndex === undefined || latest.dayIndex === dayIndex)
+        ? clone(latest)
+        : null;
+    return { planRev: plan.planRev, event: eligible };
+  }
+
+  async undoEdit(input: {
+    planId: string;
+    userId: string;
+    expectedPlanRev: number;
+    undoTokenHash?: string;
+    editEventId?: string;
+  }) {
+    const plan = this.plans.get(input.planId);
+    if (!plan || plan.userId !== input.userId) throw new Error('plan not found');
+    if (plan.planRev !== input.expectedPlanRev) {
+      throw new PlannerRepositoryConflict('plan revision changed');
+    }
+    const events = this.editEvents.get(input.planId) ?? [];
+    const target = [...events]
+      .reverse()
+      .find((event) => event.kind !== 'undo' && !event.undoneByEventId);
+    if (!target) {
+      throw new PlannerRepositoryConflict(
+        'no edit is eligible for undo',
+        'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+      );
+    }
+    if (input.editEventId) {
+      if (input.editEventId !== target.id) {
+        throw new PlannerRepositoryConflict(
+          'only the latest effective edit can be undone',
+          'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+        );
+      }
+    } else {
+      const expiresAt = target.undoExpiresAt ? Date.parse(target.undoExpiresAt) : Number.NaN;
+      if (
+        !input.undoTokenHash
+        || input.undoTokenHash !== target.undoTokenHash
+        || !Number.isFinite(expiresAt)
+        || expiresAt <= Date.now()
+      ) {
+        throw new PlannerRepositoryConflict(
+          'undo token is invalid or expired',
+          'PLAN_EDIT_UNDO_INVALID',
+        );
+      }
+    }
+    const current = plan.versions.find((version) => version.id === plan.currentVersionId);
+    const base = plan.versions.find((version) => version.id === target.baseVersionId);
+    if (!current || !base) throw new Error('edit version not found');
+    const currentUndo = directUndoForVersion(events, current.id);
+    if (
+      input.editEventId
+      && currentUndo?.operationId.startsWith('undo:recent:')
+    ) {
+      throw new PlannerRepositoryConflict(
+        'the additional recent-action undo was already used',
+        'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+      );
+    }
+    if (effectiveVersionId(events, current.id) !== target.resultVersionId) {
+      throw new PlannerRepositoryConflict(
+        'the current plan has changes after this edit',
+        'PLAN_EDIT_UNDO_NOT_ELIGIBLE',
+      );
+    }
+    const version = this.createVersion(input.planId, current.kind, base.payload);
+    const createdAt = nowIso();
+    const undoEvent: PlannerEditEventRecord = {
+      id: `edit_${randomUUID()}`,
+      planId: input.planId,
+      kind: 'undo',
+      operationId: `undo:${input.editEventId ? 'recent' : 'token'}:${target.id}`,
+      requestHash: `undo:${input.editEventId ? 'recent' : 'token'}:${target.id}`,
+      slotId: target.slotId,
+      dayIndex: target.dayIndex,
+      baseVersionId: current.id,
+      resultVersionId: version.id,
+      resultPlanRev: plan.planRev + 1,
+      undoTokenHash: null,
+      undoExpiresAt: null,
+      targetEventId: target.id,
+      undoneByEventId: null,
+      createdAt,
+    };
+    target.undoneByEventId = undoEvent.id;
+    events.push(undoEvent);
+    plan.currentVersionId = version.id;
+    plan.planRev += 1;
+    plan.updatedAt = createdAt;
+    return {
+      planRev: plan.planRev,
+      version: clone(version),
+      undoEventId: undoEvent.id,
+      undoneEditEventId: target.id,
+    };
   }
 
   async adoptHqVersion(input: {

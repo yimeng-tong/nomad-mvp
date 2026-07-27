@@ -296,39 +296,90 @@ paths:
                     event: anchors_ready
                     data: {"trace_id":"t-1","plan_job_id":"pj_1","city":"HZ","season":"autumn","tod":"evening","ready":true}
 
-  /plan/slots/{slot_id}:
+  /plan/{plan_id}/slots/{slot_id}:
     patch:
       tags: [Plans]
-      summary: Edit a slot (move/retime/replace/delete) with optimistic locking
-      operationId: editSlot
+      summary: Edit an owned timeline slot with optimistic locking
+      operationId: editPlanSlot
+      security:
+        - SessionAuth: []
       parameters:
+        - in: path
+          name: plan_id
+          required: true
+          schema: { type: string, format: uuid }
         - in: path
           name: slot_id
           required: true
           schema: { type: string }
-        - in: header
-          name: If-Match-Rev
-          required: true
-          schema: { type: integer, format: int32, minimum: 1 }
-          description: Current plan revision for optimistic concurrency
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/SlotPatchRequest'
+            schema: { $ref: '#/components/schemas/SlotEditRequest' }
       responses:
         '200':
           description: Slot edited
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/SlotPatchResponse'
+              schema: { $ref: '#/components/schemas/SlotEditResponse' }
         '400': { $ref: '#/components/responses/Error400' }
         '401': { $ref: '#/components/responses/Error401' }
+        '404': { $ref: '#/components/responses/Error404' }
         '409': { $ref: '#/components/responses/Error409' }
-        '429': { $ref: '#/components/responses/Error429' }
-        '500': { $ref: '#/components/responses/Error500' }
+
+  /plan/{plan_id}/recent-actions:
+    get:
+      tags: [Plans]
+      summary: Get the latest effective edit available from the recent-actions entry
+      operationId: getPlanRecentAction
+      security:
+        - SessionAuth: []
+      parameters:
+        - in: path
+          name: plan_id
+          required: true
+          schema: { type: string, format: uuid }
+        - in: query
+          name: day_index
+          schema: { type: integer, minimum: 0, maximum: 13 }
+      responses:
+        '200':
+          description: Latest eligible recent action, if any
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PlanRecentActionResponse' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '404': { $ref: '#/components/responses/Error404' }
+
+  /plan/{plan_id}/edits/undo:
+    post:
+      tags: [Plans]
+      summary: Undo the latest eligible timeline edit
+      operationId: undoPlanEdit
+      security:
+        - SessionAuth: []
+      parameters:
+        - in: path
+          name: plan_id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PlanEditUndoRequest' }
+      responses:
+        '200':
+          description: Edit undone into a new immutable plan version
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PlanEditUndoResponse' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '404': { $ref: '#/components/responses/Error404' }
+        '409': { $ref: '#/components/responses/Error409' }
 
   /plan/ai-fill:
     post:
@@ -1911,22 +1962,102 @@ components:
         plan_rev: { type: integer, minimum: 1 }
         current_version_id: { type: string }
 
-    SlotPatchRequest:
-      type: object
-      required: [op]
-      properties:
-        op: { type: string, enum: [move, retime, replace, delete] }
-        new_day: { type: integer, minimum: 1 }
-        new_start: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$' }
-        new_end: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$' }
-        replace_with_poi_id: { type: string }
+    SlotEditRequest:
+      oneOf:
+        - type: object
+          required: [op, expected_plan_rev, operation_id, candidate_id]
+          properties:
+            op: { type: string, enum: [replace] }
+            expected_plan_rev: { type: integer, minimum: 1 }
+            operation_id: { type: string, minLength: 8, maxLength: 128 }
+            candidate_id: { type: string, minLength: 1 }
+          additionalProperties: false
+        - type: object
+          required: [op, expected_plan_rev, operation_id, target_day_index]
+          properties:
+            op: { type: string, enum: [move_day] }
+            expected_plan_rev: { type: integer, minimum: 1 }
+            operation_id: { type: string, minLength: 8, maxLength: 128 }
+            target_day_index: { type: integer, minimum: 0, maximum: 13 }
+          additionalProperties: false
+        - type: object
+          required: [op, expected_plan_rev, operation_id, target_day_index, start_local, end_local]
+          properties:
+            op: { type: string, enum: [retime] }
+            expected_plan_rev: { type: integer, minimum: 1 }
+            operation_id: { type: string, minLength: 8, maxLength: 128 }
+            target_day_index: { type: integer, minimum: 0, maximum: 13 }
+            start_local: { type: string, pattern: '^([01][0-9]|2[0-3]):(00|15|30|45)$' }
+            end_local: { type: string, pattern: '^([01][0-9]|2[0-3]):(00|15|30|45)$' }
+          additionalProperties: false
+        - type: object
+          required: [op, expected_plan_rev, operation_id]
+          properties:
+            op: { type: string, enum: [delete] }
+            expected_plan_rev: { type: integer, minimum: 1 }
+            operation_id: { type: string, minLength: 8, maxLength: 128 }
+          additionalProperties: false
 
-    SlotPatchResponse:
+    SlotEditResponse:
       type: object
-      required: [undo_token, plan_rev]
+      required: [plan_id, plan_rev, current_version_id, edit_event_id, undo_token, undo_expires_at, changed_slot]
       properties:
-        undo_token: { type: string }
+        plan_id: { type: string }
         plan_rev: { type: integer, minimum: 1 }
+        current_version_id: { type: string }
+        edit_event_id: { type: string }
+        undo_token: { type: string }
+        undo_expires_at: { type: string, format: date-time }
+        changed_slot:
+          $ref: '#/components/schemas/DayPlanSlot'
+
+    PlanRecentAction:
+      type: object
+      required: [edit_event_id, kind, day_index, slot_id, label, can_undo, created_at]
+      properties:
+        edit_event_id: { type: string }
+        kind: { type: string, enum: [replace, move_day, retime, delete] }
+        day_index: { type: integer, minimum: 0 }
+        slot_id: { type: string }
+        label: { type: string, maxLength: 40 }
+        can_undo: { type: boolean }
+        created_at: { type: string, format: date-time }
+
+    PlanRecentActionResponse:
+      type: object
+      required: [plan_id, plan_rev]
+      properties:
+        plan_id: { type: string }
+        plan_rev: { type: integer, minimum: 1 }
+        action:
+          allOf:
+            - $ref: '#/components/schemas/PlanRecentAction'
+          nullable: true
+
+    PlanEditUndoRequest:
+      oneOf:
+        - type: object
+          required: [expected_plan_rev, undo_token]
+          properties:
+            expected_plan_rev: { type: integer, minimum: 1 }
+            undo_token: { type: string, minLength: 1 }
+          additionalProperties: false
+        - type: object
+          required: [expected_plan_rev, edit_event_id]
+          properties:
+            expected_plan_rev: { type: integer, minimum: 1 }
+            edit_event_id: { type: string, minLength: 1 }
+          additionalProperties: false
+
+    PlanEditUndoResponse:
+      type: object
+      required: [plan_id, plan_rev, current_version_id, undo_event_id, undone_edit_event_id]
+      properties:
+        plan_id: { type: string }
+        plan_rev: { type: integer, minimum: 1 }
+        current_version_id: { type: string }
+        undo_event_id: { type: string }
+        undone_edit_event_id: { type: string }
 
     AiFillRequest:
       type: object

@@ -41,7 +41,7 @@ development_status:
   epic-2: in-progress
   2-0-confirm-and-planner-picker: done
   2-1-generate-day-skeleton-with-quick-and-hq-planning: done
-  2-2-timeline-editing-undo-and-history: backlog
+  2-2-timeline-editing-undo-and-history: in-progress
   2-3-feasibility-validation-and-one-click-fixes: backlog
   2-4-export-itinerary-png: backlog
   epic-2-retrospective: optional

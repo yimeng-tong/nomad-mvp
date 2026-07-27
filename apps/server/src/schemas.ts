@@ -202,6 +202,58 @@ export const SeedUndoBody = z.object({
   undo_token: z.string().min(1)
 }).strict();
 
+const EditOperationBase = {
+  expected_plan_rev: z.number().int().positive(),
+  operation_id: z.string().min(8).max(128),
+};
+
+export const SlotEditBody = z.discriminatedUnion('op', [
+  z.object({
+    op: z.literal('replace'),
+    ...EditOperationBase,
+    candidate_id: z.string().min(1),
+  }).strict(),
+  z.object({
+    op: z.literal('move_day'),
+    ...EditOperationBase,
+    target_day_index: z.number().int().min(0).max(13),
+  }).strict(),
+  z.object({
+    op: z.literal('retime'),
+    ...EditOperationBase,
+    target_day_index: z.number().int().min(0).max(13),
+    start_local: z.string().regex(/^([01][0-9]|2[0-3]):(00|15|30|45)$/),
+    end_local: z.string().regex(/^([01][0-9]|2[0-3]):(00|15|30|45)$/),
+  }).strict(),
+  z.object({
+    op: z.literal('delete'),
+    ...EditOperationBase,
+  }).strict(),
+]);
+
+export const PlanEditUndoBody = z.union([
+  z.object({
+    expected_plan_rev: z.number().int().positive(),
+    undo_token: z.string().min(1),
+  }).strict(),
+  z.object({
+    expected_plan_rev: z.number().int().positive(),
+    edit_event_id: z.string().min(1),
+  }).strict(),
+]);
+
+export const PlanIdParams = z.object({
+  planId: z.string().uuid(),
+}).strict();
+
+export const PlanSlotParams = PlanIdParams.extend({
+  slotId: z.string().min(1),
+}).strict();
+
+export const PlanRecentActionQuery = z.object({
+  day_index: z.coerce.number().int().min(0).max(13).optional(),
+}).strict();
+
 export const HqStartBody = z.object({
   plan_id: z.string().min(1)
 }).strict();

@@ -20,7 +20,7 @@ Nomad MVP turns travel inspiration into an executable itinerary: collect a singl
 - Work in WSL Ubuntu at `/home/tong123/work/nomad-mvp`; do not use Windows-native Node/pnpm and do not copy from old E-drive migration images.
 - BMAD 6.8 is authoritative through `_bmad/`, `_bmad-output/`, and `.agents/skills/`; old `bmad/`, `.cursor/rules/bmad/`, and `.bmad-core` references are not authoritative.
 - The repo is a pnpm monorepo with a Fastify TypeScript backend, generated OpenAPI types, Prisma schema, promptfoo assets, and docs as planning source.
-- `CURRENT.md` is the single recovery entry. Story 2.0 is done; Story 2.1 is the next story and is ready for development.
+- `CURRENT.md` is the single recovery entry. Story 2.0 and 2.1 are done; Story 2.2 timeline editing, undo, and recent actions is in progress.
 
 ## Implementation Rules for AI Agents
 
@@ -62,3 +62,4 @@ Nomad MVP turns travel inspiration into an executable itinerary: collect a singl
 - Hotels are optional per date, support AMap matching, and may remain blank. Breakfast is hotel child data.
 - Reservations, tickets, and dawn/sunset/night/night-market constraints come from uploaded inspiration evidence and Agent planning, not standalone Confirm controls.
 - User-facing planning language uses “计划” and “开始规划”; “骨架” is an internal implementation term.
+- Story 2.2 MVP exposes an 8-second undo and only the latest effective “最近操作” path. FR43's complete history timeline, hotel-change snapshots, and arbitrary rollback remain Post-MVP.

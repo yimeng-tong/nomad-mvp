@@ -26,6 +26,7 @@ sudo install -d -o root -g nomad -m 0750 "${ENV_DIR}"
 if [[ ! -f "${ENV_FILE}" ]]; then
   db_password="$(openssl rand -hex 24)"
   kms_key="$(openssl rand -base64 32 | tr -d '\n')"
+  planner_undo_secret="$(openssl rand -hex 32)"
 
   if ! sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'nomad_app'" | grep -qx 1; then
     sudo -u postgres psql -v ON_ERROR_STOP=1 \
@@ -47,10 +48,23 @@ if [[ ! -f "${ENV_FILE}" ]]; then
     printf 'AUTH_PRIVACY_URL=/legal/privacy\n'
     printf 'AUTH_USER_AGREEMENT_URL=/legal/terms\n'
     printf 'PLANNER_DEFAULT_TIMEZONE=Asia/Shanghai\n'
+    printf 'PLANNER_UNDO_SECRET=%s\n' "${planner_undo_secret}"
     printf 'LOCAL_KMS_CMK_B64=%s\n' "${kms_key}"
   } > "${env_tmp}"
   sudo install -o root -g nomad -m 0640 "${env_tmp}" "${ENV_FILE}"
   shred -u "${env_tmp}"
+fi
+
+if ! sudo grep -Eq '^PLANNER_UNDO_SECRET=.+$' "${ENV_FILE}"; then
+  planner_undo_secret="$(openssl rand -hex 32)"
+  if sudo grep -q '^PLANNER_UNDO_SECRET=' "${ENV_FILE}"; then
+    sudo sed -i \
+      "s/^PLANNER_UNDO_SECRET=.*/PLANNER_UNDO_SECRET=${planner_undo_secret}/" \
+      "${ENV_FILE}"
+  else
+    printf 'PLANNER_UNDO_SECRET=%s\n' "${planner_undo_secret}" \
+      | sudo tee -a "${ENV_FILE}" >/dev/null
+  fi
 fi
 
 cd "${RELEASE_DIR}"

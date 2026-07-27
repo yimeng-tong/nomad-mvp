@@ -699,12 +699,27 @@ model UnresolvedRequiredItem {
 }
 
 model EditEvent {
-  id        String   @id @default(uuid()) @db.Uuid
-  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
-  planId    String   @db.Uuid
-  kind      String
-  payload   Json     @map("payload_json")
-  createdAt DateTime @default(now()) @map("created_at")
+  id                String   @id @default(uuid()) @db.Uuid
+  plan              Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId            String   @db.Uuid
+  kind              String
+  operationId       String?  @map("operation_id")
+  requestHash       String?  @map("request_hash")
+  apiSlotId         String?  @map("api_slot_id")
+  dayIndex          Int?     @map("day_index")
+  baseVersionId     String?  @map("base_version_id") @db.Uuid
+  resultVersionId   String?  @map("result_version_id") @db.Uuid
+  resultPlanRev     Int?     @map("result_plan_rev")
+  undoTokenHash     String?  @map("undo_token_hash")
+  undoExpiresAt     DateTime? @map("undo_expires_at")
+  targetEventId     String?  @map("target_event_id") @db.Uuid
+  undoneByEventId   String?  @map("undone_by_event_id") @db.Uuid
+  payload           Json     @map("payload_json")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@unique([planId, operationId])
+  @@index([planId, createdAt])
+  @@index([planId, resultPlanRev])
 }
 
 model SlotCandidate {

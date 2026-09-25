@@ -2544,3 +2544,17 @@ Story9.5只关闭自身CODE-QUALITY-01/UI-BROWSER-01。WebKit26.6不是Safari16.
 审阅修补还强制B先认证后才释放旧A的/me响应；OTP替身绑定成功start的手机号；法律新窗口尝试后保留48px当前页回退链接，避免noopener成功误报，也不让弹窗被阻止时失去入口。下载旧报告的显式SHA审计按该提交当时合同验证，并标明contractVersion/compiledProductVerified；不能用v1历史证明替代当前v2验收。
 
 最终交付：9.5源码85eedb6完整CI36157432347通过；93项v2、777下载文件与12trace已核验，具体数字、源/资源摘要及边界见story-9-5-acceptance-2026-09-26.md和evidence/story-9-5-browser-2026-09-25/ui-delivery.yaml。
+
+## Story9.3共享UI增量（当前实现；最终CI尚在收口）
+
+前面的9.4/9.5段落保留各自交付时的事实。当前9.3已在src/ui建立Nomad共享层，使用精确Base UI1.8.0、Tailwind/Vite插件4.3.3及受控shadcn4.21.0来源。现有Login字段/按钮、HomeSheet三入口、Home计划/灵感Tabs及Settings退出确认实际消费；来源/人工调整/兼容清单见docs/ui/shared-components.md和其upstream记录。没有新全局Preflight或第二模态/Toast框架。
+
+工作台当前31个场景保留原18项，增加基础字段/按钮/状态/Tabs、受控模态拒绝/异步/嵌套、私有容器与非关键通知、隐式触发器身份恢复。模态在同身份的DOM私有边界内；页面兄弟节点按真实present层计数inert/aria-hidden，覆盖Base UI默认保留的背景aria-live节点。正常关闭播放260ms并保持原Base UI锁，动画实际结束后才释放Dock；checking/unavailable立即卸载。已经接受的关闭在同身份重新验证后收尾，取消决定不会占据旧pending。原控制器/journal/cursor/幂等规则保持。
+
+当前产品矩阵为B00–B31与V01–V11，共129个三引擎实例；候选只执行33视觉实例。320×740和1280×900场景在policy/run-contract双登记，capture同时检查project默认值、实际page/window viewport与DPR。B05检查实际合成focus颜色对比≥3，B20覆盖新标题的200%字号与关闭字形边界，B26以模拟composition状态中的真实键盘Enter验证默认提交抑制，229事件单独验证preventDefault；它不是OS输入法实证。B29覆盖关闭动画被身份核验打断，B31验证真正背景位置点击只关闭当前模态。
+
+受控候选分支支持codex/story-9-3-visual-candidate-*及保留的9.5入口；普通CI覆盖9.3开发分支和到实际父分支9.5的PR。候选保持unapproved，必须先下载校验源码/构建/环境/实际PNG，逐图审阅并记录决策，再提交基线并重跑当前完整CI。当前9.3前两轮分别因320px按钮边界和逐图发现的弱焦点环被拒；没有自动更新基线或降低像素/ratio/对比门槛。
+
+本次定向原职责回归：6e0b973上的auth-browser-probe6项与PG-backed durable browser6项通过，含真实PG18.6、SSE、IDB、3进程和1次SIGKILL；新隔离DB和输出目录，原28证据文件hash不变。其他存储/压力/遥测/生产PITR职责仍保留，未重跑不计通过。原生配置/assets和真实设备分别记录，当前T9/APP-HOST-01及整张Story仍未关闭。当前进度与最终证据入口为story-9-3-dev-progress-2026-09-26.md及evidence/story-9-3-ui-2026-09-26/，四项UI条件只在最终实际CI和下载实证后按本Story范围更新。
+
+---

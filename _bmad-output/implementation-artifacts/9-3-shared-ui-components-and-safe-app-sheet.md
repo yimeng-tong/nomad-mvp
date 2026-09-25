@@ -248,6 +248,7 @@ Codex当前任务，两个独立只读研究者和两个fresh-context VS；合�
 CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。准备时状态ready-for-dev；当前已in-progress，五条件进行中，本地与真实设备验收分别执行。
 
 ### File List
+- `_bmad-output/planning-artifacts/architecture.md`
 - `.github/workflows/browser-visual-candidate.yml`
 - `.github/workflows/ci.yml`
 - `CURRENT.md`

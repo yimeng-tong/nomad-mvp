@@ -53,3 +53,5 @@ CI36176188637（6e0b973）33/33候选及显式下载来源/图谱/viewport检查
 第三候选0061cf9/run36178891862的33图/源/构建/环境/实际viewport校验通过。29张与已经逐图原尺寸看过的C2完全字节相同；4张变化再次原尺寸查看（3个V06焦点修补、ChromiumV09边缘25个RGB像素差异），记录理由与hash后接纳33张9.3基线。截图threshold0/maxDiffPixels0/masks空/普通CI禁止更新均保持。前24张9.5基线的原提交与approval留存，C1/C2失败和拒绝原因不删除。
 
 接纳只是视觉候选审阅，不代表完整CI或T9通过；下一在提交这些PNG/approval后的当前源码跑129项、全部counterexamples、原PG/工作台/类型/native资源链。细节baseline-review.json。
+
+基线提交734efb7时交接检查发现docs/ops/ui-validation.md增量尚未同步architecture source packet；已按原marker同步对应段落，保留源/规划镜像一致性，不修改checker或源Story指纹。该首次完整CI提交不能作为全绿验收，后继提交重新执行。

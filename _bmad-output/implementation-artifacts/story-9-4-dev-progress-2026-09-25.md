@@ -15,3 +15,5 @@
 三层审阅13项已修复复核，实际计数更新为18场景、网络9、16故障＋2控制、lint6组和资源5组。cleanup Promise/workerEpoch、scope绑定与fetch静态旁路/Accept保护、普通Node负例、输出bytes与native产物、移动宽度及JSX/Node globals均补齐。Storybook addon会覆盖默认cacheDir，增加post config hook保证实际使用独立cache；对应受控静态目录明确列入白名单，任意programmatic fetch仍不能绕过。
 
 1dee5bd的干净clone冻结安装/全build/工作台17全部通过；最初Prisma只读cache utime失败以同版本已存在引擎路径显式引用解决，未改系统cache。首轮远端CI36115340403在反例输出ANSI计数报错，真实所选组件通过；已修复并用CI=true/FORCE_COLOR=1复验。下一收取修补commit全CI与最终证据。
+
+第二轮CI36118754564在专用tsc处报告scene可能undefined；旧本地分项命令曾继续运行后续lint而隐藏该退出码。已改为先捕获scene并显式return失败，使用实际ci:workbench串联入口完整通过（9 Node＋18 Chromium），不再把后续成功覆盖编译失败。此前两轮CI原结论均保留，第三提交等待远端全量链。

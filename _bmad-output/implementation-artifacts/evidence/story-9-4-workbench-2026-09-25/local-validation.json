@@ -2,7 +2,7 @@
   "kind": "local-story-verification",
   "story_id": "9.4",
   "recorded_at": "2026-09-25T09:29:01.406581+00:00",
-  "source_revision": "1dee5bd+review-fixes",
+  "source_revision": "3812c96+explicit-type-guard",
   "checks": {
     "workbench_typecheck": {
       "exit_code": 0
@@ -73,14 +73,12 @@
     "handoff_regression": {
       "exit_code": 0,
       "passed": 82
+    },
+    "ci_workbench_chain": {
+      "exit_code": 0,
+      "commands": "typecheck + shared Node handlers (9) + static Storybook + Chromium interaction/a11y (18)",
+      "log": "local /tmp/nomad-story-9-4-workbench-final.log"
     }
-  },
-  "remote_ci": {
-    "initialRun": 36115340403,
-    "commit": "1dee5bdc0ceafa63e15d7d0076fb4a124560abbd",
-    "conclusion": "failure",
-    "failure": "ANSI escape sequences broke positive-test-count text matching; actual selected component tests passed. Fixed with node:util stripVTControlCharacters. Rerun pending.",
-    "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36115340403"
   },
   "independent_review": {
     "layers": 3,
@@ -100,5 +98,22 @@
     "workbenchExitCode": 0,
     "workbenchTests": 17,
     "engineSource": "Existing verified Prisma 5.22 engine paths passed explicitly; no DB connection"
-  }
+  },
+  "remote_ci_history": [
+    {
+      "initialRun": 36115340403,
+      "commit": "1dee5bdc0ceafa63e15d7d0076fb4a124560abbd",
+      "conclusion": "failure",
+      "failure": "ANSI escape sequences broke positive-test-count text matching; actual selected component tests passed. Fixed with node:util stripVTControlCharacters. Rerun pending.",
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36115340403"
+    },
+    {
+      "run": 36118754564,
+      "commit": "3812c9609bc5c9cceb98902932b24941bf99b86f",
+      "conclusion": "failure",
+      "failure": "Workbench typecheck rejected possibly undefined scene after an inferred never-returning method. Fixed by capturing scene then explicit return.",
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36118754564"
+    }
+  ],
+  "remote_ci": "next-commit-run-pending"
 }

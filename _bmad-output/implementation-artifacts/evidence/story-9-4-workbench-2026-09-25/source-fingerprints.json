@@ -1,6 +1,6 @@
 {
   "kind": "scoped-source-fingerprints",
-  "recorded_at": "2026-09-25T09:29:01.432648+00:00",
+  "recorded_at": "2026-09-25T09:38:11.307110+00:00",
   "files": {
     ".github/workflows/ci.yml": "e9b23cae7b6898a7d3a3652b03f5024440d1d675c8a47c667770cb9d70b3ccf1",
     "apps/mobile/.storybook/main.ts": "724628dc6553a05cd41406b9f413bdf63a0503624066e5d8ef3993687d4e1929",
@@ -31,7 +31,7 @@
     "apps/mobile/workbench/network-policy.test.ts": "b3c993fae0f4587407a49174e65e356945624dd54610041f3472b02263a45060",
     "apps/mobile/workbench/network-policy.ts": "f043544a674ec9756f0f4c4f7637ed8b7d50b7b15e0c70a10d988b43959805ab",
     "apps/mobile/workbench/node-scenario.ts": "5e6cbfe26a949be569cc16372aae07486d04bdb07aa19320b3ce70f8db7a4286",
-    "apps/mobile/workbench/scenario.ts": "4830f773c40488e5c12832ffc982602636c116424baca3af0d62290cbcbdc7f5",
+    "apps/mobile/workbench/scenario.ts": "9ed4ccce9d7e83bf4bd43f32b8354d8ff92e8152dfafcadf922ea9dc265bcbb9",
     "apps/mobile/workbench/workbench.css": "7918b3d0303262babe8726ab7133ac9f7717a020129c4476b7566370ce1ead2f",
     "eslint.config.mjs": "1c933d1b4f25b126909218bf8fc7f2202fd72768f29963d4f48534594e7bf1ab",
     "package.json": "c75e6908c8c8f989186396ef87b8cbcca7a95be0c2cd1a0ef6c27d8459da6ec8",

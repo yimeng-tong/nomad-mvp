@@ -40,8 +40,8 @@ function installFetchGuard() {
   const fetch = globalThis.fetch.bind(globalThis);
   globalThis.fetch = async (input, init) => {
     const request = new Request(input instanceof Request ? input : new URL(String(input), location.origin), init);
-    if (!current) orphan.reject(request, 'NO_SCENE');
     const scene = current;
+    if (!scene) return orphan.reject(request, 'NO_SCENE');
     if (scene.closed) reject(scene, request, 'LATE_REQUEST');
     if (new URL(request.url).origin !== location.origin) reject(scene, request, 'EXTERNAL_REQUEST');
     // Programmatic fetch never inherits the static-resource bypass. A retained URL binds its scene.

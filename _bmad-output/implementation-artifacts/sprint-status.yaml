@@ -29,7 +29,7 @@ stop_after_story_reason: removed-by-explicit-user-direction-2026-09-25
 epics_source: _bmad-output/planning-artifacts/epics.md
 migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
 migration_report: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.md
-next_story_to_prepare: 9-5-browser-flow-and-visual-regression-gates
+next_story_to_prepare: 9-3-shared-ui-components-and-safe-app-sheet
 development_status:
   epic-1: in-progress
   1-0-production-login-and-multi-device-sessions: in-progress
@@ -112,7 +112,7 @@ development_status:
   9-2-android-apk-and-ios-testflight-delivery: backlog
   9-3-shared-ui-components-and-safe-app-sheet: backlog
   9-4-component-workbench-and-enforced-code-quality: done
-  9-5-browser-flow-and-visual-regression-gates: backlog
+  9-5-browser-flow-and-visual-regression-gates: ready-for-dev
   9-6-identity-scoped-server-read-queries: backlog
   9-7-typed-navigation-and-host-history: backlog
   epic-9-retrospective: optional
@@ -632,25 +632,28 @@ active_workstreams:
     contract: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md
     evidence: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
   near_term_execution:
-    story: 9-4-component-workbench-and-enforced-code-quality
+    story: 9-5-browser-flow-and-visual-regression-gates
     thread_id: 01a0d78a-3692-78b1-aee5-76268a743925
     host_id: local
     environment: current-saved-project
     status: active
-    working_branch: codex/story-9-4-workbench-quality
+    working_branch: codex/story-9-5-browser-gates
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.4开发审阅先行；9.5/9.3临近实施才CS/VS；在制真实门槛和3.1暂停保持
+    scope: 9.4已done；9.5 CS/独立VS已完成，下一DS/CR；9.3临近实施再准备，真实门槛和3.1暂停保持
 previous_preparation:
-  story: 1-6-home-multi-link-import-queue-and-honest-status
-  status: complete
-  evidence: _bmad-output/implementation-artifacts/1-6-home-multi-link-import-queue-and-honest-status-validation.md
-current_preparation:
   story: 9-4-component-workbench-and-enforced-code-quality
   status: complete
   evidence: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
   authorization: _bmad-output/implementation-artifacts/story-9-4-preparation-decisions-2026-09-25.md
   implementation_started: true
+  execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
+current_preparation:
+  story: 9-5-browser-flow-and-visual-regression-gates
+  status: complete
+  evidence: _bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates-validation.md
+  authorization: _bmad-output/implementation-artifacts/story-9-5-preparation-decisions-2026-09-25.md
+  implementation_started: false
   execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_boundary_override: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md

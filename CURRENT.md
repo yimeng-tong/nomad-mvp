@@ -3,14 +3,14 @@ project: nomad-mvp
 updated: '2026-09-25'
 current_epic: 9
 last_completed_story: 9-4-component-workbench-and-enforced-code-quality
-current_story: 9-4-component-workbench-and-enforced-code-quality
-current_story_status: done
-current_story_file: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md
+current_story: 9-5-browser-flow-and-visual-regression-gates
+current_story_status: ready-for-dev
+current_story_file: _bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates.md
 current_story_spec: _bmad-output/planning-artifacts/epics.md
 planning_status: bmad-sprint-planning-complete
 execution_phase: execution
-next_bmad_action: bmad-create-story
-next_bmad_checkpoint: story-9-5-preparation-and-validation
+next_bmad_action: bmad-dev-story
+next_bmad_checkpoint: story-9-5-development-and-review
 readiness_report: _bmad-output/planning-artifacts/implementation-readiness-sp-handoff-2026-09-15.md
 prompt_strength_status: approved-applied-and-revalidated
 prompt_strength_record: _bmad-output/planning-artifacts/prompt-strength-adoption-2026-09-15.md
@@ -18,15 +18,15 @@ sprint_planning_authorized: true
 sprint_planning_completed: true
 create_story_authorized: true
 implementation_authorized: true
-handoff_status: story-9-4-complete-next-9-5
+handoff_status: story-9-5-ready-for-development
 tracking_system: _bmad-output/implementation-artifacts/sprint-status.yaml
 migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
 migration_report: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.md
 delivery_contract: _bmad-output/implementation-artifacts/sprint-delivery-contract-ui-foundation-2026-09-20.yaml
 revalidation_report: _bmad-output/planning-artifacts/implementation-readiness-ui-foundation-2026-09-20.md
 paused_story: 3-1-minute-timeline-editing-and-plan-wide-undo
-working_branch: codex/story-9-4-workbench-quality
-story_preparation_report: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
+working_branch: codex/story-9-5-browser-gates
+story_preparation_report: _bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates-validation.md
 resource_alignment: _bmad-output/implementation-artifacts/research/story-1-0-resource-confirmation-2026-09-19.md
 input_import_progress: _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
 authentication_progress: _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
@@ -38,10 +38,10 @@ stop_after_story: null
 stop_after_story_reason: removed-by-explicit-user-direction-2026-09-25
 ui_scope_progress: _bmad-output/implementation-artifacts/ui-foundation-dev-progress-2026-09-20.md
 ui_scope_handoff: _bmad-output/implementation-artifacts/ui-foundation-handoff-2026-09-20.md
-last_prepared_story: 9-4-component-workbench-and-enforced-code-quality
-ui_prepared_story_status: done
-ui_prepared_story_file: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md
-ui_story_preparation_report: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
+last_prepared_story: 9-5-browser-flow-and-visual-regression-gates
+ui_prepared_story_status: ready-for-dev
+ui_prepared_story_file: _bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates.md
+ui_story_preparation_report: _bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates-validation.md
 execution_boundary_override: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
 recovery_progress: _bmad-output/implementation-artifacts/story-1-7-dev-progress-2026-09-19.md
@@ -57,9 +57,9 @@ development_thread_host: local
 
 用户明确解除原1.7完成后停止边界，改为按近期开发顺序滚动CS/VS，并要求新建任务开发与审阅。授权记录见frontmatter.execution_boundary_override；不再全量准备backlog。
 
-Story9.4已完成实现、独立审阅及完整CI（6344a53，run36129441895），26个实际下载产物已核验，两项自身UI条件verified。当前入口暂保留9.4 done，下一按bmad-create-story仅准备并独立验证9.5；9.3等到临近实施再准备，next_story_to_prepare仍9.5。1.0/1.6/1.7/9.1保留在制和真实资源/关闭门槛，3.1保持paused及上游/迁移审计要求。详细剩余项、启动条件和写入交接见near-term-development-plan-2026-09-25.md。
+Story9.4已完成实现、独立审阅及完整CI（6344a53，run36129441895），26个实际下载产物已核验，两项自身UI条件verified。当前Story9.5 CS与两份独立VS已完成，ready-for-dev，下一DS→实际验证→独立CR；9.3等到临近实施再准备，next_story_to_prepare为9.3。1.0/1.6/1.7/9.1保留在制和真实资源/关闭门槛，3.1保持paused及上游/迁移审计要求。详细剩余项、启动条件和写入交接见near-term-development-plan-2026-09-25.md。
 
-Sprint当前仍67 Story/1089 GWT：8done、5in-progress（含暂停3.1）、0ready、54backlog。17份未验证远期草稿已归档，未推进就绪状态；历史done、源合同与批准快照保持。
+Sprint当前仍67 Story/1089 GWT：8done、5in-progress（含暂停3.1）、1ready（9.5）、53backlog。17份未验证远期草稿已归档，未推进就绪状态；历史done、源合同与批准快照保持。
 
 9.4开始前的代码/锁文件/合同/脱敏证据基线已提交并推送（b8b4455）；WSL与Mac通过Git交接，Mac可承担组件/iOS，不强制切机。同一共享文件使用单一写入者；当前开发任务为Nomad UI基础开发与审阅（01a0d78a-3692-78b1-aee5-76268a743925），接管当前保存项目；原Nomad Sprint Planning已完成最后轮次且资源阻断，不自动重启。原30分钟heartbeat当前配置为PAUSED，不能从旧monitor JSON的ACTIVE推断正在运行。
 

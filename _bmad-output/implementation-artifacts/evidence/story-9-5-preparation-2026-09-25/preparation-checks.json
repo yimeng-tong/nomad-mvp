@@ -1,0 +1,39 @@
+{
+  "kind": "story-preparation-validation",
+  "story_id": "9.5",
+  "recorded_at": "2026-09-25T11:59:47.628290+00:00",
+  "source_contract_sha256": "54dc15b7f578eeb46e8b93566b2fb6a26deffc99aa8a88ed9c8cfd5692f44ad6",
+  "approved_gwt_groups": 6,
+  "preserved_source_lines": 30,
+  "independent_reviews": {
+    "contract": "passed-no-blockers",
+    "implementation_plan": "passed-two-enhancements-applied-and-rechecked"
+  },
+  "handoff_exit_code": 0,
+  "scope_counts": {
+    "stories": 67,
+    "gwt": 1089,
+    "done": 8,
+    "in_progress": 5,
+    "ready": 1,
+    "backlog": 53
+  },
+  "next_preparation": "9-3-shared-ui-components-and-safe-app-sheet",
+  "prerequisite": {
+    "story": "9.4",
+    "status": "done",
+    "code_ci_run": 36129441895,
+    "closure_commit": "a950ea00d8064c86fd26cbf092308291d124d2ce",
+    "closure_ci_run": 36130729652,
+    "closure_ci_conclusion": "success"
+  },
+  "implementation_verified": false,
+  "three_engine_runtime_verified": false,
+  "container_runtime_verified": false,
+  "files": {
+    "_bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates.md": "a0e431ae7c729e504d22b15d9c5cab560140addbfeff3d4b699ba2209aff2a3a",
+    "_bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates-validation.md": "b96b8bb0d11fc50151ed849b6dde2012ee9500c68fbb69ac737079cb90efd497",
+    "_bmad-output/implementation-artifacts/research/story-9-5-contract-review-2026-09-25.md": "b00129566cd8e5bc1779518cbc0d008ed74e49c14095834b782a916513639be9",
+    "_bmad-output/implementation-artifacts/research/story-9-5-plan-review-2026-09-25.md": "385200e517ff7cef033069efb74f00eaf06f1562831fb0ee42c9bed872ec00f5"
+  }
+}

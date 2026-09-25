@@ -74,3 +74,5 @@ CI 清单逐一标注现有认证/ingest probes、home-dock/auth/journal/telemet
 审阅修补：API仅在工作台使用随机场景前缀，原/auth等生成合同路径保留；plain fetch不能借用下一场景，静态资源旁路不适用于programmatic fetch。finish Promise复用、切换串行化；worker.stop与异步lookup用epoch围栏。loading保持等待至取消，timeout通过受控abort模拟并核对取消计数，不宣称产品新增超时策略。Node使用同一finish强制校验ledger，预期违例为普通断言；MSW Accept旁路被记录/清除，Node无静态passthrough。产物绑定writeBundle实际bytes；390px运行与截图探针验证横向溢出和动作可达。
 
 CI的Prisma client生成位于typed lint之前：服务器脚本进入覆盖后不能靠本机旧生成物提供类型。该顺序有干净副本中缺生成物失败、生成后通过的实际反例。它不是数据库迁移；DB迁移与PG探针仍按原独立步骤执行。
+
+旧fixture服务器仅在隔离CI步骤显式开启持久ingest worker（INGEST_WORKER_MODE=enabled、INGEST_RECOVERY_ISOLATED=false）；生产默认关闭不变。synthetic/SSE继续走实际PG，子阶段允许持久快照重复但不允许缺失或错误阶段，scripts/sse-assert.test.mts以实际HTTP/原探针执行正反例。Redis自然退出探针在专用CI实例执行正常/暂停回复验证，禁止指向共享服务。

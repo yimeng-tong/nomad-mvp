@@ -1,4 +1,9 @@
 import EventSource from 'eventsource';
+import type { components } from '../packages/types/src/api-types.js';
+
+type ProbeEvent = { phase?: string; state?: string; sub_stage?: string; error_code?: string };
+type DataEvent = { data: string };
+
 
 const API = process.env.API_BASE || 'http://localhost:3000';
 const traceId = `syn_${Date.now()}`;
@@ -6,7 +11,7 @@ const headers = { 'X-Trace-Id': traceId, 'X-User-Id': '00000000-0000-4000-8000-0
 
 function assertTTFU(url: string, label: string, timeoutMs = 1500) {
   return new Promise<void>((resolve, reject) => {
-    const es = new EventSource(`${API}${url}`, { headers: headers as any });
+    const es = new EventSource(`${API}${url}`, { headers });
     const timer = setTimeout(() => { es.close(); reject(new Error(`${label} TTFU timeout`)); }, timeoutMs);
     const onAny = () => { clearTimeout(timer); es.close(); resolve(); };
     es.addEventListener('ingest', onAny);
@@ -17,7 +22,7 @@ function assertTTFU(url: string, label: string, timeoutMs = 1500) {
 
 function assertKeepAlive(url: string, label: string, maxGapMs = 12000, testDurationMs = 22000) {
   return new Promise<void>((resolve, reject) => {
-    const es = new EventSource(`${API}${url}`, { headers: headers as any });
+    const es = new EventSource(`${API}${url}`, { headers });
     let last = Date.now();
     let settled = false;
     let interval: NodeJS.Timeout | undefined;
@@ -31,11 +36,11 @@ function assertKeepAlive(url: string, label: string, maxGapMs = 12000, testDurat
       if (error) reject(error);
       else resolve();
     };
-    const onAny = (event: any) => {
+    const onAny = (event: DataEvent) => {
       last = Date.now();
       if (!event?.data) return;
       try {
-        const data = JSON.parse(event.data);
+        const data = JSON.parse(event.data) as ProbeEvent;
         if (data.phase === 'failed' || data.state === 'failed') {
           finish(new Error(`${label} failed: ${data.error_code ?? 'unknown'}`));
         } else if (data.phase === 'done' || data.state === 'done') {
@@ -60,15 +65,15 @@ function assertKeepAlive(url: string, label: string, maxGapMs = 12000, testDurat
 
 function assertPlanStages(url: string, timeoutMs = 10_000) {
   return new Promise<void>((resolve, reject) => {
-    const es = new EventSource(`${API}${url}`, { headers: headers as any });
+    const es = new EventSource(`${API}${url}`, { headers });
     const phases: string[] = [];
     const timer = setTimeout(() => {
       es.close();
       reject(new Error(`plan stage timeout: ${phases.join(',')}`));
     }, timeoutMs);
-    es.addEventListener('plan', (event: any) => {
-      const data = JSON.parse(event.data);
-      phases.push(data.phase);
+    es.addEventListener('plan', (event: DataEvent) => {
+      const data = JSON.parse(event.data) as ProbeEvent;
+      if (data.phase) phases.push(data.phase);
       if (data.phase === 'failed') {
         clearTimeout(timer);
         es.close();
@@ -94,16 +99,16 @@ function assertPlanStages(url: string, timeoutMs = 10_000) {
 
 function assertIngestStages(url: string, timeoutMs = 5000) {
   return new Promise<void>((resolve, reject) => {
-    const es = new EventSource(`${API}${url}`, { headers: headers as any });
+    const es = new EventSource(`${API}${url}`, { headers });
     const states: string[] = [];
     const subStages: string[] = [];
     const timer = setTimeout(() => {
       es.close();
       reject(new Error(`ingest stage timeout: ${states.join(',')}`));
     }, timeoutMs);
-    es.addEventListener('ingest', (event: any) => {
-      const data = JSON.parse(event.data);
-      states.push(data.state);
+    es.addEventListener('ingest', (event: DataEvent) => {
+      const data = JSON.parse(event.data) as ProbeEvent;
+      if (data.state) states.push(data.state);
       if (data.sub_stage) subStages.push(data.sub_stage);
       if (data.state === 'failed') {
         clearTimeout(timer);
@@ -117,7 +122,7 @@ function assertIngestStages(url: string, timeoutMs = 5000) {
         const required = ['created', 'fetching', 'parsing', 'geo', 'storing', 'done'];
         const missing = required.filter((state) => !states.includes(state));
         if (missing.length > 0) reject(new Error(`ingest missing stages: ${missing.join(',')}`));
-        else if (subStages.join(',') !== 'multimodal') reject(new Error(`ingest parsing sub-stages mismatch: ${subStages.join(',')}`));
+        else if (subStages.length === 0 || subStages.some((stage) => stage !== 'multimodal')) reject(new Error(`ingest parsing sub-stages mismatch: ${subStages.join(',')}`));
         else resolve();
       }
     });
@@ -131,8 +136,9 @@ function assertIngestStages(url: string, timeoutMs = 5000) {
 
 async function main() {
   // derive URLs by triggering ack first (ingest)
-  const r1 = await fetch(`${API}/ingest/xhs`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ url: `https://www.xiaohongshu.com/explore/${traceId}` }) } as any);
-  const j1 = await r1.json() as any;
+  const r1 = await fetch(`${API}/ingest/xhs`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ url: `https://www.xiaohongshu.com/explore/${traceId}` }) });
+  if (r1.status !== 202) throw new Error(`ingest ack failed: ${r1.status}`);
+  const j1 = await r1.json() as components['schemas']['IngestAcceptedResponse'];
   await assertTTFU(j1.sse_url, 'ingest');
   await assertIngestStages(j1.sse_url);
   await assertKeepAlive(j1.sse_url, 'ingest');
@@ -152,15 +158,17 @@ async function main() {
       morning_start_time: '09:30',
       smart_planning: true,
     }),
-  } as any);
+  });
   if (r2.status !== 202) throw new Error(`plan ack failed: ${r2.status} ${await r2.text()}`);
-  const j2 = await r2.json() as any;
+  const j2 = await r2.json() as components['schemas']['PlanGenerateResponse'];
   await assertTTFU(j2.sse_url, 'plan');
   await assertPlanStages(j2.sse_url);
   await assertKeepAlive(j2.sse_url, 'plan');
 
-  const r3 = await fetch(`${API}/plan/ai-fill`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ plan_id: j2.plan_id }) } as any);
-  const j3 = await r3.json() as any;
+  const r3 = await fetch(`${API}/plan/ai-fill`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ plan_id: j2.plan_id }) });
+  if (r3.status !== 202) throw new Error(`fill ack failed: ${r3.status}`);
+  const j3 = await r3.json() as components['schemas']['AiFillResponse'];
+  if (!j3.sse_url) throw new Error('fill SSE URL missing');
   await assertTTFU(j3.sse_url, 'fill');
   await assertKeepAlive(j3.sse_url, 'fill');
 
@@ -168,5 +176,4 @@ async function main() {
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });
-
 

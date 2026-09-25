@@ -213,9 +213,18 @@
         "@vitest/ui": "4.1.11"
       },
       "installScripts": {}
+    },
+    {
+      "workspace": ".",
+      "name": "@types/eventsource",
+      "declared": "1.1.15",
+      "installed": "1.1.15",
+      "engines": {},
+      "peers": {},
+      "installScripts": {}
     }
   ],
-  "newResolutionCount": 367,
+  "newResolutionCount": 368,
   "newLifecycleScripts": [
     {
       "name": "msw",

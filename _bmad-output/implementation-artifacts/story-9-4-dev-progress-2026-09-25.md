@@ -33,3 +33,5 @@
 第六轮CI36125167023已通过9.4和auth-persistence/auth-http断言，但auth-http成功后Redis连接未随Fastify关闭，进程持续等待；核对完整日志后明确取消，保留原结论。为既有Redis插件增加onClose，仅做关闭连接与类型收紧，不改key/TTL/业务权限。隔离Redis真实进程先复现“成功输出后超时”，修复后自然退出；同隔离PG加Redis的27项HTTP断言也通过且自然退出，typed lint与server build通过。临时实例已停止，数据和原失败日志保留。新增证据isolated-redis-lifecycle.json，CI加入5秒自然退出探针和整个持久认证阶段3分钟上限。
 
 Redis追加边界复核指出QUIT可能等待无响应服务器；最终改为Fastify请求排空后本地disconnect。真实Redis正常与暂停回复10秒两组均在子进程5秒边界内自然退出，代码质量与构建再次通过。
+
+第七轮CI36127674906在工作台、持久认证、mobile和旧Home/Planner/Settings均通过后，synthetic导入因fixture server没有启用新持久worker而503；保护逻辑本身正确。只在显式CI fixture启动步骤设置worker enabled/非恢复隔离；本地实际PG+Redis完整synthetic通过。其后SSE旧探针对合法持久快照重复multimodal误判，改为非空且所有子阶段均为multimodal，全部原必需state仍检查；真实SSE与实际脚本HTTP正反例（重复通过、无/错子阶段、缺geo失败）通过。仅为该脚本补@types/eventsource1.1.15开发声明及原any边界类型，运行时依赖未变化。Edge只读复核[]，失败记录保留于legacy-ci-probes.json。

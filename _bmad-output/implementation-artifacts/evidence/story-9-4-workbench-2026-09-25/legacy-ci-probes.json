@@ -1,0 +1,62 @@
+{
+  "kind": "legacy-ci-probe-verification",
+  "recorded_at": "2026-09-25T11:18:21.241960+00:00",
+  "source_revision": "8ca552c+legacy-worker-and-sse-probe",
+  "environment": {
+    "postgres": "18.6 isolated UTC synthetic DB",
+    "redis": "8.0.5 isolated loopback",
+    "browser": "Playwright Chromium 1243 via existing Puppeteer22 renderer",
+    "auth": "explicit fixture only",
+    "real_provider_calls": 0,
+    "production_data_touched": false,
+    "owned_processes_stopped": true
+  },
+  "before_worker_configuration": {
+    "synthetic_exit_code": 1,
+    "http_status": 503,
+    "code": "INGEST_EXECUTION_UNAVAILABLE"
+  },
+  "after_worker_configuration": {
+    "synthetic_exit_code": 0,
+    "checks": [
+      "canonical-and-legacy-ingest-ack",
+      "multi-link-warning",
+      "persisted-three-day-plan",
+      "persisted-delete-and-undo-readback",
+      "fill-ack",
+      "actual-Chromium-export"
+    ]
+  },
+  "sse_before": {
+    "exit_code": 1,
+    "failure": "ingest parsing sub-stages mismatch: multimodal,multimodal"
+  },
+  "sse_after": {
+    "exit_code": 0,
+    "checks": [
+      "ingest-plan-fill-TTFU",
+      "required-ingest-and-plan-stages",
+      "keepalive-or-terminal-done",
+      "nonempty-multimodal-only-substages"
+    ]
+  },
+  "actual_script_http_controls": {
+    "exit_code": 0,
+    "positive": "repeated durable parsing snapshots",
+    "expected_failures": [
+      "no-substage",
+      "wrong-substage",
+      "missing-geo"
+    ]
+  },
+  "failure_history": [
+    "New root .ts test used top-level await under CommonJS; changed to explicit .mts and reran successfully."
+  ],
+  "log_hashes": {
+    "nomad-story-9-4-legacy-synthetic.log": "15f2d70cd780a0950a1c0e498f296205918f679d73b643c17715b7c19e18cd99",
+    "nomad-story-9-4-legacy-synthetic-worker.log": "2fef2556ebe897c8b4b51da96639cb55c8249b77ddda8e440230e2b3e443357b",
+    "nomad-story-9-4-legacy-sse-worker.log": "427d109159939421e1d33407d41f0e127c5dbdac3f7aff0bfff773375e466d50",
+    "nomad-story-9-4-legacy-sse-fixed.log": "ad7065ee41b4ebb505e02cf2648f50caff8c8cf65a680dfa55a199e63a4adb25",
+    "nomad-story-9-4-legacy-sse-controls.log": "13c9f24cd9a303c6f4d7924b743ca9174bf48cbf633d0fee09650f5dfb747180"
+  }
+}

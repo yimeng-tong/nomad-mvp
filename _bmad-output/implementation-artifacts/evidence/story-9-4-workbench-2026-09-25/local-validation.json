@@ -1,8 +1,8 @@
 {
   "kind": "local-story-verification",
   "story_id": "9.4",
-  "recorded_at": "2026-09-25T11:04:13.670541+00:00",
-  "source_revision": "a630cfc+redis-lifecycle-fix",
+  "recorded_at": "2026-09-25T11:18:21.241960+00:00",
+  "source_revision": "8ca552c+legacy-worker-and-sse-probe",
   "checks": {
     "workbench_typecheck": {
       "exit_code": 0
@@ -106,6 +106,17 @@
     "redis_lifecycle": {
       "exit_code": 0,
       "evidence": "_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/isolated-redis-lifecycle.json"
+    },
+    "legacy_full_synthetic_and_sse": {
+      "exit_code": 0,
+      "evidence": "_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/legacy-ci-probes.json"
+    },
+    "legacy_sse_type_dependencies": {
+      "frozen_install_exit_code": 0,
+      "strict_peers": true,
+      "server_build_exit_code": 0,
+      "lint_exit_code": 0,
+      "runtime_dependency_changes": false
     }
   },
   "independent_review": {
@@ -172,6 +183,15 @@
       "ui_workbench_gates": "all-passed",
       "failure": "Auth HTTP completed all assertions but process retained the existing Redis connection. Cancelled after confirming full logs; added Fastify close hook and actual Redis natural-exit regression.",
       "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36125167023"
+    },
+    {
+      "run": 36127674906,
+      "commit": "8ca552c4735dceeb545244a679b7d782bcc4ee17",
+      "conclusion": "failure",
+      "ui_workbench_gates": "all-passed",
+      "persistent_auth_and_mobile_contracts": "all-passed",
+      "failure": "Legacy fixture server inherited safe default disabled ingest worker; synthetic ACK rejected with 503. Explicit worker enabled only for isolated CI fixture server; actual PG+Redis synthetic and SSE validated locally.",
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36127674906"
     }
   ],
   "remote_ci": "next-commit-run-pending"

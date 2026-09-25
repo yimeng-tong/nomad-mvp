@@ -25,3 +25,7 @@
 ## D6 保留旧CI整链并修复实际阻断
 
 背景：新工作台门禁通过后，旧进程观察、PG合成数据和SSE reader、Prisma生成顺序、Redis生命周期依次暴露真实CI失败。决定：保留每轮失败记录，只修已定位的观察/fixture/构建顺序及Redis关闭连接，不跳过旧责任。Redis修补由5秒子进程自然退出反例及实际PG+Redis HTTP验证，CI原PG15/Redis7服务版本不变，持久认证步骤设3分钟失败上限。后果：新增服务器文件进入相同typed lint，原认证/日志/租约语义及其他Story真机/生产关闭门槛不变；最终完成仍等待整链CI。
+
+## D7 旧fixture服务显式worker与SSE门禁
+
+在隔离CI PG保留持久导入链，显式开启该fixture实例worker；不把数据库清空或退回memory来通过旧探针。子阶段断言允许持久快照合法重复，但仍须非空、仅multimodal、所有原必需状态齐全，实际HTTP正反例证明没有吞掉缺项。新进入typed lint的旧脚本补精确@types/eventsource1.1.15（声明包无runtime依赖/脚本），不升级eventsource2.0.2；除这一声明包无lock依赖漂移。原1.7租约/生产执行默认值不变。

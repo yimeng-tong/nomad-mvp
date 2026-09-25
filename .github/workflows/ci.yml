@@ -117,7 +117,7 @@ jobs:
 
       - name: Recovery reader and backup helper counterexamples
         run: |
-          node --import tsx --test apps/server/scripts/benchmark-stream.test.ts apps/server/scripts/sse-probe-reader.test.ts
+          node --import tsx --test apps/server/scripts/benchmark-stream.test.ts apps/server/scripts/sse-probe-reader.test.ts scripts/sse-assert.test.mts
           python3 -m unittest discover -s ops/postgres -p 'test_*.py'
           python3 ops/pve-staging/test_bounded_process.py
 
@@ -155,6 +155,8 @@ jobs:
           AUTH_PROVIDER: fixture
           AUTH_TEST_ADAPTER_ENABLED: 'true'
           AUTH_PUBLIC_ORIGIN: http://localhost:5173
+          INGEST_WORKER_MODE: enabled
+          INGEST_RECOVERY_ISOLATED: 'false'
         run: |
           pnpm run ci:start-server &
           echo $! > server.pid

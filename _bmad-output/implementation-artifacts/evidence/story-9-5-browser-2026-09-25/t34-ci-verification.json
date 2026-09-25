@@ -1,0 +1,367 @@
+{
+  "kind": "actual-canonical-t3-t4-browser-verification",
+  "sourceRevision": "5fad9d6c27b0952871fda10d39abf2eb7e266c76",
+  "runId": 36149241265,
+  "jobs": [
+    {
+      "conclusion": "success",
+      "id": 108118019718,
+      "name": "Canonical browser environment and product entry",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize containers"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run pnpm/action-setup@v3"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run pnpm install --frozen-lockfile --strict-peer-dependencies"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify actual engine runtimes and fonts"
+        },
+        {
+          "conclusion": "success",
+          "name": "Generate API types and check browser suite types"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build the actual controlled product entry"
+        },
+        {
+          "conclusion": "success",
+          "name": "Current product scenarios in all three engines"
+        },
+        {
+          "conclusion": "success",
+          "name": "Browser network guard counterexamples"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run pnpm/action-setup@v3"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Stop containers"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ]
+    },
+    {
+      "conclusion": "success",
+      "id": 108118019990,
+      "name": "build-and-test",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize containers"
+        },
+        {
+          "conclusion": "success",
+          "name": "Checkout"
+        },
+        {
+          "conclusion": "success",
+          "name": "Setup pnpm"
+        },
+        {
+          "conclusion": "success",
+          "name": "Setup Node"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install deps"
+        },
+        {
+          "conclusion": "success",
+          "name": "Generate OpenAPI types"
+        },
+        {
+          "conclusion": "success",
+          "name": "Generate Prisma client for typed checks"
+        },
+        {
+          "conclusion": "success",
+          "name": "Validate BMAD handoff"
+        },
+        {
+          "conclusion": "success",
+          "name": "Handoff regression"
+        },
+        {
+          "conclusion": "success",
+          "name": "Typed lint with explicit comparison and frozen coverage"
+        },
+        {
+          "conclusion": "success",
+          "name": "Lint gate counterexamples"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build workspace"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install locked component Chromium and Chinese fonts"
+        },
+        {
+          "conclusion": "success",
+          "name": "Workbench types, static build, shared network handlers, interaction and accessibility"
+        },
+        {
+          "conclusion": "success",
+          "name": "Actual component and network counterexamples"
+        },
+        {
+          "conclusion": "success",
+          "name": "Sync controlled native project resources and inspect complete inventories"
+        },
+        {
+          "conclusion": "success",
+          "name": "Preserve component and resource evidence"
+        },
+        {
+          "conclusion": "success",
+          "name": "Apply Prisma migrations to isolated CI database"
+        },
+        {
+          "conclusion": "success",
+          "name": "Authentication unit and API contract tests"
+        },
+        {
+          "conclusion": "success",
+          "name": "Ingest state and command contracts"
+        },
+        {
+          "conclusion": "success",
+          "name": "Recovery reader and backup helper counterexamples"
+        },
+        {
+          "conclusion": "success",
+          "name": "Persistent authentication with explicit provider substitutes"
+        },
+        {
+          "conclusion": "success",
+          "name": "Mobile tests"
+        },
+        {
+          "conclusion": "success",
+          "name": "Home and Library contract probe"
+        },
+        {
+          "conclusion": "success",
+          "name": "Planner contract probe"
+        },
+        {
+          "conclusion": "success",
+          "name": "Settings contract probe"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install Puppeteer Chrome"
+        },
+        {
+          "conclusion": "success",
+          "name": "Start explicit fixture server for legacy contract probes"
+        },
+        {
+          "conclusion": "success",
+          "name": "Health check"
+        },
+        {
+          "conclusion": "success",
+          "name": "Synthetic probe (ACK)"
+        },
+        {
+          "conclusion": "success",
+          "name": "SSE assertions (TTFU/keepalive)"
+        },
+        {
+          "conclusion": "success",
+          "name": "Stop server"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Setup Node"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Setup pnpm"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Checkout"
+        },
+        {
+          "conclusion": "success",
+          "name": "Stop containers"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "startTime": "2026-09-25T14:43:17.850Z",
+    "duration": 109687.125,
+    "expected": 57,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "requiredScenarios": "B00-B18 in Chromium, Firefox and WebKit",
+  "environmentFingerprint": "7a174c57a759784e37a22d2c3cf4943c57b70bb22bcfd938b0ce11d6be8e9c0b",
+  "networkCounterexamples": {
+    "kind": "actual-browser-network-guard-counterexamples",
+    "results": [
+      {
+        "probe": "control",
+        "runId": "network-control-471ec67f-78ad-4426-8347-30b612082c75",
+        "exitCode": 0,
+        "expectedFailure": null
+      },
+      {
+        "probe": "unknown",
+        "runId": "network-unknown-c8332440-f369-43f7-9a40-c64da7c62857",
+        "exitCode": 1,
+        "expectedFailure": "NOMAD_E2E_UNDECLARED_REQUEST"
+      },
+      {
+        "probe": "static",
+        "runId": "network-static-30f96d83-c380-4be0-9ba0-4a3a8541e886",
+        "exitCode": 1,
+        "expectedFailure": "NOMAD_E2E_UNDECLARED_REQUEST"
+      },
+      {
+        "probe": "external",
+        "runId": "network-external-f6e0a460-d537-430e-baf9-ae5540c04af3",
+        "exitCode": 1,
+        "expectedFailure": "NOMAD_E2E_EXTERNAL_REQUEST"
+      },
+      {
+        "probe": "retired",
+        "runId": "network-retired-9a07bc08-289d-4b98-8548-3d89acc6da59",
+        "exitCode": 1,
+        "expectedFailure": "NOMAD_E2E_LATE_REQUEST"
+      },
+      {
+        "probe": "control",
+        "runId": "network-control-72769af6-914d-4395-b8ae-19e7c56cf0b3",
+        "exitCode": 0,
+        "expectedFailure": null
+      }
+    ]
+  },
+  "downloadedArtifacts": {
+    "network-counterexamples.json": {
+      "bytes": 1142,
+      "sha256": "2653a1a071cd0fbb64470e8d8b1f11dfd01e212985da19d5300a890e09f254e0"
+    },
+    "environment.json": {
+      "bytes": 11326,
+      "sha256": "7769942f66d4dc272e1ce4226827aa8517bac6f1d2449acf45c32899c023c4e9"
+    },
+    "runs/network-unknown-c8332440-f369-43f7-9a40-c64da7c62857/report.json": {
+      "bytes": 13671,
+      "sha256": "57bc816a5434c9478eae33385373ba696525de6514dc1e66a4841caaea4899aa"
+    },
+    "runs/network-static-30f96d83-c380-4be0-9ba0-4a3a8541e886/report.json": {
+      "bytes": 13650,
+      "sha256": "aa6bd02f4390b3366a3ec7d5cd67459a9eb8a0a53c864bdd62694e711ab6a4be"
+    },
+    "runs/network-retired-9a07bc08-289d-4b98-8548-3d89acc6da59/report.json": {
+      "bytes": 13653,
+      "sha256": "441dfa1ca1151bb57c47af96b059c1729059ad3ca57a9a3759294d9bf643b302"
+    },
+    "runs/network-external-f6e0a460-d537-430e-baf9-ae5540c04af3/report.json": {
+      "bytes": 13676,
+      "sha256": "bf73ab341ada8a63c327a11e43e25570b5dafa7d829136e245c3d44654deea95"
+    },
+    "runs/network-control-72769af6-914d-4395-b8ae-19e7c56cf0b3/report.json": {
+      "bytes": 9112,
+      "sha256": "49379cba6326896f241cf96f16a582fc20efb971f72ca3a0e46e993d96c8481b"
+    },
+    "runs/network-control-471ec67f-78ad-4426-8347-30b612082c75/report.json": {
+      "bytes": 9112,
+      "sha256": "d16994f5a25594761c169bb05c42e61519186e2824856567aafc4f1a946e70d3"
+    },
+    "runs/5ec55da8-74f3-46b2-8e4d-45a474efe2af/report.json": {
+      "bytes": 70174,
+      "sha256": "d278752ee9809699c05475ac9042f13efccb02bfcac8f3c0a3d0c1642d2c5590"
+    },
+    "runs/network-external-f6e0a460-d537-430e-baf9-ae5540c04af3/html-report/data/33d818965485224f139a8f0cf909c32aa1f0dcd8.zip": {
+      "bytes": 69589,
+      "sha256": "943fafb6e851ef6342c211f638d6b3eb6c610b2001c117020bc6a127c7a55fb9"
+    },
+    "runs/network-external-f6e0a460-d537-430e-baf9-ae5540c04af3/test-results/flows-fixture-guards-B02-d-d8a86--inside-its-active-scenario-chromium/trace.zip": {
+      "bytes": 69589,
+      "sha256": "943fafb6e851ef6342c211f638d6b3eb6c610b2001c117020bc6a127c7a55fb9"
+    },
+    "runs/network-retired-9a07bc08-289d-4b98-8548-3d89acc6da59/html-report/data/35a965b4c826c41c6ed9b9660877a06054adef3d.zip": {
+      "bytes": 69542,
+      "sha256": "2c4e79877cc4c868d8f83030ba888ff82e4b05b5af87a688cce705419c811a30"
+    },
+    "runs/network-retired-9a07bc08-289d-4b98-8548-3d89acc6da59/test-results/flows-fixture-guards-B02-d-d8a86--inside-its-active-scenario-chromium/trace.zip": {
+      "bytes": 69542,
+      "sha256": "2c4e79877cc4c868d8f83030ba888ff82e4b05b5af87a688cce705419c811a30"
+    },
+    "runs/network-static-30f96d83-c380-4be0-9ba0-4a3a8541e886/html-report/data/1590b2f906093567f5d889d12f15565d15fccd82.zip": {
+      "bytes": 69867,
+      "sha256": "300105fa10798032f7c0fc3cb6919c4a1bfdd718a19b366724126d62a6e6d5ff"
+    },
+    "runs/network-static-30f96d83-c380-4be0-9ba0-4a3a8541e886/test-results/flows-fixture-guards-B02-d-d8a86--inside-its-active-scenario-chromium/trace.zip": {
+      "bytes": 69867,
+      "sha256": "300105fa10798032f7c0fc3cb6919c4a1bfdd718a19b366724126d62a6e6d5ff"
+    },
+    "runs/network-unknown-c8332440-f369-43f7-9a40-c64da7c62857/html-report/data/0e888b2167cce7a012e5200102f68f660240b5a7.zip": {
+      "bytes": 69559,
+      "sha256": "63dd1c27f1b55e9cba5372ca5fca5bc465e380f57e52658d102d56d9e4b2d7ff"
+    },
+    "runs/network-unknown-c8332440-f369-43f7-9a40-c64da7c62857/test-results/flows-fixture-guards-B02-d-d8a86--inside-its-active-scenario-chromium/trace.zip": {
+      "bytes": 69559,
+      "sha256": "63dd1c27f1b55e9cba5372ca5fca5bc465e380f57e52658d102d56d9e4b2d7ff"
+    }
+  },
+  "boundaries": [
+    "synthetic HTTP, real browser/IDB/WebCrypto; reload not SIGKILL",
+    "No real provider/native/production recovery approval",
+    "Escaped-portal fault and visual baseline remain T5/T6 work"
+  ]
+}

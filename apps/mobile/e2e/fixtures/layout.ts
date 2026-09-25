@@ -29,3 +29,14 @@ export async function expectLayout(page: Page, action: Locator) {
   expect(box!.width).toBeGreaterThanOrEqual(44);
   expect(box!.height).toBeGreaterThanOrEqual(44);
 }
+
+export async function expectHomeCardText(page: Page) {
+  for (const card of await page.locator('.destination-card').all()) {
+    const bounds = await card.evaluate((node) => {
+      const box = node.getBoundingClientRect(), text = node.querySelector('strong')!.getBoundingClientRect();
+      return { top: box.top, bottom: box.bottom, textTop: text.top, textBottom: text.bottom };
+    });
+    expect(bounds.textTop, 'NOMAD_E2E_CARD_TEXT_OVERFLOW').toBeGreaterThanOrEqual(bounds.top);
+    expect(bounds.textBottom, 'NOMAD_E2E_CARD_TEXT_OVERFLOW').toBeLessThanOrEqual(bounds.bottom);
+  }
+}

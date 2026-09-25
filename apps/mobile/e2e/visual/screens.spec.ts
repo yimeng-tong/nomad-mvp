@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures/browser-test';
-import { doubleText, expectLayout } from '../fixtures/layout';
+import { doubleText, expectLayout, expectHomeCardText } from '../fixtures/layout';
 import { capture } from './capture';
 import policy from './policy.json' with { type: 'json' };
 
@@ -23,6 +23,7 @@ test('V03 Home long Chinese', async ({ page, api }, info) => {
   api.identity = 'A'; api.library = 'long'; await page.goto('/');
   await expect(page.locator('.destination-card')).toHaveCount(1);
   await expectLayout(page, page.getByRole('button', { name: '添加', exact: true }));
+  await expectHomeCardText(page);
   await capture(page, info, 'V03-long-home');
 });
 test('V04 login actual 200 percent text', async ({ page }, info) => {

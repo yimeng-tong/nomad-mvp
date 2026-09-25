@@ -5,6 +5,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { FullConfig } from 'playwright/test';
+import contract from './run-contract.json' with { type: 'json' };
 
 export default function setup(config: FullConfig) {
   assert.equal(config.updateSnapshots, 'none', 'NOMAD_E2E_AUTO_UPDATE_FORBIDDEN');
@@ -12,10 +13,7 @@ export default function setup(config: FullConfig) {
   const root = resolve(mobile, '../..');
   const runId = process.env.NOMAD_BROWSER_RUN_ID!;
   const git = (args: string[]) => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
-  const inputs = ['apps/mobile/src', 'apps/mobile/e2e', 'apps/mobile/scripts', 'apps/mobile/playwright.config.ts',
-    'apps/mobile/tsconfig.e2e.json', 'apps/mobile/vite.config.ts', 'apps/mobile/package.json', 'apps/mobile/workbench/fixtures.ts',
-    'packages/types', 'pnpm-lock.yaml', 'package.json', 'eslint.config.mjs', '.github/workflows/ci.yml', '.github/workflows/browser-visual-candidate.yml'];
-  const files = git(['ls-files', '--cached', '--others', '--exclude-standard', '--', ...inputs]).split('\n').filter(Boolean).sort();
+  const files = git(['ls-files', '--cached', '--others', '--exclude-standard', '--', ...contract.sourceInputs]).split('\n').filter(Boolean).sort();
   const hashes = Object.fromEntries(files.map((file) => [file, createHash('sha256').update(readFileSync(resolve(root, file))).digest('hex')]));
   const graph = readFileSync(resolve(mobile, '.workbench-results/product-graph.json'));
   const directory = resolve(mobile, '.browser-results/runs', runId);

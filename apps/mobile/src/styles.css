@@ -285,8 +285,8 @@ button:focus-visible {
 .dock-completion > span:nth-child(2) { font-size: 13px; }
 .dock-composer { display: flex; align-items: flex-end; gap: 10px; margin-top: 8px; }
 .dock-composer textarea { width: 100%; min-width: 0; resize: vertical; max-height: 22dvh; border: 1px solid #c8d2cc; border-radius: 14px; padding: 12px; background: white; font: inherit; }
-.dock-send { flex-shrink: 0; width: 48px; height: 48px; color: white; background: #247e6f; }
-.dock-send-glyph { display: inline-grid; place-items: center; width: 26px; height: 26px; font-size: 26px; transform: rotate(0); transition: transform 150ms ease; }
+.home-import-dock .dock-send { flex-shrink: 0; width: 3em; height: 3em; padding: 0; display: grid; place-items: center; color: white; background: #247e6f; }
+.dock-send-glyph { display: inline-grid; place-items: center; width: 1em; height: 1em; font-size: 26px; line-height: 1; transform: rotate(0); transition: transform 150ms ease; }
 .dock-send-glyph.has-input { transform: rotate(-12deg); }
 .home-recognized { padding: 12px; background: #e2eee7; border-radius: 12px; }
 .home-sheet-backdrop { position: fixed; inset: 0; z-index: 5; background: #17211b33; }

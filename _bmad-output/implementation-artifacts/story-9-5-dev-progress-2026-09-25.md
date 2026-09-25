@@ -31,3 +31,5 @@ T3/T4 canonical首轮run36148595131为56/57、0skip，只有WebKit公开协议�
 
 
 T5新增8个固定环境视觉场景及B19/B20真实200%文字/长中文几何检查；后两项本机Chromium通过。24个三引擎候选用例已实际发现（仅list，不算执行）；候选使用明确codex/story-9-5-visual-candidate-*分支push，输出unapproved图片/源/环境摘要，不能覆盖正常基线。normal保持updateSnapshots:none、零像素/零threshold，并验证审批hash；当前没有已批准基线。新增setup绑定当前源码/lock/config/产品图谱，拒绝自动更新。下一推送明确候选ref，下载/逐张审阅实际图片后再接受。
+
+5fad9d6完整CI36149241265通过，57/57、0skip与4网络故障/2控制证据已下载核验；T3勾选，T4的专用漏显反例仍待T6。首批24张canonical视觉候选241d1d3/run36149480697全部执行且hash/矩阵通过，但逐张审阅拒绝200%加号裁切，未接受任何基线。B21实际Range边界红灯（glyph bottom750 > button730）保留，CSS只让Send/Add按字号增长并居中，待新候选复核；长中文卡片新增文字边界断言。

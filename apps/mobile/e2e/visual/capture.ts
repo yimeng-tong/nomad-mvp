@@ -30,9 +30,14 @@ export async function capture(page: Page, info: TestInfo, scene: string, surface
     const path = resolve(mobile, '.browser-results/visual-candidate', file);
     mkdirSync(dirname(path), { recursive: true });
     const bytes = await surface.screenshot({ path, animations: 'disabled', caret: 'hide', scale: 'css' });
+    const geometry = await page.evaluate(() => Object.fromEntries(['.home-header', '.brand-kicker', '.home-content', '.destination-strip', '.destination-card', '.destination-card strong', '.dock-send', '.dock-send-glyph'].map((selector) => {
+      const node = document.querySelector(selector); if (!node) return [selector, null];
+      const rect = node.getBoundingClientRect();
+      return [selector, { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right, fontSize: getComputedStyle(node).fontSize, scrollY }];
+    })));
     writeFileSync(path + '.json', JSON.stringify({ kind: 'unapproved-visual-candidate', scene, engine: info.project.name, file,
       sha256: hash(bytes), sourceRevision: source(), environmentFingerprint: environment.fingerprint, policyHash: hash(JSON.stringify(policy)),
-      testTitle: info.title, githubRun: process.env.GITHUB_RUN_ID, ref: process.env.GITHUB_REF }, null, 2) + '\n');
+      testTitle: info.title, geometry, githubRun: process.env.GITHUB_RUN_ID, ref: process.env.GITHUB_REF }, null, 2) + '\n');
     await info.attach('unapproved-candidate', { path, contentType: 'image/png' });
     return;
   }
@@ -43,4 +48,5 @@ export async function capture(page: Page, info: TestInfo, scene: string, surface
   assert.equal(approval.policyHash, hash(JSON.stringify(policy)), 'NOMAD_E2E_BASELINE_POLICY');
   assert.equal(hash(readFileSync(resolve(mobile, 'e2e/visual/baselines', file))), approval.files[file], 'NOMAD_E2E_UNREVIEWED_BASELINE');
   await expect(surface).toHaveScreenshot(`${scene}.png`, { animations: 'disabled', caret: 'hide', scale: 'css', threshold: 0, maxDiffPixels: 0 });
+  await info.attach('visual-actual', { body: await surface.screenshot({ animations: 'disabled', caret: 'hide', scale: 'css' }), contentType: 'image/png' });
 }

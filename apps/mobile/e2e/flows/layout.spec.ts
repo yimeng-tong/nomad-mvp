@@ -33,3 +33,21 @@ test('B20 long Chinese Home and Sheet at 200 percent retain input and usable clo
   await expect(input).toHaveValue(text);
   expect(api.count('POST', '/api/ingest/xhs')).toBe(0);
 });
+
+test('B21 200 percent Add glyph stays inside its actual action button', async ({ page, api }) => {
+  api.identity = 'A'; await page.goto('/');
+  const add = page.getByRole('button', { name: '添加', exact: true });
+  await expect(add).toBeVisible(); await doubleText(page);
+  const bounds = await add.evaluate((node) => {
+    const button = node.getBoundingClientRect(), range = document.createRange();
+    range.selectNodeContents(node.querySelector('.dock-send-glyph')!);
+    const glyph = range.getBoundingClientRect();
+    return { button: { top: button.top, bottom: button.bottom, left: button.left, right: button.right },
+      glyph: { top: glyph.top, bottom: glyph.bottom, left: glyph.left, right: glyph.right } };
+  });
+  expect(bounds.glyph.top, 'NOMAD_E2E_GLYPH_CLIPPED').toBeGreaterThanOrEqual(bounds.button.top);
+  expect(bounds.glyph.bottom, 'NOMAD_E2E_GLYPH_CLIPPED').toBeLessThanOrEqual(bounds.button.bottom);
+  expect(bounds.glyph.left, 'NOMAD_E2E_GLYPH_CLIPPED').toBeGreaterThanOrEqual(bounds.button.left);
+  expect(bounds.glyph.right, 'NOMAD_E2E_GLYPH_CLIPPED').toBeLessThanOrEqual(bounds.button.right);
+  await expectLayout(page, add);
+});

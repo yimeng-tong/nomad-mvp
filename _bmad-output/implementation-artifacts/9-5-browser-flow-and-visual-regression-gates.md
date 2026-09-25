@@ -123,10 +123,10 @@ So that 组件迁移前后可以核对实际行为并防止未经审阅的变化
   - [x] 记录有限请求/operation/owner与受控迟到响应，未声明、外网、被业务catch或场景结束后到达的请求使用例失败；日志只留合成数据/脱敏字段。场景cleanup必须等待取消并检查账本，不向后续场景借身份或handler。
   - [x] 需要“断线/超时/未知回执”时真正切断/延迟相应HTTP/SSE边界并记录已受理与未知状态；不以返回empty/成功替代。替身不替代PG、lease、原生bridge或真实PNVS。
 
-- [ ] T3 在三个引擎保护既有入口与Sheet（AC1/2/5；FR1、FR18、FR52；UI-BROWSER-01）
-  - [ ] 实际执行匿名登录→Home→Settings→返回，验证当前可见surface和导航事实；现有App使用view state，不能要求尚未交付Router的pathname/history合同。确认同身份Dock草稿保留，导航不新建写入。
-  - [ ] 操作实际Home输入类型/候选/已保存结果中的代表性Sheet：首焦点、Tab/Shift+Tab、Escape/关闭、同身份有效触发器、原滚动位置/输入和调用层inert、Sheet期间Dock可见窗口暂停。Settings当前内联退出确认另测，不能伪称其已具有AppDialog trap。
-  - [ ] 区分正常动效与reduced-motion；busy/未提交规则按当前领域合同处理，不在工具Story发明新关闭规则。软键盘/宿主返回若用替身必须标注，真实App仍由9.1/9.3/业务Story验收。
+- [x] T3 在三个引擎保护既有入口与Sheet（AC1/2/5；FR1、FR18、FR52；UI-BROWSER-01）
+  - [x] 实际执行匿名登录→Home→Settings→返回，验证当前可见surface和导航事实；现有App使用view state，不能要求尚未交付Router的pathname/history合同。确认同身份Dock草稿保留，导航不新建写入。
+  - [x] 操作实际Home输入类型/候选/已保存结果中的代表性Sheet：首焦点、Tab/Shift+Tab、Escape/关闭、同身份有效触发器、原滚动位置/输入和调用层inert、Sheet期间Dock可见窗口暂停。Settings当前内联退出确认另测，不能伪称其已具有AppDialog trap。
+  - [x] 区分正常动效与reduced-motion；busy/未提交规则按当前领域合同处理，不在工具Story发明新关闭规则。软键盘/宿主返回若用替身必须标注，真实App仍由9.1/9.3/业务Story验收。
 
 - [ ] T4 在三个引擎验证错误、恢复与身份边界（AC2/5/6；NFR3、NFR8；UI-BROWSER-01）
   - [ ] login字段错误保留输入；Home loading/empty/partial/error/reconnect各自有实际场景。已知部分保存仍可读取，未知写入先查原operation回执，明确恢复沿同一operation，不新增自动POST。

@@ -41,6 +41,8 @@ jobs:
         run: pnpm -F nomad-mobile run build
       - name: Generate candidates in all three engines without accepting baselines
         run: pnpm -F nomad-mobile run test:browser --grep 'V[0-9][0-9] '
+      - name: Verify all unapproved candidate images and current source bindings
+        run: node apps/mobile/scripts/check-browser-results.mjs --candidate
       - uses: actions/upload-artifact@v4
         if: always()
         with:

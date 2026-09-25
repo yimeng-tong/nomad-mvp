@@ -7,5 +7,16 @@
   "handoff_exit_code": 0,
   "canonical_container_run": "pending",
   "product_flows_tested": false,
-  "native_devices_tested": false
+  "native_devices_tested": false,
+  "ci_attempts": [
+    {
+      "run": 36133102037,
+      "source_revision": "16bdc08500e7c22c30fe0af9bda832f11150646f",
+      "environment_job": "failure",
+      "reason": "Direct resolve of transitive playwright-core is invalid in clean pnpm layout. Resolve from playwright package context.",
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36133102037"
+    }
+  ],
+  "local_firefox": "downloaded; launch failed: profile folder unavailable",
+  "local_webkit": "downloaded; host libraries missing"
 }

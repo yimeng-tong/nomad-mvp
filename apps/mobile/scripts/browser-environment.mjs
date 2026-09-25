@@ -26,7 +26,8 @@ assert.equal(process.env.NOMAD_BROWSER_IMAGE, image, 'Explicit pinned CI image i
 
 const pw = JSON.parse(read(require.resolve('playwright/package.json')));
 assert.equal(pw.version, '1.63.0');
-const metadata = JSON.parse(read(join(dirname(require.resolve('playwright-core/package.json')), 'browsers.json')));
+const playwrightRequire = createRequire(require.resolve('playwright/package.json'));
+const metadata = JSON.parse(read(join(dirname(playwrightRequire.resolve('playwright-core/package.json')), 'browsers.json')));
 const fontPaths = [...new Set(output('fc-list', ['-f', '%{file}\n']).split('\n').filter(Boolean))].sort();
 assert.ok(fontPaths.length > 0, 'No real fonts found');
 const fonts = Object.fromEntries(fontPaths.map((path) => [path, hash(readFileSync(path))]));

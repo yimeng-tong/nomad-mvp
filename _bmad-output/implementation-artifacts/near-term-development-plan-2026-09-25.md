@@ -8,7 +8,7 @@ preparation_policy: just-in-time
 first_story: 9-4-component-workbench-and-enforced-code-quality
 next_story_to_prepare: 9-5-browser-flow-and-visual-regression-gates
 single_writer: true
-new_task_id: pending
+new_task_id: 01a0d78a-3692-78b1-aee5-76268a743925
 git_checkpoint_before_story_9_4: true
 development_hosts: [wsl, macos]
 backend_environment: homelab-vm104
@@ -77,3 +77,7 @@ Query9.6与Router9.7分别开发/验收：依赖9.4/9.5和9.3的shared-ui-local-
 ## Git与后端交接结果
 
 2026-09-25基线b8b445567f60fcafd0ff2d8dcd75498659b8728d已推送origin/codex/story-1-0-production-auth，9.4尚未实施。独立VM104开发API和环境集中已实际验证，原staging保留；原生HTTPS/frp配置位置仍待确认。后端连接、Mac/WSL步骤和实证边界见docs/ops/cross-device-development.md。新任务应从此后已推送的当前交接提交继续，先处理9.4，后续遵循上表九步，不重新批量准备。
+
+## 新任务接手
+
+Nomad UI基础开发与审阅（01a0d78a-3692-78b1-aee5-76268a743925，local）为唯一开发写入者。已从当前保存项目建立，先只读核对，协调任务完成本记录提交后发开始DS/CR消息。早先独立worktree创建请求 client-new-thread:b906b399-5272-4660-906c-8e140f99fc76 仍没有正式任务ID；生成的5cba工作树保留，该请求只安排只读核对且已由当前可用任务接替，不得自行启动第二个开发写入者。

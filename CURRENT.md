@@ -18,7 +18,7 @@ sprint_planning_authorized: true
 sprint_planning_completed: true
 create_story_authorized: true
 implementation_authorized: true
-handoff_status: git-synchronized-ready-for-story-9-4-task
+handoff_status: new-task-registered-ready-for-story-9-4
 tracking_system: _bmad-output/implementation-artifacts/sprint-status.yaml
 migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
 migration_report: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.md
@@ -47,6 +47,8 @@ execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan
 recovery_progress: _bmad-output/implementation-artifacts/story-1-7-dev-progress-2026-09-19.md
 git_checkpoint_commit: b8b445567f60fcafd0ff2d8dcd75498659b8728d
 cross_device_setup: docs/ops/cross-device-development.md
+development_thread_id: 01a0d78a-3692-78b1-aee5-76268a743925
+development_thread_host: local
 ---
 
 # Nomad Current Handoff
@@ -59,7 +61,7 @@ cross_device_setup: docs/ops/cross-device-development.md
 
 Sprint当前仍67 Story/1089 GWT：7done、5in-progress（含暂停3.1）、1ready（9.4）、54backlog。17份未验证远期草稿已归档，未推进就绪状态；历史done、源合同与批准快照保持。
 
-9.4开始前的代码/锁文件/合同/脱敏证据基线已提交并推送（b8b4455）；WSL与Mac通过Git交接，Mac可承担组件/iOS，不强制切机。同一共享文件使用单一写入者；原Nomad Sprint Planning已完成最后轮次且资源阻断，不自动重启。原30分钟heartbeat当前配置为PAUSED，不能从旧monitor JSON的ACTIVE推断正在运行。
+9.4开始前的代码/锁文件/合同/脱敏证据基线已提交并推送（b8b4455）；WSL与Mac通过Git交接，Mac可承担组件/iOS，不强制切机。同一共享文件使用单一写入者；当前开发任务为Nomad UI基础开发与审阅（01a0d78a-3692-78b1-aee5-76268a743925），接管当前保存项目；原Nomad Sprint Planning已完成最后轮次且资源阻断，不自动重启。原30分钟heartbeat当前配置为PAUSED，不能从旧monitor JSON的ACTIVE推断正在运行。
 
 开发测试配置集中VM104，跨设备连接与秘密边界见docs/ops/cross-device-development.md。新开发服务使用独立数据库与SSH回环入口；原生HTTPS/frp仍须实际核验，不能以私网配置替代。
 

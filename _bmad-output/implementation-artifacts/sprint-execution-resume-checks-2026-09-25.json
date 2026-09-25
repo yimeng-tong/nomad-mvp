@@ -77,7 +77,12 @@
     "files_changed": 1006
   },
   "new_development_task": {
-    "status": "not-dispatched-before-git-checkpoint"
+    "status": "created-readonly-handoff-before-start",
+    "thread_id": "01a0d78a-3692-78b1-aee5-76268a743925",
+    "host_id": "local",
+    "title": "Nomad UI基础开发与审阅",
+    "environment": "current-saved-project",
+    "prior_readonly_creation_pending": "client-new-thread:b906b399-5272-4660-906c-8e140f99fc76"
   },
   "implementation_story_9_4_started": false,
   "git_export_handoff": {
@@ -98,5 +103,9 @@
       "apps/mobile/public/vendor/pnvs/ct4.js"
     ],
     "reason": "Preserve approved/historical artifacts, generated Gradle wrapper and pinned vendor bytes; no whole-repo whitespace rewrite."
+  },
+  "github_actions": {
+    "started_for_checkpoint_branch": false,
+    "reason": "Existing workflow runs on main push or PR to main; no PR was created by this checkpoint."
   }
 }

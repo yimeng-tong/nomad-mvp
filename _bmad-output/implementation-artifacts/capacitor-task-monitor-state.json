@@ -1,32 +1,32 @@
 {
-  "scope_revision": "capacitor-2026-09-19",
-  "target_thread_id": "01a0a132-7203-7871-bf0e-d33087ba371a",
+  "scope_revision": "ui-foundation-2026-09-20",
+  "target_thread_id": "01a0d78a-3692-78b1-aee5-76268a743925",
   "target_host": "local",
-  "handoff_file": "_bmad-output/implementation-artifacts/capacitor-main-task-handoff-2026-09-19.md",
+  "handoff_file": "_bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md",
   "initial_direct_coordination_sent": true,
-  "formal_handoff_sent": true,
+  "formal_handoff_sent": false,
   "automation_id": "nomad-app",
-  "last_observed_turn": "01a0b914-02f3-7ff2-949e-b4990493d5ee",
+  "last_observed_turn": null,
   "last_nudged_turn": null,
   "last_reported_blocker": null,
   "completed": false,
-  "automation_status": "ACTIVE",
+  "automation_status": "PAUSED",
   "interval_minutes": 30,
   "formal_handoff_sent_at": "2026-09-18T21:57:01.575870+00:00",
   "handoff_delivery": "send_message_to_thread succeeded; target already actively incorporating scope",
-  "cursor": "ddb76644-c300-404b-ac36-0cb0f4025ff0:8",
-  "last_checked_at": "2026-09-19T17:17:48.583877+00:00",
+  "cursor": null,
+  "last_checked_at": "2026-09-25T07:50:45.636325+00:00",
   "last_status": "completed",
   "local_scope_handoff_complete": true,
   "handoff_acknowledged": true,
   "handoff_acknowledged_turn": "01a0b58e-1195-7763-a03f-08cf560c73a4",
   "continuous_goal_active": false,
   "continuous_goal_evidence": "CURRENT and blocked audit record resource-blocked Story1.7; read_thread/wait_threads confirm idle completed turn",
-  "current_story": "1-7-durable-import-progress-and-restart-recovery",
-  "current_story_status": "in-progress",
-  "next_story_to_prepare": "9-4-component-workbench-and-enforced-code-quality",
+  "current_story": "9-4-component-workbench-and-enforced-code-quality",
+  "current_story_status": "ready-for-dev",
+  "next_story_to_prepare": "9-5-browser-flow-and-visual-regression-gates",
   "routine_nudge_needed": false,
-  "last_coordination_decision": "UI2026-09-20 approved source/contracts/readiness applied directly in shared workspace. Story1.7 resource-blocked with explicit stop; do not restart task or dispatch new UI work.",
+  "last_coordination_decision": "用户解除1.7后停止并要求滚动准备/新任务开发；Git与homelab交接完成，唯一写入者改为9.4新任务。已存在heartbeat实际PAUSED，保留暂停。",
   "latest_android_artifact": {
     "path": "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
     "sha256": "35251310c690598b7295e193c665fe86e1f3470e9d821cbb9786a1e44ee0d252",
@@ -41,21 +41,20 @@
   "last_observation": {
     "source": [
       "read_thread",
-      "wait_threads",
       "CURRENT.md",
-      "sprint-status.yaml"
+      "sprint-status.yaml",
+      "create_thread",
+      "automation.toml"
     ],
-    "thread_revision_changed": true,
     "material_change": true,
-    "change_kind": "approved-ui-planning-handoff-with-existing-resource-stop",
+    "change_kind": "explicit-execution-resume-and-new-writer-handoff",
     "new_actionable_blocker": false,
-    "notification_required": false,
-    "coordination_message_sent": false,
+    "notification_required": true,
     "paused_3_1_preserved": true,
     "real_runtime_gates_preserved": true
   },
   "previous_observed_turn": "01a0b727-577c-73e1-930f-7a85eee428c6",
-  "next_bmad_checkpoint": "story-1-7-real-device-and-operational-validation",
+  "next_bmad_checkpoint": "story-9-4-development-and-review",
   "previous_android_artifact": {
     "path": "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
     "sha256": "4445bd94860a55f11acb860c9730e15567f26541f6968294706a4a49ad5fd426",
@@ -66,13 +65,13 @@
     "historical_9_1_evidence_preserved": true
   },
   "execution_stop_boundary": {
-    "story": "1-7-durable-import-progress-and-restart-recovery",
-    "reason": "user-request-complete-current-story-then-stop",
+    "story": null,
+    "reason": "explicit-user-resume-2026-09-25",
     "sources": [
       "CURRENT.md",
-      "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      "_bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md"
     ],
-    "prohibits_routine_resume_after_stop": true
+    "prohibits_routine_resume_after_stop": false
   },
   "latest_scope_proposal": {
     "path": "_bmad-output/planning-artifacts/sprint-change-proposal-ui-foundation-2026-09-19.md",
@@ -84,5 +83,13 @@
   "ui_scope_revision": "ui-foundation-2026-09-20",
   "ui_scope_handoff": "_bmad-output/implementation-artifacts/ui-foundation-handoff-2026-09-20.md",
   "ui_scope_applied": true,
-  "ui_message_sent": false
+  "ui_message_sent": false,
+  "previous_target_thread_id": "01a0a132-7203-7871-bf0e-d33087ba371a",
+  "target_title": "Nomad UI基础开发与审阅",
+  "pending_readonly_creation": {
+    "client_thread_id": "client-new-thread:b906b399-5272-4660-906c-8e140f99fc76",
+    "worktree": "/home/tong123/.codex/worktrees/5cba/nomad-mvp",
+    "status": "superseded-pending-creation",
+    "development_dispatch_authorized": false
+  }
 }

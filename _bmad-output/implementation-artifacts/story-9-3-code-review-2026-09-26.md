@@ -25,3 +25,9 @@ CR1/CR2/CR3已修补，原审阅者复核关闭；CR1真实B29旧实现失败→
 CI1原实际Chromium几何为action bottom740.40625、popup bottom740、scrollTop12、scrollHeight430、clientHeight400；scroll-padding16px让滚动目标留在可视边界内，未调整ratio1/截图门槛。B30已通过，仍等新canonical33图复验。完整产品矩阵新增关闭恢复/窄屏/外侧点击为B29–B31，现129项；下次最终CI才验证整个当前版本。
 
 当前无未修补代码发现；CI视觉审阅与整体本地gate尚未结束，T9不变。详见evidence/story-9-3-ui-2026-09-26/review-fix-validation.json。未标整Storydone。
+
+## 逐图审阅补充CI2
+
+6e0b973候选CI36176188637的33项和当前源/构建/viewport/DPR校验全部通过。主任务原尺寸查看全部33张，发现V06沿用旧业务按钮的半透明粉色focus环；进一步真实B05测得1.4947557784，对比阈值3未满足，因此本轮候选仍拒绝。其他30张完成布局审阅，不自动发布baseline。
+
+共享Modal后代控件改用已批准的深绿3px环/3px offset；B05新增真实合成颜色/宽度断言，旧源失败→修补后通过。B20补齐新标题的实际200%放大及关闭文字范围检查并通过；没有为未失败的字形改变布局。新增weak-focus故障回放目标断言，完整CI仍会执行。所有原像素/ratio/对比阈值保留。

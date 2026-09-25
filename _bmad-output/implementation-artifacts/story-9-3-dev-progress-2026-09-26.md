@@ -41,3 +41,9 @@ T6工作台已保留18原场景并增加12项共享状态/交互；首跑29/30�
 a60674b候选CI36172229448生成32/33，Chromium320px V11关闭按钮0.40625px越界，整体候选拒绝；完整下载摘要与checker拒绝见candidate1-rejection.json。没有接纳其中32张作为本次baseline。
 
 四项独立CR已修补复核：身份暂停打断已接受关闭、cancel释放pending、真实Enter的IME反例、默认trigger跨activity恢复。真实B29/B30旧实现均失败，新B26/B29/B30及B31外侧实际点击通过；工作台31、移动265+5配置通过，typedlint通过。本地产品5个故障/8控制实际通过，包含IME失去接线时1次误提交被拒。现矩阵129项/33视觉，准备候选r2与最终完整CI；原生和Story状态仍未关闭。
+
+## 候选r2原尺寸审阅与旧职责回归
+
+CI36176188637（6e0b973）33/33候选及显式下载来源/图谱/viewport检查通过；主任务看完全部原尺寸图，因V06继承旧focus环而拒绝批准，记录candidate2-visual-review.json。真实B05测得1.49476，CSS限定共享Modal后代改深绿后B05/B20通过；weak-focus持续反例新增。将提交候选r3，尚无9.3新基线被接受。
+
+原auth-browser-probe6项、durable-dock-pg-browser-probe6项以6e0b973代码实际重跑，复制脚本仅修改固定输出/绝对导入，原断言不变。PG18.6、SSE、IDB、3浏览器进程和1真实SIGKILL通过、0新导入POST；新隔离DB为nomad_auth_test_story93_ui_20260926_r1且UTC，所有临时服务已停止，28历史文件hash保持。证据legacy/verification.json。这里只验证该源版本的原业务职责，不含TLS/供应商/真机。

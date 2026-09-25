@@ -24,6 +24,18 @@ test('B05 actual Home Sheet contains keyboard focus and returns input and scroll
   await expect(sheet.getByRole('heading', { name: '选择输入类型', exact: true })).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(first).toBeFocused();
+  const focus = await first.evaluate((node) => {
+    const style = getComputedStyle(node), popup = getComputedStyle(node.closest('.nomad-modal')!);
+    const outline = style.outlineColor.match(/[\d.]+/g)!.map(Number), background = popup.backgroundColor.match(/[\d.]+/g)!.map(Number);
+    const alpha = outline[3] ?? 1;
+    const foreground = outline.slice(0, 3).map((channel, index) => channel * alpha + background[index] * (1 - alpha));
+    const luminance = (rgb: number[]) => rgb.slice(0, 3).map((value) => value / 255).map((value) => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4).reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
+    const levels = [luminance(foreground), luminance(background)].sort((a, b) => a - b);
+    return { color: style.outlineColor, contrast: (levels[1] + 0.05) / (levels[0] + 0.05), width: parseFloat(style.outlineWidth) };
+  });
+  await test.info().attach('modal-focus-contrast', { contentType: 'application/json', body: JSON.stringify(focus) });
+  expect(focus.contrast, 'NOMAD_E2E_MODAL_FOCUS_CONTRAST').toBeGreaterThanOrEqual(3);
+  expect(focus.width).toBeGreaterThanOrEqual(3);
   for (const [key, target] of [['Tab', second], ['Tab', last], ['Tab', first], ['Shift+Tab', last], ['Shift+Tab', second], ['Shift+Tab', first]] as const) {
     await page.keyboard.press(key);
     await expect(target).toBeFocused();

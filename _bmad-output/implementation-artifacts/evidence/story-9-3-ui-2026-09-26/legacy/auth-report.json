@@ -1,0 +1,194 @@
+{
+  "result": "passed",
+  "browser": "Chrome/127.0.6533.88",
+  "actualBrowser": true,
+  "realProviderCalls": 0,
+  "explicitHttpAndCaptchaSubstitutes": true,
+  "realAuthenticationVerified": false,
+  "checks": [
+    "unknown-send-copy",
+    "same-owner-draft-retained",
+    "authority-unavailable-private-hidden",
+    "cross-tab-owner-change-clears-draft",
+    "unknown-logout-foreground-same-operation",
+    "desktop-operator-denial-and-audit"
+  ],
+  "calls": [
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/config"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/config"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/otp/start"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/otp/start"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/otp/verify"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/library/cities"
+    },
+    {
+      "method": "GET",
+      "path": "/library/inspirations"
+    },
+    {
+      "method": "GET",
+      "path": "/library/cities"
+    },
+    {
+      "method": "GET",
+      "path": "/library/inspirations"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/library/cities"
+    },
+    {
+      "method": "GET",
+      "path": "/library/inspirations"
+    },
+    {
+      "method": "GET",
+      "path": "/library/cities"
+    },
+    {
+      "method": "GET",
+      "path": "/library/inspirations"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/library/cities"
+    },
+    {
+      "method": "GET",
+      "path": "/library/inspirations"
+    },
+    {
+      "method": "GET",
+      "path": "/library/cities"
+    },
+    {
+      "method": "GET",
+      "path": "/library/inspirations"
+    },
+    {
+      "method": "GET",
+      "path": "/user-key"
+    },
+    {
+      "method": "GET",
+      "path": "/user-key"
+    },
+    {
+      "method": "POST",
+      "path": "/logout"
+    },
+    {
+      "method": "POST",
+      "path": "/logout"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/config"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/config"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/config"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/config"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/ops/me"
+    },
+    {
+      "method": "GET",
+      "path": "/ops/me"
+    },
+    {
+      "method": "GET",
+      "path": "/ops/me"
+    },
+    {
+      "method": "POST",
+      "path": "/ops/access-check"
+    }
+  ]
+}

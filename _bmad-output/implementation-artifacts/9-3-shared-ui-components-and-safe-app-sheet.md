@@ -193,7 +193,9 @@ So that 我能保持上下文完成操作，并在身份变化时不会看到旧
 - [x] [Review][Patch] CR2：关闭决定取消后立即释放pending，后续关闭不依赖不响应AbortSignal的旧Promise；旧finally不能清掉新决定。[apps/mobile/src/ui/components/modal-policy.ts:25]
 - [x] [Review][Patch] CR3：登录IME产品回归使用composition期间的真实Enter，并验证229事件被preventDefault；新增缺失防护会失败的反例。[apps/mobile/e2e/flows/shared-ui.spec.ts:61]
 - [x] [Review][Patch] CR4：未显式传restoreFocusTo的共享API，在同身份暂停恢复后仍保留有效隐式触发器。[apps/mobile/src/ui/components/AppDialog.tsx:112]
-- [ ] [Review][Patch] CI1：320px Chromium长Sheet关闭按钮完整可达，修复实际布局，不降低ratio1/像素门槛。[apps/mobile/src/ui/styles/modal.css:3]
+- [x] [Review][Patch] CI1：320px Chromium长Sheet关闭按钮完整可达，修复实际布局，不降低ratio1/像素门槛。[apps/mobile/src/ui/styles/modal.css:3]
+
+- [x] [Review][Patch] CI2：共享Sheet内保留业务按钮的焦点环使用批准深绿，实际渲染对比至少3；原1.49476失败已复现，绿色修補通过，弱化样式故障必须被新反例拒绝。[apps/mobile/src/ui/styles/modal.css]
 
 ## Dev Notes
 
@@ -252,7 +254,12 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 - `_bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet.md`
 - `_bmad-output/implementation-artifacts/capacitor-task-monitor-state.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate1-rejection.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate2-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate2-visual-review.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/dependency-and-foundation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/legacy/auth-report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/legacy/pg-browser.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/legacy/verification.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local-validation.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/chromium-source-manifest.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/flow-counterexamples-after-cr.json`
@@ -271,6 +278,7 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 - `apps/mobile/e2e/fixtures/faults.ts`
 - `apps/mobile/e2e/flows/home-sheet.spec.ts`
 - `apps/mobile/e2e/flows/identity.spec.ts`
+- `apps/mobile/e2e/flows/layout.spec.ts`
 - `apps/mobile/e2e/flows/recovery.spec.ts`
 - `apps/mobile/e2e/flows/shared-ui.spec.ts`
 - `apps/mobile/e2e/run-contract.json`

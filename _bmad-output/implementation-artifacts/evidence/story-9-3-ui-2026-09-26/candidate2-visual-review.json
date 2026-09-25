@@ -1,0 +1,246 @@
+{
+  "kind": "explicit-agent-visual-review",
+  "reviewer": "primary Codex task; original-resolution view_image of all33 files",
+  "source_revision": "6e0b973640d8ae02fc01c5f0b3e854ff83587d66",
+  "github_run": 36176188637,
+  "recorded_at": "2026-09-25T19:17:30.720722+00:00",
+  "actual_candidate_matrix": 33,
+  "automated_result": "passed",
+  "source_build_environment_verifier": "passed",
+  "decision": "reject-current-candidate-until-modal-focus-contrast-fixed",
+  "finding": "CI2: measured legacy rgba(238,111,86,.38) against white =1.4947557784029495; threshold remains3",
+  "files": [
+    {
+      "file": "chromium/V01-login.png",
+      "sha256": "58296bd7994c1a5c5642f09f4f5d0bfcd1b0fff8203e6bcec9ffd54d9d00a392",
+      "viewed_original_resolution": true,
+      "layout_review": "原尺寸登录字段/按钮/法律入口完整；保留现行近白/深绿品牌",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "chromium/V02-home.png",
+      "sha256": "069b0677f60feb830c36d68be80dc80f54e200987405289a937b4979ea2e76be",
+      "viewed_original_resolution": true,
+      "layout_review": "Home实际Tabs和原Dock/输入布局完整，旧Dock轮廓保持",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "chromium/V03-long-home.png",
+      "sha256": "f0da76fa05008395702c9c4a54c85968118a5e8a78d9d7d0d4094bda7c50de7a",
+      "viewed_original_resolution": true,
+      "layout_review": "长城市名称真实换行；背景页面保持滚动，不以占位省略事实",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "chromium/V04-large-login.png",
+      "sha256": "b78b883d18a99d6872f421c748cee375d637b3a36c452836f2b82c7287cb0e21",
+      "viewed_original_resolution": true,
+      "layout_review": "200%真实字号，长按钮文字换行，登录及法律操作可达",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "chromium/V05-large-home.png",
+      "sha256": "bcf3e81c9204eea2d8764cca0326d51b2f38d5283ec3e1303bf94e34bd93de99",
+      "viewed_original_resolution": true,
+      "layout_review": "200%Home真实字号与Add字形位于按钮内；旧textarea继续滚动",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "chromium/V06-keyboard-sheet.png",
+      "sha256": "da43e8b8254ae2103658d9f11b4102c03574f15019e822f39188cb5c108984c0",
+      "viewed_original_resolution": true,
+      "layout_review": "旧业务按钮继承半透明粉色focus环；实际合成对比1.4947557784低于3，必须修补",
+      "result": "needs-focus-fix"
+    },
+    {
+      "file": "chromium/V07-large-long-sheet.png",
+      "sha256": "c90a3de2180e44ce63b38bb1ff7e89fd2bf2ce8206f53946625ab00c34c52620",
+      "viewed_original_resolution": true,
+      "layout_review": "200%长Sheet内容滚动至动作区域；关闭字形后由B20实际边界验证通过",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "chromium/V08-logout-confirmation.png",
+      "sha256": "cdc73fbaab8b9ddfbdf8134ce8b044495ce13f5541b53ddbec817951b297ea7f",
+      "viewed_original_resolution": true,
+      "layout_review": "仅当前退出确认，文案/取消/确认完整，不扩大7.3",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "chromium/V09-narrow-login.png",
+      "sha256": "31fe068a89dd35bc54dd1a89ca8b6870f6de5f856d6c160dc31b456e863e4ef6",
+      "viewed_original_resolution": true,
+      "layout_review": "320px登录标签/输入/CTA和法律入口完整",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "chromium/V10-desktop-home.png",
+      "sha256": "f55d16a43b86fb79ef57fdbb3fa3e11cf62a52cbcafd0b4cad839b900b1a23e2",
+      "viewed_original_resolution": true,
+      "layout_review": "1280px保留现行桌面Home列与居中Dock，操作可达",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "chromium/V11-narrow-sheet.png",
+      "sha256": "680a97041d02e8b562c983fd3a679e428973f1feff2d11f0d441ab0e817e06e3",
+      "viewed_original_resolution": true,
+      "layout_review": "320px长Sheet滚至操作区，关闭目标已完整，保留上方内容滚动",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "firefox/V01-login.png",
+      "sha256": "e8dc25a13eca4c7ffac95526af208837e2f3bdef69003d4be343db334bf2fdcd",
+      "viewed_original_resolution": true,
+      "layout_review": "原尺寸登录字段/按钮/法律入口完整；保留现行近白/深绿品牌",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "firefox/V02-home.png",
+      "sha256": "a838847d4b00369cd76a6a3f51e69f5e3a7d72b2c66e5328faf365f327fbd442",
+      "viewed_original_resolution": true,
+      "layout_review": "Home实际Tabs和原Dock/输入布局完整，旧Dock轮廓保持",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "firefox/V03-long-home.png",
+      "sha256": "11910aca83557049449f5344b9a052813dcbfd39615723f298c6e45523d59103",
+      "viewed_original_resolution": true,
+      "layout_review": "长城市名称真实换行；背景页面保持滚动，不以占位省略事实",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "firefox/V04-large-login.png",
+      "sha256": "fd9dc7851689fa892b9b9f3f955fe16a4b9b50567288db60496d96681f7c3bd9",
+      "viewed_original_resolution": true,
+      "layout_review": "200%真实字号，长按钮文字换行，登录及法律操作可达",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "firefox/V05-large-home.png",
+      "sha256": "20ab296c2ebedc0e10ccc0d76405cf03f8b6eb1d53c47c38c90c204598b11fe1",
+      "viewed_original_resolution": true,
+      "layout_review": "200%Home真实字号与Add字形位于按钮内；旧textarea继续滚动",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "firefox/V06-keyboard-sheet.png",
+      "sha256": "a6690cfbc46ae7fd52cdd26d3d05eaeb73c2de555446bda066a41f54826fada9",
+      "viewed_original_resolution": true,
+      "layout_review": "旧业务按钮继承半透明粉色focus环；实际合成对比1.4947557784低于3，必须修补",
+      "result": "needs-focus-fix"
+    },
+    {
+      "file": "firefox/V07-large-long-sheet.png",
+      "sha256": "62791a4170e5888f165ab07c3c486f307f7f1009f789c163a70274d6329feb30",
+      "viewed_original_resolution": true,
+      "layout_review": "200%长Sheet内容滚动至动作区域；关闭字形后由B20实际边界验证通过",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "firefox/V08-logout-confirmation.png",
+      "sha256": "e3a197b0cd925a3d80f2915aa855f825719578d4ecff3527d0d7b53b648c0fe4",
+      "viewed_original_resolution": true,
+      "layout_review": "仅当前退出确认，文案/取消/确认完整，不扩大7.3",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "firefox/V09-narrow-login.png",
+      "sha256": "681f02cfdc1668180f026adcfad9f0da7b292a6152977003a47ee0595543ceee",
+      "viewed_original_resolution": true,
+      "layout_review": "320px登录标签/输入/CTA和法律入口完整",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "firefox/V10-desktop-home.png",
+      "sha256": "19275fab0dd865a55f230645d5d18d19294b49427d6fdee93b77f65109c65464",
+      "viewed_original_resolution": true,
+      "layout_review": "1280px保留现行桌面Home列与居中Dock，操作可达",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "firefox/V11-narrow-sheet.png",
+      "sha256": "3e7b7aa75fc04370168f016c1baa4100d10a79771383ebea6de159272841ce43",
+      "viewed_original_resolution": true,
+      "layout_review": "320px长Sheet滚至操作区，关闭目标已完整，保留上方内容滚动",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "webkit/V01-login.png",
+      "sha256": "2a48461d7fbae0da666832cbc1a2db37288fd4320e81a1a4eb6fa928ba99241c",
+      "viewed_original_resolution": true,
+      "layout_review": "原尺寸登录字段/按钮/法律入口完整；保留现行近白/深绿品牌",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "webkit/V02-home.png",
+      "sha256": "f00ca200693ea73f7e59a693f282dfb31e47ac932e3edd4a2c503d44c70d43e8",
+      "viewed_original_resolution": true,
+      "layout_review": "Home实际Tabs和原Dock/输入布局完整，旧Dock轮廓保持",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "webkit/V03-long-home.png",
+      "sha256": "f84271665010e2601a04bbfec3f8e0552a0d5a2fba9fa6c8363a18021fd22962",
+      "viewed_original_resolution": true,
+      "layout_review": "长城市名称真实换行；背景页面保持滚动，不以占位省略事实",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "webkit/V04-large-login.png",
+      "sha256": "0dc163697e106866d4e1a2c8b414f26704054730dd17f799a98cf9e2d6a22ef5",
+      "viewed_original_resolution": true,
+      "layout_review": "200%真实字号，长按钮文字换行，登录及法律操作可达",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "webkit/V05-large-home.png",
+      "sha256": "c40fc03a169d8e874b20d56baa7e9bd0ac4192fcc69f5164d391104e1c5db699",
+      "viewed_original_resolution": true,
+      "layout_review": "200%Home真实字号与Add字形位于按钮内；旧textarea继续滚动",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "webkit/V06-keyboard-sheet.png",
+      "sha256": "b7e2393498d9484e7aa231bce1e97b3170322a9e6b86be82564e019fdd399d8c",
+      "viewed_original_resolution": true,
+      "layout_review": "旧业务按钮继承半透明粉色focus环；实际合成对比1.4947557784低于3，必须修补",
+      "result": "needs-focus-fix"
+    },
+    {
+      "file": "webkit/V07-large-long-sheet.png",
+      "sha256": "2145169f55d89259a0fbcbe2fc18df16ad0daab2f064921c1b1f065ae542c710",
+      "viewed_original_resolution": true,
+      "layout_review": "200%长Sheet内容滚动至动作区域；关闭字形后由B20实际边界验证通过",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "webkit/V08-logout-confirmation.png",
+      "sha256": "f826c08cfdde6e2d2ec61d3f98e6c620e5aee7e95da9c5118c3c69ea4d522e0c",
+      "viewed_original_resolution": true,
+      "layout_review": "仅当前退出确认，文案/取消/确认完整，不扩大7.3",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "webkit/V09-narrow-login.png",
+      "sha256": "490823723836ff84ee029fdb38be7153aec7b5b911728658c8fa95c72de04ae1",
+      "viewed_original_resolution": true,
+      "layout_review": "320px登录标签/输入/CTA和法律入口完整",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "webkit/V10-desktop-home.png",
+      "sha256": "2e19d2038e19d68cce1e16e703a8b836716156c490630d9abef90b760ca08413",
+      "viewed_original_resolution": true,
+      "layout_review": "1280px保留现行桌面Home列与居中Dock，操作可达",
+      "result": "layout-reviewed"
+    },
+    {
+      "file": "webkit/V11-narrow-sheet.png",
+      "sha256": "35420fc42f1eed32af8b1c7063e8979c8b420ac62d853bca4884286e716a031d",
+      "viewed_original_resolution": true,
+      "layout_review": "320px长Sheet滚至操作区，关闭目标已完整，保留上方内容滚动",
+      "result": "layout-reviewed"
+    }
+  ],
+  "native_device_acceptance": false
+}

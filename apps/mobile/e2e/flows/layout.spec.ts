@@ -22,13 +22,20 @@ test('B20 long Chinese Home and Sheet at 200 percent retain input and usable clo
   await expect(sheet).toBeVisible();
   // A new dialog is a new subtree. Scale it from its actual unscaled computed sizes.
   await sheet.evaluate((node) => {
-    const sizes = [...node.querySelectorAll<HTMLElement>('p,button')].map((element) => [element, parseFloat(getComputedStyle(element).fontSize)] as const);
+    const sizes = [...node.querySelectorAll<HTMLElement>('h1,h2,h3,p,button,input,textarea,label,span,a')].map((element) => [element, parseFloat(getComputedStyle(element).fontSize)] as const);
     for (const [element, size] of sizes) { element.dataset.nomadE2eFontBase = String(size); element.style.setProperty('font-size', `${size * 2}px`, 'important'); }
   });
   expect(await sheet.evaluate((node) => node.scrollHeight > node.clientHeight)).toBe(true);
   expect(await sheet.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   const close = sheet.getByRole('button', { name: '关闭', exact: true });
   await expectLayout(page, close);
+  const closeBounds = await close.evaluate((node) => {
+    const button = node.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(node);
+    const text = range.getBoundingClientRect();
+    return { top: button.top, bottom: button.bottom, textTop: text.top, textBottom: text.bottom };
+  });
+  expect(closeBounds.textTop, 'NOMAD_E2E_CLOSE_GLYPH_CLIPPED').toBeGreaterThanOrEqual(closeBounds.top);
+  expect(closeBounds.textBottom, 'NOMAD_E2E_CLOSE_GLYPH_CLIPPED').toBeLessThanOrEqual(closeBounds.bottom);
   await close.click();
   await expect(input).toHaveValue(text);
   expect(api.count('POST', '/api/ingest/xhs')).toBe(0);

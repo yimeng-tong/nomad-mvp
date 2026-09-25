@@ -41,6 +41,10 @@
 .nomad-modal-title { margin: 0; font-size: var(--nomad-heading-md); line-height: 1.4; }
 .nomad-modal-description { margin: 0; color: var(--nomad-text-muted); }
 .nomad-modal.nomad-modal > p { margin: 0; }
+.nomad-modal :is(button, input, textarea, select, a[href]):focus-visible {
+  outline: 3px solid var(--nomad-focus);
+  outline-offset: 3px;
+}
 .nomad-modal-backdrop:is([data-starting-style], [data-closing]), .nomad-modal:is([data-starting-style], [data-closing]) { opacity: 0; }
 .nomad-modal[data-kind="sheet"]:is([data-starting-style], [data-closing]) { transform: translateY(2.5rem); }
 .nomad-modal[data-kind="dialog"]:is([data-starting-style], [data-closing]) { transform: translate(-50%, -48%); }

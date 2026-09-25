@@ -2,7 +2,7 @@
   "kind": "local-story-verification",
   "story_id": "9.4",
   "recorded_at": "2026-09-25T09:29:01.406581+00:00",
-  "source_revision": "3bd3fb9+proc-observation-test-fix",
+  "source_revision": "e6c5933+legacy-probe-fixture-and-reader-fixes",
   "checks": {
     "workbench_typecheck": {
       "exit_code": 0
@@ -79,6 +79,14 @@
       "exit_code": 0,
       "commands": "typecheck + shared Node handlers (9) + static Storybook + Chromium interaction/a11y (18)",
       "log": "local /tmp/nomad-story-9-4-workbench-final.log"
+    },
+    "isolated_pg_probes": {
+      "exit_code": 0,
+      "evidence": "_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/isolated-pg-ci-probes.json"
+    },
+    "sse_probe_reader": {
+      "exit_code": 0,
+      "passed": 3
     }
   },
   "independent_review": {
@@ -122,6 +130,14 @@
       "ui_workbench_gates": "all-passed",
       "failure": "Existing bounded-process test raced /proc disappearance (ProcessLookupError); production helper unchanged, test observation fixed and independently reviewed.",
       "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36119579229"
+    },
+    {
+      "run": 36120947834,
+      "commit": "e6c59339b6967083c85da56c4567a5373bae6601",
+      "conclusion": "failure",
+      "ui_workbench_gates": "all-passed",
+      "failure": "Legacy auth-persistence fixture declared done without saved result. Added invalid-fixture rejection then actual owned result; set probe working-directory to apps/server.",
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36120947834"
     }
   ],
   "remote_ci": "next-commit-run-pending"

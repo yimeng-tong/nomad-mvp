@@ -104,9 +104,15 @@ try {
   assert.equal((await applyTrustedLegacyClaim(a, claimLegacy)).applied, true);
   assert.equal((await applyTrustedLegacyClaim(b, claimLegacy)).applied, false, 'trusted binding apply is idempotent');
   assert.ok((await retainedSourceHashes(a, retainedOwner, url)).includes(oldSourceHash));
+  await assert.rejects(createOrGetIngestJob({ userId: retainedOwner, sourceUrl: url, traceId: randomUUID() }),
+    fault('INGEST_EVENT_STATE_UNAVAILABLE'), 'a legacy done row without a saved result must not become a completed durable event');
+  const savedLegacyResult = await a.inspiration.create({ data: {
+    userId: retainedOwner, jobId: retainedJob, sourceHash: oldSourceHash, tags: [], title: 'Synthetic retained result',
+  } });
   const retained = await createOrGetIngestJob({ userId: retainedOwner, sourceUrl: url, traceId: randomUUID() });
   assert.equal(retained.dbId, retainedJob, 'legacy deduplication recovers the retained job');
   assert.equal(retained.dbUserId, retainedOwner, 'canonical UUID is not hashed twice');
+  assert.equal(retained.snapshot?.result?.inspiration_id, savedLegacyResult.id, 'legacy adoption retains the actual saved result');
   await assert.rejects(createOrGetIngestJob({ userId: randomUUID(), sourceUrl: url, traceId: randomUUID() }), fault('AUTH_ACCOUNT_UNAVAILABLE'));
   await assert.rejects(actorContext.run({ ownerId: retainedOwner, authVersion: 0 },
     () => a.$transaction((tx) => lockQualifiedOwner(tx, retainedOwner))), fault('AUTH_CONTEXT_CHANGED'));

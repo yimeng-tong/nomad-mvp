@@ -114,18 +114,19 @@ jobs:
 
       - name: Recovery reader and backup helper counterexamples
         run: |
-          node --import tsx --test apps/server/scripts/benchmark-stream.test.ts
+          node --import tsx --test apps/server/scripts/benchmark-stream.test.ts apps/server/scripts/sse-probe-reader.test.ts
           python3 -m unittest discover -s ops/postgres -p 'test_*.py'
           python3 ops/pve-staging/test_bounded_process.py
 
       - name: Persistent authentication with explicit provider substitutes
+        working-directory: apps/server
         env:
           AUTH_TEST_DATABASE_ACK: isolated-synthetic-only
         run: |
-          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/prisma/tests/auth-migration-seed.sql
-          node --import tsx apps/server/scripts/auth-persistence-probe.ts
-          node --import tsx apps/server/scripts/auth-http-probe.ts
-          node --import tsx apps/server/scripts/auth-ingest-probe.ts
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f ../../packages/prisma/tests/auth-migration-seed.sql
+          node --import tsx scripts/auth-persistence-probe.ts
+          node --import tsx scripts/auth-http-probe.ts
+          node --import tsx scripts/auth-ingest-probe.ts
 
       - name: Mobile tests
         run: pnpm run ci:mobile

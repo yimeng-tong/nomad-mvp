@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import Fastify from 'fastify';
+import Fastify, { type FastifyInstance, type FastifyPluginCallback, type LightMyRequestResponse } from 'fastify';
 import cookie from '@fastify/cookie';
 import fastifySSE from 'fastify-sse-v2';
 import { createAuthorizedSse } from '../src/auth/sse.js';
@@ -16,6 +16,10 @@ import { changeOperatorGrant } from '../src/auth/operator.js';
 import { newCredential } from '../src/auth/credentials.js';
 import { actorContext, lockQualifiedOwner } from '../src/auth/owner.js';
 import type { PhoneProofProvider } from '../src/auth/pnvs-provider.js';
+import type { components } from '../../../packages/types/src/api-types.js';
+import { readFirstSseData } from './sse-probe-reader.js';
+type CurrentUser = components['schemas']['CurrentUserResponse'];
+type OtpStart = components['schemas']['OtpStartResponse'];
 
 assert.equal(process.env.AUTH_TEST_DATABASE_ACK, 'isolated-synthetic-only');
 assert.match(new URL(process.env.DATABASE_URL!).pathname, /^\/nomad_auth_test_[a-z0-9_]+$/);
@@ -39,12 +43,12 @@ const proof: PhoneProofProvider = {
 };
 let pausedReadEntered: (() => void) | undefined; let releaseRead: (() => void) | undefined;
 let activeSender: ReturnType<typeof createAuthorizedSse> | undefined;
-const apps = [];
+const apps: FastifyInstance[] = [];
 for (const db of databases) {
   const repository = new PrismaAuthRepository(db); await repository.ready();
   const service = new PersistentAuthService(config, repository, proof);
   const app = Fastify({ logger: false, trustProxy: config.trustProxy });
-  await app.register(cookie); await app.register(errorEnvelope); await app.register(fastifySSE as any);
+  await app.register(cookie); await app.register(errorEnvelope); await app.register(fastifySSE as unknown as FastifyPluginCallback);
   await app.register(authPlugin, { service }); await app.register(authRoutes, { service });
   app.get('/private/read', async (req) => ({ owner: req.user!.id }));
   app.get('/private/paused-read', async (req) => {
@@ -63,7 +67,7 @@ for (const db of databases) {
 }
 type Jar = Map<string, string>;
 const cookieHeader = (jar: Jar) => [...jar].map(([key, value]) => `${key}=${value}`).join('; ');
-const absorb = (jar: Jar, response: any) => {
+const absorb = (jar: Jar, response: Pick<LightMyRequestResponse, 'headers'>) => {
   const values = response.headers['set-cookie'];
   for (const value of (Array.isArray(values) ? values : values ? [values] : [])) {
     const [pair] = value.split(';'); const index = pair.indexOf('=');
@@ -72,23 +76,23 @@ const absorb = (jar: Jar, response: any) => {
   }
 };
 const anonymous = { origin, 'x-forwarded-for': probeIp, 'x-auth-user-id': 'anonymous', 'x-auth-session-id': 'anonymous' };
-const expected = (user: any) => ({ origin, 'x-forwarded-for': probeIp, 'x-auth-user-id': user.user_id, 'x-auth-session-id': user.session.id });
+const expected = (user: CurrentUser) => ({ origin, 'x-forwarded-for': probeIp, 'x-auth-user-id': user.user_id, 'x-auth-session-id': user.session.id });
 const phone = () => '+8613'+String(Date.now()).slice(-8)+String(Math.floor(Math.random()*10));
 const captcha = () => ({ lot_number: randomUUID(), captcha_output: 'isolated-proof', pass_token: 'isolated-proof', gen_time: String(Math.floor(Date.now()/1000)) });
 async function sent(jar: Jar, number: string, requestId = randomUUID()) {
   const first = await apps[0].inject({ method: 'POST', url: '/auth/otp/start', headers: { ...anonymous, cookie: cookieHeader(jar) }, payload: { phone: number, request_id: requestId } });
   assert.equal(first.statusCode, 200, 'new anonymous intent should request a captcha');
-  assert.equal(first.json().captcha_required, true); absorb(jar, first);
+  assert.equal(first.json<OtpStart>().captcha_required, true); absorb(jar, first);
   const second = await apps[1].inject({ method: 'POST', url: '/auth/otp/start', headers: { ...anonymous, cookie: cookieHeader(jar) }, payload: { phone: number, request_id: requestId, captcha: captcha() } });
   assert.equal(second.statusCode, 200, 'isolated proof should produce a send result');
   absorb(jar, second);
-  return { ...second.json(), requestId, number };
+  return { ...second.json<OtpStart>(), requestId, number };
 }
-async function verified(jar: Jar, challenge: any, appIndex = 0) {
+async function verified(jar: Jar, challenge: OtpStart & { number: string }, appIndex = 0) {
   const response = await apps[appIndex].inject({ method: 'POST', url: '/auth/otp/verify', headers: { ...anonymous, cookie: cookieHeader(jar) },
     payload: { phone: challenge.number, challenge_id: challenge.challenge_id, otp: '123456', device_id: 'isolated-browser' } });
   assert.equal(response.statusCode, 200, 'isolated verification should create a durable session');
-  const body = response.json(); absorb(jar, response);
+  const body = response.json<CurrentUser>(); absorb(jar, response);
   const secret = jar.get(`__Host-nomad-sid-${body.session.id}`);
   assert.ok(secret && secret !== body.session.id && !response.body.includes(secret));
   assert.match(String(response.headers['set-cookie']), /__Host-nomad-login=/, 'binding is renewed with session');
@@ -99,7 +103,7 @@ try {
   const denied = await apps[0].inject({ method: 'GET', url: '/me', headers: { 'x-user-id': randomUUID(), 'x-auth-test-adapter-enabled': 'true' } });
   assert.equal(denied.statusCode, 401);
   const configReply = await apps[0].inject({ method: 'GET', url: '/auth/config' });
-  assert.equal(configReply.json().captcha.provider, 'aliyun-pnvs');
+  assert.equal(configReply.json<components['schemas']['AuthConfigResponse']>().captcha.provider, 'aliyun-pnvs');
   assert.ok(!configReply.body.includes('sentinel-'));
   const forgedOrigin = await apps[0].inject({ method: 'POST', url: '/auth/otp/start', headers: { ...anonymous, origin: 'https://attacker.invalid' }, payload: { phone: phone(), request_id: randomUUID() } });
   assert.equal(forgedOrigin.statusCode, 403); assert.equal(sends, 0);
@@ -109,7 +113,7 @@ try {
   assert.equal(repeated.statusCode, 200); assert.equal(sends, 1);
   const userA = await verified(jarA, a);
   const across = await apps[1].inject({ method: 'GET', url: '/me', headers: { cookie: cookieHeader(jarA) } });
-  assert.equal(across.json().user_id, userA.user_id);
+  assert.equal(across.json<CurrentUser>().user_id, userA.user_id);
   const publicReference = await apps[1].inject({ method: 'GET', url: '/me', headers: { cookie: `__Host-nomad-sid-${userA.session.id}=${userA.session.id}` } });
   assert.equal(publicReference.statusCode, 401);
   const write = await apps[1].inject({ method: 'POST', url: '/private/write', headers: { ...expected(userA), cookie: cookieHeader(jarA) }, payload: {} });
@@ -127,13 +131,13 @@ try {
   assert.equal(loggedOut.statusCode, 200); absorb(jarA, loggedOut);
   // Apply A's old logout response AFTER B's successful login response, as a browser would.
   absorb(jarB, loggedOut);
-  assert.equal((await apps[1].inject({ method: 'GET', url: '/me', headers: { cookie: cookieHeader(jarB) } })).json().user_id, userB.user_id,
+  assert.equal((await apps[1].inject({ method: 'GET', url: '/me', headers: { cookie: cookieHeader(jarB) } })).json<CurrentUser>().user_id, userB.user_id,
     'late logout Set-Cookie must not erase a newer session');
   const recovered = await apps[1].inject({ method: 'POST', url: '/logout', headers: expected(userA), payload: { operation_id: operationId } });
   assert.equal(recovered.statusCode, 200, 'lost response can be confirmed after cookie clearing');
   const oldRetryWithB = await apps[1].inject({ method: 'POST', url: '/logout', headers: { ...expected(userA), cookie: cookieHeader(jarB) }, payload: { operation_id: operationId } });
   assert.equal(oldRetryWithB.statusCode, 200); assert.equal(oldRetryWithB.headers['set-cookie'], undefined);
-  assert.equal((await apps[0].inject({ method: 'GET', url: '/me', headers: { cookie: cookieHeader(jarB) } })).json().user_id, userB.user_id);
+  assert.equal((await apps[0].inject({ method: 'GET', url: '/me', headers: { cookie: cookieHeader(jarB) } })).json<CurrentUser>().user_id, userB.user_id);
 
   const unknownJar: Jar = new Map(); unknownSend = true;
   const uncertain = await sent(unknownJar, phone()); unknownSend = false;
@@ -154,7 +158,7 @@ try {
   const laterUser = await verified(racingJar, later, 1);
   releaseCheck!(); const late = await inFlight;
   assert.equal(late.statusCode, 409); assert.equal(late.headers['set-cookie'], undefined);
-  assert.equal((await apps[0].inject({ method: 'GET', url: '/me', headers: { cookie: cookieHeader(racingJar) } })).json().user_id, laterUser.user_id);
+  assert.equal((await apps[0].inject({ method: 'GET', url: '/me', headers: { cookie: cookieHeader(racingJar) } })).json<CurrentUser>().user_id, laterUser.user_id);
   const reorderedJar: Jar = new Map();
   const earlier = await sent(reorderedJar, phone());
   const committedA = await apps[0].inject({ method: 'POST', url: '/auth/otp/verify', headers: { ...anonymous, cookie: cookieHeader(reorderedJar) },
@@ -164,7 +168,7 @@ try {
   const committedB = await verified(reorderedJar, latest, 1);
   absorb(reorderedJar, committedA); // A's committed success is delivered after B's success.
   const stillB = await apps[1].inject({ method: 'GET', url: '/me', headers: { cookie: cookieHeader(reorderedJar) } });
-  assert.equal(stillB.json().user_id, committedB.user_id, 'late login response cannot overwrite the newer credential');
+  assert.equal(stillB.json<CurrentUser>().user_id, committedB.user_id, 'late login response cannot overwrite the newer credential');
 
   const nativeHeaders = { 'x-forwarded-for': probeIp, 'x-forwarded-proto': 'https', 'x-nomad-auth-audience': origin,
     'x-nomad-login-binding': newCredential(), 'x-auth-user-id': 'anonymous', 'x-auth-session-id': 'anonymous' };
@@ -174,10 +178,10 @@ try {
   assert.equal(nativeStart.statusCode, 200, 'native start uses the same PG authority without cookies');
   assert.equal(nativeStart.headers['set-cookie'], undefined);
   const nativeVerify = await apps[1].inject({ method: 'POST', url: '/auth/native/otp/verify', headers: nativeHeaders,
-    payload: { phone: nativePhone, challenge_id: nativeStart.json().challenge_id, otp: '123456', device_id: 'native-synthetic' } });
+    payload: { phone: nativePhone, challenge_id: nativeStart.json<OtpStart>().challenge_id, otp: '123456', device_id: 'native-synthetic' } });
   assert.equal(nativeVerify.statusCode, 200);
   assert.equal(nativeVerify.headers['set-cookie'], undefined);
-  const nativeUser = nativeVerify.json(); const nativeSecret = nativeUser.native_session_credential;
+  const nativeUser = nativeVerify.json<components['schemas']['NativeOtpVerifyResponse']>(); const nativeSecret = nativeUser.native_session_credential;
   assert.match(nativeSecret, /^[A-Za-z0-9_-]{43}$/);
   const nativePrivate = { ...nativeHeaders, authorization: `Bearer ${nativeSecret}`,
     'x-auth-user-id': nativeUser.user_id, 'x-auth-session-id': nativeUser.session.id };
@@ -210,14 +214,14 @@ try {
   const grant = await changeOperatorGrant(databases[0], grantInput);
   assert.equal(grant.version, 1);
   const granted = await apps[1].inject({ method: 'GET', url: '/ops/me', headers: opsHeaders });
-  assert.equal(granted.statusCode, 200); assert.equal(granted.json().grants.length, 1);
+  assert.equal(granted.statusCode, 200); assert.equal(granted.json<components['schemas']['OperatorAccessResponse']>().grants.length, 1);
   const operatorBody = { capability: grantInput.capability, scope: grantInput.scope, expected_grant_version: 1, operation_id: randomUUID() };
   assert.equal((await apps[1].inject({ method: 'POST', url: '/ops/access-check', headers: opsHeaders, payload: { ...operatorBody, scope: 'workspace:other' } })).statusCode, 403);
   assert.equal((await apps[1].inject({ method: 'POST', url: '/ops/access-check', headers: opsHeaders, payload: { ...operatorBody, role: 'admin' } })).statusCode, 400);
   const checked = await apps[0].inject({ method: 'POST', url: '/ops/access-check', headers: opsHeaders, payload: operatorBody });
   assert.equal(checked.statusCode, 200);
   const checkedAgain = await apps[1].inject({ method: 'POST', url: '/ops/access-check', headers: opsHeaders, payload: operatorBody });
-  assert.equal(checkedAgain.json().receipt_id, checked.json().receipt_id);
+  assert.equal(checkedAgain.json<components['schemas']['OperatorAccessCheckResponse']>().receipt_id, checked.json<components['schemas']['OperatorAccessCheckResponse']>().receipt_id);
   await changeOperatorGrant(databases[1], { ...grantInput, expectedVersion: 1, enabled: false });
   assert.equal((await apps[0].inject({ method: 'GET', url: '/ops/me', headers: opsHeaders })).statusCode, 403);
   assert.equal((await apps[1].inject({ method: 'POST', url: '/ops/access-check', headers: opsHeaders, payload: operatorBody })).statusCode, 403, 'old receipt does not bypass revoked capability');
@@ -238,12 +242,14 @@ try {
   try {
     const live = await fetch(`${address}/sse/private/test`, { headers: { ...expected(userB), cookie: cookieHeader(jarB) }, signal: controller.signal });
     assert.equal(live.status, 200); const reader = live.body!.getReader();
-    const initial = await reader.read(); assert.ok(new TextDecoder().decode(initial.value).includes(userB.user_id));
+    const initial = await readFirstSseData(reader);
+    assert.equal((JSON.parse(initial.data) as { owner?: unknown }).owner, userB.user_id);
     const revoke = await apps[1].inject({ method: 'DELETE', url: `/sessions/${userB.session.id}`, headers: { ...expected(userB), cookie: cookieHeader(jarB) } });
     assert.equal(revoke.statusCode, 200);
     assert.equal(await activeSender!.send({ event: 'test', data: 'sentinel-private-after-revocation' }), false);
-    let remaining = '';
-    for (;;) { const chunk = await reader.read(); if (chunk.done) break; remaining += new TextDecoder().decode(chunk.value); }
+    let remaining = initial.remainder;
+    for (;;) { const chunk = await reader.read(); if (chunk.done) break; remaining += initial.decoder.decode(chunk.value, { stream: true }); }
+    remaining += initial.decoder.decode();
     assert.ok(!remaining.includes('sentinel-private-after-revocation'));
   } finally { clearTimeout(timer); controller.abort(); activeSender?.close(); }
 

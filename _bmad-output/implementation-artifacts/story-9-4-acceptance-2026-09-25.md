@@ -1,6 +1,6 @@
 # Story 9.4验收与DoD记录
 
-当前状态：整链CI等待中；不作为review/done凭据。源合同a120d2b064bfa7ba8a362f51aee771e61db8c04083817f7366250ae4d55adf27，实际开发基线abac3df，当前代码8ca552c。工具版本与本地验证见evidence/story-9-4-workbench-2026-09-25/{resolved-toolchain,local-validation,source-fingerprints}.json；历史失败逐次保留。
+当前状态：PASS；完整CI及下载产物已验证，T0–T7已完成，进入最终状态同步。源合同a120d2b064bfa7ba8a362f51aee771e61db8c04083817f7366250ae4d55adf27，实际开发基线abac3df，最终代码6344a53。工具版本与本地验证见evidence/story-9-4-workbench-2026-09-25/{resolved-toolchain,local-validation,source-fingerprints}.json；历史失败逐次保留。
 
 | AC | 实际实现与正例 | 会失败的反例与边界 |
 | --- | --- | --- |
@@ -15,10 +15,10 @@
 
 原类型/build/handoff/82回归、auth/ingest/备份/进程、真实隔离PG、mobile及旧合同/synthetic/SSE保持，实际CI入口与未全部纳入的IDB/双tab/原生/生产恢复责任列在docs/ops/ui-validation.md。工作台不关闭1.0/1.6/1.7/9.1的真实证据，也不解除3.1暂停。
 
-三层独立CR首轮13项已全部修复复核；后续CI窄修补分别独立审阅，Redis补充R14已修复且Edge复核[]。最终验收审计与远端整链仍待收取。完整发现与复核见story-9-4-code-review-2026-09-25.md。
+三层独立CR首轮13项已全部修复复核；后续CI窄修补分别独立审阅，Redis补充R14已修复且Edge复核[]。最终验收审计无额外阻断，远端整链36129441895全部38步骤成功；R14/R15窄修补均已独立复核和实际验证。完整发现与复核见story-9-4-code-review-2026-09-25.md。
 
-## 当前关闭待办
+## DoD与最终证据
 
-- 收取8ca552c实际完整CI、产物及源码绑定记录。
-- 保存逐条件ui_delivery_evidence，T6/T7逐项完成后更新review/done与CURRENT/Sprint，ci:handoff通过。
-- 最终File List包含相对abac3df的全部新增、修改、删除文件；保留历史准备清单为历史。
+全部任务/子任务已勾选，6组AC、15项审阅修补、类型/工作台/资源隔离和原完整CI均通过；planner-domain71、独立ingest contract补齐项目基线。独立三层CR和最终验收审计无残项。ui-delivery.yaml绑定6344a53；ci-verification.json保存实际run与26个下载成员摘要，ci/保留实际产物图谱/双端清单/运行结果/反例。旧lint-result.json为1dee5bd历史，lint-result-final.json是f0f8d7b本地最终源码检查；最后上传配置提交由6344a53实际CI覆盖。
+
+本轮无实际外部Provider调用、现有业务库变更或设备/发行验收；只在9.4范围关闭两个条件，其他Story状态和3.1暂停保持。状态同步后运行ci:handoff，结果记入state-transitions.json。

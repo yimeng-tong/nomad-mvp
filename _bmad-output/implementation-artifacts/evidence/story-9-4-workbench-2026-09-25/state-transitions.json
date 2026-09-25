@@ -1,0 +1,19 @@
+{
+  "story_id": "9.4",
+  "recorded_at": "2026-09-25T11:39:30.579194+00:00",
+  "verified_code_revision": "6344a53fdd328e231511c2be6be0cccf1183f317",
+  "transitions": [
+    {
+      "from": "in-progress",
+      "to": "review",
+      "handoff_exit_code": 0
+    },
+    {
+      "from": "review",
+      "to": "done",
+      "handoff_exit_code": 0
+    }
+  ],
+  "guard_changes": false,
+  "other_story_conditions_changed": false
+}

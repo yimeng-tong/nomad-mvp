@@ -40,11 +40,12 @@ independent_reviews:
 - _bmad-output/implementation-artifacts/research/story-9-4-plan-review-2026-09-25.md
 execution_authorization: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
+ui_delivery_evidence: _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ui-delivery.yaml
 ---
 
 # Story 9.4: 用可运行状态工作台与真实检查维护组件
 
-Status: in-progress
+Status: done
 
 > 2026-09-25用户已明确恢复开发并安排本Story先行；六组源GWT和工程条件保持，3.1自身暂停及真实资源门槛不变。本Story仍ready-for-dev，实际开发进展由接手任务记录。
 
@@ -146,21 +147,21 @@ So that 我无需真实账号或外部请求就能审阅改动并及时发现回
   - [x] 隔离checker独立遍历dist及两端复制目录的完整文件清单并比较，拒绝只残留在native目录的额外worker/mock资源；现有native:verify核对预期资源一致性，不能单独证明额外文件不存在。
   - [x] 保存人为污染产品public/入口/native目标目录或worker路径错误的负例，证明隔离检查能失败。产品Web资源/生成工程验证与APK/iPhone/TestFlight实证分别报告。
 
-- [ ] T6 接入实际CI并保留原验证责任（AC3–6；CODE-QUALITY-01、UI-WORKBENCH-01）
-  - [ ] CI显式取得比较基准：PR使用event base SHA与实际checkout提交，push使用有效before SHA；核验commit可解析并通过受控fetch补足历史（可用fetch-depth0）。缺少预期非零基准应失败，首次push/全零before用已记录的全cohort策略，不绿色空跑；补浅克隆/丢失基准反例。
-  - [ ] CI固定兼容Node patch/包版本/Chromium revision；干净frozen-lockfile安装后实际运行lint与其负例、工作台typecheck/build、interaction/a11y、MSW和产品隔离检查；失败传播且保留可审阅产物。
-  - [ ] 保留现有types、handoff/回归、workspace build、auth/ingest/PG、mobile/Node、旧合同、synthetic/SSE及备份helper检查，不升级数据库或将PG证明替换为MSW。
-  - [ ] 更新CI/独立探针对照：列出调用命令与范围、未接入项和所属Story。9.4仅交付工作台相关检查；9.5仍负责跨引擎产品流程/截图及等价覆盖后的旧浏览器脚本整合。
-  - [ ] 工作台输出/cache/report进入.gitignore，保留版本化场景/基线/证据摘要；不加入公开托管或付费截图服务。
+- [x] T6 接入实际CI并保留原验证责任（AC3–6；CODE-QUALITY-01、UI-WORKBENCH-01）
+  - [x] CI显式取得比较基准：PR使用event base SHA与实际checkout提交，push使用有效before SHA；核验commit可解析并通过受控fetch补足历史（可用fetch-depth0）。缺少预期非零基准应失败，首次push/全零before用已记录的全cohort策略，不绿色空跑；补浅克隆/丢失基准反例。
+  - [x] CI固定兼容Node patch/包版本/Chromium revision；干净frozen-lockfile安装后实际运行lint与其负例、工作台typecheck/build、interaction/a11y、MSW和产品隔离检查；失败传播且保留可审阅产物。
+  - [x] 保留现有types、handoff/回归、workspace build、auth/ingest/PG、mobile/Node、旧合同、synthetic/SSE及备份helper检查，不升级数据库或将PG证明替换为MSW。
+  - [x] 更新CI/独立探针对照：列出调用命令与范围、未接入项和所属Story。9.4仅交付工作台相关检查；9.5仍负责跨引擎产品流程/截图及等价覆盖后的旧浏览器脚本整合。
+  - [x] 工作台输出/cache/report进入.gitignore，保留版本化场景/基线/证据摘要；不加入公开托管或付费截图服务。
 
-- [ ] T7 关闭记录、限定审阅与交接（AC1–6；两项工程条件）
-  - [ ] 对应每组AC保留实际命令/退出码、工具/环境、源码/lock/config摘要及正反例；标清mock与未运行范围。修补已确认问题，限定CR后复核。
-  - [ ] ui_delivery_evidence满足当前checker格式，CODE-QUALITY-01与UI-WORKBENCH-01均由本Story实际verified，不能以not-applicable关闭自身首交付；其他Story条件不变。
-  - [ ] 更新File List、开发进度、实际CI证据和CURRENT/Sprint的获准窗口内状态，运行pnpm run ci:handoff；如改守卫再跑对应回归。准备完成不计作工具实现或Story done。
+- [x] T7 关闭记录、限定审阅与交接（AC1–6；两项工程条件）
+  - [x] 对应每组AC保留实际命令/退出码、工具/环境、源码/lock/config摘要及正反例；标清mock与未运行范围。修补已确认问题，限定CR后复核。
+  - [x] ui_delivery_evidence满足当前checker格式，CODE-QUALITY-01与UI-WORKBENCH-01均由本Story实际verified，不能以not-applicable关闭自身首交付；其他Story条件不变。
+  - [x] 更新File List、开发进度、实际CI证据和CURRENT/Sprint的获准窗口内状态，运行pnpm run ci:handoff；如改守卫再跑对应回归。准备完成不计作工具实现或Story done。
 
 ### Review Findings
 
-- [ ] [Review][Patch] R15 明确上传隐藏工作台结果目录并下载核验反例日志/截图/完整资源清单，避免只有索引的artifact被当成完整证据 [ci.yml]
+- [x] [Review][Patch] R15 明确上传隐藏工作台结果目录并下载核验反例日志/截图/完整资源清单，避免只有索引的artifact被当成完整证据 [ci.yml]
 
 - [x] [Review][Patch] R14 Redis关闭钩子在请求排空后直接disconnect，避免等待无响应QUIT；真实Redis正常/暂停回复与自然退出反例通过，Edge复核无残项 [idempotency-redis.ts / redis-lifecycle-probe.ts]
 
@@ -395,6 +396,16 @@ Codex（当前会话）；准备包含独立工具研究、仓库上下文分析
 
 T0–T5已有对应真实本地/干净安装/正反例证据，逐项勾选；精确候选版本的审计调整按D3执行（仅Vitest同组4.1.11安全patch及对应类型/传递修复，产品React/Vite/Capacitor不变）。T6实际远端整链与T7关闭记录仍待完成，Story和两项工程条件保持in-progress。
 
+### 最终实现与验收（2026-09-25）
+
+完整CI36129441895在6344a53通过，38步骤全部成功；实际下载并核验26个产物，含反例日志/截图和完整双端资源清单。T0–T7及R1–R15已闭环，三层CR及后续窄修补复核无残项。CODE-QUALITY-01与UI-WORKBENCH-01仅在9.4范围verified，详情见ui_delivery_evidence和story-9-4-acceptance-2026-09-25.md。额外必需基线：planner-domain71及独立ingest contract通过。历史准备/失败段落保留为当时记录，本段与Status为当前结论。
+
+原生实机、TestFlight、实际供应商和生产恢复不由本Story关闭；3.1仍暂停。下一仅临近准备9.5，未提前实施9.3/Query/Router。
+
+### Change Log — 9.4实现完成
+
+新增隔离组件工作台、真实typed lint、正反例、产品资源隔离及完整CI产物；补LoginScreen语义与异步失败处理，按实际CI证据窄修旧probe/Redis生命周期。保留失败历史与原测试责任。
+
 ### 最终实施File List（相对abac3df）
 
 - `.eslintrc.json`
@@ -403,6 +414,12 @@ T0–T5已有对应真实本地/干净安装/正反例证据，逐项勾选；�
 - `CURRENT.md`
 - `_bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md`
 - `_bmad-output/implementation-artifacts/capacitor-task-monitor-state.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci/counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci/product-graph.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci/product-isolation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci/runtime.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci/storybook-index.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/counterexamples.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/dependency-audit.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/dev-server.json`
@@ -411,6 +428,7 @@ T0–T5已有对应真实本地/干净安装/正反例证据，逐项勾选；�
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/isolated-pg-ci-probes.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/isolated-redis-lifecycle.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/legacy-ci-probes.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/lint-result-final.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/lint-result.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/local-validation.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/login-large-text.png`
@@ -420,13 +438,16 @@ T0–T5已有对应真实本地/干净安装/正反例证据，逐项勾选；�
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/runtime.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/sheet-partial.png`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/source-fingerprints.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/state-transitions.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/toolchain-registry.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ui-delivery.yaml`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
 - `_bmad-output/implementation-artifacts/story-9-4-acceptance-2026-09-25.md`
 - `_bmad-output/implementation-artifacts/story-9-4-code-review-2026-09-25.md`
 - `_bmad-output/implementation-artifacts/story-9-4-dev-progress-2026-09-25.md`
 - `_bmad-output/implementation-artifacts/story-9-4-execution-decisions-2026-09-25.md`
 - `_bmad-output/planning-artifacts/architecture.md`
+- `_bmad-output/project-context.md`
 - `apps/mobile/.storybook/main.ts`
 - `apps/mobile/.storybook/preview.tsx`
 - `apps/mobile/.storybook/public/mockServiceWorker.js`

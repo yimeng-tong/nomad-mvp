@@ -325,7 +325,7 @@ contract changes. The actual repository structure wins over older proposed RN/Fl
 
 ## Story9.4工具实施进展（2026-09-25）
 
-独立Storybook/MSW工作台、typed ESLint、单Chromium interaction/axe与产品/双端资源隔离已接线；实际命令、cohort、反例、旧探针保留表与证据边界统一见docs/ops/ui-validation.md。Vitest同组由准备候选4.1.9调至安全修复4.1.11，正式决定见story-9-4-execution-decisions-2026-09-25.md。当前不修改9.3共享层、Query/Router或auth/journal/cursor权威；9.4在真实CI及独立CR收口前仍in-progress。本增量只描述工具实施，原批准范围/快照不重写。
+独立Storybook/MSW工作台、typed ESLint、单Chromium interaction/axe与产品/双端资源隔离已接线；实际命令、cohort、反例、旧探针保留表与证据边界统一见docs/ops/ui-validation.md。Vitest同组由准备候选4.1.9调至安全修复4.1.11，正式决定见story-9-4-execution-decisions-2026-09-25.md。当前不修改9.3共享层、Query/Router或auth/journal/cursor权威；9.4已于2026-09-25通过独立CR及完整CI36129441895，按6344a53与26文件下载产物封存，当前done；详见其ui-delivery.yaml。本增量只描述工具实施，原批准范围/快照不重写。
 
 ---
 
@@ -1947,7 +1947,7 @@ test evidence, not extra product Stories or claims of already-run infrastructure
 
 ## Story9.4工具实施进展（2026-09-25）
 
-独立Storybook/MSW工作台、typed ESLint、单Chromium interaction/axe与产品/双端资源隔离已接线；实际命令、cohort、反例、旧探针保留表与证据边界统一见docs/ops/ui-validation.md。Vitest同组由准备候选4.1.9调至安全修复4.1.11，正式决定见story-9-4-execution-decisions-2026-09-25.md。当前不修改9.3共享层、Query/Router或auth/journal/cursor权威；9.4在真实CI及独立CR收口前仍in-progress。本增量只描述工具实施，原批准范围/快照不重写。
+独立Storybook/MSW工作台、typed ESLint、单Chromium interaction/axe与产品/双端资源隔离已接线；实际命令、cohort、反例、旧探针保留表与证据边界统一见docs/ops/ui-validation.md。Vitest同组由准备候选4.1.9调至安全修复4.1.11，正式决定见story-9-4-execution-decisions-2026-09-25.md。当前不修改9.3共享层、Query/Router或auth/journal/cursor权威；9.4已于2026-09-25通过独立CR及完整CI36129441895，按6344a53与26文件下载产物封存，当前done；详见其ui-delivery.yaml。本增量只描述工具实施，原批准范围/快照不重写。
 
 ---
 
@@ -2426,7 +2426,7 @@ Sentry/Langfuse 和评测的隐私/真实查询/无双计数仍按 8.1/8.2 及�
 # UI组件、浏览器与CI验证合同
 
 Updated: 2026-09-20
-Status: 9.4 implementation under verification; 9.5 pending
+Status: 9.4 complete with scoped CI evidence; 9.5 pending
 
 交付一个可运行的组件状态工作台，先覆盖已有 HomeSheet/字段，再由 9.3 补共享组件示例。每个核心组件至少有正常、加载、禁用/原因、错误/重连、长中文、200% 字号、键盘、reduced-motion 与身份未确认场景；复杂组合补 empty/partial/stale。Storybook 展示用例不是 BMAD Story 状态。
 
@@ -2494,7 +2494,7 @@ CI 清单逐一标注现有认证/ingest probes、home-dock/auth/journal/telemet
 
 工作台配置/场景和测试各有独立cacheDir（browser用post config hook防addon覆盖），避免与产品jsdom或反例互相污染。MSW worker字节与锁包一致；只在.storybook/public并等到激活。未知/外部请求在fetch守卫或MSW兜底失败，收尾账本使业务catch仍失败；迟到的旧client同时污染当前账本并失败。场景只清自己的timer、请求、合成身份和工作台origin的device标识，不访问产品IDB或注销其他origin的worker。
 
-本次实际证据入口：`_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/`。真实CI与独立CR完成前9.4继续in-progress。
+本次实际证据入口：`_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/`。9.4已完成独立CR与完整CI36129441895（6344a53），实际下载26文件包含日志/截图/双端资源；ui-delivery.yaml仅关闭本Story两项条件。
 
 审阅修补：API仅在工作台使用随机场景前缀，原/auth等生成合同路径保留；plain fetch不能借用下一场景，静态资源旁路不适用于programmatic fetch。finish Promise复用、切换串行化；worker.stop与异步lookup用epoch围栏。loading保持等待至取消，timeout通过受控abort模拟并核对取消计数，不宣称产品新增超时策略。Node使用同一finish强制校验ledger，预期违例为普通断言；MSW Accept旁路被记录/清除，Node无静态passthrough。产物绑定writeBundle实际bytes；390px运行与截图探针验证横向溢出和动作可达。
 

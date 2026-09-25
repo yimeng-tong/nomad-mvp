@@ -1,0 +1,311 @@
+{
+  "kind": "github-actions-verification",
+  "story_id": "9.4",
+  "recorded_at": "2026-09-25T11:35:35.224917+00:00",
+  "source_revision": "6344a53fdd328e231511c2be6be0cccf1183f317",
+  "run": {
+    "conclusion": "success",
+    "createdAt": "2026-09-25T11:26:58Z",
+    "databaseId": 36129441895,
+    "headSha": "6344a53fdd328e231511c2be6be0cccf1183f317",
+    "jobs": [
+      {
+        "completedAt": "2026-09-25T11:33:51Z",
+        "conclusion": "success",
+        "databaseId": 108053057629,
+        "name": "build-and-test",
+        "startedAt": "2026-09-25T11:27:01Z",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Initialize containers",
+            "number": 2,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Checkout",
+            "number": 3,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Setup pnpm",
+            "number": 4,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Setup Node",
+            "number": 5,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Install deps",
+            "number": 6,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Generate OpenAPI types",
+            "number": 7,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Generate Prisma client for typed checks",
+            "number": 8,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Validate BMAD handoff",
+            "number": 9,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Handoff regression",
+            "number": 10,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Typed lint with explicit comparison and frozen coverage",
+            "number": 11,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Lint gate counterexamples",
+            "number": 12,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Build workspace",
+            "number": 13,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Install locked component Chromium and Chinese fonts",
+            "number": 14,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Workbench types, static build, shared network handlers, interaction and accessibility",
+            "number": 15,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Actual component and network counterexamples",
+            "number": 16,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Sync controlled native project resources and inspect complete inventories",
+            "number": 17,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Preserve component and resource evidence",
+            "number": 18,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Apply Prisma migrations to isolated CI database",
+            "number": 19,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Authentication unit and API contract tests",
+            "number": 20,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Ingest state and command contracts",
+            "number": 21,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Recovery reader and backup helper counterexamples",
+            "number": 22,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Persistent authentication with explicit provider substitutes",
+            "number": 23,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Mobile tests",
+            "number": 24,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Home and Library contract probe",
+            "number": 25,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Planner contract probe",
+            "number": 26,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Settings contract probe",
+            "number": 27,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Install Puppeteer Chrome",
+            "number": 28,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Start explicit fixture server for legacy contract probes",
+            "number": 29,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Health check",
+            "number": 30,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Synthetic probe (ACK)",
+            "number": 31,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "SSE assertions (TTFU/keepalive)",
+            "number": 32,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Stop server",
+            "number": 33,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Setup Node",
+            "number": 63,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Setup pnpm",
+            "number": 64,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Checkout",
+            "number": 65,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Stop containers",
+            "number": 66,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 67,
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36129441895/job/108053057629"
+      }
+    ],
+    "status": "completed",
+    "updatedAt": "2026-09-25T11:33:52Z",
+    "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36129441895"
+  },
+  "artifacts": {
+    "total_count": 1,
+    "artifacts": [
+      {
+        "id": 10861611779,
+        "node_id": "MDg6QXJ0aWZhY3QxMDg2MTYxMTc3OQ==",
+        "name": "story-9-4-workbench-6344a53fdd328e231511c2be6be0cccf1183f317",
+        "size_in_bytes": 170176,
+        "url": "https://api.github.com/repos/yimeng-tong/nomad-mvp/actions/artifacts/10861611779",
+        "archive_download_url": "https://api.github.com/repos/yimeng-tong/nomad-mvp/actions/artifacts/10861611779/zip",
+        "expired": false,
+        "digest": "sha256:cbcd7323fb7c514855f70010c65e1f4fbcd1a3e6bfbf3ac8b878f0dc094d3ae8",
+        "created_at": "2026-09-25T11:32:47Z",
+        "updated_at": "2026-09-25T11:32:47Z",
+        "expires_at": "2026-12-24T11:26:58Z",
+        "workflow_run": {
+          "id": 36129441895,
+          "repository_id": 1083581333,
+          "head_repository_id": 1083581333,
+          "head_branch": "codex/story-9-4-workbench-quality",
+          "head_sha": "6344a53fdd328e231511c2be6be0cccf1183f317"
+        }
+      }
+    ]
+  },
+  "artifact_members_sha256": {
+    ".workbench-results/counterexample-axe-unnamed-control-defect.log": "b43625ee75bc62323619cebe4f843bcd0c14b149f810b8ac73bb342882f19a0a",
+    ".workbench-results/counterexample-business-catch-cannot-hide-undeclared-API.log": "18a1a976ea2511fcb8a06080e09e89833b353da4d43daed46ea38e554de90b22",
+    ".workbench-results/counterexample-field-error-association-defect.log": "389465b964672543bfd1bda28b820d75be12e8f0d77514137a77575f069847f0",
+    ".workbench-results/counterexample-focus-return-defect.log": "a77d7e2b3978c1629b81a7bac07b6e3f1099732917c37bf2440e6e26914f770d",
+    ".workbench-results/counterexample-keyboard-close-defect.log": "52f4d83300d9c1ce5b4a41ec97b72f36aab0f74fcce227219a1a51c808794e8a",
+    ".workbench-results/counterexample-late-previous-scene-cannot-pass-the-next-ledger.log": "d9ba78b8bb1fa4b28ca1b090cf0996eb299849fa254841220fabf784cb3e694c",
+    ".workbench-results/counterexample-late-raw-URL-cannot-adopt-a-new-scene.log": "6e939a432dadc59a09f685f8ad75b34ee70fe5c972d1e0e181b9df6d0986330e",
+    ".workbench-results/counterexample-missing-textual-error-defect.log": "b5027202dd9e9597133061c5a718d7a2be5d07bc43d8aed1409b428d8198e73b",
+    ".workbench-results/counterexample-mocking-stop-during-registration-lookup-is-fenced.log": "328c7eaacaa455c98433a8435242455854c73e5e869c71eae6dd704c2fb63403",
+    ".workbench-results/counterexample-passthrough-request-is-blocked.log": "009285d926a86f40e719c246aa4e81caf4d50e988e764259ef8b9b7c40972075",
+    ".workbench-results/counterexample-raw-fetch-after-cleanup-is-recorded.log": "208f116e012e2bee815a9ad3cf04f1e5631d7333097154d9dc400ac44271d6e9",
+    ".workbench-results/counterexample-real-captcha-rejected-before-render.log": "66094bbd477b675e0ee33e4eda28a9ab4c2ff3fe803c12629d8702ee2e1ca04a",
+    ".workbench-results/counterexample-repaired-workbench.log": "ff55928add11707565294b4ce9871da0f23f45dfc4e03d071f5b4cba4547524a",
+    ".workbench-results/counterexample-static-looking-raw-fetch-is-blocked.log": "5cf1ebbcc99785d78749975819975d468466e5f30e6a709fae81be03353ddaf7",
+    ".workbench-results/counterexample-stopped-mocking-still-registered-is-blocked.log": "9e8c3cdddd6a5f38d173e50838063163af4487b3d493900927f284e8f3f69686",
+    ".workbench-results/counterexample-unaltered-workbench.log": "e63a9a1c9baf276ce56ad1eff36fd004fbd25d070735f0339d9368bbcb7a08ae",
+    ".workbench-results/counterexample-worker-loss-blocks-API-before-dispatch.log": "25f1212db89f2677a31b4759675ce7c814d682b51762da498c1d7dcc73eb198c",
+    ".workbench-results/counterexample-worker-startup-failure-blocks-rendering.log": "b515cbbaaf4e387ec7f82afc02327238e6e28ccc448f7bc4a609a650077dd1e2",
+    ".workbench-results/counterexamples.json": "1c8d57f21348f111685c3d88393709a9903a98fd5be6203c73975fdc433c968e",
+    ".workbench-results/login-large-text.png": "69383129121ff127ea0b15702230edef4dbd866c6e1c4f60fd07e6b6154b04f0",
+    ".workbench-results/product-graph.json": "2e32d4754354c6a727e4c8c86637792aa10b9928ccfc2c781e505ec22a07cd51",
+    ".workbench-results/product-isolation.json": "5ceb290e5468d8093c21fc225b8c66d6624d950e2ef203cb8a647bf9dc173cec",
+    ".workbench-results/product-unavailable.png": "d0f69174ef47291987d04e5370ce25288bb3bd5d5eeeba1c221d8acb432a7e9c",
+    ".workbench-results/runtime.json": "5ad4c257e70f73cd3b5c7cb1c97392b69a1a180e83e6bb5c87c6cf4768b9fe84",
+    ".workbench-results/sheet-partial.png": "4a460f787318cc1bad5d72eb62cd0a7cad97b40fc84c6af9ca60031958d3389f",
+    "storybook-static/index.json": "5cb651851304a8e0a3cda75a5676481d39cae872bac507011bf556cc50d4bf60"
+  },
+  "scoped_sources_verified": 48,
+  "local_evidence_is_separate": true
+}

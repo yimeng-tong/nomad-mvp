@@ -1,0 +1,28 @@
+kind: ui-verification
+story_id: '9.4'
+source_contract_sha256: a120d2b064bfa7ba8a362f51aee771e61db8c04083817f7366250ae4d55adf27
+source_revision: 6344a53fdd328e231511c2be6be0cccf1183f317
+recorded_at: '2026-09-25T11:37:55.897269+00:00'
+checks:
+  CODE-QUALITY-01:
+    result: passed
+    environment: WSL project / Ubuntu26.04 local; GitHub ubuntu-24.04, Node22.22.1, pnpm11.7.0
+    summary: 37个实际源文件typed lint，6组同门禁正反例；零保留豁免；最终提交CI完整执行且48个源码/lock/config摘要核验。只关闭9.4自身工具责任。
+    evidence:
+    - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci-verification.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/lint-result-final.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/source-fingerprints.json
+    - _bmad-output/implementation-artifacts/story-9-4-code-review-2026-09-25.md
+  UI-WORKBENCH-01:
+    result: passed
+    environment: Storybook10.6.0/MSW2.15.0/Vitest4.1.11/Playwright1.63.0 Chromium153.0.8010.12 rev1243; controlled synthetic
+      API only
+    summary: 独立dev/static工作台18场景、共享网络9项、16故障+2控制、5组产物污染检查；实际产品图谱/输出bytes/双端完整资源与干净origin检查。CI下载包26文件核验；不等于原生或供应商验收。
+    evidence:
+    - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci-verification.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci/counterexamples.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci/product-graph.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci/product-isolation.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/ci/runtime.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/dev-server.json
+    - _bmad-output/implementation-artifacts/story-9-4-acceptance-2026-09-25.md

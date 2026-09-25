@@ -1,6 +1,6 @@
 # Story9.4开发进度
 
-唯一写入者：01a0d78a-3692-78b1-aee5-76268a743925；分支codex/story-9-4-workbench-quality，开发基线abac3df。当前in-progress。
+唯一写入者：01a0d78a-3692-78b1-aee5-76268a743925；分支codex/story-9-4-workbench-quality，开发基线abac3df。当前done（最终证据见文末）。
 
 已完成实现：17场景工作台、共享DTO/MSW、ready/lost与未知请求账本、真实lint及零豁免、覆盖与基准反例、内存缺陷转换测试、产品真实模块图与两端完整资源检查、CI接线。LoginScreen仅补显式失败处理、提示关联/发送文字和保持原语义的ref失效helper；既有auth/journal/cursor/lease不重写。
 
@@ -37,3 +37,7 @@ Redis追加边界复核指出QUIT可能等待无响应服务器；最终改为Fa
 第七轮CI36127674906在工作台、持久认证、mobile和旧Home/Planner/Settings均通过后，synthetic导入因fixture server没有启用新持久worker而503；保护逻辑本身正确。只在显式CI fixture启动步骤设置worker enabled/非恢复隔离；本地实际PG+Redis完整synthetic通过。其后SSE旧探针对合法持久快照重复multimodal误判，改为非空且所有子阶段均为multimodal，全部原必需state仍检查；真实SSE与实际脚本HTTP正反例（重复通过、无/错子阶段、缺geo失败）通过。仅为该脚本补@types/eventsource1.1.15开发声明及原any边界类型，运行时依赖未变化。Edge只读复核[]，失败记录保留于legacy-ci-probes.json。
 
 实际下载旧CI36120947834的artifact发现只有storybook-static/index.json，隐藏的.workbench-results被upload-artifact默认排除；此前只能证明本地产物生成，不能声称CI包已包含完整资源清单。已在精确两项上传路径内开启include-hidden-files，并把完全无产物设为error；只涉及合成验证结果目录，不扩大到env/工作区。最终需从新提交CI实际下载核验成员与hash后封存。官方依据：https://github.com/actions/upload-artifact/tree/v4#uploading-hidden-files 。
+
+## 最终完成
+
+6344a53完整CI36129441895的38个步骤成功；实际下载26文件，含16故障+2正常控制日志、截图、模块图和完整Android/iOS资源清单。验收层及三层CR/追加窄复核无残项，R1–R15全部关闭。Review状态handoff检查通过后转done，再做最终handoff；48个源码/lock/config摘要一致。额外必需基线planner-domain71与ingest contract通过。两个UI条件只在9.4 verified。原实际设备/供应商/生产恢复门槛和3.1暂停不变，下一仅准备9.5。

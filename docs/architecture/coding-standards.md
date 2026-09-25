@@ -39,4 +39,4 @@
 
 ## Story9.4工具实施进展（2026-09-25）
 
-独立Storybook/MSW工作台、typed ESLint、单Chromium interaction/axe与产品/双端资源隔离已接线；实际命令、cohort、反例、旧探针保留表与证据边界统一见docs/ops/ui-validation.md。Vitest同组由准备候选4.1.9调至安全修复4.1.11，正式决定见story-9-4-execution-decisions-2026-09-25.md。当前不修改9.3共享层、Query/Router或auth/journal/cursor权威；9.4在真实CI及独立CR收口前仍in-progress。本增量只描述工具实施，原批准范围/快照不重写。
+独立Storybook/MSW工作台、typed ESLint、单Chromium interaction/axe与产品/双端资源隔离已接线；实际命令、cohort、反例、旧探针保留表与证据边界统一见docs/ops/ui-validation.md。Vitest同组由准备候选4.1.9调至安全修复4.1.11，正式决定见story-9-4-execution-decisions-2026-09-25.md。当前不修改9.3共享层、Query/Router或auth/journal/cursor权威；9.4已于2026-09-25通过独立CR及完整CI36129441895，按6344a53与26文件下载产物封存，当前done；详见其ui-delivery.yaml。本增量只描述工具实施，原批准范围/快照不重写。

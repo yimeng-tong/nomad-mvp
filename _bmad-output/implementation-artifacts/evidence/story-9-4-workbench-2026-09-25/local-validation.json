@@ -1,8 +1,8 @@
 {
   "kind": "local-story-verification",
   "story_id": "9.4",
-  "recorded_at": "2026-09-25T11:18:21.241960+00:00",
-  "source_revision": "8ca552c+legacy-worker-and-sse-probe",
+  "recorded_at": "2026-09-25T11:37:55.897269+00:00",
+  "source_revision": "6344a53fdd328e231511c2be6be0cccf1183f317",
   "checks": {
     "workbench_typecheck": {
       "exit_code": 0
@@ -117,16 +117,24 @@
       "server_build_exit_code": 0,
       "lint_exit_code": 0,
       "runtime_dependency_changes": false
+    },
+    "planner_domain": {
+      "exit_code": 0,
+      "passed": 71
+    },
+    "standalone_ingest_contract": {
+      "exit_code": 0
     }
   },
   "independent_review": {
     "layers": 3,
     "uniqueFindings": 13,
-    "phase": "all-13-fixed-and-rechecked",
+    "phase": "all-15-fixed-and-rechecked",
     "additionalCiFix": "Strip ANSI before positive-control matching",
-    "postReviewHardening": "Node start hook records/removes MSW bypass Accept header before dispatch; Node has no static passthrough."
+    "postReviewHardening": "Node start hook records/removes MSW bypass Accept header before dispatch; Node has no static passthrough.",
+    "additionalFindings": 2
   },
-  "remaining": "Final commit CI and final scoped closure evidence.",
+  "remaining": "None for Story9.4; native/provider/production recovery gates remain in owning Stories.",
   "clean_install": {
     "commit": "1dee5bdc0ceafa63e15d7d0076fb4a124560abbd",
     "installExitCode": 0,
@@ -192,7 +200,22 @@
       "persistent_auth_and_mobile_contracts": "all-passed",
       "failure": "Legacy fixture server inherited safe default disabled ingest worker; synthetic ACK rejected with 503. Explicit worker enabled only for isolated CI fixture server; actual PG+Redis synthetic and SSE validated locally.",
       "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36127674906"
+    },
+    {
+      "run": 36128777231,
+      "commit": "f0f8d7b167027e6fa20b26644508d8d9d7236e58",
+      "conclusion": "success",
+      "complete_check_chain": true,
+      "artifact_complete": false,
+      "limitation": "Hidden .workbench-results excluded by upload-artifact default. Checks passed; complete downloadable evidence requires the explicit upload option in 6344a53.",
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36128777231"
     }
   ],
-  "remote_ci": "next-commit-run-pending"
+  "remote_ci": {
+    "run": 36129441895,
+    "conclusion": "success",
+    "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36129441895",
+    "artifact_complete": true,
+    "artifact_files": 26
+  }
 }

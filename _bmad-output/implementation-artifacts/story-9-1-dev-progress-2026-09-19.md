@@ -49,3 +49,8 @@ Clipboard8.0.1已固定并双端sync注册，当前dev.nomad.mvp自定义scheme�
 ### 主任务1.6日志接线后的构建更新
 
 1.6已接通确认前持久化/原operation恢复，修复旧Chromium自定义scheme解析兼容；两进程浏览器+真实IDB+明确鉴权/API替身证明通过。双端sync/注册/资源核对与Android243 tasks及v2 debug签名通过，当前APK SHA256 `14cf310bb890bbdded864903a3dde18be0a3754764cc2acf5bc221afae341f7c`。这仍不证明真实原生设备、iOS编译或U-Link/U-App接通；其门槛保留。具体源码/资源指纹见story-1-6-local-validation-2026-09-19.json。
+
+
+## 2026-09-26 共享UI迁移受影响回归
+
+9.3在实际Login/Home/退出入口迁移共享UI，本Story受影响范围及原auth6/真实PG-SSE-IDB6回放见story-9-3-integration-impact-2026-09-26.md。当前aeadc1e完整CI36184294356通过，129产品场景/33视觉和6三引擎组件补证、265移动+5配置保持；原controller/journal/cursor与历史证据未重写。9.3四项UI条件只在9.3范围verified，本Story状态及自身条件没有自动关闭；真实供应商/归因/设备/生产恢复仍按原合同验收。

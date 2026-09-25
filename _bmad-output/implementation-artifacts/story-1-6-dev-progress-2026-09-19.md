@@ -140,3 +140,8 @@ bmad-code-review三层在1215行后端差异上独立检查。5项可修问题�
 原生SDK前置进一步取得实际离线运行证据：独立Android探针36tasks/21s构建，在本任务Android29 x86模拟器中执行，探针UID双IP族出站REJECT在启动前/结束后均验证。真实SDK初始化，关闭组合返回10秒后仍有9文件42460字节（SDK db/envelope/identity元数据确认，未读正文）。不能把该组合包成成功close/清缓存，也不能由此推断离线事件已经上传。实际App未加入SDK依赖，仍保持原门槛。记录于docs/ops/umeng-sdk-artifact-audit.md及android-lifecycle.json，探针已force-stop/模拟器请求关机，无真实Key/事件或真实设备。
 
 为避免硬资源/供应商生命周期门槛阻塞整个已授权MVP，下一独立行动按Sprint.next_story_to_prepare准备1.7持久导入进度与重启恢复合同；1.0/1.6/9.1继续in-progress，已有后端回执/快照是可复用输入，不把整Story或SDK归因标done。SDK兼容核验及正式法律/U-Link/iOS设备仍保留具体待证责任，不能用后续Story删除这些义务。
+
+
+## 2026-09-26 共享UI迁移受影响回归
+
+9.3在实际Login/Home/退出入口迁移共享UI，本Story受影响范围及原auth6/真实PG-SSE-IDB6回放见story-9-3-integration-impact-2026-09-26.md。当前aeadc1e完整CI36184294356通过，129产品场景/33视觉和6三引擎组件补证、265移动+5配置保持；原controller/journal/cursor与历史证据未重写。9.3四项UI条件只在9.3范围verified，本Story状态及自身条件没有自动关闭；真实供应商/归因/设备/生产恢复仍按原合同验收。

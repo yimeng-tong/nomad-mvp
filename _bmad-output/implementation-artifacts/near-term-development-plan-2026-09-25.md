@@ -6,7 +6,7 @@ scope_revision: ui-foundation-2026-09-20
 authorization_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 preparation_policy: just-in-time
 first_story: 9-4-component-workbench-and-enforced-code-quality
-next_story_to_prepare: 9-3-shared-ui-components-and-safe-app-sheet
+next_story_to_prepare: 1-8-owner-import-records-and-versioned-deduplication
 single_writer: true
 new_task_id: 01a0d78a-3692-78b1-aee5-76268a743925
 git_checkpoint_before_story_9_4: true
@@ -18,11 +18,11 @@ backend_environment: homelab-vm104
 
 ## 2026-09-26 当前进展
 
-9.4/9.5均done；9.5源码85eedb6完整CI36157432347通过，93项三引擎/24视觉、v2来源及全部反例、777实际下载文件核验。当前9done/5in-progress/53backlog，下一仅准备9.3 CS/VS，不批量准备。其他Story真实条件和3.1暂停保持。
+9.4/9.5均done；9.3本地UI切片已通过独立CR及aeadc1e完整CI36184294356（129产品/33视觉、6三引擎组件、32工作台、88 typed lint、970下载文件核验）。四项UI条件和local gate已verified，9.3仍in-progress，T9/APP-HOST-01真实设备未关闭。当前9done/6in-progress/52backlog；进入下表第5步，先完成在制Story受影响集成并推进仍可独立编码的部分，再临近开发时准备1.8，不批量准备。其他真实条件与3.1暂停保持。
 
 下方9月25日交接时的数量、ready与Git状态属于历史快照；当前CURRENT/Sprint及本段决定现时派发。执行顺序和资源边界继续有效。
 
-## 当前决定
+## 2026-09-25执行决定（保留）
 
 用户明确解除原1.7完成后停止边界，并把全量准备改为按近期开发顺序滚动CS/VS。先执行已经准备完的9.4；9.5、9.3在各自即将实施时再正式准备和独立验证。其余backlog保留，17份尚未验证草稿归档为研究，不计ready。
 
@@ -59,7 +59,7 @@ Query9.6与Router9.7分别开发/验收：依赖9.4/9.5和9.3的shared-ui-local-
 
 ## 准备与执行规则
 
-- 当前只正式保持9.4 ready；next_story_to_prepare=9.5表达顺序，不表达已授权忽略前置或要求立刻全量生成。
+- 当前9.4/9.5已done，9.3本地gate已verified但原生仍in-progress；next_story_to_prepare=1.8表达准备顺序，不要求跳过在制集成/真实前置或全量生成。
 - 每次CS读取CURRENT→project-context→Sprint→当前catalog/delivery→当前源块/真实代码，记录source_story_id/hash、FR/NFR、conditions、obligations到实际Tasks。VS由独立上下文复核后才ready。
 - DS沿实际合同实施，有限且有意义的测试；CR按bmad-code-review独立审阅并修复确认问题。只有适用AC/工程条件证据充分才review/done，不因编译/fixture或别的Story通过而关本Story。
 - 持续推进已授权的独立工作，不再为普通CS/VS/DS/CR求授权；遇硬资源只询问未提供的非秘密资源名称/配置位置，合理技术决策先落盘。真实外发消息、删除数据与公有云发布按既有具体授权边界。

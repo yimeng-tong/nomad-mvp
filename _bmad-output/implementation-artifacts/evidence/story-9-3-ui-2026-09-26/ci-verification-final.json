@@ -1,0 +1,460 @@
+{
+  "kind": "story-ci-execution-verification",
+  "story_id": "9.3",
+  "source_revision": "aeadc1e79e1243c942b3db0216b945174eca0256",
+  "github_run": 36184294356,
+  "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36184294356",
+  "recorded_at": "2026-09-25T20:21:05.897332+00:00",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "completedAt": "2026-09-25T20:17:44Z",
+      "conclusion": "success",
+      "databaseId": 108233847192,
+      "name": "Canonical browser environment and product entry",
+      "startedAt": "2026-09-25T20:11:56Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize containers",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run pnpm/action-setup@v3",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v4",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run pnpm install --frozen-lockfile --strict-peer-dependencies",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify actual engine runtimes and fonts",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Generate API types and check browser suite types",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build the actual controlled product entry",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Current product scenarios in all three engines",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Browser network guard counterexamples",
+          "number": 11,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Product privacy recovery and pixel counterexamples",
+          "number": 12,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Missing coverage baseline environment and auto-update counterexamples",
+          "number": 13,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Private shared UI lifecycle in all three actual browser engines",
+          "number": 14,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 15,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@v4",
+          "number": 27,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run pnpm/action-setup@v3",
+          "number": 28,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 29,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Stop containers",
+          "number": 30,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 31,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36184294356/job/108233847192"
+    },
+    {
+      "completedAt": "2026-09-25T20:20:07Z",
+      "conclusion": "success",
+      "databaseId": 108233847438,
+      "name": "build-and-test",
+      "startedAt": "2026-09-25T20:11:56Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize containers",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Checkout",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Setup pnpm",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Setup Node",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install deps",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Generate OpenAPI types",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Generate Prisma client for typed checks",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Validate BMAD handoff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Handoff regression",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Typed lint with explicit comparison and frozen coverage",
+          "number": 11,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Lint gate counterexamples",
+          "number": 12,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build workspace",
+          "number": 13,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install locked component Chromium and Chinese fonts",
+          "number": 14,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Workbench types, static build, shared network handlers, interaction and accessibility",
+          "number": 15,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Actual component and network counterexamples",
+          "number": 16,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Sync controlled native project resources and inspect complete inventories",
+          "number": 17,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Preserve component and resource evidence",
+          "number": 18,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Apply Prisma migrations to isolated CI database",
+          "number": 19,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Authentication unit and API contract tests",
+          "number": 20,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Ingest state and command contracts",
+          "number": 21,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Recovery reader and backup helper counterexamples",
+          "number": 22,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Persistent authentication with explicit provider substitutes",
+          "number": 23,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Mobile tests",
+          "number": 24,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Home and Library contract probe",
+          "number": 25,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Planner contract probe",
+          "number": 26,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Settings contract probe",
+          "number": 27,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install Puppeteer Chrome",
+          "number": 28,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Start explicit fixture server for legacy contract probes",
+          "number": 29,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Health check",
+          "number": 30,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Synthetic probe (ACK)",
+          "number": 31,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "SSE assertions (TTFU/keepalive)",
+          "number": 32,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Stop server",
+          "number": 33,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Setup Node",
+          "number": 63,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Setup pnpm",
+          "number": 64,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Checkout",
+          "number": 65,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Stop containers",
+          "number": 66,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 67,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36184294356/job/108233847438"
+    }
+  ],
+  "browser": {
+    "matrix": 129,
+    "visuals": 33,
+    "skips": 0,
+    "retries": 0,
+    "source_files": 303,
+    "modules": 220,
+    "local_modules": 52,
+    "network_negative_cases": 5,
+    "network_controls": 2,
+    "product_negative_cases": 7,
+    "product_control_cases": 12,
+    "report_integrity_negative_cases": 4,
+    "build_binding_negative_cases": 5,
+    "validation_negative_cases": 4,
+    "visual_validation_controls": 2,
+    "focus_contrast_all_three_engines": 4.896366277958921
+  },
+  "core": {
+    "typed_lint_files": 88,
+    "exceptions": 0,
+    "handoff_regressions": 82,
+    "lint_gate_regressions": 6,
+    "workbench_network_node_tests": 9,
+    "workbench_browser_scenarios": 32,
+    "workbench_negative_cases": 16,
+    "workbench_controls": 2,
+    "mobile_tests": 265,
+    "native_config_tests": 5,
+    "isolation_counterexamples": 7,
+    "native_sync_verify": "passed",
+    "original_pg_auth_ingest_redis_legacy_ack_sse_chain": "passed"
+  },
+  "downloaded_files": 970,
+  "zip_crc_passed": 30,
+  "raw_log_hashes": {
+    "/tmp/nomad-story93-aead-core.log": "b2f06d96ac8cdafb160c35bf8c8494b1ec92d6fd27e87f54b105c1486c28685d",
+    "/tmp/nomad-story93-aead-browser.log": "1e840f69514fdbd5562ecd52988c577d4b8dee4436790b244e586776921f8140"
+  },
+  "native_device_acceptance": false,
+  "minimum_browser_versions_actually_executed": false,
+  "real_provider_acceptance": false,
+  "shared_component_browser_matrix": {
+    "engines": 3,
+    "cases": 6,
+    "scope": "Actual shared PrivateUiBoundary/Toast/Dialog on isolated Storybook fixture; not a new business Toast entry or native-device acceptance",
+    "results": [
+      {
+        "engine": "chromium",
+        "executable": "/ms-playwright/chromium-1243/chrome-linux64/chrome",
+        "executed": 2,
+        "tests": [
+          "身份恢复 · 隐式触发器",
+          "身份恢复 · 私有提示与迟到回调"
+        ],
+        "result": "passed"
+      },
+      {
+        "engine": "firefox",
+        "executable": "/ms-playwright/firefox-1543/firefox/firefox",
+        "executed": 2,
+        "tests": [
+          "身份恢复 · 隐式触发器",
+          "身份恢复 · 私有提示与迟到回调"
+        ],
+        "result": "passed"
+      },
+      {
+        "engine": "webkit",
+        "executable": "/ms-playwright/webkit-2359/pw_run.sh",
+        "executed": 2,
+        "tests": [
+          "身份恢复 · 隐式触发器",
+          "身份恢复 · 私有提示与迟到回调"
+        ],
+        "result": "passed"
+      }
+    ]
+  }
+}

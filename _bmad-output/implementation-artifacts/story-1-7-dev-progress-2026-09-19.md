@@ -110,3 +110,8 @@ VM104实际PG/staging模式server、152事件、4场景各3次共12样本通过�
 ## 当前资源阻断审计
 
 见story-1-7-blocked-audit-2026-09-19.md。前一轮为实际progress，本轮重复核验后确认剩余实机/iOS、正式备份目标及生产运行/产品指标门槛仍依赖用户输入或外部状态。相同条件已持续三轮，目标标blocked；不是Story完成或用户主动pause。保持1.7 in-progress，资源补齐后从未完成项续接，不进入1.8。
+
+
+## 2026-09-26 共享UI迁移受影响回归
+
+9.3在实际Login/Home/退出入口迁移共享UI，本Story受影响范围及原auth6/真实PG-SSE-IDB6回放见story-9-3-integration-impact-2026-09-26.md。当前aeadc1e完整CI36184294356通过，129产品场景/33视觉和6三引擎组件补证、265移动+5配置保持；原controller/journal/cursor与历史证据未重写。9.3四项UI条件只在9.3范围verified，本Story状态及自身条件没有自动关闭；真实供应商/归因/设备/生产恢复仍按原合同验收。

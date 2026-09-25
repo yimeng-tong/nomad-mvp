@@ -13,3 +13,6 @@ Toast.Close的1.8默认在未展开时aria-hidden；Nomad只展示一条非关�
 B05实际浏览器进一步暴露Base UI1.8 markOthers对所有[aria-live]的保留策略；Home Dock包含此类节点，所以默认逐节点隐藏无法满足整页背景不可读。PrivateUiBoundary现按实际present层计数对整个页面兄弟节点设inert/aria-hidden，Portal在兄弟容器；不增加另一focus trap/scroll/back管理器。该修改后Chromium29/29、263移动/5配置和工作台30/30通过。T6早期完整16反例通过是在这一额外mask修改前，最终当前CI会重新跑全部反例。
 
 候选矩阵扩至B00–B28与V01–V11，共120项/三引擎；保留原93项责任。V09/V11使用320×740，V10使用1280×900，policy/run-contract双登记，capture校验真实page viewport、window尺寸及DPR。新的actual-viewport-drift反例使用真正page.setViewportSize改变尺寸，不能由同一份project配置假通过；等待实际canonical CI执行。
+
+
+本地收口决定：基于aeadc1e实际完整CI36184294356、下载产物及原探针，登记四项UI条件与local gate verified；背景是合同允许局部依赖，后果是9.6/9.7将来可消费此证明，但整張9.3仍受T9/APP-HOST-01限制，当前队列先做在制集成。未放宽阈值/原生资源或3.1暂停；Git后的文档提交不更改受验产品。公开UI迁移不新增权限；已有clipboard/auth/native权限责任继续原Story。Apple/微信实际接入平台或非密配置位置已单独询问，等待期间继续独立工作，不恢复已被PNVS替代的旧身份平台候选。

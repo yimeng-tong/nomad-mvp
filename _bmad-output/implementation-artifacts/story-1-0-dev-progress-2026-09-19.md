@@ -105,3 +105,8 @@ Planner流暂停时断开，身份重新确认后同job/cursor恢复；旧事件
 当前完整客户端217测试+3原生配置、workspace构建、auth/Home浏览器替身回归、遥测3个序列化HTTP信封检查通过；Android最新资源同步/编译/签名见`evidence/story-1-6-telemetry-2026-09-19/validation.json`。早先PG/服务端证据保持原范围，未在此重复运行或改写为新生产证据。
 
 实际SDK、App默认runtime/许可UI、规范认证/输入事件、匿名到owner关联和真实U-App/U-Link查询尚未接通；页面默认Noop只代表未连接，T8保持未完成。下一步按`docs/ops/telemetry-first-use-v1.md`核验固定版SDK和原生适配器，最终三端真实证据分别取得；不重复索要已给AppKey/短信资源，不因本地绿测试关闭真实门槛。
+
+
+## 2026-09-26 共享UI迁移受影响回归
+
+9.3在实际Login/Home/退出入口迁移共享UI，本Story受影响范围及原auth6/真实PG-SSE-IDB6回放见story-9-3-integration-impact-2026-09-26.md。当前aeadc1e完整CI36184294356通过，129产品场景/33视觉和6三引擎组件补证、265移动+5配置保持；原controller/journal/cursor与历史证据未重写。9.3四项UI条件只在9.3范围verified，本Story状态及自身条件没有自动关闭；真实供应商/归因/设备/生产恢复仍按原合同验收。

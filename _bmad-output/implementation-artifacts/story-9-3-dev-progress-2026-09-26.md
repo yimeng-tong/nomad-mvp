@@ -61,3 +61,10 @@ CI36176188637（6e0b973）33/33候选及显式下载来源/图谱/viewport检查
 26dab0a/run36180644424两个完整CI job通过；129产品场景/33实际PNG/87typed lint/265移动+5配置/31工作台/全部正反例与原PG链通过；963文件和30ZIP（15唯一hash）实际下载与CRC核验。该记录保存在ci-verification.json和ci/，不重写。
 
 逐Task核对发现私有Toast迟到回调与隐式focus此前只覆盖单测/单Chromium，现新增独立三引擎组件矩阵：同一实际PrivateUiBoundary/Toast/Dialog在隔离Storybook中运行两个场景，不增加产品通知入口。每engine真实executablePath、UA校验及JSON两条必须passed，禁止零执行。当前Chrome正控2通过，错标Firefox的两项实际失败；工作台增至32，独立Acceptance只读复核无问题。等待新CI产出6个实际三引擎组件结果，再验证本地gate；T9/全部真实资源要求保持。
+
+
+## 本地UI切片收口与继续执行
+
+aeadc1e/run36184294356完整CI通过：129产品/33视觉、6三引擎共享组件、32工作台、88 typed lint、265移动+5配置及原PG链/全部反例；970实际下载文件/30ZIP核验。详细当前源/构建/环境与三引擎记录保存在ci-verification-final.json、downloaded-artifacts-final.json和ci-final/；26dab及所有先前失败保留。
+
+T1–T8本地实现与证据完成，四项UI条件verified，ui-delivery.yaml/local-ui-regression.yaml可消费。T9/APP-HOST-01/AC6及整張9.3保持in-progress，最低版/设备差异见native-gates，四张在制影响见integration-impact。CURRENT/Sprint/monitor与近期计划已同步，last_completed_story仍9.5，next-preparation仍1.8。沿持续授权继续近期计划第5步，不恢复旧任务/heartbeat，不批量准备或越序启动Query/Router。

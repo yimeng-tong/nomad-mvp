@@ -1,6 +1,6 @@
 # Story9.3 本地切片独立审阅
 
-Status: patches-rechecked-canonical-verification-pending
+Status: local-slice-approved-native-gates-open
 Source: a60674b5a3422b09ad2c4f3a6f13cff749917e4f
 Baseline: 775b132f64bf0d6831150d95a6f9192e814f39ce
 Scope: T8 local implementation review; whole Story remains in-progress, T9 real-device gates open
@@ -35,3 +35,8 @@ CI1原实际Chromium几何为action bottom740.40625、popup bottom740、scrollTo
 ## 工具覆盖收尾复核
 
 新增三引擎组件矩阵（两个真实组件场景×三个engine）获独立Acceptance只读复核通过：实际driver/executable、观察到的UA、JSON指定场景/非零执行约束明确，沿用身份与网络清理。当前仅本机Chrome和错误engine标记负例实际完成，三引擎最终结果等待CI；不把该harness称为生产通知入口或原生验收。
+
+
+## 当前最终核验
+
+aeadc1e完整CI36184294356两个job通过，新增6项三引擎组件均真实执行。129产品/33视觉、32工作台与88 typed lint及所有正反例通过；970下载文件和30ZIP已核验，33actual PNG均与批准基线摘要一致。当前无未关闭本地代码发现；四项UI条件/local gate仅限定9.3本地切片，T9/APP-HOST-01及整张Story仍未完成。详情见story-9-3-acceptance-2026-09-26.md。

@@ -1,0 +1,37 @@
+{
+  "kind": "actual-shared-component-browser-matrix",
+  "results": [
+    {
+      "engine": "chromium",
+      "executable": "/ms-playwright/chromium-1243/chrome-linux64/chrome",
+      "executed": 2,
+      "tests": [
+        "身份恢复 · 隐式触发器",
+        "身份恢复 · 私有提示与迟到回调"
+      ],
+      "result": "passed"
+    },
+    {
+      "engine": "firefox",
+      "executable": "/ms-playwright/firefox-1543/firefox/firefox",
+      "executed": 2,
+      "tests": [
+        "身份恢复 · 隐式触发器",
+        "身份恢复 · 私有提示与迟到回调"
+      ],
+      "result": "passed"
+    },
+    {
+      "engine": "webkit",
+      "executable": "/ms-playwright/webkit-2359/pw_run.sh",
+      "executed": 2,
+      "tests": [
+        "身份恢复 · 隐式触发器",
+        "身份恢复 · 私有提示与迟到回调"
+      ],
+      "result": "passed"
+    }
+  ],
+  "executed": 6,
+  "scope": "Actual shared PrivateUiBoundary/Toast/Dialog on isolated Storybook fixture; not a new business Toast entry or native-device acceptance"
+}

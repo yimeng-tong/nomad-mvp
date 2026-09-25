@@ -38,6 +38,7 @@ dependencies:
 - 9-5-browser-flow-and-visual-regression-gates
 execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
 local_slice_gate: shared-ui-local-regression-passed
+ui_delivery_evidence: _bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ui-delivery.yaml
 research_records:
 - _bmad-output/implementation-artifacts/research/story-9-3-tooling-research-2026-09-26.md
 - _bmad-output/implementation-artifacts/research/story-9-3-integration-audit-2026-09-26.md
@@ -132,54 +133,54 @@ So that 我能保持上下文完成操作，并在身份变化时不会看到旧
   - [x] 冻结Node22.22.1、pnpm11.7.0、React19.2.7、Vite8.0.16和现有Capacitor/验证工具；初选shadcn4.21.0、@base-ui/react1.8.0、tailwindcss与@tailwindcss/vite4.3.3，再确认实际peer/install/build。真实secret仍在VM104受限配置，不读入UI或Git。
   - [x] 核验Web与原生资源状态：真实最低iOS16.4/代表性iPhone、Android10+/WebView111+、Mac/Xcode/签名、合法HTTPS后端等；已问资源不重复索取。缺资源记录到APP-HOST-01切片，继续独立组件工作；不下调矩阵。
 
-- [ ] T1 引入可追溯的Nomad组件与样式基础（AC1/8；NFR7/8/25；UI-COMPONENT-01、CODE-QUALITY-01；shared-ui-adoption）
-  - [ ] 新增src/ui/{primitives,components,styles}；精确锁生成CLI及显式Base UI基础，逐个获取/审阅选中registry源码，记录URL/版本/响应hash/生成文件/人工调整。CLI锁版本不代表远端registry已冻结；不使用浮动latest或批量覆盖源码。
-  - [ ] Tailwind4/Vite插件接产品与工作台，保留原build proof、JS/CSS targets与env隔离；显式theme/utilities/layer顺序、不引入全局Preflight。核对原未分层button/input及第三方样式的优先级，仅迁移实际消费点。
-  - [ ] 按UX-DR37建立深绿/近白等语义tokens、rem字体/4px间距阶梯/受控层级/标准与Sheet动效。逐项实测正文4.5:1和适用控件/焦点3:1，保留品牌；登记Dock/composer/Sheet的12/14/22px历史例外，卡片不扩到大圆角。不引入暗色主题、另一Drawer/Toast库或packages/ui。
+- [x] T1 引入可追溯的Nomad组件与样式基础（AC1/8；NFR7/8/25；UI-COMPONENT-01、CODE-QUALITY-01；shared-ui-adoption）
+  - [x] 新增src/ui/{primitives,components,styles}；精确锁生成CLI及显式Base UI基础，逐个获取/审阅选中registry源码，记录URL/版本/响应hash/生成文件/人工调整。CLI锁版本不代表远端registry已冻结；不使用浮动latest或批量覆盖源码。
+  - [x] Tailwind4/Vite插件接产品与工作台，保留原build proof、JS/CSS targets与env隔离；显式theme/utilities/layer顺序、不引入全局Preflight。核对原未分层button/input及第三方样式的优先级，仅迁移实际消费点。
+  - [x] 按UX-DR37建立深绿/近白等语义tokens、rem字体/4px间距阶梯/受控层级/标准与Sheet动效。逐项实测正文4.5:1和适用控件/焦点3:1，保留品牌；登记Dock/composer/Sheet的12/14/22px历史例外，卡片不扩到大圆角。不引入暗色主题、另一Drawer/Toast库或packages/ui。
 
-- [ ] T2 完成基础控件与诚实状态组合（AC1/2/6/8；FR1/FR18、NFR8；UI-COMPONENT-01、UI-WORKBENCH-01、CODE-QUALITY-01）
-  - [ ] Button、Input、Textarea、Field/FormField、Tabs、Skeleton/AsyncState与非关键Toast形成Nomad公共API，业务不散落Base UI imports。采用Base UI render/ref/DOM props组合方式，不套用Radix asChild。
-  - [ ] Button默认type=button，只有显式submit提交；loading/disabled有真实原因，icon-only有label和44pt区域。表单保留name、inputMode、autocomplete、maxLength、手机号/challenge绑定；IME组合中Enter不误提交，正常明确提交仍一次。
-  - [ ] label/description/error ID关联、字段错误/失败保留输入；loading/empty/error/reconnect/partial/stale/unverified区别来自领域事实。Toast只放非关键短消息、去重且不抢焦点，未知写入/字段错误/恢复与hard conflict保持页面内；Skeleton只代表真实读取占位。
+- [x] T2 完成基础控件与诚实状态组合（AC1/2/6/8；FR1/FR18、NFR8；UI-COMPONENT-01、UI-WORKBENCH-01、CODE-QUALITY-01）
+  - [x] Button、Input、Textarea、Field/FormField、Tabs、Skeleton/AsyncState与非关键Toast形成Nomad公共API，业务不散落Base UI imports。采用Base UI render/ref/DOM props组合方式，不套用Radix asChild。
+  - [x] Button默认type=button，只有显式submit提交；loading/disabled有真实原因，icon-only有label和44pt区域。表单保留name、inputMode、autocomplete、maxLength、手机号/challenge绑定；IME组合中Enter不误提交，正常明确提交仍一次。
+  - [x] label/description/error ID关联、字段错误/失败保留输入；loading/empty/error/reconnect/partial/stale/unverified区别来自领域事实。Toast只放非关键短消息、去重且不抢焦点，未知写入/字段错误/恢复与hard conflict保持页面内；Skeleton只代表真实读取占位。
 
-- [ ] T3 建立身份边界内的受控Portal与模态生命周期（AC3/4/5；NFR3/7/8；UI-COMPONENT-01、UI-BROWSER-01；shared-ui-adoption）
-  - [ ] 私有Portal host位于实际.auth-private DOM内并在inert背景外；先拿到已连接容器再开放Root/Portal。container只能是已解析HTMLElement或literal null；不得用current=null的ref对象触发body fallback，也不得以public模式兜底私有内容。
-  - [ ] AppDialog/AppSheet使用唯一Base UI modal=true焦点/滚动管理；Root受控open和onOpenChange，移除旧同层trap/Escape/back/锁。默认keepMounted=false；若保留DOM必须作用域[hidden]规则及真实浏览器证明，display:flex不能覆盖安全隐藏。
-  - [ ] Root交互生命周期在checking/unavailable/退出/撤权时立即停用或卸载，不能只给仍open的Root加display:none留下锁/焦点/aria masking。页面/Sheet/Toast同步从视觉、交互和可访问树隔离；保留公开协议独立可读边界。
-  - [ ] 关闭决定、Toast和延迟focus/callback绑定owner/session/nativeGeneration、epoch、activity及layer instance/取消信号；身份变化优先安全处理，不等待busy/dirty异步决定。owner/session变化清旧UI；同owner复核保留合法草稿/已确认内容，不按activity重建整个Home/Dock。
-  - [ ] 首焦点进入标题或合适字段，双向Tab包含；正常关闭恢复实际激活的同身份有效trigger，disabled/删除目标回可编辑输入或当前安全标题。安全标题可程序聚焦；身份失效finalFocus明确false而非null，并覆盖其微任务期间身份变化。
-  - [ ] 仅支持原流程所需的一层上级确认；最上层独占输入。StrictMode、卸载、异常、离页、撤权与过期close promise都完整释放listener/inert/scroll lock，不制造新的业务流程。
+- [x] T3 建立身份边界内的受控Portal与模态生命周期（AC3/4/5；NFR3/7/8；UI-COMPONENT-01、UI-BROWSER-01；shared-ui-adoption）
+  - [x] 私有Portal host位于实际.auth-private DOM内并在inert背景外；先拿到已连接容器再开放Root/Portal。container只能是已解析HTMLElement或literal null；不得用current=null的ref对象触发body fallback，也不得以public模式兜底私有内容。
+  - [x] AppDialog/AppSheet使用唯一Base UI modal=true焦点/滚动管理；Root受控open和onOpenChange，移除旧同层trap/Escape/back/锁。默认keepMounted=false；若保留DOM必须作用域[hidden]规则及真实浏览器证明，display:flex不能覆盖安全隐藏。
+  - [x] Root交互生命周期在checking/unavailable/退出/撤权时立即停用或卸载，不能只给仍open的Root加display:none留下锁/焦点/aria masking。页面/Sheet/Toast同步从视觉、交互和可访问树隔离；保留公开协议独立可读边界。
+  - [x] 关闭决定、Toast和延迟focus/callback绑定owner/session/nativeGeneration、epoch、activity及layer instance/取消信号；身份变化优先安全处理，不等待busy/dirty异步决定。owner/session变化清旧UI；同owner复核保留合法草稿/已确认内容，不按activity重建整个Home/Dock。
+  - [x] 首焦点进入标题或合适字段，双向Tab包含；正常关闭恢复实际激活的同身份有效trigger，disabled/删除目标回可编辑输入或当前安全标题。安全标题可程序聚焦；身份失效finalFocus明确false而非null，并覆盖其微任务期间身份变化。
+  - [x] 仅支持原流程所需的一层上级确认；最上层独占输入。StrictMode、卸载、异常、离页、撤权与过期close promise都完整释放listener/inert/scroll lock，不制造新的业务流程。
 
-- [ ] T4 接现有host关闭、键盘与真实遮挡时间（AC3/4/6/7；FR18/FR52、NFR25；APP-HOST-01、UI-COMPONENT-01、UI-BROWSER-01）
-  - [ ] 使用registerHostBackHandler既有协调器，保留keyboard优先、auth priority1000和page priority0；shared modal明确高于保留的legacy priority20且低于1000（例如100加受控层级），不依赖同级effect注册先后；只消费当前top layer。覆盖Settings背景saving/export/delete/fallback状态与共享确认并存时的单次返回。复用host-runtime的异步合并、AbortSignal/backRevision与root minimize，不新增原生back listener。
-  - [ ] 外侧点击、Escape、host返回/适用手势和关闭按钮进入同一受控策略。异步策略先同步cancel库默认关闭，再按当前scope提交决定；disablePointerDismissal不能当统一busy策略。保留现有未知输入B08：加密准备中仍可关闭，原明确确认仅发一次POST。
-  - [ ] 明确safe-area各边单一owner及KeyboardResize.Native、contentInset=never、SystemBars CSS变量、visualViewport分工；不重复键盘抬升/边距。Sheet 240–300ms且reduced-motion可操作，不在此另装拖动/snap-point框架；Home Dock已有拖动保持。
-  - [ ] 以实际遮挡生命周期暂停Dock可见窗口：退出动画虽logical open=false仍遮挡时继续暂停，退出完成/卸载才释放。保持layout确认后的acknowledgePresentation、10秒累计、真实11秒遮挡+剩余窗口正控与reload不重播，不能改controller/journal/cursor。
+- [x] T4 接现有host关闭、键盘与真实遮挡时间（AC3/4/6/7；FR18/FR52、NFR25；APP-HOST-01、UI-COMPONENT-01、UI-BROWSER-01）
+  - [x] 使用registerHostBackHandler既有协调器，保留keyboard优先、auth priority1000和page priority0；shared modal明确高于保留的legacy priority20且低于1000（例如100加受控层级），不依赖同级effect注册先后；只消费当前top layer。覆盖Settings背景saving/export/delete/fallback状态与共享确认并存时的单次返回。复用host-runtime的异步合并、AbortSignal/backRevision与root minimize，不新增原生back listener。
+  - [x] 外侧点击、Escape、host返回/适用手势和关闭按钮进入同一受控策略。异步策略先同步cancel库默认关闭，再按当前scope提交决定；disablePointerDismissal不能当统一busy策略。保留现有未知输入B08：加密准备中仍可关闭，原明确确认仅发一次POST。
+  - [x] 明确safe-area各边单一owner及KeyboardResize.Native、contentInset=never、SystemBars CSS变量、visualViewport分工；不重复键盘抬升/边距。Sheet 240–300ms且reduced-motion可操作，不在此另装拖动/snap-point框架；Home Dock已有拖动保持。
+  - [x] 以实际遮挡生命周期暂停Dock可见窗口：退出动画虽logical open=false仍遮挡时继续暂停，退出完成/卸载才释放。保持layout确认后的acknowledgePresentation、10秒累计、真实11秒遮挡+剩余窗口正控与reload不重播，不能改controller/journal/cursor。
 
-- [ ] T5 迁移三个现有实际消费面与兼容清单（AC1/2/5/7/8；FR1/FR18；UI-COMPONENT-01、CODE-QUALITY-01；shared-ui-adoption）
-  - [ ] LoginScreen迁移Button/Field/Input与就近状态，保留配置排序、iOS等权、generation/abort、PNVS原intent/challenge、公开法律安全打开与48px当前页fallback；不增加供应商调用或新登录方式。
-  - [ ] HomeSheet变AppSheet兼容适配，至少一个现有Home临时层实际使用，覆盖共享该适配的分类/候选/已保存结果；保留data-home-sheet-trigger的精确来源、clearParsed不清草稿、请求symbol/epoch/activity和领域选中/回执。移除旧对应priority20/焦点管理；现有Home“计划/灵感”接共享Tabs作为真实消费点，只改变呈现与键盘/选中语义，保留switchSegment、埋点及领域状态；输入如迁移也只改呈现。
-  - [ ] Settings当前退出确认接AppDialog并移除该确认重复back分支；onLogout仍交给App原single-flight/pending operation，未知退出仍由auth shield恢复。BYOK/配额/账号/反馈等旧区域只列兼容与责任，不顺带实现完整7.3–7.6。
-  - [ ] 记录每个保留legacy组件的负责人、后续Story和退出条件；Planner/SlotEditSheet/DayPlan等不纳入本次批量改造，S10 ResultSheet保持页面。单适配层可回退且不清业务数据。
-  - [ ] 按app-host ADR落实旧浏览器轻量升级提示，应用bundle无法运行时仍可读；保留viewport-fit=cover、中文与安全公开入口。能力/UA判断只负责诚实退出，不当最低平台实证。
+- [x] T5 迁移三个现有实际消费面与兼容清单（AC1/2/5/7/8；FR1/FR18；UI-COMPONENT-01、CODE-QUALITY-01；shared-ui-adoption）
+  - [x] LoginScreen迁移Button/Field/Input与就近状态，保留配置排序、iOS等权、generation/abort、PNVS原intent/challenge、公开法律安全打开与48px当前页fallback；不增加供应商调用或新登录方式。
+  - [x] HomeSheet变AppSheet兼容适配，至少一个现有Home临时层实际使用，覆盖共享该适配的分类/候选/已保存结果；保留data-home-sheet-trigger的精确来源、clearParsed不清草稿、请求symbol/epoch/activity和领域选中/回执。移除旧对应priority20/焦点管理；现有Home“计划/灵感”接共享Tabs作为真实消费点，只改变呈现与键盘/选中语义，保留switchSegment、埋点及领域状态；输入如迁移也只改呈现。
+  - [x] Settings当前退出确认接AppDialog并移除该确认重复back分支；onLogout仍交给App原single-flight/pending operation，未知退出仍由auth shield恢复。BYOK/配额/账号/反馈等旧区域只列兼容与责任，不顺带实现完整7.3–7.6。
+  - [x] 记录每个保留legacy组件的负责人、后续Story和退出条件；Planner/SlotEditSheet/DayPlan等不纳入本次批量改造，S10 ResultSheet保持页面。单适配层可回退且不清业务数据。
+  - [x] 按app-host ADR落实旧浏览器轻量升级提示，应用bundle无法运行时仍可读；保留viewport-fit=cover、中文与安全公开入口。能力/UA判断只负责诚实退出，不当最低平台实证。
 
-- [ ] T6 扩工作台、lint和缺陷反例（AC2–5/8；UI-WORKBENCH-01、CODE-QUALITY-01、UI-COMPONENT-01）
-  - [ ] 复用93项/18现有工作台和网络隔离；给新共享组件补适用正常/loading/disabled原因/error/reconnect/empty/partial/stale/unverified、长中文/200%/reduced-motion与嵌套、拒绝/异步关闭、身份及卸载场景。Portal在canvas/TextScale边界内，或明确更新真实provider/字号目标，不能漏放大Portal。
-  - [ ] 迁移workbench-mutations.ts内HomeSheet focus/keyboard/axe、Login aria-describedby等失效锚点到真实新实现；每个故障须非零用例、目标断言失败，ANCHOR_MISSING/编译错误/启动失败不计成功。前后正常控制与原网络反例保留。
-  - [ ] 所有新改TS/TSX进入9.4原typed lint，保留冻结cohort/零增长例外、Hooks/a11y/no-floating/unsafe门禁。对新增关键UI策略作有意义的纯逻辑/组件测试，其余由真实交互验证，不写同义空测试。
+- [x] T6 扩工作台、lint和缺陷反例（AC2–5/8；UI-WORKBENCH-01、CODE-QUALITY-01、UI-COMPONENT-01）
+  - [x] 复用93项/18现有工作台和网络隔离；给新共享组件补适用正常/loading/disabled原因/error/reconnect/empty/partial/stale/unverified、长中文/200%/reduced-motion与嵌套、拒绝/异步关闭、身份及卸载场景。Portal在canvas/TextScale边界内，或明确更新真实provider/字号目标，不能漏放大Portal。
+  - [x] 迁移workbench-mutations.ts内HomeSheet focus/keyboard/axe、Login aria-describedby等失效锚点到真实新实现；每个故障须非零用例、目标断言失败，ANCHOR_MISSING/编译错误/启动失败不计成功。前后正常控制与原网络反例保留。
+  - [x] 所有新改TS/TSX进入9.4原typed lint，保留冻结cohort/零增长例外、Hooks/a11y/no-floating/unsafe门禁。对新增关键UI策略作有意义的纯逻辑/组件测试，其余由真实交互验证，不写同义空测试。
 
-- [ ] T7 三引擎实际Portal、视觉候选与受影响原探针（AC1–8；UI-BROWSER-01、UI-COMPONENT-01、CODE-QUALITY-01）
-  - [ ] 保留B00–B22/V01–V08业务职责，新增真正产品Portal、scroll lock/背景pointer与读屏、top-only关闭、同owner恢复、A→B/同owner换session、pagehide/pageshow/跨tab退出、迟到candidate/result/close/Toast/focus。只在语义改变时调旧结构断言，不删引擎/场景/skip；新ID登记run-contract。
-  - [ ] 保留B05/B07/B08/B11/B12与实际IDB/crypto、原operation/请求数/cursor/FIFO；normal motion与reduced-motion分别验证，实际200%字号、长中文、44pt/对比度/CTA可达；最小320px窄屏和代表性桌面宽度需实际检查/截图。新增视觉viewport在policy/run-contract中登记并校验实际viewport/DPR，不能只看project配置。浏览器viewport变化不算真实软键盘。
-  - [ ] 显式让codex/story-9-3-shared-ui push及实际PR base codex/story-9-5-browser-gates触发完整CI，保留原入口；候选workflow与capture.ts两处ref门同步支持明确9.3候选。独立unapproved候选→canonical CI→下载manifest/原尺寸审阅→记录hash/理由→提交baseline→当前最终提交重跑，普通CI不更新、不mask/放宽。
-  - [ ] 保留v2当前源码/HTML/public/native-auth/lock/图谱/实际bytes/逐PNG/环境/run ID完整性与反例；隔离检查继续覆盖产品Web及双端assets。下载实际trace、actual/expected/diff等完整产物再作结论。
-  - [ ] 从9.5原职责矩阵选择受影响原auth/Home/PG-SSE-IDB/FIFO/进程探针重跑，保留失败和旧报告；输出重定位不覆盖历史。真实PG/SIGKILL/压力/恢复/测量职责不由组件fixture替代，未重跑项目明确未计通过。
+- [x] T7 三引擎实际Portal、视觉候选与受影响原探针（AC1–8；UI-BROWSER-01、UI-COMPONENT-01、CODE-QUALITY-01）
+  - [x] 保留B00–B22/V01–V08业务职责，新增真正产品Portal、scroll lock/背景pointer与读屏、top-only关闭、同owner恢复、A→B/同owner换session、pagehide/pageshow/跨tab退出、迟到candidate/result/close/Toast/focus。只在语义改变时调旧结构断言，不删引擎/场景/skip；新ID登记run-contract。
+  - [x] 保留B05/B07/B08/B11/B12与实际IDB/crypto、原operation/请求数/cursor/FIFO；normal motion与reduced-motion分别验证，实际200%字号、长中文、44pt/对比度/CTA可达；最小320px窄屏和代表性桌面宽度需实际检查/截图。新增视觉viewport在policy/run-contract中登记并校验实际viewport/DPR，不能只看project配置。浏览器viewport变化不算真实软键盘。
+  - [x] 显式让codex/story-9-3-shared-ui push及实际PR base codex/story-9-5-browser-gates触发完整CI，保留原入口；候选workflow与capture.ts两处ref门同步支持明确9.3候选。独立unapproved候选→canonical CI→下载manifest/原尺寸审阅→记录hash/理由→提交baseline→当前最终提交重跑，普通CI不更新、不mask/放宽。
+  - [x] 保留v2当前源码/HTML/public/native-auth/lock/图谱/实际bytes/逐PNG/环境/run ID完整性与反例；隔离检查继续覆盖产品Web及双端assets。下载实际trace、actual/expected/diff等完整产物再作结论。
+  - [x] 从9.5原职责矩阵选择受影响原auth/Home/PG-SSE-IDB/FIFO/进程探针重跑，保留失败和旧报告；输出重定位不覆盖历史。真实PG/SIGKILL/压力/恢复/测量职责不由组件fixture替代，未重跑项目明确未计通过。
 
-- [ ] T8 独立审阅与可消费的本地UI gate（AC1–5/7/8；四项UI条件；shared-ui-adoption）
-  - [ ] 三层独立CR、修补/复核确认问题，核对源GWT、品牌/provenance、真实消费与回退；形成current source/lock/config/构建/实际CI证据，不沿用9.4/9.5的verified作为本Story结论。
-  - [ ] 本地/浏览器适用项全部通过后，按实际范围更新CODE-QUALITY-01/UI-COMPONENT-01/UI-WORKBENCH-01/UI-BROWSER-01的summary/evidence；UI-COMPONENT-01首次交付必须verified，不能not-applicable。
-  - [ ] 仅达到实际本地切片时写local-ui-regression YAML：kind、story_id='9.3'、同source_contract_sha256、source_revision、recorded_at、result=passed、非空且全passed的checks、现存repo-relative evidence；登记scope_local_slice_progress[本Story].shared-ui-local-regression-passed。该证据只解锁后续9.6/9.7的本地依赖，不关闭本Story原生AC6或提前派发后续队列。
-  - [ ] 写入同一迁移对1.0/1.6/1.7/9.1的实际受影响证据/责任引用，保留其状态与真实关闭门槛。更新File List/Dev record/CURRENT/Sprint/monitor，ci:handoff通过；只有修改guard时才补其回归。
+- [x] T8 独立审阅与可消费的本地UI gate（AC1–5/7/8；四项UI条件；shared-ui-adoption）
+  - [x] 三层独立CR、修补/复核确认问题，核对源GWT、品牌/provenance、真实消费与回退；形成current source/lock/config/构建/实际CI证据，不沿用9.4/9.5的verified作为本Story结论。
+  - [x] 本地/浏览器适用项全部通过后，按实际范围更新CODE-QUALITY-01/UI-COMPONENT-01/UI-WORKBENCH-01/UI-BROWSER-01的summary/evidence；UI-COMPONENT-01首次交付必须verified，不能not-applicable。
+  - [x] 仅达到实际本地切片时写local-ui-regression YAML：kind、story_id='9.3'、同source_contract_sha256、source_revision、recorded_at、result=passed、非空且全passed的checks、现存repo-relative evidence；登记scope_local_slice_progress[本Story].shared-ui-local-regression-passed。该证据只解锁后续9.6/9.7的本地依赖，不关闭本Story原生AC6或提前派发后续队列。
+  - [x] 写入同一迁移对1.0/1.6/1.7/9.1的实际受影响证据/责任引用，保留其状态与真实关闭门槛。更新File List/Dev record/CURRENT/Sprint/monitor，ci:handoff通过；只有修改guard时才补其回归。
 
 - [ ] T9 完成本Story真实宿主与整Story关闭（AC6/8；FR52/NFR25、AR23/24、UX-DR36；APP-HOST-01）
   - [ ] 在真实最低iOS16.4、代表性当前iPhone与Android10+/WebView111+运行输入、中文键盘、safe-area/系统栏、Tabs/Sheet/返回/焦点、VoiceOver/TalkBack、200%/reduced-motion与身份变化组合；记录实际源/lock/assets/设备OS/构建和结果。
@@ -241,23 +242,47 @@ Tailwind的layer utilities可能被未分层旧规则覆盖；在实际组件边
 Codex当前任务，两个独立只读研究者和两个fresh-context VS；合同与修补由主任务唯一writer完成，独立复核已通过。
 
 ### Debug Log References
-当前开发与测试证据：story-9-3-dev-progress-2026-09-26.md，evidence/story-9-3-ui-2026-09-26/{dependency-and-foundation,token-contrast}.json。259移动/5配置及17新增UI测试通过，当前工作台首跑29/30；不得把T6/T7/T9或整Story记完成。
+当前本地验收：story-9-3-acceptance-2026-09-26.md，evidence/story-9-3-ui-2026-09-26/{ci-verification-final,downloaded-artifacts-final}.json及ui-delivery.yaml/local-ui-regression.yaml。aeadc1e完整CI通过，129产品/33视觉、6三引擎组件、32工作台、88 typed lint、265移动+5配置。T9及整張Story未完成；原首跑失败按progress保留。
 9.5源码85eedb6完整CI36157432347，关闭提交775b132再次CI36160339430通过。此为准备阶段历史基线；9.3当前实现及验收进度见上方开发记录。
 
 ### Completion Notes List
-CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。准备时状态ready-for-dev；当前已in-progress，五条件进行中，本地与真实设备验收分别执行。
+CS/VS完成，8组源GWT与source hash保真。T1–T8仅在合同本地范围完成：四项UI条件verified，三层CR修补/CI缺陷复验与原探针完成，源码/lock/构建/完整CI与下载产物可追溯。T4的host驱动证明不是真实键盘，AC4原生分支/AC6/AC8原生仍由T9承担；APP-HOST-01和整张9.3保持in-progress。影响引用已写入1.0/1.6/1.7/9.1进度，不关闭这些Story。
 
 ### File List
 - `.github/workflows/browser-visual-candidate.yml`
 - `.github/workflows/ci.yml`
 - `CURRENT.md`
+- `_bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet-validation.md`
 - `_bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet.md`
 - `_bmad-output/implementation-artifacts/capacitor-task-monitor-state.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-preparation-2026-09-26/input-manifest.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-preparation-2026-09-26/preparation-checks.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/baseline-review.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate1-rejection.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate2-verification.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate2-visual-review.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate3-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/browser-product-graph.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/downloaded-suite-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/environment.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/flow-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/lint-result.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/network-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/shared-ui-matrix/chromium.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/shared-ui-matrix/firefox.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/shared-ui-matrix/verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/shared-ui-matrix/webkit.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/source-manifest.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/suite-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/validation-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/visual-counterexample/actual.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/visual-counterexample/diff.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/visual-counterexample/expected.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/workbench-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/workbench-index.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/workbench-product-isolation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-final/workbench-runtime.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-verification-final.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-verification.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/browser-product-graph.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/downloaded-suite-verification.json`
@@ -276,10 +301,12 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/workbench-product-isolation.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/workbench-runtime.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/dependency-and-foundation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/downloaded-artifacts-final.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/downloaded-artifacts.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/legacy/auth-report.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/legacy/pg-browser.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/legacy/verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local-ui-regression.yaml`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local-validation.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/chromium-source-manifest.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/flow-counterexamples-after-cr.json`
@@ -290,10 +317,25 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/review-fix-validation.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/shared-ui-matrix-preflight.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/token-contrast.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ui-delivery.yaml`
+- `_bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md`
+- `_bmad-output/implementation-artifacts/research/story-9-3-contract-review-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/research/story-9-3-integration-audit-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/research/story-9-3-plan-review-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/research/story-9-3-tooling-research-2026-09-26.md`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `_bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md`
+- `_bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md`
+- `_bmad-output/implementation-artifacts/story-1-7-dev-progress-2026-09-19.md`
+- `_bmad-output/implementation-artifacts/story-9-1-dev-progress-2026-09-19.md`
+- `_bmad-output/implementation-artifacts/story-9-3-acceptance-2026-09-26.md`
 - `_bmad-output/implementation-artifacts/story-9-3-code-review-2026-09-26.md`
 - `_bmad-output/implementation-artifacts/story-9-3-dev-progress-2026-09-26.md`
 - `_bmad-output/implementation-artifacts/story-9-3-execution-decisions-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/story-9-3-integration-impact-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/story-9-3-native-gates-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/story-9-3-preparation-decisions-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/ui-foundation-dev-progress-2026-09-20.md`
 - `_bmad-output/planning-artifacts/architecture.md`
 - `_bmad-output/project-context.md`
 - `apps/mobile/.storybook/vite.config.ts`
@@ -403,3 +445,5 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 
 ### Change Log
 2026-09-26：准备基线823fd85后开始9.3；实现共享组件、私有模态边界与三个实际消费面，T6/T7/CR/真实原生验收继续。
+
+- 2026-09-26：aeadc1e完整CI36184294356与970下载文件核验通过；登记9.3四项UI条件/local gate，T1–T8本地完成，T9及整张Story保持in-progress；同步在制影响与下一执行入口。

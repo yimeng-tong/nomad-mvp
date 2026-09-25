@@ -50,5 +50,7 @@ export async function capture(page: Page, info: TestInfo, scene: string, surface
   assert.ok(existsSync(baseline), 'NOMAD_E2E_MISSING_BASELINE');
   assert.equal(hash(readFileSync(baseline)), approval.files[file], 'NOMAD_E2E_UNREVIEWED_BASELINE');
   await expect(surface).toHaveScreenshot(`${scene}.png`, { animations: 'disabled', caret: 'hide', scale: 'css', threshold: 0, maxDiffPixels: 0 });
-  await info.attach('visual-actual', { body: await surface.screenshot({ animations: 'disabled', caret: 'hide', scale: 'css' }), contentType: 'image/png' });
+  const actual = info.outputPath('visual-actual.png');
+  await surface.screenshot({ path: actual, animations: 'disabled', caret: 'hide', scale: 'css' });
+  await info.attach('visual-actual', { path: actual, contentType: 'image/png' });
 }

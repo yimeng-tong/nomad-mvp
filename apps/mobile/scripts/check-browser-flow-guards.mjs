@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -36,7 +36,12 @@ for (const [fault, pattern, target] of matrix) {
     assert.ok(output.includes(target), `Missing targeted failure ${target}`);
     assert.ok(attachments.some((item) => item.name === 'trace' && existsSync(item.path)), 'First failure trace required');
     if (fault === 'cta-shift') for (const suffix of ['-actual.png', '-expected.png', '-diff.png']) {
-      assert.ok(attachments.some((item) => item.path?.endsWith(suffix) && existsSync(item.path)), `Missing visual artifact ${suffix}`);
+      const attachment = attachments.find((item) => item.name?.endsWith(suffix) && item.path && existsSync(item.path));
+      assert.ok(attachment, `Missing visual artifact ${suffix}`);
+      // Playwright points expected at the committed baseline; export all three into the uploaded run.
+      const exported = resolve(directory, 'visual-diff', suffix.slice(1)); mkdirSync(dirname(exported), { recursive: true });
+      copyFileSync(attachment.path, exported);
+      attachments.push({ name: `exported-${suffix.slice(1)}`, path: exported });
     }
   } else { assert.equal(child.status, 0); assert.equal(report.stats.expected, tests.length); }
   results.push({ fault: fault || 'control', pattern, runId, exitCode: child.status, target,

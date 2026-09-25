@@ -128,18 +128,18 @@ So that 组件迁移前后可以核对实际行为并防止未经审阅的变化
   - [x] 操作实际Home输入类型/候选/已保存结果中的代表性Sheet：首焦点、Tab/Shift+Tab、Escape/关闭、同身份有效触发器、原滚动位置/输入和调用层inert、Sheet期间Dock可见窗口暂停。Settings当前内联退出确认另测，不能伪称其已具有AppDialog trap。
   - [x] 区分正常动效与reduced-motion；busy/未提交规则按当前领域合同处理，不在工具Story发明新关闭规则。软键盘/宿主返回若用替身必须标注，真实App仍由9.1/9.3/业务Story验收。
 
-- [ ] T4 在三个引擎验证错误、恢复与身份边界（AC2/5/6；NFR3、NFR8；UI-BROWSER-01）
-  - [ ] login字段错误保留输入；Home loading/empty/partial/error/reconnect各自有实际场景。已知部分保存仍可读取，未知写入先查原operation回执，明确恢复沿同一operation，不新增自动POST。
-  - [ ] 使用真实browser IDB/current controller演练reload/恢复与双tab身份通知的适用切片；断言请求数、operation ID及事实状态，不能只断言文字可见。reload与真实进程SIGKILL分别标注，后者原探针职责保留。
-  - [ ] 私有层打开时触发checking/unavailable/撤权/owner或session变化，检查整个document的旧owner可见内容、可交互节点及可访问树；checking期间可保留严格隐藏/不可交互的同身份树以恢复草稿，切owner/session后必须清旧树；迟到/me、候选/结果响应不能写入/重开新身份。保护公开协议可读，身份失效不回旧私有焦点。
-  - [ ] 当前HomeSheet没有Portal；全document私有内容oracle及测试专用漏显反例用于证明门禁能捕获Portal泄漏。实际AppSheet Portal及通用身份焦点/滚动锁仍归9.3，不能把测试造出的Portal算产品迁移或以其替代真实App流程。
+- [x] T4 在三个引擎验证错误、恢复与身份边界（AC2/5/6；NFR3、NFR8；UI-BROWSER-01）
+  - [x] login字段错误保留输入；Home loading/empty/partial/error/reconnect各自有实际场景。已知部分保存仍可读取，未知写入先查原operation回执，明确恢复沿同一operation，不新增自动POST。
+  - [x] 使用真实browser IDB/current controller演练reload/恢复与双tab身份通知的适用切片；断言请求数、operation ID及事实状态，不能只断言文字可见。reload与真实进程SIGKILL分别标注，后者原探针职责保留。
+  - [x] 私有层打开时触发checking/unavailable/撤权/owner或session变化，检查整个document的旧owner可见内容、可交互节点及可访问树；checking期间可保留严格隐藏/不可交互的同身份树以恢复草稿，切owner/session后必须清旧树；迟到/me、候选/结果响应不能写入/重开新身份。保护公开协议可读，身份失效不回旧私有焦点。
+  - [x] 当前HomeSheet没有Portal；全document私有内容oracle及测试专用漏显反例用于证明门禁能捕获Portal泄漏。实际AppSheet Portal及通用身份焦点/滚动锁仍归9.3，不能把测试造出的Portal算产品迁移或以其替代真实App流程。
 
-- [ ] T5 建立固定环境的可审阅视觉基线（AC3/5/6；NFR8、NFR25；UI-BROWSER-01）
-  - [ ] canonical截图生成与比较均用固定noble/amd64镜像；锁定zh-CN、Asia/Shanghai、viewport、DPR、colorScheme、headless、数据、字体、时钟与动画。三个引擎分别保存基线；Firefox不用不支持的isMobile，WSL/macOS截图不能覆盖canonical基线。
-  - [ ] 覆盖正常、长中文、200%实际字号、键盘焦点/模态代表态；等待实际字体就绪并验证CJK fallback/文件hash。对固定px字段也测computed字号，检查横向溢出、主要按钮可见可操作；viewport缩小不算真实软键盘。
-  - [ ] 日常CI显式updateSnapshots:none。初始基线/更新仅走独立显式候选入口，输出待审阅图片与manifest；审阅actual/expected/diff及Git变化后人工/授权执行者纳入版本库，不能因缺基线自动写入即通过。
-  - [ ] 从严格差异阈值开始，只可按记录的局部原因调整；不mask主要控件或用宽容差隐藏位移。截图稳定化与真实行为断言分开，不能因禁动画触发transitionend就宣称正常生命周期通过。
-  - [ ] Date与timer策略按场景分开：视觉静态时间可固定，FIFO/超时需安装并显式推进相同受控时钟；冻结Date而timer继续流动不能充当10秒/恢复实证。
+- [x] T5 建立固定环境的可审阅视觉基线（AC3/5/6；NFR8、NFR25；UI-BROWSER-01）
+  - [x] canonical截图生成与比较均用固定noble/amd64镜像；锁定zh-CN、Asia/Shanghai、viewport、DPR、colorScheme、headless、数据、字体、时钟与动画。三个引擎分别保存基线；Firefox不用不支持的isMobile，WSL/macOS截图不能覆盖canonical基线。
+  - [x] 覆盖正常、长中文、200%实际字号、键盘焦点/模态代表态；等待实际字体就绪并验证CJK fallback/文件hash。对固定px字段也测computed字号，检查横向溢出、主要按钮可见可操作；viewport缩小不算真实软键盘。
+  - [x] 日常CI显式updateSnapshots:none。初始基线/更新仅走独立显式候选入口，输出待审阅图片与manifest；审阅actual/expected/diff及Git变化后人工/授权执行者纳入版本库，不能因缺基线自动写入即通过。
+  - [x] 从严格差异阈值开始，只可按记录的局部原因调整；不mask主要控件或用宽容差隐藏位移。截图稳定化与真实行为断言分开，不能因禁动画触发transitionend就宣称正常生命周期通过。
+  - [x] Date与timer策略按场景分开：视觉静态时间可固定，FIFO/超时需安装并显式推进相同受控时钟；冻结Date而timer继续流动不能充当10秒/恢复实证。
 
 - [ ] T6 证明流程和视觉门禁会发现缺陷（AC2/3/5；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
   - [ ] 对实际产品测试入口注入可回滚/内存缺陷：明显CTA位移、旧owner私有层残留、迟到结果越过身份围栏、未知回执恢复重复POST、未知请求漏拦截。每个须目标断言失败和非零退出，启动失败/缺资源/零用例不是成功反例。

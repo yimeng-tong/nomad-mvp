@@ -33,18 +33,13 @@ jobs:
       - name: Generate API types and check browser suite types
         run: |
           pnpm run ci:types
-          pnpm -F nomad-mobile run typecheck:browser
       - name: Build the actual controlled product entry
         env:
           NOMAD_RECORD_PRODUCT_GRAPH: '1'
           VITE_API_BASE_URL: /api
         run: pnpm -F nomad-mobile run build
       - name: Current product scenarios in all three engines
-        env:
-          NOMAD_BROWSER_RUN_KIND: suite
-        run: pnpm -F nomad-mobile run test:browser
-      - name: Require the complete current-source browser and visual matrix
-        run: node apps/mobile/scripts/check-browser-results.mjs
+        run: pnpm run ci:browser
       - name: Browser network guard counterexamples
         run: node apps/mobile/scripts/check-browser-network-guards.mjs
       - name: Product privacy recovery and pixel counterexamples

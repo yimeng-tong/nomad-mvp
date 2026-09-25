@@ -1,0 +1,343 @@
+{
+  "kind": "targeted-original-scenario-replay",
+  "recordedAt": "2026-09-25T15:19:32.519747+00:00",
+  "sourceRevision": "f53d2a84e3168f906d1850c00875eada88629e87",
+  "scripts": [
+    {
+      "source": "apps/mobile/scripts/auth-browser-probe.mjs",
+      "sourceSha256": "41ca019e43bcc310e8f6f325b3b5401ba60cfb3505ae8504289d95e2f750ba88",
+      "replay": "/tmp/nomad-story-9-5-legacy-replays/auth-browser-probe.mjs",
+      "onlyChanges": [
+        "redirect fixed historical output to fresh /tmp directory",
+        "normalize relative Node imports and import.meta references for relocated file"
+      ],
+      "oldEvidenceHashes": {
+        "_bmad-output/implementation-artifacts/evidence/story-1-0-browser-2026-09-19/report.json": "096b79c74dbb79f7bf4f091a097396de334c7c90557b84af222e0253f75bfbfd",
+        "_bmad-output/implementation-artifacts/evidence/story-1-0-browser-2026-09-19/mobile-unknown-send.png": "cb3249bdf8bfff4757f80cf7b240a2a138144c64c7b9cbed628790d656247ce0",
+        "_bmad-output/implementation-artifacts/evidence/story-1-0-browser-2026-09-19/desktop-operator-authority.png": "81b731dc21c94ab5b7e217da8d09ac107d0ff6531a43858b330959aee4617abb",
+        "_bmad-output/implementation-artifacts/evidence/story-1-0-browser-2026-09-19/mobile-authority-unavailable.png": "ddb8759a749c82f62865ce13595646468962a15d5159c907f8e2325bc85c073a"
+      },
+      "output": "/tmp/nomad-story-9-5-legacy-auth-evidence",
+      "currentReplaySha256": "b826d6279937664baa7bbfc7306b888f7de516f3228e223093eda9e33005c80c",
+      "initialReplaySha256": "b826d6279937664baa7bbfc7306b888f7de516f3228e223093eda9e33005c80c",
+      "initialReplay": "/tmp/nomad-story-9-5-legacy-replays/auth-browser-probe.initial.mjs"
+    },
+    {
+      "source": "apps/mobile/scripts/durable-dock-pg-browser-probe.mjs",
+      "sourceSha256": "66330e6b10e7b84b250934ef1703faeaced4b56acaa61acaca4767c0c77dcd70",
+      "replay": "/tmp/nomad-story-9-5-legacy-replays/durable-dock-pg-browser-probe.mjs",
+      "onlyChanges": [
+        "redirect fixed historical output to fresh /tmp directory",
+        "normalize relative Node imports and import.meta references for relocated file",
+        "On failure, print synthetic document URL/body and TimeoutError message; scenario assertions are unchanged."
+      ],
+      "oldEvidenceHashes": {
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/owner-b-isolation.png": "4080a31779dcd2c31b338f648c147e2f9e8aad6bb7ec98f5883a527532c6b112",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/pressure-repeat-2.json": "84d40c436e0f7d3ba22d5b6eabb9149f8023a14a7695b7a4d2c5c49822500a57",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/native-preflight.json": "eda42a78e6fafa917810fe4a3dfb5fa87ba14d9ae03f4c24009884e0677325f7",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/diffcheck.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/type-generation.txt": "d5e50816938a72e6e47b3a68f8b259c29883dbc31489d20bee2c9227a6c0a7b1",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/review-fixes-tests.txt": "25dcbb7fd8f19f550d260966301abcdbc87c815b80db1b47cf3a161ede66cdd9",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/pressure-repeat-3.json": "6d43ef93967f8e2f0ebf206a24e9759d76fc97ed2f48db49961f97eae395f607",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/pressure-browser.json": "e9a959a5447aaa81b5163abe853a2b91537af9e7831f6596d8899318c80177a5",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/mobile-tests.txt": "3e3681502e1752371007c1074d276504e658f15dce4e56eb32834dd8e2d3ec4e",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/pressure-repeat-1.json": "5b5cba79db0e0a512e1ae593c1a2e361b3b963040070ef14dd162d5eaa848a36",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/native-project.json": "88001ffb1c0ad3b81e12a73ec04b6dcb2ca6ba59396517100e086aa9cd90d8e6",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/native-sync.txt": "b067f804902fca89b31bbc6796489697dfae74af4f1bce587c99d82412db2b99",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/handoff.txt": "f12da189964f7985ec5b41ed7934d8c0e514a0f03303adda0ec1459776569f2f",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/adb-devices.txt": "36f15c2fe32964a6fbe902e914a47739d4e6304b0d3e812bf08096ff0419b7ae",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/completed-before-background.png": "77d9d3a2b01b65ced808fc34b69e6709615f1232079e2817423288a185dbfe5f",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/android-build.txt": "1caa219101bd18bc28577faebba3c7747fd142e5a12ed9eff580e7e4c20a832a",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/workspace-build.txt": "e9ec1cf96f1bf4f3c47cd5eefe01de76cc5ecea0b1d552e868fb7bf5bd8b13a0",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/pg-browser.json": "c0225d60fbedd7c48deea3c71e5670a073720749b6e1f26d86c7671d536f3f41",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/android-artifact.json": "7092aa85b6aa9da6c40278fff85c6c04481e61a5a7b5566fb51af30209afd386",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/dock-regression/report.json": "79b0757f85ceb7036cc8f4172f3fbe8400943d32cad11d6b43f87caaccb60f04",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/dock-regression/mobile-recovered-original-operations.png": "a271cf1f13e5d70211885264a8914c896744eab13968e1c36950331aebe78085",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/dock-regression/desktop-queue-reconciled.png": "eab90cf509e199af85324996dcd2086a3fe0eb2522891179e368aef32266b3cc",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/dock-regression/mobile-queue-partial-completion.png": "b8271b2f43dc709967b4a21c86eb357495acb1b83358782cefe94116911f67e9",
+        "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/journal-regression/report.json": "42a2185c159a8958e1c147e6e70c2a14bef3f58ab4860026bb40ea7e824b3d31"
+      },
+      "output": "/tmp/nomad-story-9-5-legacy-pg-evidence",
+      "currentReplaySha256": "079544817501481e366df0cda8d00b35f9ad2b16a409382e5ee5eb6ffcf95d41",
+      "additionalDiagnosticOnlyChange": "On failure, print synthetic document URL/body and TimeoutError message; scenario assertions are unchanged.",
+      "initialReplaySha256": "ee9d4a021c14b1f4e54072d28c08842ea0f53e35b4d5316701e9a84e63eb8ea8",
+      "initialReplay": "/tmp/nomad-story-9-5-legacy-replays/durable-dock-pg-browser-probe.initial.mjs"
+    }
+  ],
+  "originalEvidenceUnchanged": true,
+  "originalEvidenceFiles": 28,
+  "browserExecutable": "/tmp/nomad-story-9-5-browsers/chromium-1243/chrome-linux64/chrome",
+  "auth": {
+    "result": "passed",
+    "browser": "Chrome/153.0.8010.12",
+    "actualBrowser": true,
+    "realProviderCalls": 0,
+    "explicitHttpAndCaptchaSubstitutes": true,
+    "realAuthenticationVerified": false,
+    "checks": [
+      "unknown-send-copy",
+      "same-owner-draft-retained",
+      "authority-unavailable-private-hidden",
+      "cross-tab-owner-change-clears-draft",
+      "unknown-logout-foreground-same-operation",
+      "desktop-operator-denial-and-audit"
+    ],
+    "calls": [
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/otp/start"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/otp/start"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/otp/verify"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/user-key"
+      },
+      {
+        "method": "GET",
+        "path": "/user-key"
+      },
+      {
+        "method": "POST",
+        "path": "/logout"
+      },
+      {
+        "method": "POST",
+        "path": "/logout"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/ops/me"
+      },
+      {
+        "method": "GET",
+        "path": "/ops/me"
+      },
+      {
+        "method": "GET",
+        "path": "/ops/me"
+      },
+      {
+        "method": "POST",
+        "path": "/ops/access-check"
+      }
+    ]
+  },
+  "pg": {
+    "result": "passed",
+    "checks": [
+      "actual-app-confirms-pg-session-and-bootstraps-original-accepted-job-without-post",
+      "browser-sigkill-before-checkpoint-commit-replays-from-saved-cursor-despite-newer-get-head",
+      "four-visible-seconds-background-pause-resumes-remaining-window-and-persists-noteDone",
+      "a-to-b-to-a-erases-private-ui-stops-old-stream-and-restores-each-job-checkpoint",
+      "third-process-restores-completed-and-active-jobs-without-replaying-finished-window",
+      "second-running-job-does-not-starve-later-terminal-job-independent-durable-ack"
+    ],
+    "postgresVersion": "18.6 (Ubuntu 18.6-0ubuntu0.26.04.1)",
+    "actualPg": true,
+    "actualSse": true,
+    "actualIndexedDb": true,
+    "actualApp": true,
+    "browserProcesses": 3,
+    "browserSigkills": 1,
+    "realProviderCalls": 0,
+    "newIngestPosts": 0,
+    "completionRemainderMs": 6131.6316879999995,
+    "authentication": "explicit-local-credential-routing-fixture-with-actual-PG-session-and-me-route",
+    "tlsVerified": false,
+    "nativeDeviceVerified": false,
+    "sourceSha256": {
+      "apps/mobile/src/App.tsx": "fee3387d9972f5c31972a6780cb894b328e6b821ef672121a879eb2cd497141e",
+      "apps/mobile/src/home/api.ts": "408d2e9092e83bd3ca8a9433ab65204e25432737aea56b7c95a9a9a6acab1a73",
+      "apps/mobile/src/home/durable-watch.ts": "3cebb45f3e8af8b86f1c7f083bd36cd07a56dc5ac2044302b76a96ca06d2f944",
+      "apps/mobile/src/auth/ordered-stream.ts": "a5a2c801f21e5b827ece752be0e7d7cf063dfdf466f6db47c71fa2797e3b1e76",
+      "apps/mobile/src/home/dock-controller.ts": "cc3f5e23de764f291c365c62debe1befa8ebd76eb592c4da3016f1586f3e3f70",
+      "apps/mobile/src/home/dock-model.ts": "e460eee431b23e17255b2af6bbb658942a0975a51827af0268489583ad67d038",
+      "apps/mobile/src/home/operation-journal.ts": "b8e799eecd0f02bd329925cc8bab6bc1fea96cfa04f753a3a3c4dc622ba753d7",
+      "apps/mobile/src/home/ingest-checkpoint-store.ts": "7f03328cf52da654c49ed330b526f4a496d1f957db99615e4c944a1836457e8f",
+      "apps/mobile/src/home/ingest-protocol.ts": "99c4c43f15e8e765f5f40e5a0c09e31180786299782d43adc68a9162cf4cfd9e",
+      "apps/mobile/src/home/HomeImportDock.tsx": "03d197200f059146f1e1d159fa33b4db423373c7b66eca6088656183b0112c7d"
+    }
+  },
+  "database": "nomad_auth_test_story95_browser on owned loopback 49494",
+  "databaseTimezone": "UTC",
+  "failuresPreserved": "Two setup timeouts before UTC correction; first message omitted by original probe, second synthetic document diagnostic showed anonymous login. New isolated DB inherited Asia/Shanghai; all four fixture sessions compared expired. Only this new database setting changed.",
+  "boundaries": [
+    "real PG18.6, SSE, IDB, 3 browser processes and 1 actual SIGKILL",
+    "credentials and provider paths are explicit synthetic fixtures; no TLS/provider/native acceptance",
+    "No old probe retired; other original responsibilities remain independent"
+  ],
+  "outputHashes": {
+    "pg-owner-b-isolation.png": "518499563b3c18234a198d4a614c24cb1fc5c393cf6c7b5648b7bc355fa29e00",
+    "pg-completed-before-background.png": "be7f573bda14972727f3aa839aaffb7eb1a1cddb632efd6b93247987445ed3dc",
+    "auth-desktop-operator-authority.png": "88f37999a44f96e6d3dcc0828ce43f5f86c2065d4a5de74bef09c87ad5e42f48",
+    "auth-mobile-authority-unavailable.png": "247e7ea2353f182306ada2fd8891c6fe1446c6707e49f299eb95c8acd473a7cb",
+    "pg-pg-browser.json": "47e8671dcd67bf54040239dc4162c6a97e298d1baa27149467e9736b2b184e93",
+    "auth-report.json": "4a5e8c5eb1454017b1ef6ded126f311de1dbafba141ad3db727af99134fecf3e",
+    "auth-mobile-unknown-send.png": "e4cfe7d823cb0f2d065494d23bf8fb75d1d0d7d964e9d2662d05393104794f25"
+  },
+  "rawLogs": {
+    "/tmp/nomad-story-9-5-pg-migrate.log": {
+      "sha256": "5ee019a6f64be7526db091a535bb08006fa836743e5a7ecb16f883aa5b7fbd94",
+      "storedInGit": false
+    },
+    "/tmp/nomad-story-9-5-legacy-pg-retry.log": {
+      "sha256": "cc7627aaf402ff617693c9fd2c30e1046e1969d00e3a30de67c8d80a6f00773b",
+      "storedInGit": false
+    },
+    "/tmp/nomad-story-9-5-pg-timezone-correction.log": {
+      "sha256": "c370efd5cbb8f9adc5c6a8281aea2558f691575876806ccb9a2f6fab5f67fc4c",
+      "storedInGit": false
+    },
+    "/tmp/nomad-story-9-5-legacy-pg-utc.log": {
+      "sha256": "5fed8dd14aaee72e61462fbe87a76a5c76b92c674142c17c8338b7818dfe41ed",
+      "storedInGit": false
+    },
+    "/tmp/nomad-story-9-5-legacy-auth.log": {
+      "sha256": "3f86eb91d6387c5cc2d5afc064a483e6335998b2301ae28db9b13879ab67353b",
+      "storedInGit": false
+    },
+    "/tmp/nomad-story-9-5-legacy-pg.log": {
+      "sha256": "b8c672293c50f85d2595a338d0cf61dc00f89bc536a868a7c57037aac6115f43",
+      "storedInGit": false
+    }
+  }
+}

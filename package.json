@@ -25,7 +25,9 @@
     "ci:lint:negative": "node --test scripts/check-code-quality.test.mjs",
     "ci:workbench": "pnpm -F nomad-mobile run typecheck:workbench && pnpm -F nomad-mobile run test:workbench:network && pnpm -F nomad-mobile run build:storybook && pnpm -F nomad-mobile run test:workbench",
     "ci:workbench:negative": "node apps/mobile/scripts/check-workbench-counterexamples.mjs",
-    "ci:workbench:isolation": "node apps/mobile/scripts/check-workbench-isolation.mjs && node --test apps/mobile/scripts/check-workbench-isolation.test.mjs && node apps/mobile/scripts/probe-workbench-runtime.mjs"
+    "ci:workbench:isolation": "node apps/mobile/scripts/check-workbench-isolation.mjs && node --test apps/mobile/scripts/check-workbench-isolation.test.mjs && node apps/mobile/scripts/probe-workbench-runtime.mjs",
+    "ci:browser": "pnpm -F nomad-mobile run typecheck:browser && NOMAD_BROWSER_RUN_KIND=suite pnpm -F nomad-mobile run test:browser && node apps/mobile/scripts/check-browser-results.mjs",
+    "ci:browser:negative": "node apps/mobile/scripts/check-browser-network-guards.mjs && node apps/mobile/scripts/check-browser-flow-guards.mjs && node apps/mobile/scripts/check-browser-validation-guards.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

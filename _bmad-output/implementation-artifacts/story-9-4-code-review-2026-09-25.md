@@ -29,3 +29,7 @@
 产物图谱现在包含writeBundle后完整文件hash；同名Web及双端一起被篡改也会失败。完整native inventory写入上传目录。Node允许静态请求的旧出口已关闭，MSW Accept旁路在request:start钩子中记录并清除，以保持请求在合成server内。
 
 首轮远端CI额外暴露彩色输出使正常控制数误判；已用Node内建stripVTControlCharacters修复，不降低零测试失败要求。远端run36115340403原失败保留，不改写成成功；新提交CI另取实证。
+
+## 既有CI测试观察修补
+
+第三轮CI在所有新9.4门禁通过后，原进程测试发生/proc消失竞态。ops/pve-staging/test_bounded_process.py只修只读观察、增加两类反例；bounded_process.py未变。Edge另行只读复核返回[]，4项测试通过。此项属于T6保留原链的可靠性维护，不改变生产进程恢复或1.7关闭条件。

@@ -40,6 +40,7 @@
     "scripts/check-code-quality.mjs": "eaba64544d88d7436561f1f6ab1893bca6f06f0b31cd33c00b39ea36ea05f973",
     "scripts/check-code-quality.test.mjs": "59dc0ad23ff880ef48d2662fb0189451e737fd06741d126c5a8385038f113001",
     "scripts/code-quality-exceptions.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
-    "tsconfig.lint.json": "dfba41f3741095d354883c501be24c511e02efa7bc567a721ac6b6c9eca8b06b"
+    "tsconfig.lint.json": "dfba41f3741095d354883c501be24c511e02efa7bc567a721ac6b6c9eca8b06b",
+    "ops/pve-staging/test_bounded_process.py": "07e5d61522ecd5ce62a12a9413c11aea6865cf316776dfd11a3b851c259290ec"
   }
 }

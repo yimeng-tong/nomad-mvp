@@ -2,7 +2,7 @@
   "kind": "local-story-verification",
   "story_id": "9.4",
   "recorded_at": "2026-09-25T09:29:01.406581+00:00",
-  "source_revision": "3812c96+explicit-type-guard",
+  "source_revision": "3bd3fb9+proc-observation-test-fix",
   "checks": {
     "workbench_typecheck": {
       "exit_code": 0
@@ -49,7 +49,8 @@
     },
     "bounded_process": {
       "exit_code": 0,
-      "passed": 2
+      "passed": 4,
+      "scope": "existing real timeout cleanup plus disappearance/live-state/error-reading controls"
     },
     "native_sync": {
       "exit_code": 0,
@@ -113,6 +114,14 @@
       "conclusion": "failure",
       "failure": "Workbench typecheck rejected possibly undefined scene after an inferred never-returning method. Fixed by capturing scene then explicit return.",
       "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36118754564"
+    },
+    {
+      "run": 36119579229,
+      "commit": "3bd3fb929152ff6f662f79d0f5a576536ca92724",
+      "conclusion": "failure",
+      "ui_workbench_gates": "all-passed",
+      "failure": "Existing bounded-process test raced /proc disappearance (ProcessLookupError); production helper unchanged, test observation fixed and independently reviewed.",
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36119579229"
     }
   ],
   "remote_ci": "next-commit-run-pending"

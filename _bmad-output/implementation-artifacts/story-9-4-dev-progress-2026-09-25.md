@@ -17,3 +17,5 @@
 1dee5bd的干净clone冻结安装/全build/工作台17全部通过；最初Prisma只读cache utime失败以同版本已存在引擎路径显式引用解决，未改系统cache。首轮远端CI36115340403在反例输出ANSI计数报错，真实所选组件通过；已修复并用CI=true/FORCE_COLOR=1复验。下一收取修补commit全CI与最终证据。
 
 第二轮CI36118754564在专用tsc处报告scene可能undefined；旧本地分项命令曾继续运行后续lint而隐藏该退出码。已改为先捕获scene并显式return失败，使用实际ci:workbench串联入口完整通过（9 Node＋18 Chromium），不再把后续成功覆盖编译失败。此前两轮CI原结论均保留，第三提交等待远端全量链。
+
+第三轮CI36119579229通过所有9.4新增检查与真实native资源检查，随后原bounded_process测试的exists/read竞态在Ubuntu24.04触发ProcessLookupError。只修测试观察：消失视为已退出，活进程和PermissionError仍失败，正确解析括号comm字段；生产helper未改。4项本地测试和独立Edge复核通过。下一提交重新跑保留的完整旧链，不将该失败吞掉或跳过。

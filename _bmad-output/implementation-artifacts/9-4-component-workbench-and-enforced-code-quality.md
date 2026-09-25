@@ -106,45 +106,45 @@ So that 我无需真实账号或外部请求就能审阅改动并及时发现回
 
 ## Tasks / Subtasks
 
-- [ ] T0 固定实施基线、覆盖与工具组合（AC1/4/6；CODE-QUALITY-01、ui-quality-tooling）
-  - [ ] 从当前工作树保留受影响文件/锁文件摘要、Node/pnpm版本和已有测试入口；不得用旧HEAD覆盖大量未提交实现。实施前再读CURRENT/Sprint，核实实际开发窗口。
-  - [ ] 采用下述精确候选，核验resolved engines/peer、安装脚本和当时安全审计；不使用force、浮动latest或允许所有install scripts。React/Vite/Vitest/Capacitor基线保持。
-  - [ ] 固定首轮lint cohort、逐文件执行清单和历史诊断基线；无已运行lint就没有已核验债务清单。现有相关组件/配置、所有新工具代码和后续共享UI自动覆盖。
+- [x] T0 固定实施基线、覆盖与工具组合（AC1/4/6；CODE-QUALITY-01、ui-quality-tooling）
+  - [x] 从当前工作树保留受影响文件/锁文件摘要、Node/pnpm版本和已有测试入口；不得用旧HEAD覆盖大量未提交实现。实施前再读CURRENT/Sprint，核实实际开发窗口。
+  - [x] 采用下述精确候选，核验resolved engines/peer、安装脚本和当时安全审计；不使用force、浮动latest或允许所有install scripts。React/Vite/Vitest/Capacitor基线保持。
+  - [x] 固定首轮lint cohort、逐文件执行清单和历史诊断基线；无已运行lint就没有已核验债务清单。现有相关组件/配置、所有新工具代码和后续共享UI自动覆盖。
 
-- [ ] T1 交付独立且可启动的组件工作台（AC1/4；UI-WORKBENCH-01）
-  - [ ] 在apps/mobile新增ESM Storybook main/preview、独立workbench tsconfig和vitest.storybook.config.ts；保留默认mobile jsdom、setupTests和Node native-config测试。
-  - [ ] 直接导入现有HomeSheet和LoginScreen真实字段，通过仅工作台wrapper/既有依赖注入构建场景；不复制同外观的假组件，不等待9.3/AppSheet，不引入Tailwind/新主题。
-  - [ ] 导入现有styles.css及适用app-host样式；正常、空、长中文、200%字号、loading、disabled/原因、error、reconnect、partial、reduced-motion、身份未确认场景有名称、预期和检查方法。场景不适用要写具体理由。
-  - [ ] 开发启动与静态构建在无真实业务账号/秘密的受控环境中实际可用；关闭工具遥测和非必要远程字体/资源，工作台不默认公开发布。
+- [x] T1 交付独立且可启动的组件工作台（AC1/4；UI-WORKBENCH-01）
+  - [x] 在apps/mobile新增ESM Storybook main/preview、独立workbench tsconfig和vitest.storybook.config.ts；保留默认mobile jsdom、setupTests和Node native-config测试。
+  - [x] 直接导入现有HomeSheet和LoginScreen真实字段，通过仅工作台wrapper/既有依赖注入构建场景；不复制同外观的假组件，不等待9.3/AppSheet，不引入Tailwind/新主题。
+  - [x] 导入现有styles.css及适用app-host样式；正常、空、长中文、200%字号、loading、disabled/原因、error、reconnect、partial、reduced-motion、身份未确认场景有名称、预期和检查方法。场景不适用要写具体理由。
+  - [x] 开发启动与静态构建在无真实业务账号/秘密的受控环境中实际可用；关闭工具遥测和非必要远程字体/资源，工作台不默认公开发布。
 
-- [ ] T2 共享MSW场景与严格网络失败（AC2/6；UI-WORKBENCH-01、ui-quality-tooling）
-  - [ ] fixtures使用当前nomad-types生成DTO和既有错误envelope；按真实Web客户端的路径/方法/状态构造成功、403、超时、partial与重连，不新增业务schema或伪造不支持的partial字段。
-  - [ ] LoginScreen演示的MSW /auth/config固定captcha.provider=fixture，并注入合成getCaptchaToken；aliyun-pnvs分支会直接调用requestPnvsCaptcha，不能假定token注入会替换它。场景构造/启动校验应在交互前拒绝非fixture provider；误配真实provider、worker未就绪或失效时不得加载真实SDK/外发，保留对应反例；产品与后端guard不变。
-  - [ ] 使用MSW2的http/HttpResponse和浏览器setupWorker、Node setupServer；按所锁addon3的CSF3接口接线并等待worker ready后渲染。worker404/启动失败应阻止用例，不回退真实API。
-  - [ ] worker仅位于.storybook/public，明确工作台origin、staticDirs/publicDir和scope；不放产品public、不导入main/HostBootstrap、不替换真实native bridge。
-  - [ ] 仅允许同工作台origin、GET/HEAD、明确工具静态路径；未声明API/外部请求进入按场景隔离的失败账本并通过固定脱敏错误使请求失败。MSW内置print.error/warn会输出完整URL/query/body，不作为项目失败出口；关闭handled请求的非必要日志。用例收尾断言账本为空，业务catch不能使违规请求变绿；Node测试同样失败关闭。
-  - [ ] 以合成query/body哨兵核对项目捕获的stdout/stderr、浏览器日志与证据没有原文；仅保存方法、规范路由/安全错误码，不能用默认MSW打印后再宣称脱敏。
-  - [ ] 每例清理handlers、请求/流、timer、订阅、合成auth scope/dataset和失败账本；如确需IDB使用专属工作台库，不清除产品库/用户worker。保存跨场景迟到请求和重放负例。
+- [x] T2 共享MSW场景与严格网络失败（AC2/6；UI-WORKBENCH-01、ui-quality-tooling）
+  - [x] fixtures使用当前nomad-types生成DTO和既有错误envelope；按真实Web客户端的路径/方法/状态构造成功、403、超时、partial与重连，不新增业务schema或伪造不支持的partial字段。
+  - [x] LoginScreen演示的MSW /auth/config固定captcha.provider=fixture，并注入合成getCaptchaToken；aliyun-pnvs分支会直接调用requestPnvsCaptcha，不能假定token注入会替换它。场景构造/启动校验应在交互前拒绝非fixture provider；误配真实provider、worker未就绪或失效时不得加载真实SDK/外发，保留对应反例；产品与后端guard不变。
+  - [x] 使用MSW2的http/HttpResponse和浏览器setupWorker、Node setupServer；按所锁addon3的CSF3接口接线并等待worker ready后渲染。worker404/启动失败应阻止用例，不回退真实API。
+  - [x] worker仅位于.storybook/public，明确工作台origin、staticDirs/publicDir和scope；不放产品public、不导入main/HostBootstrap、不替换真实native bridge。
+  - [x] 仅允许同工作台origin、GET/HEAD、明确工具静态路径；未声明API/外部请求进入按场景隔离的失败账本并通过固定脱敏错误使请求失败。MSW内置print.error/warn会输出完整URL/query/body，不作为项目失败出口；关闭handled请求的非必要日志。用例收尾断言账本为空，业务catch不能使违规请求变绿；Node测试同样失败关闭。
+  - [x] 以合成query/body哨兵核对项目捕获的stdout/stderr、浏览器日志与证据没有原文；仅保存方法、规范路由/安全错误码，不能用默认MSW打印后再宣称脱敏。
+  - [x] 每例清理handlers、请求/流、timer、订阅、合成auth scope/dataset和失败账本；如确需IDB使用专属工作台库，不清除产品库/用户worker。保存跨场景迟到请求和重放负例。
 
-- [ ] T3 将占位lint换为真实类型/React/a11y检查（AC3/4；CODE-QUALITY-01）
-  - [ ] 根eslint.config.mjs成为唯一执行配置，退役无实际类型规则的.eslintrc.json；typed项目覆盖真实TS/TSX和工作台配置，Node/browser globals按用途分开，工具MJS也执行适用规则。
-  - [ ] 启用no-floating-promises、no-misused-promises、经确认的unsafe规则、rules-of-hooks/exhaustive-deps和字段/控件a11y规则；control-has-associated-label等需显式配置并核验，不能只安装preset。
-  - [ ] 根ci:lint真实执行同一gate；输出受管文件、规则/诊断、基线匹配和退出状态。零文件、遗漏/被ignore文件、parser/config错误、基准不可得均失败。
-  - [ ] 用与ci:lint相同配置及TSProgram的临时副本证明：未处理Promise、条件Hook、无可访问名称字段分别命中预期ruleId并非零退出，修正后通过。不得仅靠parse error或单独RuleTester宣称CI有效。
-  - [ ] 历史例外按路径/ruleId/诊断与节点源码摘要/数量/原因/责任/退出条件冻结；只能消减。新增同数量问题、移动/复制例外节点、扩张忽略或自动重建baseline不得绕过；不全库格式化或机械补void吞异常。
+- [x] T3 将占位lint换为真实类型/React/a11y检查（AC3/4；CODE-QUALITY-01）
+  - [x] 根eslint.config.mjs成为唯一执行配置，退役无实际类型规则的.eslintrc.json；typed项目覆盖真实TS/TSX和工作台配置，Node/browser globals按用途分开，工具MJS也执行适用规则。
+  - [x] 启用no-floating-promises、no-misused-promises、经确认的unsafe规则、rules-of-hooks/exhaustive-deps和字段/控件a11y规则；control-has-associated-label等需显式配置并核验，不能只安装preset。
+  - [x] 根ci:lint真实执行同一gate；输出受管文件、规则/诊断、基线匹配和退出状态。零文件、遗漏/被ignore文件、parser/config错误、基准不可得均失败。
+  - [x] 用与ci:lint相同配置及TSProgram的临时副本证明：未处理Promise、条件Hook、无可访问名称字段分别命中预期ruleId并非零退出，修正后通过。不得仅靠parse error或单独RuleTester宣称CI有效。
+  - [x] 历史例外按路径/ruleId/诊断与节点源码摘要/数量/原因/责任/退出条件冻结；只能消减。新增同数量问题、移动/复制例外节点、扩张忽略或自动重建baseline不得绕过；不全库格式化或机械补void吞异常。
 
-- [ ] T4 组件interaction与a11y能发现缺陷（AC1/5；UI-WORKBENCH-01）
-  - [ ] 独立Vitest browser配置使用Storybook addon和锁定的单Chromium provider；浏览器缺失时明确失败，不降成jsdom。组件play中的异步操作与断言await。
-  - [ ] 验证HomeSheet打开/Tab/Shift+Tab/Escape/卸载后的焦点返回，以及真实字段的label/error关联、文字状态与禁用原因；破坏行为的反例使相应测试失败。
-  - [ ] a11y.test设error，扫描实际组件容器；对axe不能证明的200%实际字号、非颜色表达等保留明确操作/预期/结果。不能将todo、跳过或“需人工”计为通过。
-  - [ ] 明确HomeSheet当前没有Portal、inert/滚动锁、宿主返回和身份感知焦点恢复；这些仍归9.3。合成身份场景只证明工作台呈现，不能替代App的真实鉴权遮蔽。
+- [x] T4 组件interaction与a11y能发现缺陷（AC1/5；UI-WORKBENCH-01）
+  - [x] 独立Vitest browser配置使用Storybook addon和锁定的单Chromium provider；浏览器缺失时明确失败，不降成jsdom。组件play中的异步操作与断言await。
+  - [x] 验证HomeSheet打开/Tab/Shift+Tab/Escape/卸载后的焦点返回，以及真实字段的label/error关联、文字状态与禁用原因；破坏行为的反例使相应测试失败。
+  - [x] a11y.test设error，扫描实际组件容器；对axe不能证明的200%实际字号、非颜色表达等保留明确操作/预期/结果。不能将todo、跳过或“需人工”计为通过。
+  - [x] 明确HomeSheet当前没有Portal、inert/滚动锁、宿主返回和身份感知焦点恢复；这些仍归9.3。合成身份场景只证明工作台呈现，不能替代App的真实鉴权遮蔽。
 
-- [ ] T5 证实产品入口、资源和网络隔离（AC6；NFR3/7/25、ui-quality-tooling）
-  - [ ] 产品Web构建成功；核对入口与打包模块来源、输出文件清单，拒绝工作台入口、mock worker/注册、fixture身份通道、工具遥测和秘密。不能仅凭devDependency分类或几个字符串断言。
-  - [ ] 在独立干净origin/profile运行产品公开/配置不可用路径，核对请求及ServiceWorker注册仍来自既有生产入口；工作台和产品端口/存储隔离。不得为了验证登录调用真实SMS或供应商。
-  - [ ] 通过既有native:sync与native:verify检查Android/iOS复制资源、插件配置和16.4/128目标；使用受控公开开发配置，检查候选中没有工具资源。缺生产资源时不猜正式ID/域名或读取服务端秘密。
-  - [ ] 隔离checker独立遍历dist及两端复制目录的完整文件清单并比较，拒绝只残留在native目录的额外worker/mock资源；现有native:verify核对预期资源一致性，不能单独证明额外文件不存在。
-  - [ ] 保存人为污染产品public/入口/native目标目录或worker路径错误的负例，证明隔离检查能失败。产品Web资源/生成工程验证与APK/iPhone/TestFlight实证分别报告。
+- [x] T5 证实产品入口、资源和网络隔离（AC6；NFR3/7/25、ui-quality-tooling）
+  - [x] 产品Web构建成功；核对入口与打包模块来源、输出文件清单，拒绝工作台入口、mock worker/注册、fixture身份通道、工具遥测和秘密。不能仅凭devDependency分类或几个字符串断言。
+  - [x] 在独立干净origin/profile运行产品公开/配置不可用路径，核对请求及ServiceWorker注册仍来自既有生产入口；工作台和产品端口/存储隔离。不得为了验证登录调用真实SMS或供应商。
+  - [x] 通过既有native:sync与native:verify检查Android/iOS复制资源、插件配置和16.4/128目标；使用受控公开开发配置，检查候选中没有工具资源。缺生产资源时不猜正式ID/域名或读取服务端秘密。
+  - [x] 隔离checker独立遍历dist及两端复制目录的完整文件清单并比较，拒绝只残留在native目录的额外worker/mock资源；现有native:verify核对预期资源一致性，不能单独证明额外文件不存在。
+  - [x] 保存人为污染产品public/入口/native目标目录或worker路径错误的负例，证明隔离检查能失败。产品Web资源/生成工程验证与APK/iPhone/TestFlight实证分别报告。
 
 - [ ] T6 接入实际CI并保留原验证责任（AC3–6；CODE-QUALITY-01、UI-WORKBENCH-01）
   - [ ] CI显式取得比较基准：PR使用event base SHA与实际checkout提交，push使用有效before SHA；核验commit可解析并通过受控fetch补足历史（可用fetch-depth0）。缺少预期非零基准应失败，首次push/全零before用已记录的全cohort策略，不绿色空跑；补浅克隆/丢失基准反例。
@@ -386,3 +386,7 @@ Codex（当前会话）；准备包含独立工具研究、仓库上下文分析
 ### 2026-09-25审阅修补
 
 13项独立审阅发现已修复并由三层复核关闭，另补CI的ANSI正常控制解析修复。工作台18场景/网络9/16故障与2控制、lint6组、产物5组通过；scope地址只在工作台适配层，不更改生产transport。当前仍等待新提交真实CI后关闭T6/T7与Story。新增File List：workbench/Lifecycle.stories.tsx、workbench/node-scenario.ts及story-9-4-code-review-2026-09-25.md（目录沿前述清单）。
+
+### 本地闭环与CI关闭边界
+
+T0–T5已有对应真实本地/干净安装/正反例证据，逐项勾选；精确候选版本的审计调整按D3执行（仅Vitest同组4.1.11安全patch及对应类型/传递修复，产品React/Vite/Capacitor不变）。T6实际远端整链与T7关闭记录仍待完成，Story和两项工程条件保持in-progress。

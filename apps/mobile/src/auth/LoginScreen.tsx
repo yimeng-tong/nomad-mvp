@@ -96,6 +96,7 @@ export function LoginScreen({
   const [otp, setOtp] = useState('');
   const [cooldown, setCooldown] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
+  const [legalFallback, setLegalFallback] = useState<{ url: string; label: string } | null>(null);
   const [captchaRequired, setCaptchaRequired] = useState(false);
   const [submittingOtp, setSubmittingOtp] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -184,6 +185,7 @@ export function LoginScreen({
         return;
       }
       // noopener deliberately returns null even when the new page opens successfully.
+      setLegalFallback({ url, label: kind === 'privacy' ? '在当前页查看隐私政策' : '在当前页查看用户协议' });
       if (!globalThis.open) { setNotice('页面暂时无法打开，请重试'); return; }
       globalThis.open(url, '_blank', 'noopener,noreferrer');
     } catch { setNotice('页面暂时无法打开，请重试'); }
@@ -423,6 +425,7 @@ export function LoginScreen({
             用户协议
           </button>
         </nav>
+        {legalFallback ? <a className="legal-fallback" href={legalFallback.url}>{legalFallback.label}</a> : null}
       </section>
     </main>
   );

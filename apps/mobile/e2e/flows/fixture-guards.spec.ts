@@ -13,6 +13,13 @@ test('B02 declared product traffic stays inside its active scenario', async ({ p
     expect(await response).toBe(200);
   }
   if (probe) {
+    if (probe === 'websocket') {
+      await page.evaluate(() => new Promise<void>((resolve) => {
+        const socket = new WebSocket('wss://nomad-e2e.invalid/undeclared');
+        socket.onerror = () => resolve(); socket.onclose = () => resolve();
+      }));
+      return;
+    }
     if (probe === 'retired') api.retire();
     const path = probe === 'external' ? 'https://nomad-e2e.invalid/undeclared' : probe === 'static'
       ? await page.locator('link[rel="stylesheet"]').getAttribute('href') : probe === 'retired' ? '/api/me' : '/api/undeclared';

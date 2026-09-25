@@ -5,6 +5,7 @@ import type { BrowserContext, Route, Request } from 'playwright/test';
 import type { components } from 'nomad-types/src/api-types';
 import { authConfig, currentUser, otpSent } from '../../workbench/fixtures';
 import { parseIngestEvent, parseIngestRecovery, parseIngestSnapshot } from '../../src/home/ingest-protocol';
+import { rejectWebSockets } from './sockets';
 
 export type Owner = 'A' | 'B';
 type Schema = components['schemas'];
@@ -51,6 +52,7 @@ export class ApiScenario {
   private readonly streams = new Map<string, Set<() => void>>();
   private readonly intentionalAborts = new Set<Request>();
   private closing = false;
+  private otpPhone: string | null = null;
   private context?: BrowserContext;
   private readonly outputs = (JSON.parse(readFileSync(new URL('../../.workbench-results/product-graph.json', import.meta.url), 'utf8')) as { outputs: Record<string, string> }).outputs;
 
@@ -59,6 +61,10 @@ export class ApiScenario {
     this.held.delete(path);
     for (const release of this.releases.get(path) ?? []) release();
     this.releases.delete(path);
+  }
+  releaseNewest(path: string) {
+    const set = this.releases.get(path), newest = set ? [...set].at(-1) : undefined;
+    assert.ok(newest, 'A held response is required'); set!.delete(newest); newest();
   }
   async releaseAndWait(path: string) {
     this.release(path);
@@ -89,6 +95,7 @@ export class ApiScenario {
   }
   async install(context: BrowserContext) {
     this.context = context;
+    await rejectWebSockets(context, () => this.violations.push(this.closing ? 'NOMAD_E2E_LATE_REQUEST' : 'NOMAD_E2E_WEBSOCKET_FORBIDDEN'));
     context.on('page', (page) => page.on('pageerror', (error) => this.pageErrors.push(error.name)));
     await context.route('**/*', async (route) => {
       const work = this.handle(route).catch(async () => {
@@ -193,11 +200,15 @@ export class ApiScenario {
       await this.json(route, this.authorityUnavailable ? fault('AUTH_AUTHORITY_UNAVAILABLE') : owner ? this.user(owner) : fault('AUTH_SESSION_EXPIRED'), this.authorityUnavailable ? 503 : owner ? 200 : 401); return;
     }
     if (method === 'POST' && path === '/api/auth/otp/start') {
-      if (!/^1\d{10}$/.test(string(body.phone))) { await this.json(route, fault('AUTH_PHONE_INVALID', '合成错误：请输入有效手机号'), 400); return; }
+      if (typeof body.phone !== 'string' || !/^1\d{10}$/.test(body.phone)) { await this.json(route, fault('AUTH_PHONE_INVALID', '合成错误：请输入有效手机号'), 400); return; }
+      if (!this.otpError) this.otpPhone = string(body.phone);
       await this.json(route, this.otpError ? fault('AUTH_SEND_REJECTED', '合成错误：验证码暂未发送') : otpSent, this.otpError ? 403 : 200); return;
     }
     if (method === 'POST' && path === '/api/auth/otp/verify') {
-      if (body.otp !== '123456') { await this.json(route, fault('AUTH_OTP_INVALID', '合成错误：验证码无效'), 400); return; }
+      if (typeof body.phone !== 'string' || !/^1\d{10}$/.test(body.phone) || body.phone !== this.otpPhone || body.otp !== '123456') {
+        await this.json(route, fault('AUTH_OTP_INVALID', '合成错误：验证码或手机号无效'), 400); return;
+      }
+      this.otpPhone = null;
       this.identity = body.phone === '13900139000' ? 'B' : 'A';
       await this.json(route, this.user(this.identity)); return;
     }

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { test, expect } from 'playwright/test';
+import { rejectWebSockets } from '../fixtures/sockets';
 
 test('B00 actual product bootstrap honestly reports unavailable identity', async ({ page, context, request }) => {
   const owned = await request.get('/__nomad_browser_ready');
@@ -8,6 +9,7 @@ test('B00 actual product bootstrap honestly reports unavailable identity', async
   const graph = JSON.parse(readFileSync(new URL('../../.workbench-results/product-graph.json', import.meta.url), 'utf8')) as { outputs: Record<string, string> };
   const violations: string[] = [];
   const errors: string[] = [];
+  await rejectWebSockets(context, () => violations.push('NOMAD_E2E_WEBSOCKET_FORBIDDEN'));
   page.on('pageerror', (error) => errors.push(error.message));
   await context.route('**/*', async (route) => {
     const incoming = route.request();

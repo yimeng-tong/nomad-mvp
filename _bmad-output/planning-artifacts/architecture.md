@@ -2507,13 +2507,13 @@ CI的Prisma client生成位于typed lint之前：服务器脚本进入覆盖后�
 
 固定环境为Playwright1.63.0的noble/amd64镜像digest `bc6ab0d6d44ff4826e4cb8c1e6d801e185bfc42bb0753f8e2a30efc70db054c7`，Node22.22.1/pnpm11.7.0，Chromium153.0.8010.12、Firefox155、WebKit26.6。镜像采用pwuser运行，保留HOME；实际48字体及fontconfig文件hash、WenQuanYi Zen Hei中文fallback由browser-environment.mjs记录。policy.json绑定环境指纹，三个引擎独立PNG。
 
-实际入口为当前dist的main→HostBootstrap→App；loopback4175由本轮nonce标识，禁止复用未知服务。API在HTTP边界由有状态合成场景提供，继续使用产品transport/controller/journal/真实IDB和WebCrypto。未知API、伪装静态fetch、外网和结束后请求由最终ledger报错，ServiceWorker阻断；不发真实验证码、供应商或遥测请求。公开协议正文是明确标注的合成文本。
+实际入口为当前dist的main→HostBootstrap→App；loopback4175由本轮nonce标识，禁止复用未知服务。API在HTTP边界由有状态合成场景提供，继续使用产品transport/controller/journal/真实IDB和WebCrypto。未知API、伪装静态fetch、外部HTTP/WebSocket和结束后请求由最终ledger报错，WebSocket不建立服务端握手，ServiceWorker阻断；不发真实验证码、供应商或遥测请求。公开协议正文是明确标注的合成文本。
 
-22个B00–B21行为场景及8个V01–V08视觉场景，共90个三引擎实例，由独立run-contract.json核对实际报告，不能通过删引擎/删场景/skip缩减。每run独立目录保存report、source-manifest和失败trace；suite-run指针保留整套结果，不被负例覆盖。清单同时校验当前Git SHA、实际工作树、源/lock/config/基线、CI run ID及环境hash，拒绝旧报告、未提交变更和隐式snapshot更新。
+23个B00–B22行为场景及8个V01–V08视觉场景，共93个三引擎实例，由独立run-contract.json核对实际报告，不能通过删引擎/删场景/skip缩减。每run独立目录保存report、source-manifest和失败trace；suite-run指针保留整套结果，不被负例覆盖。清单同时校验当前Git SHA、实际工作树、源/lock/config/基线、CI run ID及环境hash，拒绝旧报告、未提交变更和隐式snapshot更新。v2覆盖整个mobile、native-auth工作区与生成类型等输入；测试构建的图谱/输出bytes按hash保存在不可覆盖的products目录，复用既有隔离检查校验当前dist，每个非依赖产品模块都必须在源码清单中。逐个engine×visual要求实际PNG附件和下载后路径重定位；源码HTML/public/依赖和编译输出/图谱变动另有5个真实文件变更拒绝反例。
 
 ### 执行与候选更新
 
-Canonical前置依次运行环境探针、API生成、带 `NOMAD_RECORD_PRODUCT_GRAPH=1 VITE_API_BASE_URL=/api` 的mobile build，再执行 `pnpm run ci:browser` 与 `pnpm run ci:browser:negative`。实际workflow逐步调用同一入口。环境探针会拒绝不同OS/架构/镜像；没有字体/引擎不跳过。本机可在同样产品build后运行 `pnpm -F nomad-mobile test:browser --project chromium --grep 'B[0-9][0-9] '`；它只是所选本地引擎行为证据，不能替代canonical90项。Firefox在本任务受限profile命名空间下需获准的常规进程环境；WebKit宿主依赖未在本机安装。
+Canonical前置依次运行环境探针、API生成、带 `NOMAD_RECORD_PRODUCT_GRAPH=1 VITE_API_BASE_URL=/api` 的mobile build，再执行 `pnpm run ci:browser` 与 `pnpm run ci:browser:negative`。实际workflow逐步调用同一入口。环境探针会拒绝不同OS/架构/镜像；没有字体/引擎不跳过。本机可在同样产品build后运行 `pnpm -F nomad-mobile test:browser --project chromium --grep 'B[0-9][0-9] '`；它只是所选本地引擎行为证据，不能替代canonical93项。Firefox在本任务受限profile命名空间下需获准的常规进程环境；WebKit宿主依赖未在本机安装。
 
 候选入口是 `.github/workflows/browser-visual-candidate.yml` 的显式 `codex/story-9-5-visual-candidate-*` 分支push，已从实际ref触发。它只产生unapproved图片/manifest和24项验证结果，不写仓库基线、不发布网站。审阅者先下载artifact并使用check-browser-results.mjs的 `--candidate --artifacts <目录> --revision <实际CI SHA>` 核对全部图片、源码和环境，再逐张看原尺寸图，记录拒绝/接受理由及每个hash；明确接受后才把PNG与approval.json提交。不能用缺基线时自动生成替代审阅。
 
@@ -2521,7 +2521,7 @@ Canonical前置依次运行环境探针、API生成、带 `NOMAD_RECORD_PRODUCT_
 
 视觉场景固定Date，普通timer继续运行，且不包含FIFO/超时验收。B07独立使用真实Date/performance/timer，实际遮挡11秒、关闭后走完剩余窗口、reload不重播；B04对真实AbortSignal超时同时校验aborted与reason。B08仅延迟真实WebCrypto入口再释放，实际IDB/加密未换成内存实现。200%逐项加倍computed size，包括固定px字段，并检查横向边界、主要操作可达和加号Range，不把viewport缩小当真软键盘。
 
-四个产品反例在独立context注入：CTA位移、auth容器外的私有层、无视取消并写外层的迟到HTTP回调、回执查询时重发原POST。它们证明实际页面断言会失败，不声称产品已迁到Portal，也不代替源码围栏审阅。每个功能反例需要非零执行数、目标断言、非零退出和首次trace；视觉位移另外要求actual/expected/diff。完整性反例对同一实际全套报告删除引擎/场景或改为skip；它们是报告门禁测试，不冒充新执行的产品场景。缺基线/环境不匹配通过真实V02验证，CLI自动更新在启动前明确拒绝；该配置拒绝不计为产品缺陷反例。
+五个产品反例在独立context注入：CTA位移、auth容器外的私有层、可见但inert/aria-hidden的私有输入值、无视取消并写外层的迟到HTTP回调、回执查询时重发原POST。它们证明实际页面断言会失败，不声称产品已迁到Portal，也不代替源码围栏审阅。每个功能反例需要非零执行数、目标断言、非零退出和首次trace；视觉位移另外要求actual/expected/diff。完整性反例对同一实际全套报告删除引擎/场景、改为skip或去掉一个视觉附件；它们是报告门禁测试，不冒充新执行的产品场景。缺基线/环境不匹配通过真实V02验证，CLI自动更新在启动前明确拒绝；该配置拒绝不计为产品缺陷反例。
 
 ### 原探针与恢复资源责任
 
@@ -2537,6 +2537,8 @@ Canonical前置依次运行环境探针、API生成、带 `NOMAD_RECORD_PRODUCT_
 | durable-dock-pg-browser-probe.mjs | B07/11/12仅浏览器与HTTP替身部分 | 实际PG session/me/SSE/IDB、三进程一次SIGKILL、原cursor/FIFO/A→B→A；本次用专用隔离DB定向重跑 |
 | durable-dock-pressure-browser-probe.mjs | 无等价替代 | 56KB/重复帧压力、真实双visible窗口、迟到加密CAS，保留CDP与PG资源 |
 
-服务端event/lease/worker/replay/socket/restore/PITR及正式measurements仍按上方原责任清单独立执行。当前CI继续运行PG认证/HTTP/ingest、旧Home/Planner/Settings/synthetic/SSE、worker fixture、备份helper与原单元/工作台/隔离链；新90项不能代替未在CI的真实SIGKILL/压力/生产备份与RPO。旧探针输出固定到历史目录时，本次只作输出/模块路径重定位并记录adapter/source hash，保持原场景断言，禁止覆盖历史报告。
+服务端event/lease/worker/replay/socket/restore/PITR及正式measurements仍按上方原责任清单独立执行。当前CI继续运行PG认证/HTTP/ingest、旧Home/Planner/Settings/synthetic/SSE、worker fixture、备份helper与原单元/工作台/隔离链；新93项不能代替未在CI的真实SIGKILL/压力/生产备份与RPO。旧探针输出固定到历史目录时，本次只作输出/模块路径重定位并记录adapter/source hash，保持原场景断言，禁止覆盖历史报告。
 
 Story9.5只关闭自身CODE-QUALITY-01/UI-BROWSER-01。WebKit26.6不是Safari16.4/iPhone实证，Firefox155不是128最低版本实证；真实PNVS、法律资源、native SDK/设备、TestFlight及生产恢复由1.0/1.6/1.7/9.1/9.2和业务Story继续验收。
+
+审阅修补还强制B先认证后才释放旧A的/me响应；OTP替身绑定成功start的手机号；法律新窗口尝试后保留48px当前页回退链接，避免noopener成功误报，也不让弹窗被阻止时失去入口。下载旧报告的显式SHA审计按该提交当时合同验证，并标明contractVersion/compiledProductVerified；不能用v1历史证明替代当前v2验收。

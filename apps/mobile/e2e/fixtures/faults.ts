@@ -6,7 +6,7 @@ export async function installBrowserFault(context: BrowserContext) {
   const fault = process.env.NOMAD_BROWSER_FAULT ?? '';
   if (!fault) return;
   assert.equal(process.env.NOMAD_BROWSER_RUN_KIND, 'counterexample', 'Faults cannot create or approve baselines');
-  assert.ok(['cta-shift', 'private-portal', 'late-result', 'duplicate-start'].includes(fault));
+  assert.ok(['cta-shift', 'private-portal', 'private-input', 'late-result', 'duplicate-start'].includes(fault));
   await context.addInitScript((activeFault) => {
     if (activeFault === 'cta-shift') {
       document.addEventListener('DOMContentLoaded', () => {
@@ -15,13 +15,19 @@ export async function installBrowserFault(context: BrowserContext) {
         document.head.append(style);
       });
     }
-    if (activeFault === 'private-portal') {
+    if (activeFault === 'private-portal' || activeFault === 'private-input') {
       let armed = false;
       const observer = new MutationObserver(() => {
         if (document.querySelector('.home-shell') && document.documentElement.dataset.authChecking === 'false') armed = true;
+        if (activeFault === 'private-input' && document.documentElement.dataset.authChecking === 'false') document.querySelector('[data-nomad-e2e-escape]')?.remove();
         if (!armed || !document.body || document.documentElement.dataset.authChecking !== 'true' || document.querySelector('[data-nomad-e2e-escape]')) return;
         const escaped = document.createElement('aside'); escaped.dataset.nomadE2eEscape = 'true';
-        escaped.textContent = 'A的合成旧owner逃逸私有层'; document.body.append(escaped);
+        if (activeFault === 'private-input') {
+          escaped.inert = true; escaped.setAttribute('aria-hidden', 'true');
+          const input = document.createElement('textarea'); input.value = 'A的合成可见inert输入'; escaped.append(input);
+          escaped.style.cssText = 'position:fixed;top:0;left:0;z-index:99999';
+        } else escaped.textContent = 'A的合成旧owner逃逸私有层';
+        document.body.append(escaped);
       });
       observer.observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-auth-checking'] });
     }

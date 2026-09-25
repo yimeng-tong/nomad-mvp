@@ -54,6 +54,8 @@ button:disabled {
   gap: 18px;
 }
 
+.legal-fallback { display: flex; align-items: center; justify-content: center; min-height: 48px; color: #247e6f; line-height: 1.5; }
+
 .brand-lockup {
   display: grid;
   grid-template-columns: 72px 1fr;

@@ -159,6 +159,19 @@ So that 组件迁移前后可以核对实际行为并防止未经审阅的变化
   - [ ] 独立bmad-code-review、修补并复核已确认问题；新改源文件真实typed lint。创建当前checker的ui_delivery_evidence：kind=ui-verification、story_id='9.5'、同源hash、source_revision/recorded_at、两个checks的passed/environment/summary和现存repo-relative证据。UI-BROWSER-01作为首交付必须verified，不能not-applicable。
   - [ ] 更新完整File List、Dev Agent Record、CURRENT/Sprint/monitor/当前branch与next-preparation；ci:handoff通过，若改guard才补guard回归。9.5自身done以后才临近准备9.3；3.1暂停/历史done/真实资源门槛不变。
 
+### Review Findings
+
+三层独立CR均完成；合并重复问题后0decision、8patch、0defer、0dismiss。已批准持续执行覆盖本轮普通修补，无需重新请求选择。
+
+- [ ] [Review][Patch] R1 报告负例递归入口传错对象，改为report.suites并实际执行CLI完整性负例。[apps/mobile/scripts/check-browser-validation-guards.mjs]
+- [ ] [Review][Patch] R2 inert不等于视觉隐藏，分别校验可见与交互输入值并补inert-only漏显反例。[apps/mobile/e2e/fixtures/privacy.ts]
+- [ ] [Review][Patch] R3 强制B已认证之后才释放旧A的/me响应，避免只检查最终覆盖后的B。[apps/mobile/e2e/flows/identity.spec.ts]
+- [ ] [Review][Patch] R4 完整覆盖HTML/public/tsconfig/native-auth等实际输入，保存并复核测试构建图谱及输出bytes，补源/输出变更拒绝反例。[apps/mobile/e2e/run-contract.json, apps/mobile/scripts/check-browser-results.mjs]
+- [ ] [Review][Patch] R5 HTTP route之外显式阻断WebSocket并检查最终ledger，补实际WebSocket反例。[apps/mobile/e2e/fixtures/api-scenario.ts]
+- [ ] [Review][Patch] R6 OTP fixture验证手机号形状且绑定成功start的号码，拒绝缺失/错配而不改变合成身份。[apps/mobile/e2e/fixtures/api-scenario.ts]
+- [ ] [Review][Patch] R7 noopener成功不报错，同时为被浏览器阻止的新窗口提供可用的当前页法律链接回退。[apps/mobile/src/auth/LoginScreen.tsx]
+- [ ] [Review][Patch] R8 每个engine×visual实例必须具备可读实际PNG，下载路径重定位后仍验证；缺capture/缺文件不得通过。[apps/mobile/scripts/check-browser-results.mjs]
+
 ## Dev Notes
 
 ### 已核验的实现上下文

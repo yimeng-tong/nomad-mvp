@@ -4,6 +4,20 @@ import type { components } from 'nomad-types/src/api-types';
 import { test, expect } from '../fixtures/browser-test';
 import { syntheticUser, type Owner } from '../fixtures/api-scenario';
 
+test('B22 OTP fixture rejects malformed unstarted and mismatched verification', async ({ page, api }) => {
+  await page.goto('/'); await expect(page.getByLabel('手机号', { exact: true })).toBeVisible();
+  expect((await call(page, 'A', '/auth/otp/verify', { otp: '123456' })).status).toBe(400);
+  expect((await call(page, 'A', '/auth/otp/verify', { phone: '13800138000', otp: '123456' })).status).toBe(400);
+  expect(api.identity).toBeNull();
+  expect((await call(page, 'A', '/auth/otp/start', { phone: '13800138000' })).status).toBe(200);
+  expect((await call(page, 'A', '/auth/otp/verify', { phone: '13900139000', otp: '123456' })).status).toBe(400);
+  expect(api.identity).toBeNull();
+  expect((await call(page, 'A', '/auth/otp/verify', { phone: '13800138000', otp: '654321' })).status).toBe(400);
+  expect((await call(page, 'A', '/auth/otp/verify', { phone: '13800138000', otp: '123456' })).status).toBe(200);
+  expect(api.identity).toBe('A');
+  await page.reload(); await expect(page.getByRole('textbox', { name: '统一输入', exact: true })).toBeVisible();
+});
+
 async function call(page: Page, owner: Owner, path: string, body?: unknown) {
   const identity = syntheticUser(owner);
   return page.evaluate(async ({ path, body, identity }) => {

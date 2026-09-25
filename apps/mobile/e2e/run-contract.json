@@ -1,6 +1,7 @@
 {
+  "version": 2,
   "engines": ["chromium", "firefox", "webkit"],
-  "flowIds": ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11", "B12", "B13", "B14", "B15", "B16", "B17", "B18", "B19", "B20", "B21"],
+  "flowIds": ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11", "B12", "B13", "B14", "B15", "B16", "B17", "B18", "B19", "B20", "B21", "B22"],
   "visualIds": ["V01", "V02", "V03", "V04", "V05", "V06", "V07", "V08"],
-  "sourceInputs": ["apps/mobile/src", "apps/mobile/e2e", "apps/mobile/scripts", "apps/mobile/playwright.config.ts", "apps/mobile/tsconfig.e2e.json", "apps/mobile/vite.config.ts", "apps/mobile/package.json", "apps/mobile/workbench/fixtures.ts", "packages/types", "pnpm-lock.yaml", "package.json", "eslint.config.mjs", ".github/workflows/ci.yml", ".github/workflows/browser-visual-candidate.yml"]
+  "sourceInputs": ["apps/mobile", "packages/native-auth", "packages/types", "docs/api/openapi.yaml", "pnpm-lock.yaml", "pnpm-workspace.yaml", "package.json", "eslint.config.mjs", ".gitignore", ".github/workflows/ci.yml", ".github/workflows/browser-visual-candidate.yml"]
 }

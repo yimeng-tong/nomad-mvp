@@ -1,5 +1,6 @@
 import { test, expect } from '../fixtures/browser-test';
 import { expectPrivateHidden } from '../fixtures/privacy';
+import { expectLayout } from '../fixtures/layout';
 
 test('B09 login errors retain fields and public legal content remains readable', async ({ page, api, context }) => {
   api.otpError = true;
@@ -17,6 +18,12 @@ test('B09 login errors retain fields and public legal content remains readable',
   await expect(popup.getByText('仅用于浏览器测试，不是正式协议。')).toBeVisible();
   await popup.close();
   await expect(page.getByText('页面暂时无法打开，请重试', { exact: true })).toHaveCount(0);
+  await page.evaluate(() => { window.open = () => null; });
+  await page.getByRole('button', { name: '用户协议', exact: true }).click();
+  await expect(phone).toHaveValue('13800138000');
+  const fallback = page.getByRole('link', { name: '在当前页查看用户协议', exact: true });
+  await expectLayout(page, fallback); await fallback.click();
+  await expect(page.getByRole('heading', { name: '合成公开说明' })).toBeVisible();
   expect(api.count('POST', '/api/ingest/xhs')).toBe(0);
 });
 

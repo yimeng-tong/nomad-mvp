@@ -93,10 +93,13 @@ test('B18 superseded me response cannot restore an old owner', async ({ page, ap
   api.hold('/api/me'); await recheckIdentity(page);
   await expect.poll(() => api.count('GET', '/api/me')).toBeGreaterThan(before);
   api.identity = 'B';
-  // The next focus invalidates the first request before either old response can commit.
+  // Settle B first, then force the old A response to arrive last.
   await recheckIdentity(page);
   await expect.poll(() => api.count('GET', '/api/me')).toBeGreaterThan(before + 1);
+  api.releaseNewest('/api/me');
+  await expect(page.getByRole('button', { name: 'B的合成城市 1 个想去', exact: true })).toBeVisible();
   await api.releaseAndWait('/api/me');
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
   await expect(page.getByRole('button', { name: 'B的合成城市 1 个想去', exact: true })).toBeVisible();
   await expectPrivateHidden(page, privateA, true);
 });

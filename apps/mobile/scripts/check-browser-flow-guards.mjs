@@ -13,6 +13,7 @@ const results = [];
 const flowsOnly = process.argv.includes('--flows-only');
 const matrix = [
   ['', 'B11|B13|B15', null], ['private-portal', 'B13', 'NOMAD_E2E_PRIVATE_VISIBLE'],
+  ['private-input', 'B13', 'NOMAD_E2E_PRIVATE_VISIBLE_VALUE'],
   ['late-result', 'B15', 'NOMAD_E2E_PRIVATE_VISIBLE'], ['duplicate-start', 'B11', 'NOMAD_E2E_DUPLICATE_START'],
   ...(!flowsOnly ? [['', 'V02', null], ['cta-shift', 'V02', 'toHaveScreenshot'], ['', 'V02', null]] : []),
   ['', 'B11|B13|B15', null],

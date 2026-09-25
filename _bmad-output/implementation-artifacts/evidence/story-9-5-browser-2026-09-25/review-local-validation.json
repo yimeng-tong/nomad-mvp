@@ -1,0 +1,515 @@
+{
+  "kind": "code-review-remediation-local-validation",
+  "recordedAt": "2026-09-25T15:54:33.911870+00:00",
+  "baseRevision": "05466d3f4274f811bd3647cc794ad04d75073b04",
+  "dirtyImplementation": true,
+  "independentReviews": {
+    "blind": "all five original findings closed at static code review; blocked popup uses explicit window.open substitute",
+    "edge": "R2/R3/R4/R8 closed; no additional findings",
+    "acceptance": "R4 all 41 local graph modules bound; docs mirror exact; v2 actual93 CI still required"
+  },
+  "lastBrowserReport": {
+    "runId": "2cc1b683-3cd7-4f20-bcb7-5da990ffe956",
+    "stats": {
+      "startTime": "2026-09-25T15:51:40.725Z",
+      "duration": 54490.047999999995,
+      "expected": 23,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "sourceManifestHash": "713574511df8c93986ae6034b3b5ca13eca0a3680994fe8e4420ac0a90086adb",
+    "sourceHashesStillMatch": true
+  },
+  "logs": {
+    "/tmp/nomad-story-9-5-review-handoff.log": {
+      "sha256": "70ce89da0e8a90a18005e13d50f51af31bd885c644d3690f9cd7757fc1ad178f",
+      "bytes": 235
+    },
+    "/tmp/nomad-story-9-5-review-isolation-tests.log": {
+      "sha256": "a67f10809b708479dd85f592c09d9d500ae6457da6cecb9bd9589cdc746c7529",
+      "bytes": 1754
+    },
+    "/tmp/nomad-story-9-5-review-isolation.log": {
+      "sha256": "7734ab0c248c3f4c7ff6c1a3c7f498b1ac6862d7f42bf09c070d2f8014d9a4f9",
+      "bytes": 3179
+    },
+    "/tmp/nomad-story-9-5-review-native-verify.log": {
+      "sha256": "2c926cc074b0098c5fbde8b8851318dbf651f28311b3842be2e8445003b5e880",
+      "bytes": 1225
+    },
+    "/tmp/nomad-story-9-5-review-native-sync.log": {
+      "sha256": "4ecf7d5dd6601598e8c0df067afe666e9fe1d7d9f4fc4a6e18ea68b19df6beda",
+      "bytes": 1197
+    },
+    "/tmp/nomad-story-9-5-review-final-firefox.log": {
+      "sha256": "d3775e5777c1b1095eeea2604f8e011c338774925bcc6cb79763ccdef342ec1a",
+      "bytes": 3753
+    },
+    "/tmp/nomad-story-9-5-review-final-workbench.log": {
+      "sha256": "cfcc44184e2fbe2613af5387bb1ad340a8f4c6d45395df2b036aca975797990b",
+      "bytes": 306
+    },
+    "/tmp/nomad-story-9-5-review-final-mobile.log": {
+      "sha256": "1a18d3240af01e61f11cce799d4e1a80a76d3c220f399a62f92adc6914a80725",
+      "bytes": 1571
+    },
+    "/tmp/nomad-story-9-5-review-final-chromium.log": {
+      "sha256": "adaba6ba0fe7a84640f27c009b4e2d44fd0264a0c0c413f6ae21d0bb446270c6",
+      "bytes": 3785
+    },
+    "/tmp/nomad-story-9-5-review-final-build.log": {
+      "sha256": "bd8ab94092db35f4b644203a78ffb1d26b7128057cc9051838e72b8327b0ecac",
+      "bytes": 526
+    },
+    "/tmp/nomad-story-9-5-review-final-lint.log": {
+      "sha256": "029cc3561ea23f1c6a1bf7aa9ec7e8df41b2543e79826978ec0caf3c9f801fdc",
+      "bytes": 30553
+    },
+    "/tmp/nomad-story-9-5-review-network-guards.log": {
+      "sha256": "9ccd9960c1da7444469c64d8ff83756adc8d1ad08e971b7c9a10d7b4fa17d537",
+      "bytes": 76
+    },
+    "/tmp/nomad-story-9-5-review-flow-guards.log": {
+      "sha256": "3f1020cbf85153be641cd4fbab720e55b44f0e3449d8ae607d04c35e34208df8",
+      "bytes": 3557
+    },
+    "/tmp/nomad-story-9-5-review-integrity-local.log": {
+      "sha256": "a415ce11eb044102df53414ae915405f7c67e51fcb1a6ad877e5e8e03f9c408a",
+      "bytes": 164
+    },
+    "/tmp/nomad-story-9-5-review-fixes-lint.log": {
+      "sha256": "029cc3561ea23f1c6a1bf7aa9ec7e8df41b2543e79826978ec0caf3c9f801fdc",
+      "bytes": 30553
+    },
+    "/tmp/nomad-story-9-5-review-fixes-browser.log": {
+      "sha256": "d745b81797b04148b186867ab74ede5c043e2fa0262bde7273842883fa972b38",
+      "bytes": 1191
+    },
+    "/tmp/nomad-story-9-5-review-fixes-build.log": {
+      "sha256": "4d6d196ba0a79904346d2f698052c17f90f62f278e9721b5e4dd1687f0beb8a6",
+      "bytes": 526
+    },
+    "/tmp/nomad-story-9-5-r2-hidden-inert-old-oracle.log": {
+      "sha256": "60a56bfb4e87b03e0eb6cb430437e958ba469d3acc46bcc1176a28efe7965512",
+      "bytes": 630
+    },
+    "/tmp/nomad-story-9-5-r2-inert-false-green.log": {
+      "sha256": "0f051ac98560350e2be0dc03eda38808becb526cbc2716c8734a45566f7ab671",
+      "bytes": 3946
+    }
+  },
+  "flowCounterexamples": {
+    "kind": "actual-product-browser-counterexamples",
+    "flowsOnly": true,
+    "injection": "isolated browser init script; no product writes",
+    "results": [
+      {
+        "fault": "control",
+        "pattern": "B11|B13|B15",
+        "runId": "flow-control-a2bee545-272a-4a32-83e3-be8447491855",
+        "exitCode": 0,
+        "target": null,
+        "executed": 3,
+        "attachments": []
+      },
+      {
+        "fault": "private-portal",
+        "pattern": "B13",
+        "runId": "flow-private-portal-b864f894-e28e-4390-b686-ea1f4a767ab0",
+        "exitCode": 1,
+        "target": "NOMAD_E2E_PRIVATE_VISIBLE",
+        "executed": 1,
+        "attachments": [
+          {
+            "name": "screenshot",
+            "path": ".browser-results/runs/flow-private-portal-b864f894-e28e-4390-b686-ea1f4a767ab0/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/test-failed-1.png"
+          },
+          {
+            "name": "error-context",
+            "path": ".browser-results/runs/flow-private-portal-b864f894-e28e-4390-b686-ea1f4a767ab0/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/error-context.md"
+          },
+          {
+            "name": "trace",
+            "path": ".browser-results/runs/flow-private-portal-b864f894-e28e-4390-b686-ea1f4a767ab0/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/trace.zip"
+          }
+        ]
+      },
+      {
+        "fault": "private-input",
+        "pattern": "B13",
+        "runId": "flow-private-input-d0a90cd5-6e86-4ef3-a261-d9c778a5d218",
+        "exitCode": 1,
+        "target": "NOMAD_E2E_PRIVATE_VISIBLE_VALUE",
+        "executed": 1,
+        "attachments": [
+          {
+            "name": "screenshot",
+            "path": ".browser-results/runs/flow-private-input-d0a90cd5-6e86-4ef3-a261-d9c778a5d218/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/test-failed-1.png"
+          },
+          {
+            "name": "error-context",
+            "path": ".browser-results/runs/flow-private-input-d0a90cd5-6e86-4ef3-a261-d9c778a5d218/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/error-context.md"
+          },
+          {
+            "name": "trace",
+            "path": ".browser-results/runs/flow-private-input-d0a90cd5-6e86-4ef3-a261-d9c778a5d218/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/trace.zip"
+          }
+        ]
+      },
+      {
+        "fault": "late-result",
+        "pattern": "B15",
+        "runId": "flow-late-result-e65eee41-be3d-4cbf-80e6-f70e461c20de",
+        "exitCode": 1,
+        "target": "NOMAD_E2E_PRIVATE_VISIBLE",
+        "executed": 1,
+        "attachments": [
+          {
+            "name": "screenshot",
+            "path": ".browser-results/runs/flow-late-result-e65eee41-be3d-4cbf-80e6-f70e461c20de/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/test-failed-1.png"
+          },
+          {
+            "name": "error-context",
+            "path": ".browser-results/runs/flow-late-result-e65eee41-be3d-4cbf-80e6-f70e461c20de/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/error-context.md"
+          },
+          {
+            "name": "trace",
+            "path": ".browser-results/runs/flow-late-result-e65eee41-be3d-4cbf-80e6-f70e461c20de/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/trace.zip"
+          }
+        ]
+      },
+      {
+        "fault": "duplicate-start",
+        "pattern": "B11",
+        "runId": "flow-duplicate-start-7ed4a659-291a-4c49-93be-1517d354ddc2",
+        "exitCode": 1,
+        "target": "NOMAD_E2E_DUPLICATE_START",
+        "executed": 1,
+        "attachments": [
+          {
+            "name": "screenshot",
+            "path": ".browser-results/runs/flow-duplicate-start-7ed4a659-291a-4c49-93be-1517d354ddc2/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/test-failed-1.png"
+          },
+          {
+            "name": "error-context",
+            "path": ".browser-results/runs/flow-duplicate-start-7ed4a659-291a-4c49-93be-1517d354ddc2/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/error-context.md"
+          },
+          {
+            "name": "trace",
+            "path": ".browser-results/runs/flow-duplicate-start-7ed4a659-291a-4c49-93be-1517d354ddc2/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/trace.zip"
+          }
+        ]
+      },
+      {
+        "fault": "control",
+        "pattern": "B11|B13|B15",
+        "runId": "flow-control-764dcaaa-dd85-418d-8783-35a4be604cd8",
+        "exitCode": 0,
+        "target": null,
+        "executed": 3,
+        "attachments": []
+      }
+    ]
+  },
+  "networkCounterexamples": {
+    "kind": "actual-browser-network-guard-counterexamples",
+    "results": [
+      {
+        "probe": "control",
+        "runId": "network-control-3b95ce04-f034-4cc6-a172-519994e17aaa",
+        "exitCode": 0,
+        "expectedFailure": null
+      },
+      {
+        "probe": "unknown",
+        "runId": "network-unknown-92ffc3ca-39fe-4776-b559-6590b0fcf7de",
+        "exitCode": 1,
+        "expectedFailure": "NOMAD_E2E_UNDECLARED_REQUEST"
+      },
+      {
+        "probe": "static",
+        "runId": "network-static-9608fd27-0a60-404b-b00d-bd07cf34ddcd",
+        "exitCode": 1,
+        "expectedFailure": "NOMAD_E2E_UNDECLARED_REQUEST"
+      },
+      {
+        "probe": "external",
+        "runId": "network-external-28863b28-debd-4cb6-9060-76a0fb074e6f",
+        "exitCode": 1,
+        "expectedFailure": "NOMAD_E2E_EXTERNAL_REQUEST"
+      },
+      {
+        "probe": "retired",
+        "runId": "network-retired-53519d37-f181-45e8-b8ee-d00fcb9de69e",
+        "exitCode": 1,
+        "expectedFailure": "NOMAD_E2E_LATE_REQUEST"
+      },
+      {
+        "probe": "websocket",
+        "runId": "network-websocket-2aaecb09-10f0-427e-83d2-55b1d7a06626",
+        "exitCode": 1,
+        "expectedFailure": "NOMAD_E2E_WEBSOCKET_FORBIDDEN"
+      },
+      {
+        "probe": "control",
+        "runId": "network-control-66152acf-d025-4324-8032-c9cd18026590",
+        "exitCode": 0,
+        "expectedFailure": null
+      }
+    ]
+  },
+  "reportIntegrity": {
+    "kind": "downloaded-report-integrity-counterexamples",
+    "original": {
+      "kind": "complete-canonical-browser-suite",
+      "sourceRevision": "f53d2a84e3168f906d1850c00875eada88629e87",
+      "runId": "0e95991f-e068-4bed-a0a2-c71ab18998a3",
+      "requiredCases": 90,
+      "skipped": 0,
+      "environmentFingerprint": "7a174c57a759784e37a22d2c3cf4943c57b70bb22bcfd938b0ce11d6be8e9c0b",
+      "reportHash": "58a003805720a30cc9b6a805bb47d5e05c4c3672c56963adf4952208b3224037",
+      "sourceManifestHash": "17868c8254208e79beba7911456698e58df4929504cad16c4ab1516caa5a90c2",
+      "contractVersion": 1,
+      "compiledProductVerified": false,
+      "visualFiles": {
+        "chromium/V01-login.png": "9540017ec3359443a781ff82b115375fc6166c1e9d8494464f69947cbd4b37dd",
+        "chromium/V02-home.png": "1285ea4cdb95a3e0aecf0c339fdb580a8516694b6f188f865030ab594b6290dc",
+        "chromium/V03-long-home.png": "8ba1f6bae438c19f9435abbd974503ea24e8890a6021a2ea9247840aec823229",
+        "chromium/V04-large-login.png": "e13ae640a784733553074a8bc27e4b30b8c28aea1a4021b44a0c12d897b38a04",
+        "chromium/V05-large-home.png": "83800de4cba71c2fe07f71f91741bd81d22024f4283a76e5f6cef4f560770218",
+        "chromium/V06-keyboard-sheet.png": "ee027c6403542f098b849b8f80b169968493ffcfc3ef45c52a99235136d03ce3",
+        "chromium/V07-large-long-sheet.png": "4a5f0d122b56a00db3236f7049c84369aec2abf7f6bf21145d9a3b5876191136",
+        "chromium/V08-logout-confirmation.png": "b1a75c443368b24349d999effb37985fca272cbad910a93fc04213b0ec0cf90f",
+        "firefox/V01-login.png": "cef7a34158f15bc2ca2228f2ac1e75b6b1d69505587a444a05169b5bdc7c0bf5",
+        "firefox/V02-home.png": "ba980d1ef2b1d093ecf1ab06307c9ab5796fb8c0f8ee17c672f9dbc18c69f903",
+        "firefox/V03-long-home.png": "5f8ca8bd3d57a2b028a7653da73f25ed45351f39ae3dfe430d67dbbd21dd2f61",
+        "firefox/V04-large-login.png": "15cd32e955d3d45c05de4ac7dbe08767f21bdb82a538a390d6c86267d7183d8a",
+        "firefox/V05-large-home.png": "b169787b3fa7c5436c851dce867470ec4699e7464861f1d8dbc8ba4b5a9bf37e",
+        "firefox/V06-keyboard-sheet.png": "0d7617498ba8f51f5ad6cdbd1ecd5669d700049d279cfe68a0080133892b1249",
+        "firefox/V07-large-long-sheet.png": "84f7b1694b08734c6adca2d461b143c9bae2bcde52dbafb00f2c12417f4912e4",
+        "firefox/V08-logout-confirmation.png": "392798f5b1f4f04b6ab0743154b6878479c1da2b25cf416fafc2943ee43e54b2",
+        "webkit/V01-login.png": "c2e76ee3a4df49f33764939ce322e6e40035a71725242fda09a38fd431f98cdd",
+        "webkit/V02-home.png": "9af227395edb55698125634f3acccba7e46bde0b1c116715359cc6f3d050525e",
+        "webkit/V03-long-home.png": "881d39d7d7d1bf42e0626ad6e055c65ec666f80a9e0478aa1edcff9251f069cc",
+        "webkit/V04-large-login.png": "0d64dcef1f78ebdd182e03911b0e0cf7aea6f9c153c98da05778e297d6c7a911",
+        "webkit/V05-large-home.png": "52b4f3f2fd69d13e8a96075a5088f51421a972e56b012753e19c58851b88aafc",
+        "webkit/V06-keyboard-sheet.png": "ea52c71c0b534d7969bb67871ac79ee3e8db9ea425f451a7309787332dc84ae8",
+        "webkit/V07-large-long-sheet.png": "4b014bf0779eedb82abdf1923bb1f6cd4eed2ae957f5dfa67a8e71fc10ab0eb6",
+        "webkit/V08-logout-confirmation.png": "6e933a338869765b595efa722aea4cb83489c2a89a29d111591645e1e042b56e"
+      },
+      "visualArtifacts": [
+        {
+          "engine": "chromium",
+          "scene": "V01-login",
+          "artifact": "legacy-inline-report",
+          "bytes": 41248,
+          "sha256": "9540017ec3359443a781ff82b115375fc6166c1e9d8494464f69947cbd4b37dd"
+        },
+        {
+          "engine": "chromium",
+          "scene": "V02-home",
+          "artifact": "legacy-inline-report",
+          "bytes": 37869,
+          "sha256": "1285ea4cdb95a3e0aecf0c339fdb580a8516694b6f188f865030ab594b6290dc"
+        },
+        {
+          "engine": "chromium",
+          "scene": "V03-long-home",
+          "artifact": "legacy-inline-report",
+          "bytes": 54289,
+          "sha256": "8ba1f6bae438c19f9435abbd974503ea24e8890a6021a2ea9247840aec823229"
+        },
+        {
+          "engine": "chromium",
+          "scene": "V04-large-login",
+          "artifact": "legacy-inline-report",
+          "bytes": 65947,
+          "sha256": "e13ae640a784733553074a8bc27e4b30b8c28aea1a4021b44a0c12d897b38a04"
+        },
+        {
+          "engine": "chromium",
+          "scene": "V05-large-home",
+          "artifact": "legacy-inline-report",
+          "bytes": 66724,
+          "sha256": "83800de4cba71c2fe07f71f91741bd81d22024f4283a76e5f6cef4f560770218"
+        },
+        {
+          "engine": "chromium",
+          "scene": "V06-keyboard-sheet",
+          "artifact": "legacy-inline-report",
+          "bytes": 32967,
+          "sha256": "ee027c6403542f098b849b8f80b169968493ffcfc3ef45c52a99235136d03ce3"
+        },
+        {
+          "engine": "chromium",
+          "scene": "V07-large-long-sheet",
+          "artifact": "legacy-inline-report",
+          "bytes": 85458,
+          "sha256": "4a5f0d122b56a00db3236f7049c84369aec2abf7f6bf21145d9a3b5876191136"
+        },
+        {
+          "engine": "chromium",
+          "scene": "V08-logout-confirmation",
+          "artifact": "legacy-inline-report",
+          "bytes": 8731,
+          "sha256": "b1a75c443368b24349d999effb37985fca272cbad910a93fc04213b0ec0cf90f"
+        },
+        {
+          "engine": "firefox",
+          "scene": "V01-login",
+          "artifact": "legacy-inline-report",
+          "bytes": 44460,
+          "sha256": "cef7a34158f15bc2ca2228f2ac1e75b6b1d69505587a444a05169b5bdc7c0bf5"
+        },
+        {
+          "engine": "firefox",
+          "scene": "V02-home",
+          "artifact": "legacy-inline-report",
+          "bytes": 45833,
+          "sha256": "ba980d1ef2b1d093ecf1ab06307c9ab5796fb8c0f8ee17c672f9dbc18c69f903"
+        },
+        {
+          "engine": "firefox",
+          "scene": "V03-long-home",
+          "artifact": "legacy-inline-report",
+          "bytes": 80160,
+          "sha256": "5f8ca8bd3d57a2b028a7653da73f25ed45351f39ae3dfe430d67dbbd21dd2f61"
+        },
+        {
+          "engine": "firefox",
+          "scene": "V04-large-login",
+          "artifact": "legacy-inline-report",
+          "bytes": 74749,
+          "sha256": "15cd32e955d3d45c05de4ac7dbe08767f21bdb82a538a390d6c86267d7183d8a"
+        },
+        {
+          "engine": "firefox",
+          "scene": "V05-large-home",
+          "artifact": "legacy-inline-report",
+          "bytes": 82790,
+          "sha256": "b169787b3fa7c5436c851dce867470ec4699e7464861f1d8dbc8ba4b5a9bf37e"
+        },
+        {
+          "engine": "firefox",
+          "scene": "V06-keyboard-sheet",
+          "artifact": "legacy-inline-report",
+          "bytes": 39317,
+          "sha256": "0d7617498ba8f51f5ad6cdbd1ecd5669d700049d279cfe68a0080133892b1249"
+        },
+        {
+          "engine": "firefox",
+          "scene": "V07-large-long-sheet",
+          "artifact": "legacy-inline-report",
+          "bytes": 102045,
+          "sha256": "84f7b1694b08734c6adca2d461b143c9bae2bcde52dbafb00f2c12417f4912e4"
+        },
+        {
+          "engine": "firefox",
+          "scene": "V08-logout-confirmation",
+          "artifact": "legacy-inline-report",
+          "bytes": 10312,
+          "sha256": "392798f5b1f4f04b6ab0743154b6878479c1da2b25cf416fafc2943ee43e54b2"
+        },
+        {
+          "engine": "webkit",
+          "scene": "V01-login",
+          "artifact": "legacy-inline-report",
+          "bytes": 45993,
+          "sha256": "c2e76ee3a4df49f33764939ce322e6e40035a71725242fda09a38fd431f98cdd"
+        },
+        {
+          "engine": "webkit",
+          "scene": "V02-home",
+          "artifact": "legacy-inline-report",
+          "bytes": 47502,
+          "sha256": "9af227395edb55698125634f3acccba7e46bde0b1c116715359cc6f3d050525e"
+        },
+        {
+          "engine": "webkit",
+          "scene": "V03-long-home",
+          "artifact": "legacy-inline-report",
+          "bytes": 96011,
+          "sha256": "881d39d7d7d1bf42e0626ad6e055c65ec666f80a9e0478aa1edcff9251f069cc"
+        },
+        {
+          "engine": "webkit",
+          "scene": "V04-large-login",
+          "artifact": "legacy-inline-report",
+          "bytes": 74542,
+          "sha256": "0d64dcef1f78ebdd182e03911b0e0cf7aea6f9c153c98da05778e297d6c7a911"
+        },
+        {
+          "engine": "webkit",
+          "scene": "V05-large-home",
+          "artifact": "legacy-inline-report",
+          "bytes": 78070,
+          "sha256": "52b4f3f2fd69d13e8a96075a5088f51421a972e56b012753e19c58851b88aafc"
+        },
+        {
+          "engine": "webkit",
+          "scene": "V06-keyboard-sheet",
+          "artifact": "legacy-inline-report",
+          "bytes": 41051,
+          "sha256": "ea52c71c0b534d7969bb67871ac79ee3e8db9ea425f451a7309787332dc84ae8"
+        },
+        {
+          "engine": "webkit",
+          "scene": "V07-large-long-sheet",
+          "artifact": "legacy-inline-report",
+          "bytes": 104182,
+          "sha256": "4b014bf0779eedb82abdf1923bb1f6cd4eed2ae957f5dfa67a8e71fc10ab0eb6"
+        },
+        {
+          "engine": "webkit",
+          "scene": "V08-logout-confirmation",
+          "artifact": "legacy-inline-report",
+          "bytes": 10716,
+          "sha256": "6e933a338869765b595efa722aea4cb83489c2a89a29d111591645e1e042b56e"
+        }
+      ],
+      "nativeDeviceAcceptance": false
+    },
+    "results": [
+      {
+        "probe": "missing-engine",
+        "category": "fresh-report-integrity-negative",
+        "sourceRunId": "0e95991f-e068-4bed-a0a2-c71ab18998a3",
+        "directory": "/tmp/nomad-story-9-5-t56-ci-f53d/integrity-probes/missing-engine-2f3e3ec4-fc92-420c-8224-7fcd249261a3",
+        "exitCode": 1,
+        "target": "NOMAD_E2E_REQUIRED_MATRIX"
+      },
+      {
+        "probe": "missing-scenario",
+        "category": "fresh-report-integrity-negative",
+        "sourceRunId": "0e95991f-e068-4bed-a0a2-c71ab18998a3",
+        "directory": "/tmp/nomad-story-9-5-t56-ci-f53d/integrity-probes/missing-scenario-74c0da52-4026-45f9-a1d0-3e155b6462ec",
+        "exitCode": 1,
+        "target": "NOMAD_E2E_REQUIRED_MATRIX"
+      },
+      {
+        "probe": "skipped-case",
+        "category": "fresh-report-integrity-negative",
+        "sourceRunId": "0e95991f-e068-4bed-a0a2-c71ab18998a3",
+        "directory": "/tmp/nomad-story-9-5-t56-ci-f53d/integrity-probes/skipped-case-d9bc63ae-590f-462b-9b77-1f69ca74a089",
+        "exitCode": 1,
+        "target": "NOMAD_E2E_CASE_FAILED"
+      },
+      {
+        "probe": "missing-visual-attachment",
+        "category": "fresh-report-integrity-negative",
+        "sourceRunId": "0e95991f-e068-4bed-a0a2-c71ab18998a3",
+        "directory": "/tmp/nomad-story-9-5-t56-ci-f53d/integrity-probes/missing-visual-attachment-992c2861-7fbe-4f7b-b287-c9dbbd82e426",
+        "exitCode": 1,
+        "target": "NOMAD_E2E_VISUAL_ATTACHMENT"
+      }
+    ],
+    "productFlowsExecuted": false
+  },
+  "boundaries": [
+    "Only local Chromium/Firefox23 each; current WebKit+24 visuals pending new CI",
+    "Original oracle passed visible inert+aria-hidden value; fixed oracle must fail it",
+    "window.open=null is a test substitute, current-page legal navigation is actual browser navigation",
+    "Full source/bundle/artifact v2 checks still require actual complete93 CI"
+  ]
+}

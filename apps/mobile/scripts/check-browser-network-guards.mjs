@@ -12,7 +12,7 @@ const cli = resolve(dirname(require.resolve('playwright/package.json')), 'cli.js
 const results = [];
 for (const [probe, expected] of [
   ['', null], ['unknown', 'NOMAD_E2E_UNDECLARED_REQUEST'], ['static', 'NOMAD_E2E_UNDECLARED_REQUEST'],
-  ['external', 'NOMAD_E2E_EXTERNAL_REQUEST'], ['retired', 'NOMAD_E2E_LATE_REQUEST'], ['', null],
+  ['external', 'NOMAD_E2E_EXTERNAL_REQUEST'], ['retired', 'NOMAD_E2E_LATE_REQUEST'], ['websocket', 'NOMAD_E2E_WEBSOCKET_FORBIDDEN'], ['', null],
 ]) {
   const runId = `network-${probe || 'control'}-${randomUUID()}`;
   const directory = resolve(mobile, '.browser-results/runs', runId);
@@ -38,4 +38,4 @@ for (const [probe, expected] of [
   results.push({ probe: probe || 'control', runId, exitCode: result.status, expectedFailure: expected });
 }
 writeFileSync(resolve(mobile, '.browser-results/network-counterexamples.json'), JSON.stringify({ kind: 'actual-browser-network-guard-counterexamples', results }, null, 2) + '\n');
-console.log(JSON.stringify({ result: 'network-guard-counterexamples-passed', failures: 4, controls: 2 }));
+console.log(JSON.stringify({ result: 'network-guard-counterexamples-passed', failures: 5, controls: 2 }));

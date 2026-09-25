@@ -55,6 +55,7 @@ for (const [name, type] of Object.entries({ chromium, firefox, webkit })) {
 const environment = { image, os: { id: release.ID, version: release.VERSION_ID }, architecture: process.arch,
   node: process.version, pnpm: '11.7.0', playwright: pw.version, browsers, fonts, fontconfig, cjkFamily, cjkFile };
 const report = { kind: 'actual-canonical-browser-environment', recordedAt: new Date().toISOString(),
+  githubRunId: process.env.GITHUB_RUN_ID ?? null,
   sourceRevision: output('git', ['rev-parse', 'HEAD']), environment, fingerprint: hash(JSON.stringify(environment)),
   nodeExecutable: process.execPath, productFlowsTested: false, nativeDevicesTested: false };
 mkdirSync(resolve(mobile, '.browser-results'), { recursive: true });

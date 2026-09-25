@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { expect, type Locator, type Page, type TestInfo } from 'playwright/test';
@@ -46,7 +46,9 @@ export async function capture(page: Page, info: TestInfo, scene: string, surface
   };
   assert.equal(approval.environmentFingerprint, environment.fingerprint, 'NOMAD_E2E_BASELINE_ENVIRONMENT');
   assert.equal(approval.policyHash, hash(JSON.stringify(policy)), 'NOMAD_E2E_BASELINE_POLICY');
-  assert.equal(hash(readFileSync(resolve(mobile, 'e2e/visual/baselines', file))), approval.files[file], 'NOMAD_E2E_UNREVIEWED_BASELINE');
+  const baseline = resolve(mobile, 'e2e/visual/baselines', file);
+  assert.ok(existsSync(baseline), 'NOMAD_E2E_MISSING_BASELINE');
+  assert.equal(hash(readFileSync(baseline)), approval.files[file], 'NOMAD_E2E_UNREVIEWED_BASELINE');
   await expect(surface).toHaveScreenshot(`${scene}.png`, { animations: 'disabled', caret: 'hide', scale: 'css', threshold: 0, maxDiffPixels: 0 });
   await info.attach('visual-actual', { body: await surface.screenshot({ animations: 'disabled', caret: 'hide', scale: 'css' }), contentType: 'image/png' });
 }

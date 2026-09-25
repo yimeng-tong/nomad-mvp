@@ -1,0 +1,130 @@
+{
+  "kind": "actual-product-browser-counterexamples",
+  "flowsOnly": true,
+  "injection": "isolated browser init script; no product writes",
+  "results": [
+    {
+      "fault": "control",
+      "pattern": "B11|B13|B15",
+      "runId": "flow-control-de8cf871-c87e-4480-8b1c-afbf27b67d36",
+      "exitCode": 0,
+      "target": null,
+      "executed": 3,
+      "attachments": []
+    },
+    {
+      "fault": "private-portal",
+      "pattern": "B13",
+      "runId": "flow-private-portal-64ffbd12-16f7-4eb3-8f7e-2bf3564c66ae",
+      "exitCode": 1,
+      "target": "NOMAD_E2E_PRIVATE_VISIBLE",
+      "executed": 1,
+      "attachments": [
+        {
+          "name": "screenshot",
+          "path": ".browser-results/runs/flow-private-portal-64ffbd12-16f7-4eb3-8f7e-2bf3564c66ae/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "path": ".browser-results/runs/flow-private-portal-64ffbd12-16f7-4eb3-8f7e-2bf3564c66ae/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/error-context.md"
+        },
+        {
+          "name": "trace",
+          "path": ".browser-results/runs/flow-private-portal-64ffbd12-16f7-4eb3-8f7e-2bf3564c66ae/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/trace.zip"
+        }
+      ]
+    },
+    {
+      "fault": "late-result",
+      "pattern": "B15",
+      "runId": "flow-late-result-1c46922f-8449-441b-b5ed-431eb52fd149",
+      "exitCode": 1,
+      "target": "NOMAD_E2E_PRIVATE_VISIBLE",
+      "executed": 1,
+      "attachments": [
+        {
+          "name": "screenshot",
+          "path": ".browser-results/runs/flow-late-result-1c46922f-8449-441b-b5ed-431eb52fd149/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "path": ".browser-results/runs/flow-late-result-1c46922f-8449-441b-b5ed-431eb52fd149/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/error-context.md"
+        },
+        {
+          "name": "trace",
+          "path": ".browser-results/runs/flow-late-result-1c46922f-8449-441b-b5ed-431eb52fd149/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/trace.zip"
+        }
+      ]
+    },
+    {
+      "fault": "duplicate-start",
+      "pattern": "B11",
+      "runId": "flow-duplicate-start-4edca11b-de63-4a93-bd5f-d9cd2df9dbee",
+      "exitCode": 1,
+      "target": "NOMAD_E2E_DUPLICATE_START",
+      "executed": 1,
+      "attachments": [
+        {
+          "name": "screenshot",
+          "path": ".browser-results/runs/flow-duplicate-start-4edca11b-de63-4a93-bd5f-d9cd2df9dbee/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "path": ".browser-results/runs/flow-duplicate-start-4edca11b-de63-4a93-bd5f-d9cd2df9dbee/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/error-context.md"
+        },
+        {
+          "name": "trace",
+          "path": ".browser-results/runs/flow-duplicate-start-4edca11b-de63-4a93-bd5f-d9cd2df9dbee/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/trace.zip"
+        }
+      ]
+    },
+    {
+      "fault": "control",
+      "pattern": "B11|B13|B15",
+      "runId": "flow-control-b8d35d4d-2253-46aa-8254-77312438ac37",
+      "exitCode": 0,
+      "target": null,
+      "executed": 3,
+      "attachments": []
+    }
+  ],
+  "environment": "local Ubuntu26.04 Chromium153; no canonical visual claim",
+  "artifacts": {
+    ".browser-results/runs/flow-private-portal-64ffbd12-16f7-4eb3-8f7e-2bf3564c66ae/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/test-failed-1.png": {
+      "sha256": "06de19882ec4133057212f8209347cb5b85e6c871c8a3cebe8044e47cc28c59e",
+      "bytes": 24239
+    },
+    ".browser-results/runs/flow-private-portal-64ffbd12-16f7-4eb3-8f7e-2bf3564c66ae/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/error-context.md": {
+      "sha256": "1011dfd6a0d0409bc40fecc02441fc0f40619ccd086e898e99dae3ed30521c06",
+      "bytes": 2416
+    },
+    ".browser-results/runs/flow-private-portal-64ffbd12-16f7-4eb3-8f7e-2bf3564c66ae/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/trace.zip": {
+      "sha256": "6fb51c7e9de1b6c8e609f3ade8e5fb0a9fe7f7a0a436d592321d5919e04a1089",
+      "bytes": 254714
+    },
+    ".browser-results/runs/flow-late-result-1c46922f-8449-441b-b5ed-431eb52fd149/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/test-failed-1.png": {
+      "sha256": "1398a9234d05eb1a76b9d49f5f12c047ac55c979cf30fc7a05956fb66aaf8d63",
+      "bytes": 39201
+    },
+    ".browser-results/runs/flow-late-result-1c46922f-8449-441b-b5ed-431eb52fd149/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/error-context.md": {
+      "sha256": "d0b5baaafc5504e713a7fdfd9d40e4173d0f43dab2f1f158eab62597ca1ae9d1",
+      "bytes": 2539
+    },
+    ".browser-results/runs/flow-late-result-1c46922f-8449-441b-b5ed-431eb52fd149/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/trace.zip": {
+      "sha256": "f903ad96dae9c88e296988805584c03680517009e823102daf7d24c144f7f47a",
+      "bytes": 349383
+    },
+    ".browser-results/runs/flow-duplicate-start-4edca11b-de63-4a93-bd5f-d9cd2df9dbee/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/test-failed-1.png": {
+      "sha256": "6d4180ab973cedc4871a1f32e6bf025ebe45157b8a84a65b7d1eb22bb52a0bed",
+      "bytes": 56272
+    },
+    ".browser-results/runs/flow-duplicate-start-4edca11b-de63-4a93-bd5f-d9cd2df9dbee/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/error-context.md": {
+      "sha256": "f29d3a0f97d7e5458f6e4810589a9dab993ff2b246f3a75445ca31c81b48d031",
+      "bytes": 6954
+    },
+    ".browser-results/runs/flow-duplicate-start-4edca11b-de63-4a93-bd5f-d9cd2df9dbee/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/trace.zip": {
+      "sha256": "ef7a443d3395ae6c39e98da1c376ccbc9adf7ab01e8ce37aae71b0b3221beb3c",
+      "bytes": 447669
+    }
+  }
+}

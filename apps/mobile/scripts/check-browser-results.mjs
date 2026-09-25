@@ -19,7 +19,9 @@ function cases(suites) {
 
 /** Default verifies the current checkout; explicit downloaded runs must name their known CI SHA. */
 export function verifyBrowserResults({ artifacts = resolve(mobile, '.browser-results'), candidate = false,
-  revision = git(['rev-parse', 'HEAD']).toString().trim(), pointerFile = candidate ? 'latest-run.json' : 'suite-run.json' } = {}) {
+  revision, pointerFile = candidate ? 'latest-run.json' : 'suite-run.json' } = {}) {
+  const checkCurrentCheckout = revision === undefined;
+  revision ??= git(['rev-parse', 'HEAD']).toString().trim();
   const pointer = json(resolve(artifacts, pointerFile));
   assert.match(pointer.runId, /^[a-zA-Z0-9_-]{1,80}$/);
   const directory = resolve(artifacts, 'runs', pointer.runId);
@@ -30,6 +32,10 @@ export function verifyBrowserResults({ artifacts = resolve(mobile, '.browser-res
   assert.equal(environment.sourceRevision, revision, 'NOMAD_E2E_ENVIRONMENT_STALE');
   assert.equal(environment.fingerprint, policy.environmentFingerprint, 'NOMAD_E2E_ENVIRONMENT_MISMATCH');
   assert.equal(hash(JSON.stringify(environment.environment)), environment.fingerprint, 'NOMAD_E2E_ENVIRONMENT_HASH');
+  if (checkCurrentCheckout && process.env.GITHUB_RUN_ID) {
+    assert.equal(environment.githubRunId, process.env.GITHUB_RUN_ID, 'NOMAD_E2E_STALE_CI_ENVIRONMENT');
+    assert.equal(manifest.githubRunId, process.env.GITHUB_RUN_ID, 'NOMAD_E2E_STALE_CI_MANIFEST');
+  }
   assert.equal(report.config.metadata.runId, pointer.runId, 'NOMAD_E2E_RUN_ID');
   assert.equal(report.config.metadata.runKind, candidate ? 'candidate' : 'suite', 'NOMAD_E2E_RUN_KIND');
   assert.equal(manifest.runKind, report.config.metadata.runKind);
@@ -37,6 +43,11 @@ export function verifyBrowserResults({ artifacts = resolve(mobile, '.browser-res
   const inputs = git(['ls-tree', '-r', '--name-only', revision, '--', ...contract.sourceInputs]).toString().trim().split('\n').filter(Boolean).sort();
   assert.deepEqual(Object.keys(manifest.sourceHashes).sort(), inputs, 'NOMAD_E2E_SOURCE_INVENTORY');
   for (const file of inputs) assert.equal(manifest.sourceHashes[file], hash(git(['show', `${revision}:${file}`])), `NOMAD_E2E_SOURCE_HASH ${file}`);
+  if (checkCurrentCheckout) {
+    const live = git(['ls-files', '--cached', '--others', '--exclude-standard', '--', ...contract.sourceInputs]).toString().trim().split('\n').filter(Boolean).sort();
+    assert.deepEqual(live, inputs, 'NOMAD_E2E_CHECKOUT_INVENTORY_CHANGED');
+    for (const file of inputs) assert.equal(hash(readFileSync(resolve(root, file))), manifest.sourceHashes[file], `NOMAD_E2E_CHECKOUT_CHANGED ${file}`);
+  }
   const expectedIds = candidate ? contract.visualIds : [...contract.flowIds, ...contract.visualIds];
   const expected = contract.engines.flatMap((engine) => expectedIds.map((id) => `${engine}:${id}`)).sort();
   const all = cases(report.suites);

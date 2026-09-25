@@ -43,8 +43,14 @@ jobs:
         env:
           NOMAD_BROWSER_RUN_KIND: suite
         run: pnpm -F nomad-mobile run test:browser
+      - name: Require the complete current-source browser and visual matrix
+        run: node apps/mobile/scripts/check-browser-results.mjs
       - name: Browser network guard counterexamples
         run: node apps/mobile/scripts/check-browser-network-guards.mjs
+      - name: Product privacy recovery and pixel counterexamples
+        run: node apps/mobile/scripts/check-browser-flow-guards.mjs
+      - name: Missing coverage baseline environment and auto-update counterexamples
+        run: node apps/mobile/scripts/check-browser-validation-guards.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

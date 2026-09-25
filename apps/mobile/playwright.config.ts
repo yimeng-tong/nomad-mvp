@@ -29,7 +29,7 @@ export default defineConfig({
   expect: { timeout: 5_000 },
   updateSnapshots: 'none',
   snapshotPathTemplate: '{testDir}/visual/baselines/{projectName}/{arg}{ext}',
-  metadata: { runId, runKind: process.env.NOMAD_BROWSER_RUN_KIND ?? 'local' },
+  metadata: { runId, runKind: process.env.NOMAD_BROWSER_RUN_KIND ?? 'local', fault: process.env.NOMAD_BROWSER_FAULT ?? null },
   reporter: [['list'], ['json', { outputFile: resolve(runDirectory, 'report.json') }],
     ['html', { outputFolder: resolve(runDirectory, 'html-report'), open: 'never' }]],
   use: {

@@ -111,11 +111,11 @@ So that 组件迁移前后可以核对实际行为并防止未经审阅的变化
   - [x] 固定Playwright1.63.0及对应三引擎revision、Linux/amd64镜像digest、Node22.22.1/pnpm11.7.0；记录实际版本/路径/OS和中文字体文件、fontconfig摘要。镜像默认Node24必须覆盖，不能仅写配置即算验证。
   - [x] 拍摄和检查前区分当前可用界面与已批准目标：不把旧BYOK等历史入口截图升级为新产品合同；不修改原型/源GWT，不使用远期归档草稿为ready合同。
 
-- [ ] T1 接入隔离三引擎runner与类型检查（AC1/5/6；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
-  - [ ] 复用现有playwright/test；新增playwright.config.ts、e2e目录和tsconfig.e2e.json，三个项目明确Chromium/Firefox/WebKit。实际运行全部必需项目，缺浏览器/库直接失败；不得skip/零用例通过。
-  - [ ] 产品仍使用实际main.tsx→HostBootstrap→App与当前transport/controller；现有Vitest明确排除e2e，ESLint给Node配置/测试与browser helper正确TSProgram和globals。所有新改TS受9.4同门禁覆盖，不增加豁免或重建冻结cohort。
-  - [ ] 测试产物/cache/trace/profile独立且Git忽略，版本化基线/摘要另有明确路径；不加载本地env/真实身份，不改原native/API生产入口，不把test runner打包到Web或原生资源。
-  - [ ] 扩展9.4既有check-workbench-isolation及其反例，覆盖新e2e/fixtures、playwright/test runner、浏览器注入helper和可识别的生成资源；同时检查实际产品模块图/输出bytes与Android/iOS完整复制清单，不另建重复checker。
+- [x] T1 接入隔离三引擎runner与类型检查（AC1/5/6；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
+  - [x] 复用现有playwright/test；新增playwright.config.ts、e2e目录和tsconfig.e2e.json，三个项目明确Chromium/Firefox/WebKit。实际运行全部必需项目，缺浏览器/库直接失败；不得skip/零用例通过。
+  - [x] 产品仍使用实际main.tsx→HostBootstrap→App与当前transport/controller；现有Vitest明确排除e2e，ESLint给Node配置/测试与browser helper正确TSProgram和globals。所有新改TS受9.4同门禁覆盖，不增加豁免或重建冻结cohort。
+  - [x] 测试产物/cache/trace/profile独立且Git忽略，版本化基线/摘要另有明确路径；不加载本地env/真实身份，不改原native/API生产入口，不把test runner打包到Web或原生资源。
+  - [x] 扩展9.4既有check-workbench-isolation及其反例，覆盖新e2e/fixtures、playwright/test runner、浏览器注入helper和可识别的生成资源；同时检查实际产品模块图/输出bytes与Android/iOS完整复制清单，不另建重复checker。
 
 - [ ] T2 建立有状态且拒绝漏拦截的产品API场景（AC1/2/5；NFR3、ui-quality-tooling）
   - [ ] 复用9.4的生成DTO/合成fixture和隔离原则，补匿名→登录、owner A/B、Settings、inspirations/candidates、operation receipt、job/result/retry、recovery/SSE等实际所需合同；不把9.4永远authenticated的/me当作登录流程。
@@ -247,3 +247,20 @@ Codex当前会话；两项独立只读研究，随后fresh-context合同VS。
 - `pnpm-lock.yaml`
 
 产品不可用首屏仅本地两引擎通过，等待canonical三引擎；隔离红/绿和类型/构建证据见evidence/story-9-5-browser-2026-09-25/t1-local-validation.json。
+
+### T1实际CI
+
+13a2fee在CI36137026276/job108077440971的固定容器中实际执行B00三引擎3/3通过、0skip，显式launcher与48字体记录已下载封存。T1完成；仍只覆盖真实App不可用首屏，下一T2补有状态API与漏拦截账本，不据此宣称登录/恢复/截图全套通过。
+
+### T2当前File List与证据
+
+- `apps/mobile/e2e/fixtures/api-scenario.ts`
+- `apps/mobile/e2e/fixtures/browser-test.ts`
+- `apps/mobile/e2e/flows/auth-session.spec.ts`
+- `apps/mobile/e2e/flows/fixture-contract.spec.ts`
+- `apps/mobile/e2e/flows/fixture-guards.spec.ts`
+- `apps/mobile/scripts/check-browser-network-guards.mjs`
+- `apps/mobile/playwright.config.ts`
+- `.github/workflows/ci.yml`
+
+T2局部证明见t2-local-validation.json与t2-network-counterexamples.json（本Story evidence目录）；等待canonical三引擎复验，未勾选T2或关闭UI-BROWSER-01。

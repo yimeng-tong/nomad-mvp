@@ -39,8 +39,12 @@ jobs:
           NOMAD_RECORD_PRODUCT_GRAPH: '1'
           VITE_API_BASE_URL: /api
         run: pnpm -F nomad-mobile run build
-      - name: Product bootstrap in all three engines
+      - name: Current product scenarios in all three engines
+        env:
+          NOMAD_BROWSER_RUN_KIND: suite
         run: pnpm -F nomad-mobile run test:browser
+      - name: Browser network guard counterexamples
+        run: node apps/mobile/scripts/check-browser-network-guards.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

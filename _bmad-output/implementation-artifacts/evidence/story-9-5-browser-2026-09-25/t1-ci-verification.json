@@ -1,0 +1,31 @@
+{
+  "kind": "three-engine-product-entry-proof",
+  "source_revision": "13a2fee6083cc32fd8f6aa7e97d3985c50210359",
+  "ci_run": 36137026276,
+  "job_id": 108077440971,
+  "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36137026276/job/108077440971",
+  "result": "passed",
+  "stats": {
+    "startTime": "2026-09-25T12:49:10.778Z",
+    "duration": 5905.909,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "engines": [
+    "chromium",
+    "firefox",
+    "webkit"
+  ],
+  "scope": "B00 actual compiled App unavailable-identity bootstrap only",
+  "full_product_journeys_tested": false,
+  "native_devices_tested": false,
+  "environment_fingerprint": "7a174c57a759784e37a22d2c3cf4943c57b70bb22bcfd938b0ce11d6be8e9c0b",
+  "artifact_members_sha256": {
+    "report.json": "0b11a41c28e73cf527a42aab9008c8cfe5b447852f2b77faad2479b42c4df056",
+    "environment.json": "8ef3c1cc2cc451450fa6348565806efd4aff5ea37d848bc6bb8b9763ab9e284d",
+    "test-results/.last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+    "html-report/index.html": "3984c01d0762360b7fda8465115a4260be7c1b3f77d67a047f148bfdede4aa57"
+  }
+}

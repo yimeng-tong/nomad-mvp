@@ -1,0 +1,43 @@
+{
+  "kind": "local-stateful-api-fixture-verification",
+  "recorded_at": "2026-09-25T13:37:26.492897+00:00",
+  "source_revision": "13a2fee+T2-working-tree",
+  "typecheck_exit_code": 0,
+  "lint_exit_code": 0,
+  "lint_selected_files": 47,
+  "local_engines": {
+    "chromium_and_firefox": {
+      "passed": 10,
+      "scope": "B00-B04 before adding the additional deliberate SSE disconnect assertion"
+    },
+    "chromium_final_sse_control": {
+      "passed": 1,
+      "scope": "B03 lost ACK, original receipt, partial facts, idempotency, real EventSource disconnect/continuation, owner denial"
+    }
+  },
+  "network_counterexamples": {
+    "expected_failures": 4,
+    "positive_controls": 2,
+    "browser": "Chromium",
+    "log": "/tmp/nomad-story-9-5-network-guards.log"
+  },
+  "initial_auth_red": {
+    "exit_code": 1,
+    "log_sha256": "16175dbc574b8c0cf3e1b94b91e62c3a974a64a0381c323507e75efa6fe4fd4d",
+    "trace_preserved": false,
+    "note": "Initial Playwright output folder was reused before unique per-run directories were added. Failure log retained; subsequent runs preserve traces/screenshots separately."
+  },
+  "real_provider_calls": 0,
+  "native_evidence": false,
+  "full_story_acceptance": false,
+  "files": {
+    "apps/mobile/e2e/fixtures/api-scenario.ts": "5c161a5cdd2e3351242bb6b7a32f96324b60885fe86c0ef323d530b17a2aa636",
+    "apps/mobile/e2e/fixtures/browser-test.ts": "cf9a6e75e801b6d69078d508f0e91d72cf5d9f0cdc09bb443688a8901cb4525a",
+    "apps/mobile/e2e/flows/auth-session.spec.ts": "14a93b279ab850a52c212c4a829e6999559deabd25541354e7331e932d36e996",
+    "apps/mobile/e2e/flows/fixture-contract.spec.ts": "bd71503dcbbdd675339e2fcca5c4d22cd8714ed3070f5d373412183ec7ead9a2",
+    "apps/mobile/e2e/flows/fixture-guards.spec.ts": "054031146385b5f5a730787376323a8a8df26ad798ba5959f31bcf557262dcd6",
+    "apps/mobile/scripts/check-browser-network-guards.mjs": "3f7fd2bc39a4fba32c519b139549bfb89903c502557440f96196932adb32b801",
+    "apps/mobile/playwright.config.ts": "6e09f0b0593740c409b1e44202c2385cf79a35f64e75ffbcca347337fa073edd",
+    ".github/workflows/ci.yml": "b0326947cbc5597a83f7f9eb0b020cf3f7a2b6c12868e0be4e5a7e147f6a7e7a"
+  }
+}

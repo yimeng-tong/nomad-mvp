@@ -1,0 +1,41 @@
+{
+  "kind": "actual-browser-network-guard-counterexamples",
+  "results": [
+    {
+      "probe": "control",
+      "runId": "network-control-9008b160-62a0-4b1b-901a-c6e52c59f995",
+      "exitCode": 0,
+      "expectedFailure": null
+    },
+    {
+      "probe": "unknown",
+      "runId": "network-unknown-43b4e41f-efbd-4008-9e4b-275d68871e80",
+      "exitCode": 1,
+      "expectedFailure": "NOMAD_E2E_UNDECLARED_REQUEST"
+    },
+    {
+      "probe": "static",
+      "runId": "network-static-4456295b-56cd-4dc8-8233-eb0766655fe0",
+      "exitCode": 1,
+      "expectedFailure": "NOMAD_E2E_UNDECLARED_REQUEST"
+    },
+    {
+      "probe": "external",
+      "runId": "network-external-3eaad080-106d-49f8-964e-3797c1d5715e",
+      "exitCode": 1,
+      "expectedFailure": "NOMAD_E2E_EXTERNAL_REQUEST"
+    },
+    {
+      "probe": "retired",
+      "runId": "network-retired-7ade58c0-fdfc-43b3-b610-84faede46ce3",
+      "exitCode": 1,
+      "expectedFailure": "NOMAD_E2E_LATE_REQUEST"
+    },
+    {
+      "probe": "control",
+      "runId": "network-control-3b83c889-15b4-4808-a0ac-31c35df7f787",
+      "exitCode": 0,
+      "expectedFailure": null
+    }
+  ]
+}

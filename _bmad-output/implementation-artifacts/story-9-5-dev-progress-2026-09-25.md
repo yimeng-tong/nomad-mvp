@@ -13,3 +13,9 @@
 T0固定容器预检实际通过：CI36134210825/job108068273744，Node22.22.1/pnpm11.7.0，Chromium153.0.8010.12/Firefox155/WebKit26.6。原环境JSON和scoped job证明已封存，仅证明资源启动，不是App流程。T0已勾选，下一T1独立runner/类型覆盖/新E2E资源隔离。为精确绑定运行路径，T1将对preflight和runner显式传包内executablePath，避免Chromium默认headless-shell与executablePath展示不同。
 
 T1已接独立Playwright三项目、专用TSProgram、Vitest e2e排除和实际dist受控静态server。入口server先复用既有产品隔离checker拒绝过期/污染build；HTTP只在本轮loopback，外网与未知请求阻断。当前B00真实App服务不可用首屏在本地Chromium/Firefox通过，仍不是完整登录/业务流程，WebKit待同镜像CI。新E2E/Playwright/helper隔离反例先在旧checker失败（原5通过、新2失败），扩展后7组通过；native sync/verify、产品实际图谱和41文件lint及e2e typecheck通过。T1要等三引擎同一入口实测后勾选。
+
+T1 canonical三引擎B00实际3/3通过、0skip（13a2fee/run36137026276/job108077440971），环境JSON及下载成员摘要已封存。explicit executablePath确保记录路径就是指定launcher；初始T0默认headless说明保留历史。T1勾选，下一T2类型化有状态API与严格网络ledger，再T3/T4完整App行为。
+
+T2状态API fixture已实现：复用9.4DTO/合成配置，实际HTTP客户端匿名→登录、A/B、列表/候选/Settings、原operation receipt、partial/retry和持久cursor/SSE；JSON在受控延迟前固定原owner响应。未声明API/静态伪装/外网/retired请求由收尾ledger失败，四个实际Chromium反例和前后控制通过。B00–B04在本地Chrome/Firefox10项通过；新增真实SSE断开/后续完成断言又在Chrome单独通过。API fixture合同不等于App恢复全流程或真实后端。
+
+每次run独立目录，重用已有report的run ID会失败；suite-run指针与counterexample分开，避免最终控制覆盖完整矩阵。初次B01红灯只保留原日志，早期默认目录的trace被后续run覆盖的事实如实记录；新目录机制保护后续失败记录。下一canonical三引擎完整复验T2后进入T3/T4。

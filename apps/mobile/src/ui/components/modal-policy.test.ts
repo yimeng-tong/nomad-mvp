@@ -43,6 +43,23 @@ describe('private UI decisions', () => {
     expect(close).not.toHaveBeenCalled(); expect(error).toHaveBeenCalledTimes(1);
   });
 
+  it.each(['cancel', 'host-abort'] as const)('settles %s immediately even when the old decision ignores its signal, without clearing a replacement', async (source) => {
+    let firstDone!: (allowed: boolean) => void, nextDone!: (allowed: boolean) => void;
+    const close = vi.fn(), settled = vi.fn(), signal = new AbortController();
+    const decide = vi.fn<() => Promise<boolean>>()
+      .mockImplementationOnce(() => new Promise((resolve) => { firstDone = resolve; }))
+      .mockImplementationOnce(() => new Promise((resolve) => { nextDone = resolve; }));
+    const gate = createCloseGate({ isCurrent: () => true, canClose: decide, close, onError: vi.fn() });
+    const first = gate.request('host-back', signal.signal); first.then(settled).catch(() => {});
+    await Promise.resolve();
+    if (source === 'cancel') gate.cancel(); else signal.abort();
+    await vi.waitFor(() => expect(settled).toHaveBeenCalledWith(false));
+    const next = gate.request('button'); await Promise.resolve();
+    firstDone(true); await Promise.resolve(); await Promise.resolve();
+    expect(gate.request('escape')).toBe(next); expect(close).not.toHaveBeenCalled();
+    nextDone(true); expect(await next).toBe(true); expect(close).toHaveBeenCalledTimes(1);
+  });
+
   it('keeps parent coverage and only exposes the current top until each layer releases', () => {
     const layers = createModalLayers(), changed = vi.fn(); const unsubscribe = layers.subscribe(changed);
     const parent = layers.add('sheet'), child = layers.add('confirmation');

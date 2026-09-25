@@ -6,6 +6,7 @@
   gap: var(--nomad-space-3);
   overflow-y: auto;
   overscroll-behavior: contain;
+  scroll-padding-block: var(--nomad-space-4);
   box-sizing: border-box;
   color: var(--nomad-text);
   background: var(--nomad-surface);

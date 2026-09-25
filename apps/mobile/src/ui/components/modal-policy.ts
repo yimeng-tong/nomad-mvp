@@ -3,13 +3,17 @@ import type { AuthSnapshot } from '../../auth/session-context';
 export type CloseReason = 'escape' | 'outside' | 'button' | 'host-back' | 'programmatic';
 export type CloseRequest = { reason: CloseReason; signal: AbortSignal };
 
-export function sameUiScope(captured: AuthSnapshot, current: AuthSnapshot): boolean {
+export function sameUiIdentity(captured: AuthSnapshot, current: AuthSnapshot): boolean {
   return captured.phase === 'authenticated' && current.phase === 'authenticated'
-    && captured.epoch === current.epoch && captured.activity === current.activity
+    && captured.epoch === current.epoch
     && captured.identity !== null && current.identity !== null
     && captured.identity.ownerId === current.identity.ownerId
     && captured.identity.sessionId === current.identity.sessionId
     && captured.identity.nativeGeneration === current.identity.nativeGeneration;
+}
+
+export function sameUiScope(captured: AuthSnapshot, current: AuthSnapshot): boolean {
+  return sameUiIdentity(captured, current) && captured.activity === current.activity;
 }
 
 /** Only a decision crosses this gate. It never saves, retries or owns business state. */
@@ -19,33 +23,43 @@ export function createCloseGate(options: {
   close: () => void;
   onError: () => void;
 }) {
-  let pending: Promise<boolean> | null = null;
-  let controller: AbortController | null = null;
+  type Pending = { result: Promise<boolean>; cancel: () => void };
+  let pending: Pending | null = null;
   return {
-    cancel() { controller?.abort(); },
+    cancel() { pending?.cancel(); },
     request(reason: CloseReason, externalSignal?: AbortSignal): Promise<boolean> {
-      if (pending) return pending;
+      if (pending) return pending.result;
       if (!options.isCurrent() || externalSignal?.aborted) return Promise.resolve(false);
-      const operation = new AbortController(); controller = operation;
-      const abort = () => operation.abort();
-      externalSignal?.addEventListener('abort', abort, { once: true });
-      // Delay decision until `pending` is assigned, so synchronous reentry also merges.
-      pending = Promise.resolve().then(async () => {
-        if (operation.signal.aborted || !options.isCurrent()) return false;
+      const controller = new AbortController();
+      let releaseAbort!: (result: false) => void;
+      const aborted = new Promise<false>((resolve) => { releaseAbort = resolve; });
+      let operation: Pending;
+      const current = () => pending === operation && !controller.signal.aborted && options.isCurrent();
+      const cancel = () => {
+        controller.abort(); releaseAbort(false);
+        if (pending === operation) pending = null;
+      };
+      // Reentry merges, but cancellation settles immediately even when a supplied
+      // decision ignores its signal. An old finally cannot clear its replacement.
+      const decision = Promise.resolve().then(async () => {
+        if (!current()) return false;
         try {
-          const allowed = await options.canClose({ reason, signal: operation.signal });
-          if (!allowed || operation.signal.aborted || !options.isCurrent()) return false;
+          const allowed = await options.canClose({ reason, signal: controller.signal });
+          if (!allowed || !current()) return false;
           options.close(); return true;
         } catch {
-          if (!operation.signal.aborted && options.isCurrent()) options.onError();
+          if (current()) options.onError();
           return false;
         }
-      }).finally(() => {
-        externalSignal?.removeEventListener('abort', abort);
-        pending = null;
-        if (controller === operation) controller = null;
       });
-      return pending;
+      const result = Promise.race([decision, aborted]).finally(() => {
+        externalSignal?.removeEventListener('abort', cancel);
+        if (pending === operation) pending = null;
+      });
+      operation = { result, cancel }; pending = operation;
+      externalSignal?.addEventListener('abort', cancel, { once: true });
+      if (externalSignal?.aborted) cancel();
+      return result;
     },
   };
 }

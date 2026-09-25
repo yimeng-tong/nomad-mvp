@@ -1,0 +1,56 @@
+{
+  "kind": "local-review-fix-validation",
+  "base_revision": "a60674b5a3422b09ad2c4f3a6f13cff749917e4f",
+  "working_tree_dirty": true,
+  "recorded_at": "2026-09-25T18:50:10.695186+00:00",
+  "findings": {
+    "CR1": {
+      "before": "B29 Dock remainsfalse; animation abort loses business close",
+      "after": "B29 passes with Dockvisible, draft, focus, reopen andzeroPOST",
+      "independent_rechecks": [
+        "blind",
+        "edge",
+        "acceptance"
+      ]
+    },
+    "CR2": {
+      "before": "cancel andhost-abort test both fail tosettle",
+      "after": "two tests pass; replacement survives oldfinally",
+      "independent_rechecks": [
+        "blind",
+        "edge",
+        "acceptance"
+      ]
+    },
+    "CR3": {
+      "before": "synthetic keydown alone cannot submit",
+      "after": "trusted Enter during simulated composition and229defaultPrevented; unwiredcase executes1verifyPOST andtarget failure",
+      "negative_run": "0690a479-5db1-4f98-a558-cc18e5ff09bf",
+      "independent_rechecks": [
+        "blind",
+        "acceptance"
+      ]
+    },
+    "CR4": {
+      "before": "optional implicit trigger lost acrossactivity",
+      "after": "trigger retained inModal; actualworkbench ImplicitFocusRecovery passes",
+      "independent_rechecks": [
+        "blind"
+      ]
+    },
+    "CI1": {
+      "before": "B30viewport0.990767",
+      "after": "scroll-padding16px yieldsratio1; B30passes",
+      "canonical_recheck": "pending candidate2"
+    }
+  },
+  "red_browser_run": "09007390-a00a-487c-ab4c-b2228b67efcb",
+  "mobile_tests": 265,
+  "native_config_tests": 5,
+  "workbench_scenarios": 31,
+  "local_product_counterexamples": 5,
+  "local_product_control_cases": 8,
+  "matrix_declared": 129,
+  "canonical_matrix_verified": false,
+  "native_device_acceptance": false
+}

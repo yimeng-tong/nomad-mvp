@@ -1,10 +1,10 @@
 // Dialog/Sheet composition adapted from reviewed shadcn Base UI sources.
-import { createContext, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
-import { getAuthSnapshot } from '../../auth/session-context';
+import { getAuthSnapshot, type AuthSnapshot } from '../../auth/session-context';
 import { registerHostBackHandler } from '../../platform/host';
 import { Button, type ButtonProps } from '../primitives/Button';
-import { createCloseGate, sameUiScope, type CloseRequest, type CloseReason } from './modal-policy';
+import { createCloseGate, sameUiIdentity, sameUiScope, type CloseRequest, type CloseReason } from './modal-policy';
 import { usePrivateUi, type PrivateUiContextValue } from './PrivateUiBoundary';
 
 export type AppDialogProps = {
@@ -28,6 +28,16 @@ function eligible(element: HTMLElement | null): boolean {
     && getComputedStyle(element).visibility !== 'hidden' && element.getClientRects().length > 0;
 }
 
+function restoreFocus(ui: Pick<PrivateUiContextValue, 'scope' | 'layers' | 'fallback'>, trigger: HTMLElement | null, instance?: string) {
+  queueMicrotask(() => {
+    if ((instance && ui.layers.has(instance)) || !sameUiScope(ui.scope, getAuthSnapshot())) return;
+    let target = trigger;
+    if (!eligible(target)) target = target?.closest('.home-body')?.querySelector<HTMLTextAreaElement>('textarea:not(:disabled)') ?? null;
+    if (!eligible(target)) target = ui.fallback();
+    if (target && eligible(target)) target.focus({ preventScroll: true });
+  });
+}
+
 function closeReason(reason: Dialog.Root.ChangeEventReason): CloseReason {
   if (reason === 'escape-key') return 'escape';
   if (reason === 'outside-press' || reason === 'focus-out') return 'outside';
@@ -35,14 +45,13 @@ function closeReason(reason: Dialog.Root.ChangeEventReason): CloseReason {
   return 'programmatic';
 }
 
-function ModalSession({ ui, depth, kind, completed, ...props }: AppDialogProps & { ui: PrivateUiContextValue; depth: number; kind: 'dialog' | 'sheet'; completed: () => void }) {
+function ModalSession({ ui, depth, kind, completed, getReturnTarget, ...props }: AppDialogProps & { ui: PrivateUiContextValue; depth: number; kind: 'dialog' | 'sheet'; completed: () => void; getReturnTarget: () => HTMLElement | null }) {
   const id = useId(); const popup = useRef<HTMLDivElement>(null), backdrop = useRef<HTMLDivElement>(null), title = useRef<HTMLHeadingElement>(null);
   const alive = useRef(false); const latest = useRef(props); latest.current = props;
   const [closeError, setCloseError] = useState('');
   const { container, layers, fallback, scope } = ui;
   const stack = useSyncExternalStore(layers.subscribe, layers.getSnapshot);
   const registered = stack.includes(id);
-  const initialTrigger = useRef(props.restoreFocusTo ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null));
   const gate = useMemo(() => createCloseGate({
     isCurrent: () => alive.current && latest.current.open && sameUiScope(scope, getAuthSnapshot()) && container?.isConnected === true && layers.isTop(id),
     canClose: (request) => latest.current.canClose?.(request) ?? true,
@@ -53,20 +62,13 @@ function ModalSession({ ui, depth, kind, completed, ...props }: AppDialogProps &
   useLayoutEffect(() => {
     alive.current = true;
     const release = layers.add(id);
-    const trigger = initialTrigger.current;
     return () => {
       alive.current = false; gate.cancel(); release();
       // Base UI finalFocus=false prevents its unchecked deferred trigger fallback.
       // Recheck authority after all focus/inert cleanup, including StrictMode replay.
-      queueMicrotask(() => {
-        if (layers.has(id) || !sameUiScope(scope, getAuthSnapshot())) return;
-        let target = trigger;
-        if (!eligible(target)) target = target?.closest('.home-body')?.querySelector<HTMLTextAreaElement>('textarea:not(:disabled)') ?? null;
-        if (!eligible(target)) target = fallback();
-        if (target && eligible(target)) target.focus({ preventScroll: true });
-      });
+      restoreFocus({ scope, layers, fallback }, getReturnTarget(), id);
     };
-  }, [gate, id, scope, container, layers, fallback]);
+  }, [gate, id, scope, container, layers, fallback, getReturnTarget]);
 
   useEffect(() => registerHostBackHandler(async (signal) => {
     if (!alive.current || !layers.isTop(id)) return false;
@@ -109,13 +111,29 @@ function ModalSession({ ui, depth, kind, completed, ...props }: AppDialogProps &
 
 function Modal({ kind, ...props }: AppDialogProps & { kind: 'dialog' | 'sheet' }) {
   const ui = usePrivateUi(); const depth = useContext(Depth);
+  const { open, onCloseComplete, restoreFocusTo } = props;
   const active = !!ui?.active && !!ui.container?.isConnected;
-  const [presence, setPresence] = useState<number | null>(active && props.open ? ui.scope.activity : null);
-  useLayoutEffect(() => { if (active && props.open) setPresence(ui.scope.activity); }, [active, props.open, ui?.scope.activity]);
-  const completed = () => { setPresence(null); props.onCloseComplete?.(); };
+  const [presence, setPresence] = useState<AuthSnapshot | null>(null);
+  const implicitTrigger = useRef<HTMLElement | null>(null);
+  const getReturnTarget = useCallback(() => restoreFocusTo !== undefined ? restoreFocusTo : implicitTrigger.current, [restoreFocusTo]);
+  useLayoutEffect(() => {
+    if (!active || !ui) return;
+    if (open) {
+      if (!presence) implicitTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      setPresence(ui.scope); return;
+    }
+    if (presence && presence.activity !== ui.scope.activity && sameUiIdentity(presence, ui.scope)) {
+      // The user's close was already approved. A new verified same-identity render
+      // finishes UI cleanup; no canceled old animation/decision callback is reused.
+      setPresence(null);
+      onCloseComplete?.();
+      restoreFocus(ui, getReturnTarget());
+    }
+  }, [active, ui, open, onCloseComplete, getReturnTarget, presence]);
+  const completed = () => { setPresence(null); onCloseComplete?.(); };
   // No public/body fallback; unknown authority removes the entire interaction lifecycle.
-  if (!ui || !active || depth > 1 || (!props.open && presence !== ui.scope.activity)) return null;
-  return <ModalSession key={`${ui.scope.epoch}:${ui.scope.activity}`} {...props} ui={ui} depth={depth} kind={kind} completed={completed} />;
+  if (!ui || !active || depth > 1 || (!props.open && presence?.activity !== ui.scope.activity)) return null;
+  return <ModalSession key={`${ui.scope.epoch}:${ui.scope.activity}`} {...props} ui={ui} depth={depth} kind={kind} completed={completed} getReturnTarget={getReturnTarget} />;
 }
 
 export function AppDialog(props: AppDialogProps) { return <Modal {...props} kind="dialog" />; }

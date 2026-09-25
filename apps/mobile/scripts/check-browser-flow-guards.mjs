@@ -12,11 +12,12 @@ const cases = (suites) => suites.flatMap((suite) => [...(suite.specs ?? []).flat
 const results = [];
 const flowsOnly = process.argv.includes('--flows-only');
 const matrix = [
-  ['', 'B11|B13|B15', null], ['private-portal', 'B13', 'NOMAD_E2E_PRIVATE_VISIBLE'],
+  ['', 'B11|B13|B15|B26', null], ['private-portal', 'B13', 'NOMAD_E2E_PRIVATE_VISIBLE'],
   ['private-input', 'B13', 'NOMAD_E2E_PRIVATE_VISIBLE_VALUE'],
   ['late-result', 'B15', 'NOMAD_E2E_PRIVATE_VISIBLE'], ['duplicate-start', 'B11', 'NOMAD_E2E_DUPLICATE_START'],
+  ['ime-unwired', 'B26', 'NOMAD_E2E_IME_SUBMITTED'],
   ...(!flowsOnly ? [['', 'V02', null], ['cta-shift', 'V02', 'toHaveScreenshot'], ['', 'V02', null]] : []),
-  ['', 'B11|B13|B15', null],
+  ['', 'B11|B13|B15|B26', null],
 ];
 for (const [fault, pattern, target] of matrix) {
   const runId = `flow-${fault || 'control'}-${randomUUID()}`, directory = resolve(mobile, '.browser-results/runs', runId);

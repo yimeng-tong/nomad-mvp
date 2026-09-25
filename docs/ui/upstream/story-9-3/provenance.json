@@ -300,7 +300,7 @@
       ],
       "snapshot": "docs/ui/upstream/story-9-3/dialog.json",
       "adapted_file": "apps/mobile/src/ui/components/AppDialog.tsx",
-      "adapted_sha256": "0b6cbca6a4a75ee9c904521605c7c61feed31e4e1b70073d5aaff69718333482"
+      "adapted_sha256": "fe283c77644f1a191c42722eda8e1bc9d3e56c0dde12e69fe8d03cc83ca1e5d1"
     },
     {
       "name": "sheet",
@@ -322,7 +322,7 @@
       ],
       "snapshot": "docs/ui/upstream/story-9-3/sheet.json",
       "adapted_file": "apps/mobile/src/ui/components/AppDialog.tsx",
-      "adapted_sha256": "0b6cbca6a4a75ee9c904521605c7c61feed31e4e1b70073d5aaff69718333482"
+      "adapted_sha256": "fe283c77644f1a191c42722eda8e1bc9d3e56c0dde12e69fe8d03cc83ca1e5d1"
     }
   ],
   "cli": {

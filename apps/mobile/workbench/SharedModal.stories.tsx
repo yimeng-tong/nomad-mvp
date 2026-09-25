@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, waitFor } from 'storybook/test';
 import { AppDialog, AppSheet, Button, ModalClose, useModalCovered, useUiToast } from '../src/ui';
 import { PrivateUiFixture } from './PrivateUiFixture';
+import { commitIdentity, markChecking } from '../src/auth/session-context';
 
 function ModalDemo({ policy = 'allow' }: { policy?: 'allow' | 'deny' | 'async' }) {
   const [open, setOpen] = useState(false), [child, setChild] = useState(false), [deciding, setDeciding] = useState(false);
@@ -46,8 +47,12 @@ export const PrivatePortal: Story = { play: async ({ canvas, userEvent }) => {
   await waitFor(() => expect(trigger).toHaveFocus());
   await expect(canvas.getByTestId('modal-coverage')).toHaveTextContent('内容可见');
 } };
-export const DeniedClose: Story = { args: { policy: 'deny' }, play: async ({ canvas, userEvent }) => {
+export const DeniedClose: Story = { args: { policy: 'deny' }, play: async ({ canvas, canvasElement, userEvent }) => {
   await userEvent.click(canvas.getByRole('button', { name: '打开共享临时层' }));
+  const backdrop = canvasElement.querySelector<HTMLElement>('.nomad-modal-backdrop');
+  await expect(backdrop).not.toBeNull();
+  await userEvent.click(backdrop!);
+  await expect(canvas.getByRole('dialog', { name: '共享临时层' })).toBeVisible();
   await userEvent.keyboard('{Escape}');
   await expect(canvas.getByRole('dialog', { name: '共享临时层' })).toBeVisible();
   await userEvent.click(canvas.getByRole('button', { name: '关闭临时层' }));
@@ -78,3 +83,25 @@ export const QuietToast: Story = { play: async ({ canvas, userEvent }) => {
   await userEvent.click(canvas.getByRole('button', { name: '关闭通知' }));
   await waitFor(() => expect(canvas.queryByText('示例提示已更新')).not.toBeInTheDocument());
 } };
+
+function ImplicitFocusDemo() {
+  const [open, setOpen] = useState(false);
+  return <main className="workbench-stage"><h1 tabIndex={-1} data-ui-safe-focus>隐式触发器示例</h1>
+    <Button onClick={() => setOpen(true)}>打开未传ref的确认</Button>
+    <AppDialog open={open} onOpenChange={() => setOpen(false)} title="保持实际触发器"><ModalClose>关闭确认</ModalClose></AppDialog>
+  </main>;
+}
+export const ImplicitFocusRecovery: Story = {
+  render: () => <PrivateUiFixture><ImplicitFocusDemo /></PrivateUiFixture>,
+  play: async ({ canvas, userEvent }) => {
+    const trigger = canvas.getByRole('button', { name: '打开未传ref的确认' });
+    await userEvent.click(trigger);
+    await expect(await canvas.findByRole('dialog', { name: '保持实际触发器' })).toBeVisible();
+    markChecking(false);
+    await waitFor(() => expect(canvas.queryByRole('dialog')).not.toBeInTheDocument());
+    commitIdentity({ ownerId: 'workbench-ui-owner', sessionId: 'workbench-ui-session' });
+    await expect(await canvas.findByRole('dialog', { name: '保持实际触发器' })).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: '关闭确认' }));
+    await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};

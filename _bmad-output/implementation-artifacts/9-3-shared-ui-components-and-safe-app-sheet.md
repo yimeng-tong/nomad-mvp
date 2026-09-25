@@ -187,6 +187,14 @@ So that 我能保持上下文完成操作，并在身份变化时不会看到旧
   - [ ] 保存Web当前三引擎与最低版本/真机范围差异；配置、模拟器、浏览器WebKit、Android编译或IPA不能替代本条。资源未补齐时T9/APP-HOST-01及整张Story保持未完成，继续允许的独立工作，不重问已问资源。
   - [ ] 只有全部适用AC/Tasks与真实APP-HOST-01满足后才review/done。生成本Storyui_delivery_evidence及适用真实app证据，更新五条件/状态和handoff；不得因本地gate就标9.3或其他Story done，不替代9.2 TestFlight分发。
 
+### Review Findings
+
+- [x] [Review][Patch] CR1：关闭动画被checking打断后，同owner恢复必须完成已批准的关闭，释放Dock且允许再次打开。[apps/mobile/src/ui/components/AppDialog.tsx:113；apps/mobile/src/home/HomeSheet.tsx:7]
+- [x] [Review][Patch] CR2：关闭决定取消后立即释放pending，后续关闭不依赖不响应AbortSignal的旧Promise；旧finally不能清掉新决定。[apps/mobile/src/ui/components/modal-policy.ts:25]
+- [x] [Review][Patch] CR3：登录IME产品回归使用composition期间的真实Enter，并验证229事件被preventDefault；新增缺失防护会失败的反例。[apps/mobile/e2e/flows/shared-ui.spec.ts:61]
+- [x] [Review][Patch] CR4：未显式传restoreFocusTo的共享API，在同身份暂停恢复后仍保留有效隐式触发器。[apps/mobile/src/ui/components/AppDialog.tsx:112]
+- [ ] [Review][Patch] CI1：320px Chromium长Sheet关闭按钮完整可达，修复实际布局，不降低ratio1/像素门槛。[apps/mobile/src/ui/styles/modal.css:3]
+
 ## Dev Notes
 
 ### 当前架构与最小更新面
@@ -243,14 +251,18 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 - `CURRENT.md`
 - `_bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet.md`
 - `_bmad-output/implementation-artifacts/capacitor-task-monitor-state.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate1-rejection.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/dependency-and-foundation.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local-validation.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/chromium-source-manifest.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/flow-counterexamples-after-cr.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/product-isolation.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/runtime.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/workbench-counterexamples-before-page-mask.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/review-fix-validation.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/token-contrast.json`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `_bmad-output/implementation-artifacts/story-9-3-code-review-2026-09-26.md`
 - `_bmad-output/implementation-artifacts/story-9-3-dev-progress-2026-09-26.md`
 - `_bmad-output/implementation-artifacts/story-9-3-execution-decisions-2026-09-26.md`
 - `_bmad-output/project-context.md`
@@ -267,6 +279,7 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 - `apps/mobile/e2e/visual/screens.spec.ts`
 - `apps/mobile/index.html`
 - `apps/mobile/package.json`
+- `apps/mobile/scripts/check-browser-flow-guards.mjs`
 - `apps/mobile/scripts/check-browser-results.mjs`
 - `apps/mobile/scripts/check-browser-validation-guards.mjs`
 - `apps/mobile/scripts/check-workbench-counterexamples.mjs`

@@ -5,7 +5,7 @@ const sentinel = 'nomad-private-sentinel-94';
 const playAnchor = "const trigger = canvas.getByRole('button', { name: '打开灵感说明' });";
 const caught = (code: string) => `try { ${code} } catch { /* deliberate component catch */ }\n${playAnchor}`;
 const mutations: Record<string, Mutation[]> = {
-  focus: [{ file: 'src/ui/components/AppDialog.tsx', before: 'if (target && eligible(target)) target.focus({ preventScroll: true });', after: 'if (target && eligible(target)) popup.current?.focus();' }],
+  focus: [{ file: 'src/ui/components/AppDialog.tsx', before: 'if (target && eligible(target)) target.focus({ preventScroll: true });', after: 'if (target && eligible(target)) document.body.focus();' }],
   keyboard: [{ file: 'src/ui/components/AppDialog.tsx', before: 'details.cancel();', after: "details.cancel(); if (details.reason === 'escape-key') return;" }],
   association: [{ file: 'src/auth/LoginScreen.tsx', before: "aria-describedby={notice ? 'login-notice' : undefined}", after: 'aria-describedby={undefined}' }],
   text: [{ file: 'src/auth/LoginScreen.tsx', before: "if (status === 403) return '当前登录方式暂不可用';", after: "if (status === 403) return '';" }],

@@ -35,3 +35,9 @@ T6工作台已保留18原场景并增加12项共享状态/交互；首跑29/30�
 双端native:sync和native:verify配置/assets通过，静态隔离及7反例通过。首次隔离runtime未指定临时浏览器目录而失败，正确目录下重建当前Storybook后真实浏览器产品/工作台runtime通过；没有替代真机。9.4冻结cohort/原历史证据保持。
 
 下一提交可审阅源码，生成33张三引擎unapproved视觉候选；来源和实际viewport/DPR逐件核验后才接受基线。并执行三层独立CR。整张9.3仍in-progress，四项UI条件未verified，APP-HOST-01/T9仍缺真实设备证据。
+
+## 第一轮CR修补与视觉候选拒绝
+
+a60674b候选CI36172229448生成32/33，Chromium320px V11关闭按钮0.40625px越界，整体候选拒绝；完整下载摘要与checker拒绝见candidate1-rejection.json。没有接纳其中32张作为本次baseline。
+
+四项独立CR已修补复核：身份暂停打断已接受关闭、cancel释放pending、真实Enter的IME反例、默认trigger跨activity恢复。真实B29/B30旧实现均失败，新B26/B29/B30及B31外侧实际点击通过；工作台31、移动265+5配置通过，typedlint通过。本地产品5个故障/8控制实际通过，包含IME失去接线时1次误提交被拒。现矩阵129项/33视觉，准备候选r2与最终完整CI；原生和Story状态仍未关闭。

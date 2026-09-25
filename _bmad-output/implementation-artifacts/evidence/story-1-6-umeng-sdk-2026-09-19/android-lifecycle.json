@@ -1,0 +1,95 @@
+{
+  "scope": "real-sdk-offline-emulator-lifecycle",
+  "serial": "emulator-5566",
+  "avd": "nomad-umeng-fixture",
+  "api": "29",
+  "apkSha256": "48ab106b5c1e1cb25e880c36f0562247a0706509141dadb755300871830f58ec",
+  "sdkVersions": {
+    "common": "9.9.10",
+    "asms": "1.8.7.2"
+  },
+  "outboundIsolation": {
+    "uid": 10116,
+    "ipv4RejectVerified": true,
+    "ipv6RejectVerified": true,
+    "rulesRetained": true
+  },
+  "realTenantKeyUsed": false,
+  "realProviderQueryVerified": false,
+  "fullStopAndCacheClearVerified": false,
+  "observations": [
+    {
+      "run_nonce": "ea256d8a13a949dea58867f2f4915c23",
+      "phase": "before_init",
+      "sdk_initialized_flag": false,
+      "sdk_threads_observed": 0,
+      "app_data_files": 0,
+      "app_data_bytes": 0,
+      "real_tenant_key_used": false,
+      "full_stop_verified": false
+    },
+    {
+      "run_nonce": "ea256d8a13a949dea58867f2f4915c23",
+      "phase": "before_disable",
+      "sdk_initialized_flag": true,
+      "sdk_threads_observed": 1,
+      "app_data_files": 7,
+      "app_data_bytes": 1004,
+      "real_tenant_key_used": false,
+      "full_stop_verified": false
+    },
+    {
+      "run_nonce": "ea256d8a13a949dea58867f2f4915c23",
+      "phase": "disable_calls_returned",
+      "sdk_initialized_flag": true,
+      "sdk_threads_observed": 1,
+      "app_data_files": 8,
+      "app_data_bytes": 1312,
+      "real_tenant_key_used": false,
+      "full_stop_verified": false
+    },
+    {
+      "run_nonce": "ea256d8a13a949dea58867f2f4915c23",
+      "phase": "post_disable_event_called",
+      "sdk_initialized_flag": true,
+      "sdk_threads_observed": 1,
+      "app_data_files": 9,
+      "app_data_bytes": 42460,
+      "real_tenant_key_used": false,
+      "full_stop_verified": false
+    },
+    {
+      "run_nonce": "ea256d8a13a949dea58867f2f4915c23",
+      "phase": "after_disable_10s",
+      "sdk_initialized_flag": true,
+      "sdk_threads_observed": 0,
+      "app_data_files": 9,
+      "app_data_bytes": 42460,
+      "real_tenant_key_used": false,
+      "full_stop_verified": false
+    }
+  ],
+  "sourceSha256": {
+    "scripts/telemetry/run-android-sdk-probe.py": "a0fb6e372ae6865c9917a36df9c075601101580ad09c3b666ab880692832abe5",
+    "ops/telemetry/android-probe/settings.gradle": "1c378c11b0e7d9c8267255c31fa2d4142374ee63ad55de72db279bccd7185ba6",
+    "ops/telemetry/android-probe/build.gradle": "3c3fc43beca35fbf6d0ef33204bbfb8720624ae23219732c153a731c5351cb1d",
+    "ops/telemetry/android-probe/gradle.properties": "5c00ac5df23c7f00fc4e8b7df15f20b52bf6fd2b2d98339f8371ee885efc6f2f",
+    "ops/telemetry/android-probe/app/build.gradle": "a2bc8b0830ec70e53a4256db34ca4a702dce9f5994a747c6aaf883ea868ab9bf",
+    "ops/telemetry/android-probe/app/src/main/AndroidManifest.xml": "e6b5e59be6a7a5e739bce9c0ef7ee8978806a5594a59b771e586e3b3cd44bcdb",
+    "ops/telemetry/android-probe/app/src/main/java/dev/nomad/sdkprobe/ProbeActivity.java": "5c2e5c45a49dcbace9a24ce3e9f85a252fd5264923c93a1e4ffd8aaae909248b"
+  },
+  "postRunMetadataOnly": {
+    "umengDatabasePresent": true,
+    "envelopeDirectoryHasFile": true,
+    "umengIdentityFilePresent": true,
+    "rawCacheContentRead": false,
+    "probeAppForceStopped": true
+  },
+  "build": {
+    "passed": true,
+    "tasks": 36,
+    "seconds": 21,
+    "nonfatalVendorD8StackMapWarning": true
+  },
+  "physicalDeviceVerified": false
+}

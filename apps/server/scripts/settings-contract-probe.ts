@@ -52,6 +52,10 @@ async function buildSettingsApp() {
 }
 
 async function main() {
+  // Explicit isolated fixture authorization; never enable this profile in a deployment.
+  process.env.AUTH_RUNTIME_MODE = 'test';
+  process.env.AUTH_PROVIDER = 'fixture';
+  process.env.AUTH_TEST_ADAPTER_ENABLED = 'true';
   const previousProductId = process.env.FEEDBACK_PRODUCT_ID;
   process.env.FEEDBACK_PRODUCT_ID = '12345';
   queueCalls.length = 0;

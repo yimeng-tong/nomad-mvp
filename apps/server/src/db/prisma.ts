@@ -3,8 +3,9 @@ import { PrismaClient } from '@prisma/client';
 let prisma: PrismaClient | null = null;
 
 export function getPrisma(): PrismaClient | null {
-  if (!process.env.DATABASE_URL) return null;
-  if (!prisma) prisma = new PrismaClient();
+  const url = process.env.DATABASE_URL?.trim();
+  if (!url) return null;
+  if (!prisma) prisma = new PrismaClient({ datasources: { db: { url } } });
   return prisma;
 }
 

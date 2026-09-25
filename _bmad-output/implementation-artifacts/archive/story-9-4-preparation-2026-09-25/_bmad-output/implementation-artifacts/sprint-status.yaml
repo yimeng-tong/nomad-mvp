@@ -1,0 +1,610 @@
+# generated: 2026-09-15
+# last_updated: 2026-09-20
+# project: nomad-mvp
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+#
+# STATUS DEFINITIONS:
+# Epic: backlog | in-progress | done
+# Story: backlog | ready-for-dev | in-progress | review | done
+# Retrospective: optional | done
+# A story becomes ready-for-dev only after its current implementation contract is prepared.
+# Planning approval, prototypes and legacy same-number files do not establish readiness.
+# Preserve historical done; epic done requires every story in its CURRENT scope to be done.
+# 3.1 inherits in-progress work but remains paused; see execution_pauses before dispatch.
+# Retrospective 1 is done for the historical 1.1-1.5 scope only; expanded review is still owed.
+# Default flow: create-story -> dev-story -> review -> done; no implementation authorized by SP.
+
+generated: '2026-09-15'
+last_updated: '2026-09-20'
+project: nomad-mvp
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+planning_status: sprint-planning-complete
+execution_phase: execution
+stop_after_story: 1-7-durable-import-progress-and-restart-recovery
+stop_after_story_reason: user-request-complete-current-story-then-stop
+epics_source: _bmad-output/planning-artifacts/epics.md
+migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
+migration_report: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.md
+next_story_to_prepare: 9-4-component-workbench-and-enforced-code-quality
+development_status:
+  epic-1: in-progress
+  1-0-production-login-and-multi-device-sessions: in-progress
+  1-1-login-session-and-compliance-contract: done
+  1-2-mobile-login-first-screen: done
+  1-3-single-xhs-ingest-with-sse-progress: done
+  1-4-home-unified-input-and-inspiration-library: done
+  1-5-settings-feedback-and-account-entry-points: done
+  1-6-home-multi-link-import-queue-and-honest-status: in-progress
+  1-7-durable-import-progress-and-restart-recovery: in-progress
+  1-8-owner-import-records-and-versioned-deduplication: backlog
+  1-9-production-image-text-understanding-and-evidence: backlog
+  1-10-adaptive-video-understanding-and-local-frame-resampling: backlog
+  1-11-amap-poi-verification-branch-disambiguation-and-manual-correction: backlog
+  epic-1-retrospective: done
+  epic-2: in-progress
+  2-0-confirm-and-planner-picker: done
+  2-1-generate-day-skeleton-with-quick-and-hq-planning: done
+  2-3-single-city-travel-time-and-boundary-confirmation: backlog
+  2-4-unified-flight-and-rail-service-lookup: backlog
+  2-5-preplanning-nightly-stays-breakfast-and-luggage: backlog
+  2-6-preplanning-pace-and-additional-constraints: backlog
+  2-7-full-city-picker-and-l3-place-intent: backlog
+  2-8-shared-poi-information-sheet: backlog
+  2-9-single-planning-job-and-stable-timeline-transition: backlog
+  2-10-authoritative-route-facts-and-timeline-transport: backlog
+  2-11-constraint-first-complete-single-city-planning: backlog
+  2-12-amap-candidate-expansion-and-nonblocking-candidate-list: backlog
+  2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots: backlog
+  2-14-daily-load-estimation-and-explainable-summary: backlog
+  2-15-post-plan-place-search-and-manual-candidates: backlog
+  epic-2-retrospective: optional
+  epic-3: in-progress
+  3-1-minute-timeline-editing-and-plan-wide-undo: in-progress
+  3-2-controlled-candidate-placement-and-free-time-filling: backlog
+  3-3-post-plan-nightly-stay-breakfast-and-luggage-editing: backlog
+  3-4-incremental-validation-and-typed-conflict-fixes: backlog
+  3-5-controlled-conversational-local-adjustment: backlog
+  epic-3-retrospective: optional
+  epic-4: backlog
+  4-1-cross-city-intent-and-linked-trip-input-draft: backlog
+  4-2-adjacent-city-transfers-and-handoff-day-boundaries: backlog
+  4-3-independent-city-planning-and-atomic-linked-trip-publication: backlog
+  4-4-active-city-editing-and-linked-trip-revision-rebinding: backlog
+  4-5-day-excursion-intent-and-round-trip-transfer-draft: backlog
+  4-6-day-excursion-planning-and-atomic-timeline-publication: backlog
+  4-7-day-excursion-editing-and-scope-guards: backlog
+  epic-4-retrospective: optional
+  epic-5: backlog
+  5-1-revision-bound-ai-detail-enrichment: backlog
+  5-2-verifiable-result-sheet-and-citation-reading: backlog
+  5-3-line-level-detail-editing-and-ai-preservation: backlog
+  5-4-revision-bound-export-generation-and-preview: backlog
+  5-5-whole-trip-image-download-and-system-sharing: backlog
+  epic-5-retrospective: optional
+  epic-6: backlog
+  6-1-planned-meal-slots-and-primary-alternative-pool: backlog
+  6-2-foreground-location-meal-recall-and-plan-context-fallback: backlog
+  6-3-normalized-business-areas-and-owner-food-hints: backlog
+  6-4-trip-checklist-and-direct-or-ai-record-entry: backlog
+  6-5-lightweight-shopping-notes-and-label-shortcuts: backlog
+  epic-6-retrospective: optional
+  epic-7: backlog
+  7-1-recent-trips-and-context-resume: backlog
+  7-3-settings-account-and-available-actions: backlog
+  7-4-account-data-copy-export: backlog
+  7-5-account-deletion-and-cleanup-results: backlog
+  7-6-feedback-entry-and-reliable-submission: backlog
+  epic-7-retrospective: optional
+  epic-8: backlog
+  8-1-cross-flow-observability-and-fault-localization: backlog
+  8-2-reproducible-quality-regression-and-version-comparison: backlog
+  8-3-task-level-provider-routing-and-safe-release: backlog
+  8-4-platform-budget-and-usage-policy-management: backlog
+  8-5-terminal-ai-amap-incidents-and-telegram-alerts: backlog
+  8-6-operations-overview-and-read-only-diagnostics: backlog
+  epic-8-retrospective: optional
+  epic-9: in-progress
+  9-1-capacitor-app-installation-and-host-foundation: in-progress
+  9-2-android-apk-and-ios-testflight-delivery: backlog
+  9-3-shared-ui-components-and-safe-app-sheet: backlog
+  9-4-component-workbench-and-enforced-code-quality: backlog
+  9-5-browser-flow-and-visual-regression-gates: backlog
+  9-6-identity-scoped-server-read-queries: backlog
+  9-7-typed-navigation-and-host-history: backlog
+  epic-9-retrospective: optional
+execution_pauses:
+  3-1-minute-timeline-editing-and-plan-wide-undo:
+    paused: true
+    reason: inherited-work-awaiting-current-contract-and-upstream-prerequisites
+    legacy_story_id: 2-2-timeline-editing-undo-and-history
+    baseline_commit: 10f940c49e2d61ddcb1233cffddd071ed1c9284c
+    working_branch: codex/story-2-2-timeline-editing
+    contract_ready: false
+    start_after:
+    - 1-0-production-login-and-multi-device-sessions
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-11-constraint-first-complete-single-city-planning
+retrospective_scope:
+  epic-1-retrospective:
+    completed_scope: historical-1.1-through-1.5
+    evidence: _bmad-output/implementation-artifacts/epic-1-retro-2026-06-19.md
+    evidence_sha256: f4ad86411c2a021049466009992cfb3d73a26f9182c8f3b9aebc5acec06a91ee
+    completed_story_keys:
+    - 1-1-login-session-and-compliance-contract
+    - 1-2-mobile-login-first-screen
+    - 1-3-single-xhs-ingest-with-sse-progress
+    - 1-4-home-unified-input-and-inspiration-library
+    - 1-5-settings-feedback-and-account-entry-points
+    additional_scope_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    expanded_scope_review_required: true
+authorization:
+  sprint_planning: true
+  create_story: true
+  implementation: true
+  real_services: false
+  deployment: true
+  data_operations: false
+delivery_contract: _bmad-output/implementation-artifacts/sprint-delivery-contract-ui-foundation-2026-09-20.yaml
+revalidation_report: _bmad-output/planning-artifacts/implementation-readiness-ui-foundation-2026-09-20.md
+condition_progress:
+  1-0-production-login-and-multi-device-sessions:
+    OPS-01:
+      state: in-progress
+      summary: 已按9月19用户授权核验容量并启动现有Nomad VM104；Guest服务及本机健康通过。备份/隔离恢复、真实认证和生产开放未完成。
+      evidence:
+      - _bmad-output/implementation-artifacts/research/story-1-0-resource-confirmation-2026-09-19.md
+    DB-CHANGE-01:
+      state: in-progress
+      summary: 认证增量迁移草稿已在新建合成PG库完成前后不变量及隔离恢复；未操作既有库，最终代码及生产恢复条件仍待收口。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
+    METRICS-01:
+      state: not-started
+      summary: 已纳入1.0实施合同；本轮只完成准备，未运行该工程条件。
+    METRICS-02:
+      state: not-started
+      summary: 已纳入1.0实施合同；本轮只完成准备，未运行该工程条件。
+    METRICS-03:
+      state: in-progress
+      summary: 已建立配置、身份、持久会话、OTP/图形协议及跨账号并发的确定性反例；本Story未触发LLM评测，最终矩阵尚未关闭。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
+    APP-HOST-01:
+      state: in-progress
+      summary: 原生安全store/API/SSE/下载/遮蔽实现及Android编译已落地，Web/PG反例通过；Swift编译和双端实际设备及真实归因仍未验收。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
+    CODE-QUALITY-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-COMPONENT-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-WORKBENCH-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-BROWSER-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+  1-6-home-multi-link-import-queue-and-honest-status:
+    OPS-01:
+      state: in-progress
+      summary: 本Story快照/回执/partial数据已在新合成PG库dump恢复并核对引用；真实生产全量/PITR与RPO仍未验证。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
+    DB-CHANGE-01:
+      state: in-progress
+      summary: 新增任务快照/命令回执迁移已在新合成PG库及恢复库验证；真实生产恢复与整Story关闭仍待完成。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
+    METRICS-01:
+      state: in-progress
+      summary: WL-IMPORT-DOCK本地fixture报告已实现，保留版本/计划N/窗口/缺失/失败/未知和独立FIFO统计；真实staging基线与成本仍未验证。
+      evidence:
+      - docs/ops/import-measurements.md
+      - _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
+    METRICS-02:
+      state: not-started
+      summary: 已落入1.6当前实施合同；准备完成，未把1.0/9.1局部证据继承为本Story验收。
+    METRICS-03:
+      state: in-progress
+      summary: 已保留输入/回执/FIFO/粘贴/URL、IDB核心22项和两进程App恢复/重放/owner反例；本地测量及首用遥测21反例/网络信封已补，实际SDK/归因/基线门槛继续实施。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
+    APP-HOST-01:
+      state: in-progress
+      summary: Dock/粘贴/URL/持久动作接线已消费宿主，浏览器两进程恢复和双端静态注册/Android编译通过；实际归因与真实双端运行仍待验证。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
+    CODE-QUALITY-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-COMPONENT-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-WORKBENCH-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-BROWSER-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+  1-7-durable-import-progress-and-restart-recovery:
+    OPS-01:
+      state: in-progress
+      summary: 活动checkpoint恢复库及私有PG物理base/WAL指定时点恢复6项通过，备份工具/未安装daily模板完成；生产计划/RPO/异机目标与最新删除抑制仍开放。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
+      - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
+    DB-CHANGE-01:
+      state: in-progress
+      summary: 加法迁移/不可变事件及PG16.15服务端矩阵、IDB v2保留/CAS/ACK、活动恢复库通过；完整生产切换与回退窗口仍需真实环境证据。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
+      - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
+    METRICS-01:
+      state: in-progress
+      summary: WL-IMPORT当前15请求和WL-RECOVERY count/bytes各N=3已封存；nearest-rank单时钟、成本null，本地故障诊断不等于生产指标。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
+      - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
+    METRICS-02:
+      state: in-progress
+      summary: VM104受控staging恢复基线4场景×3已封存；真实产品负载/用户版本化体验费用目标与生产候选比较仍未齐备，loopback合成负载不代替目标。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
+      - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
+    METRICS-03:
+      state: in-progress
+      summary: 服务端PG/进程/TCP反例、IDB14、App-PG6及压力双窗口3项重复3轮已封存；真实平台C07仍开放。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
+      - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
+    APP-HOST-01:
+      state: in-progress
+      summary: 双端sync、Android243tasks/14s及APK资产匹配通过；Web恢复/FIFO/Sheet/44px等回归与native实机C07分别记录，iOS未编译。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
+      - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
+    CODE-QUALITY-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-BROWSER-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+  9-1-capacitor-app-installation-and-host-foundation:
+    DB-CHANGE-01:
+      state: not-applicable
+      summary: 仅9.1宿主/构建/验证切片未改数据库；1.0并行Prisma迁移由其自身条件记录，不借此关闭。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-9-1-dev-progress-2026-09-19.md
+      - _bmad-output/implementation-artifacts/story-9-1-local-validation-2026-09-19.json
+    METRICS-01:
+      state: in-progress
+      summary: 已建立WL-APP-HOST版本/文件摘要与本地检查清单，实际启动/恢复耗时保持null、运行样本0，未伪造性能。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-9-1-local-validation-2026-09-19.json
+    METRICS-02:
+      state: not-started
+      summary: 本Story逐切片核验；当前只同步合同，未声称真实构建/安装/分发。
+    METRICS-03:
+      state: verified
+      summary: 仅9.1的确定性配置/返回/权限边界/恢复和负面反例已验证；无本Story LLM人评分支，不关闭其他Story或全局条件。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-9-1-local-validation-2026-09-19.json
+      - _bmad-output/implementation-artifacts/story-9-1-scoped-code-review-2026-09-19.md
+    APP-BUILD-01:
+      state: in-progress
+      summary: 双端工程/assets同步，最新Android调试APK实际编译、v2签名和包内assets核验通过；iOS编译/正式签名/双端真机未验收。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-9-1-dev-progress-2026-09-19.md
+      - _bmad-output/implementation-artifacts/story-9-1-local-validation-2026-09-19.json
+    APP-HOST-01:
+      state: in-progress
+      summary: 宿主运行时/配置48项、本轮全mobile142+Node3及限定审阅修补通过；真实设备交互/恢复与完整登录/归因未验收。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-9-1-dev-progress-2026-09-19.md
+      - _bmad-output/implementation-artifacts/story-9-1-local-validation-2026-09-19.json
+    CODE-QUALITY-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-COMPONENT-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-WORKBENCH-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-BROWSER-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+  9-2-android-apk-and-ios-testflight-delivery:
+    OPS-01:
+      state: not-started
+      summary: 本Story逐切片核验；当前只同步合同，未声称真实构建/安装/分发。
+    DB-CHANGE-01:
+      state: not-started
+      summary: 本Story逐切片核验；当前只同步合同，未声称真实构建/安装/分发。
+    METRICS-01:
+      state: not-started
+      summary: 本Story逐切片核验；当前只同步合同，未声称真实构建/安装/分发。
+    METRICS-02:
+      state: not-started
+      summary: 本Story逐切片核验；当前只同步合同，未声称真实构建/安装/分发。
+    METRICS-03:
+      state: not-started
+      summary: 本Story逐切片核验；当前只同步合同，未声称真实构建/安装/分发。
+    APP-BUILD-01:
+      state: not-started
+      summary: 本Story逐切片核验；当前只同步合同，未声称真实构建/安装/分发。
+    APP-HOST-01:
+      state: not-started
+      summary: 本Story逐切片核验；当前只同步合同，未声称真实构建/安装/分发。
+    APP-DISTRIBUTE-01:
+      state: not-started
+      summary: 本Story逐切片核验；当前只同步合同，未声称真实构建/安装/分发。
+    CODE-QUALITY-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-COMPONENT-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-WORKBENCH-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+    UI-BROWSER-01:
+      state: not-started
+      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+  9-3-shared-ui-components-and-safe-app-sheet:
+    APP-HOST-01:
+      state: not-started
+    CODE-QUALITY-01:
+      state: not-started
+    UI-COMPONENT-01:
+      state: not-started
+    UI-WORKBENCH-01:
+      state: not-started
+    UI-BROWSER-01:
+      state: not-started
+  9-4-component-workbench-and-enforced-code-quality:
+    CODE-QUALITY-01:
+      state: not-started
+    UI-WORKBENCH-01:
+      state: not-started
+  9-5-browser-flow-and-visual-regression-gates:
+    CODE-QUALITY-01:
+      state: not-started
+    UI-BROWSER-01:
+      state: not-started
+  9-6-identity-scoped-server-read-queries:
+    APP-HOST-01:
+      state: not-started
+    CODE-QUALITY-01:
+      state: not-started
+    UI-COMPONENT-01:
+      state: not-started
+    UI-WORKBENCH-01:
+      state: not-started
+    UI-BROWSER-01:
+      state: not-started
+  9-7-typed-navigation-and-host-history:
+    APP-HOST-01:
+      state: not-started
+    CODE-QUALITY-01:
+      state: not-started
+    UI-COMPONENT-01:
+      state: not-started
+    UI-WORKBENCH-01:
+      state: not-started
+    UI-BROWSER-01:
+      state: not-started
+authorization_scope:
+  create_story:
+  - 1-0-production-login-and-multi-device-sessions
+  - 1-6-home-multi-link-import-queue-and-honest-status
+  - 1-7-durable-import-progress-and-restart-recovery
+  - 1-8-owner-import-records-and-versioned-deduplication
+  - 1-9-production-image-text-understanding-and-evidence
+  - 1-10-adaptive-video-understanding-and-local-frame-resampling
+  - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+  - 2-3-single-city-travel-time-and-boundary-confirmation
+  - 2-4-unified-flight-and-rail-service-lookup
+  - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+  - 2-6-preplanning-pace-and-additional-constraints
+  - 2-7-full-city-picker-and-l3-place-intent
+  - 2-8-shared-poi-information-sheet
+  - 2-9-single-planning-job-and-stable-timeline-transition
+  - 2-10-authoritative-route-facts-and-timeline-transport
+  - 2-11-constraint-first-complete-single-city-planning
+  - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+  - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+  - 2-14-daily-load-estimation-and-explainable-summary
+  - 2-15-post-plan-place-search-and-manual-candidates
+  - 3-1-minute-timeline-editing-and-plan-wide-undo
+  - 3-2-controlled-candidate-placement-and-free-time-filling
+  - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+  - 3-4-incremental-validation-and-typed-conflict-fixes
+  - 3-5-controlled-conversational-local-adjustment
+  - 4-1-cross-city-intent-and-linked-trip-input-draft
+  - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+  - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+  - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+  - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+  - 4-6-day-excursion-planning-and-atomic-timeline-publication
+  - 4-7-day-excursion-editing-and-scope-guards
+  - 5-1-revision-bound-ai-detail-enrichment
+  - 5-2-verifiable-result-sheet-and-citation-reading
+  - 5-3-line-level-detail-editing-and-ai-preservation
+  - 5-4-revision-bound-export-generation-and-preview
+  - 5-5-whole-trip-image-download-and-system-sharing
+  - 6-1-planned-meal-slots-and-primary-alternative-pool
+  - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+  - 6-3-normalized-business-areas-and-owner-food-hints
+  - 6-4-trip-checklist-and-direct-or-ai-record-entry
+  - 6-5-lightweight-shopping-notes-and-label-shortcuts
+  - 7-1-recent-trips-and-context-resume
+  - 7-3-settings-account-and-available-actions
+  - 7-4-account-data-copy-export
+  - 7-5-account-deletion-and-cleanup-results
+  - 7-6-feedback-entry-and-reliable-submission
+  - 8-1-cross-flow-observability-and-fault-localization
+  - 8-2-reproducible-quality-regression-and-version-comparison
+  - 8-3-task-level-provider-routing-and-safe-release
+  - 8-4-platform-budget-and-usage-policy-management
+  - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+  - 8-6-operations-overview-and-read-only-diagnostics
+  - 9-1-capacitor-app-installation-and-host-foundation
+  - 9-2-android-apk-and-ios-testflight-delivery
+  - 9-3-shared-ui-components-and-safe-app-sheet
+  - 9-4-component-workbench-and-enforced-code-quality
+  - 9-5-browser-flow-and-visual-regression-gates
+  - 9-6-identity-scoped-server-read-queries
+  - 9-7-typed-navigation-and-host-history
+  implementation:
+  - 1-0-production-login-and-multi-device-sessions
+  - 1-6-home-multi-link-import-queue-and-honest-status
+  - 1-7-durable-import-progress-and-restart-recovery
+  - 1-8-owner-import-records-and-versioned-deduplication
+  - 1-9-production-image-text-understanding-and-evidence
+  - 1-10-adaptive-video-understanding-and-local-frame-resampling
+  - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+  - 2-3-single-city-travel-time-and-boundary-confirmation
+  - 2-4-unified-flight-and-rail-service-lookup
+  - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+  - 2-6-preplanning-pace-and-additional-constraints
+  - 2-7-full-city-picker-and-l3-place-intent
+  - 2-8-shared-poi-information-sheet
+  - 2-9-single-planning-job-and-stable-timeline-transition
+  - 2-10-authoritative-route-facts-and-timeline-transport
+  - 2-11-constraint-first-complete-single-city-planning
+  - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+  - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+  - 2-14-daily-load-estimation-and-explainable-summary
+  - 2-15-post-plan-place-search-and-manual-candidates
+  - 3-1-minute-timeline-editing-and-plan-wide-undo
+  - 3-2-controlled-candidate-placement-and-free-time-filling
+  - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+  - 3-4-incremental-validation-and-typed-conflict-fixes
+  - 3-5-controlled-conversational-local-adjustment
+  - 4-1-cross-city-intent-and-linked-trip-input-draft
+  - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+  - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+  - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+  - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+  - 4-6-day-excursion-planning-and-atomic-timeline-publication
+  - 4-7-day-excursion-editing-and-scope-guards
+  - 5-1-revision-bound-ai-detail-enrichment
+  - 5-2-verifiable-result-sheet-and-citation-reading
+  - 5-3-line-level-detail-editing-and-ai-preservation
+  - 5-4-revision-bound-export-generation-and-preview
+  - 5-5-whole-trip-image-download-and-system-sharing
+  - 6-1-planned-meal-slots-and-primary-alternative-pool
+  - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+  - 6-3-normalized-business-areas-and-owner-food-hints
+  - 6-4-trip-checklist-and-direct-or-ai-record-entry
+  - 6-5-lightweight-shopping-notes-and-label-shortcuts
+  - 7-1-recent-trips-and-context-resume
+  - 7-3-settings-account-and-available-actions
+  - 7-4-account-data-copy-export
+  - 7-5-account-deletion-and-cleanup-results
+  - 7-6-feedback-entry-and-reliable-submission
+  - 8-1-cross-flow-observability-and-fault-localization
+  - 8-2-reproducible-quality-regression-and-version-comparison
+  - 8-3-task-level-provider-routing-and-safe-release
+  - 8-4-platform-budget-and-usage-policy-management
+  - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+  - 8-6-operations-overview-and-read-only-diagnostics
+  - 9-1-capacitor-app-installation-and-host-foundation
+  - 9-2-android-apk-and-ios-testflight-delivery
+  deployment:
+    environments:
+    - homelab-development-test
+    allowed: 用户允许自行创建VM/LXC或复用现有资源；本轮复用并启动VM104，保留既有数据与配置。
+    public_cloud: 整体开发测试完成后再发布；当前不执行公有云购买或发布。
+    record: _bmad-output/implementation-artifacts/research/story-1-0-resource-confirmation-2026-09-19.md
+  record: _bmad-output/planning-artifacts/capacitor-scope-decision-2026-09-19.md
+  user_direction: 2026-09-19 用户批准App方案并要求持续完成同步、定向就绪检查、开发和后续BMAD Story，无需逐项再授权；合理决策先落盘。
+  ui_scope_record: _bmad-output/planning-artifacts/ui-foundation-scope-decision-2026-09-20.md
+  ui_development_window: 本次批准范围同步；新9.3–9.7未启动，1.7后停止仍有效，后续明确恢复才改变执行窗口。
+implementation_blockers:
+  1-7-durable-import-progress-and-restart-recovery:
+    scope: real-device-operational-and-staging-measurement-evidence
+    reason: 双端实机C07/iOS构建资源、生产PITR及最新删除抑制、真实staging基线与用户版本化指标费用决定尚未齐备；本地实现和隔离证明不冒充这些门槛。
+    independent_work_allowed: true
+    resource_question_already_sent: true
+    evidence:
+    - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
+  1-0-production-login-and-multi-device-sessions:
+    scope: real-authentication-attribution-and-device-evidence
+    reason: 正式协议/用户协议正文或URL尚待回复；真实HTTPS/PNVS受限联调、U-App/U-Link和双端实机等仍待核验，已有Key与平台资源不重复列为缺失。
+    independent_work_allowed: true
+    resource_question_already_sent: true
+    evidence:
+    - _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
+  9-1-capacitor-app-installation-and-host-foundation:
+    scope: native-runtime-and-final-identity-evidence
+    reason: macOS/Xcode/Apple签名和实际设备/正式应用标识未核验；正式协议资源由1.0核对；Android编译兼容已解除。
+    independent_work_allowed: true
+    resource_question_already_sent: true
+    evidence:
+    - _bmad-output/implementation-artifacts/story-9-1-dev-progress-2026-09-19.md
+resource_checkpoints:
+  1-0-production-login-and-multi-device-sessions:
+    resolved_blockers:
+    - AUTH-RESOURCES-T0
+    - AUTH-HOST-ATTRIBUTION-T0
+    configuration_validated: true
+    homelab_vm: 104
+    homelab_runtime_verified: true
+    real_authentication_verified: false
+    attribution_integration_verified: false
+    next: 继续T0运行模式/HTTPS/宿主接入；真实短信、图形验票、U-App/U-Link与会话验收仍由当前Story完成。
+    evidence: _bmad-output/implementation-artifacts/research/story-1-0-resource-confirmation-2026-09-19.md
+resource_alignment: _bmad-output/implementation-artifacts/research/story-1-0-resource-confirmation-2026-09-19.md
+implementation_progress: _bmad-output/implementation-artifacts/story-1-7-dev-progress-2026-09-19.md
+authentication_progress: _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
+scope_change: ui-foundation-2026-09-20
+scope_decision: _bmad-output/planning-artifacts/ui-foundation-scope-decision-2026-09-20.md
+continuous_execution:
+  authorized: true
+  record: _bmad-output/planning-artifacts/capacitor-scope-decision-2026-09-19.md
+  decision_log: _bmad-output/implementation-artifacts/capacitor-execution-decisions-2026-09-19.md
+  stop_rule: 只停止不可绕过的必要凭据/资源阻断切片；继续独立任务，验收与依赖不可伪造。
+active_workstreams:
+  authentication:
+    story: 1-0-production-login-and-multi-device-sessions
+    thread_id: 01a0a132-7203-7871-bf0e-d33087ba371a
+    scope: 认证实现和真实验收缺项继续；已接收App正式交接，当前主任务可推进后续独立Story
+  app_foundation:
+    story: 9-1-capacitor-app-installation-and-host-foundation
+    thread_id: 01a0b5df-312d-76f2-84cb-8d4b60dd69bf
+    scope: 已正式交接主任务接管必要宿主维护；原App任务只读周期跟进
+    coordination: handed-off-read-only-followup
+    status: in-progress
+    progress_record: _bmad-output/implementation-artifacts/story-9-1-dev-progress-2026-09-19.md
+    next: 真实资源/双端设备验证；缺项期间继续独立工作，按正式交接协调
+  ui_scope:
+    thread_id: 01a0b5df-312d-76f2-84cb-8d4b60dd69bf
+    scope: 批准UI源/合同/就绪及现有9.1最低平台配置同步
+    status: planning-handoff-complete
+    decision_record: _bmad-output/planning-artifacts/ui-foundation-scope-decision-2026-09-20.md
+    handoff: _bmad-output/implementation-artifacts/ui-foundation-handoff-2026-09-20.md
+previous_preparation:
+  story: 1-6-home-multi-link-import-queue-and-honest-status
+  status: complete
+  evidence: _bmad-output/implementation-artifacts/1-6-home-multi-link-import-queue-and-honest-status-validation.md
+current_preparation:
+  story: 1-7-durable-import-progress-and-restart-recovery
+  status: complete
+  evidence: _bmad-output/implementation-artifacts/1-7-durable-import-progress-and-restart-recovery-validation.md

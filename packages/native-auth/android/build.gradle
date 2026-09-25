@@ -1,0 +1,20 @@
+buildscript {
+    repositories { google(); mavenCentral() }
+    dependencies { classpath 'com.android.tools.build:gradle:8.13.0' }
+}
+apply plugin: 'com.android.library'
+android {
+    namespace 'dev.nomad.auth'
+    compileSdk 36
+    defaultConfig { minSdkVersion 29; targetSdkVersion 36 }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+}
+repositories { google(); mavenCentral() }
+dependencies {
+    implementation project(':capacitor-android')
+    implementation "androidx.appcompat:appcompat:${rootProject.ext.has('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.7.1'}"
+    implementation 'com.squareup.okhttp3:okhttp:5.4.0'
+}

@@ -69,11 +69,15 @@ async function deleteByok(req: any, reply: any) {
 }
 
 export default fp(async (app) => {
-  app.get('/user-key', { preHandler: authGuard }, async (req: any) => {
+  const available = async (_req: unknown, reply: any) => {
+    if (app.authAuthority) return reply.sendError('FEATURE_NOT_AVAILABLE', 'BYOK is not available in this release', 503, false);
+  };
+
+  app.get('/user-key', { preHandler: [authGuard, available] }, async (req: any) => {
     return statusFor(req.user!.id);
   });
 
-  app.post('/byok/validate', { preHandler: authGuard }, async (req: any, reply: any) => {
+  app.post('/byok/validate', { preHandler: [authGuard, available] }, async (req: any, reply: any) => {
     const parsed = ByokValidateBody.safeParse(req.body);
     if (!parsed.success) return reply.sendError('BYOK_PARAMS_INVALID', 'invalid byok body', 400, false, { issues: parsed.error.issues });
     return {
@@ -82,9 +86,9 @@ export default fp(async (app) => {
     };
   });
 
-  app.post('/user-key', { preHandler: authGuard }, saveByok);
-  app.post('/byok/save', { preHandler: authGuard }, saveByok);
-  app.post('/byok/set', { preHandler: authGuard }, saveByok);
-  app.delete('/user-key', { preHandler: authGuard }, deleteByok);
-  app.delete('/byok', { preHandler: authGuard }, deleteByok);
+  app.post('/user-key', { preHandler: [authGuard, available] }, saveByok);
+  app.post('/byok/save', { preHandler: [authGuard, available] }, saveByok);
+  app.post('/byok/set', { preHandler: [authGuard, available] }, saveByok);
+  app.delete('/user-key', { preHandler: [authGuard, available] }, deleteByok);
+  app.delete('/byok', { preHandler: [authGuard, available] }, deleteByok);
 });

@@ -14,3 +14,34 @@ dist/
 
 # Logs
 *.log
+
+# Native build products and private machine/signing configuration
+**/.gradle/
+**/android/**/build/
+**/android/local.properties
+**/ios/**/build/
+**/ios/**/DerivedData/
+**/ios/**/xcuserdata/
+**/ios/**/.build/
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+*.ipa
+*.apk
+*.aab
+
+# Isolated local SDK probes and emulator images
+.local-tools/
+ops/telemetry/android-probe/**/build/
+scripts/telemetry/__pycache__/
+**/__pycache__/
+
+# Per-device macOS metadata and local trust material
+.DS_Store
+**/.DS_Store
+.local-certs/
+
+# Raw runtime evidence logs stay local or in the private homelab evidence archive
+_bmad-output/implementation-artifacts/evidence/**/*.txt
+_bmad-output/implementation-artifacts/investigations/evidence/**/*.txt

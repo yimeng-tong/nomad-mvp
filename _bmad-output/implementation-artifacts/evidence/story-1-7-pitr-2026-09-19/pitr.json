@@ -1,0 +1,58 @@
+{
+  "result": "passed",
+  "checks": [
+    "wrong-cluster-id-refuses-backup-before-data-write",
+    "actual-mid-backup-read-failure-retains-partial-files-without-verified-marker",
+    "physical-base-backup-and-pg-verifybackup-pass",
+    "real-wal-archive-contains-commits-after-base-backup",
+    "time-target-restores-original-owners-commands-checkpoints-and-only-pre-target-event",
+    "source-later-commit-remains-intact"
+  ],
+  "directory": "/tmp/nomad-ingest-pitr-nyeztgrm",
+  "sourceSystemIdentifier": "7687174216739079728",
+  "targetTime": "2026-09-19 09:22:03.685085+00",
+  "sourceStateDigest": "3f8706bd23571d1c5b4234de1fc6b9f4",
+  "targetStateDigest": "a994a206a7407f73878f8cb766557448",
+  "baseBackup": {
+    "result": "passed",
+    "systemIdentifier": "7687174216739079728",
+    "directory": "/tmp/nomad-ingest-pitr-nyeztgrm/backups/backup-20260919T092203Z-21a2cae926264f78880d0fe1b3f8ac48",
+    "manifestSha256": "b8b940f78f6b8a4ae4a22ae19dbe3e37f6ec721ed1a6ce1b95d351c6cc5393a6",
+    "verifiedAt": "2026-09-19T09:22:03.633967+00:00",
+    "retention": "no-automatic-deletion"
+  },
+  "archiveSegmentCount": 4,
+  "archiveTimeoutSeconds": 900,
+  "segmentSwitchInProbe": "explicit-pg_switch_wal-not-a-15-minute-observation",
+  "recoveryTargetAction": "pause",
+  "targetInRecovery": true,
+  "targetReplayPaused": true,
+  "restoredPendingJobs": 2,
+  "applicationWorkerLaunched": false,
+  "existingClusterChanged": false,
+  "productionPitrVerified": false,
+  "retainedDataArchivesBackups": true,
+  "sameHostFailureDomain": true,
+  "privateClustersStopped": true,
+  "sourceSha256": {
+    "ops/postgres/archive-wal.py": "e35a1e3ad4068001db093e5e3775a41069f9298185f7da365d62508f900c60cb",
+    "ops/postgres/base-backup.py": "6877a8e52281239f6ffd3bb9dc13f9cd1312dac6f3960c0c04fde9b5dfded8e3",
+    "ops/postgres/test_archive_wal.py": "19a64a76ff6faabf5bb4ac0d86ea1ac68300dc37c091dee721b0ec400f3ab48d",
+    "ops/postgres/test_base_backup.py": "cfc40f5e958333ac1ac3e2846974f4b4d53dfa21c6863a78635a037437298dd0",
+    "ops/postgres/nomad-pg-backup@.service": "208a8595305b0bfb7d563e036ce283e37513a006269c1d2ba682c5784ec17de3",
+    "ops/postgres/nomad-pg-backup@.timer": "8bb6442c8d5501c83bcad1e1a1f3e15d2cccd5cbfb5f627ebb06db8ef773a1a3",
+    "ops/postgres/README.md": "c71679ff7ec846481edb3b1ce03e485850004a65c6c623321f07e16fab9d8541",
+    "ops/pve-staging/run-ingest-pitr-probe.py": "3a4cab170f13d58ac02de62c20c4ee398153aa84968b1e0298a1dc7e50198b38",
+    "ops/pve-staging/read-backup-readiness.py": "b59167508da439dd7adb335750a6721e3e77793b75b6244ffa80cbd1c1f8802e"
+  },
+  "review": {
+    "layers": 3,
+    "fixed": [
+      "preserve-partial-pg-basebackup-with-no-clean",
+      "verify-backup-control-system-id-before-marker"
+    ],
+    "remainingConfirmedFindings": 0,
+    "recheck": "all-three-layers-complete"
+  },
+  "sharedPostgresStartAndArchiveModeUnchanged": true
+}

@@ -1,0 +1,67 @@
+{
+  "result": "passed",
+  "sourceSha256": {
+    "apps/mobile/src/telemetry/dictionary.ts": "6918d7fb6e472bec35ac85e37ec51aeffafcf9fcbb4e99376966c7f991b18db7",
+    "apps/mobile/src/telemetry/runtime.ts": "9f0ae1dfe894546e1175c67f61c10f8a38e0125f43cb74bb14f0a116a8686ac7",
+    "apps/mobile/src/auth/analytics.ts": "9fb3bcd74575162082cb0f11b4640032a570419e780c798a6cc22b05bb38490a",
+    "apps/mobile/scripts/telemetry-browser-probe.mjs": "86b35c780fb4a379da7668582960ed523d64c117298ea911e71b29283e50326c"
+  },
+  "browser": "Chrome/127.0.6533.88",
+  "actualBrowser": true,
+  "explicitHttpSinkFixture": true,
+  "rawNetworkEnvelopesChecked": 3,
+  "externalRequests": 0,
+  "realSdkInitialized": false,
+  "realProviderQueryVerified": false,
+  "nativeConsentVerified": false,
+  "checks": [
+    "unknown-consent-no-initialize",
+    "safe-serialized-network-envelope",
+    "value-level-private-sentinels-removed",
+    "stable-event-id-dedupe",
+    "obsolete-event-disabled",
+    "late-initialize-closed",
+    "old-bound-emitter-isolated",
+    "old-queue-abandoned",
+    "owned-vite-and-unchanged-source"
+  ],
+  "counters": {
+    "first": {
+      "state": "ready",
+      "queued": 0,
+      "retainedIdentities": 2,
+      "counters": {
+        "accepted": 2,
+        "rejected": 0,
+        "invalid": 2,
+        "blocked": 1,
+        "duplicate": 1,
+        "overflow": 0,
+        "expired": 0,
+        "abandoned": 0,
+        "failed": 0
+      },
+      "providerQueryVerified": false
+    },
+    "rebound": {
+      "state": "ready",
+      "queued": 0,
+      "retainedIdentities": 1,
+      "counters": {
+        "accepted": 1,
+        "rejected": 0,
+        "invalid": 0,
+        "blocked": 1,
+        "duplicate": 0,
+        "overflow": 0,
+        "expired": 0,
+        "abandoned": 1,
+        "failed": 0
+      },
+      "providerQueryVerified": false
+    },
+    "opens": 1,
+    "closes": 2,
+    "oldCloses": 1
+  }
+}

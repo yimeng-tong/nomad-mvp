@@ -14,6 +14,7 @@ export type PlannerVersionPayload = Pick<
 };
 
 export type PlannerJobRecord = {
+  ownerAuthVersion?: number;
   id: string;
   planId: string;
   userId: string;
@@ -51,6 +52,7 @@ export type PlannerPlanRecord = {
 };
 
 export type PlannerHqJobRecord = {
+  ownerAuthVersion?: number;
   id: string;
   planId: string;
   userId: string;

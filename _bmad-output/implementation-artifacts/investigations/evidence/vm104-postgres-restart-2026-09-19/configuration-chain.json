@@ -1,0 +1,62 @@
+{
+  "source": "delegated-read-only-inventory",
+  "timer": {
+    "path": "/usr/lib/systemd/system/apt-daily-upgrade.timer",
+    "lines": "6-8",
+    "values": [
+      "OnCalendar=*-*-* 6:00",
+      "RandomizedDelaySec=60m",
+      "Persistent=true"
+    ],
+    "lastTriggerUtc": "2026-09-19 06:33:18"
+  },
+  "service": {
+    "path": "/usr/lib/systemd/system/apt-daily-upgrade.service",
+    "line": 10,
+    "command": "/usr/lib/apt/apt.systemd.daily install",
+    "startUtc": "06:33:18",
+    "exitUtc": "06:37:44",
+    "result": "success"
+  },
+  "chain": [
+    {
+      "path": "/etc/apt/apt.conf.d/20auto-upgrades",
+      "line": 2,
+      "finding": "APT::Periodic::Unattended-Upgrade=1"
+    },
+    {
+      "path": "/usr/lib/apt/apt.systemd.daily",
+      "lines": "494-495",
+      "finding": "calls unattended-upgrade"
+    },
+    {
+      "path": "/etc/apt/apt.conf.d/99needrestart",
+      "line": 8,
+      "finding": "DPkg::Post-Invoke calls apt-pinvoke -m u"
+    },
+    {
+      "path": "/usr/lib/needrestart/apt-pinvoke",
+      "line": 49,
+      "finding": "exec needrestart preserving arguments"
+    },
+    {
+      "path": "/usr/sbin/needrestart",
+      "lines": "263-273",
+      "finding": "Ubuntu -m u defaults to automatic restart absent explicit override"
+    },
+    {
+      "path": "/etc/needrestart/needrestart.conf",
+      "line": 40,
+      "finding": "interactive restart override is commented; conf.d has no .conf override"
+    }
+  ],
+  "alternativeSources": {
+    "customCronPgRestart": "not found in inspected standard/system/user cron locations",
+    "pgUnitRestartPolicy": "no",
+    "pgUnitNRestarts": 0,
+    "pgUnitDropIns": [],
+    "logrotate": "copytruncate, no restart, ran at00:00 UTC",
+    "pgBackupTimers": "disabled/inactive"
+  },
+  "systemChanged": false
+}

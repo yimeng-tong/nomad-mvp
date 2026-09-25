@@ -1,0 +1,1795 @@
+schema_version: 1
+project: nomad-mvp
+reviewed: '2026-09-20'
+prd_source: docs/prd.md
+prd_sha256: 5930d92fc7dcf4facd4f7edf7ebc0d377ef6e8c812a1a387b9446a49d3e1d151
+epics_source: _bmad-output/planning-artifacts/epics.md
+migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
+review_report: _bmad-output/planning-artifacts/implementation-readiness-ui-foundation-2026-09-20.md
+source_task:
+  host_id: local
+  thread_id: 01a09678-26d9-7c00-a780-8da933702cd2
+  title: 继续 Nomad 主开发线程
+  read_on: '2026-09-17'
+  scope: 只取最新6轮的用户决定/最终交接核对；当前源文档与显式用户指令仍为权威。
+coverage_note: 这是PRD→当前Story/工程任务的交付责任，不代表功能或生产实证已完成；跨切片责任之外，每张Story原Requirements/GWT与所有适用全局NFR仍完整生效。
+requirements:
+  FR1:
+    summary: 登录首屏支持手机号+短信登录；如提供第三方登录
+    source_line: 137
+    source_sha256: b118bede24191579bc971a31bfc3d177e6df040a2d12b16ccbcd8662e188a754
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-5-browser-flow-and-visual-regression-gates
+    engineering_conditions: []
+  FR2:
+    summary: 首页顶部分段“旅行规划｜灵感库”，中部显示目的地卡片
+    source_line: 139
+    source_sha256: 8f64f3c19906674e3db84b468d4269d12c26e1deb0f913ce210cee3b1d1fc356
+    scope: mvp
+    delivery_story_keys:
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 9-6-identity-scoped-server-read-queries
+    engineering_conditions: []
+  FR3:
+    summary: 统一输入分流
+    source_line: 140
+    source_sha256: 139ff72e4cb7b409548446e0142571f4370b91b0dab03ac3410f22e5d4e029ea
+    scope: mvp
+    delivery_story_keys:
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 9-6-identity-scoped-server-read-queries
+    engineering_conditions: []
+  FR4:
+    summary: 小红书入库流程
+    source_line: 141
+    source_sha256: bf9c9189924f64ab09c1cb8e9e4d08594bac431134ffb685f6309541e3725544
+    scope: mvp
+    delivery_story_keys:
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    engineering_conditions: []
+  FR4.1:
+    summary: 连锁与分店规则
+    source_line: 143
+    source_sha256: 542552584188d3d0d14fc3ddabd149ad50b0475432cc194e527c0019b90d8e18
+    scope: mvp
+    delivery_story_keys:
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    engineering_conditions: []
+  FR4.2:
+    summary: 运营手工纠错地点
+    source_line: 145
+    source_sha256: 1082e23463df5376711a705e4d26fe03bd74f9bde26a982e0a835a25a776c84a
+    scope: mvp
+    delivery_story_keys:
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    engineering_conditions: []
+  FR5:
+    summary: 灵感库
+    source_line: 146
+    source_sha256: f0b987674f0c1ce67a5ff9d3766a5c3669193ebc5a3e8970f8b7a1ca4477ab6c
+    scope: mvp
+    delivery_story_keys:
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    engineering_conditions: []
+  FR6:
+    summary: 灵感库按城市提供已导入 L3、待定位 Top-5 和来源记录作为规划种子；
+    source_line: 147
+    source_sha256: ed293c55136535f0aa8b4bc879ad30f240a09c818e094b176a3b7c1044198983
+    scope: mvp
+    delivery_story_keys:
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    engineering_conditions: []
+  FR7:
+    summary: AI 初始规划
+    source_line: 150
+    source_sha256: c336bf880d8a34ac80171f2f27223bbf3b7bea26d94af61cdf8902b3c9671a39
+    scope: mvp
+    delivery_story_keys:
+    - 2-11-constraint-first-complete-single-city-planning
+    engineering_conditions: []
+  FR8:
+    summary: 时间轴编辑
+    source_line: 151
+    source_sha256: bc6a0f013681ffc77dd26b7783b50595c7cb656a6965105f1feb0221e918389e
+    scope: mvp
+    delivery_story_keys:
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    engineering_conditions: []
+  FR9:
+    summary: 增量可行性校验
+    source_line: 152
+    source_sha256: 768b21f92339a01e5ad95cc0875a59a2a50e6292c0f5b17813e8e17f9c0eebf0
+    scope: mvp
+    delivery_story_keys:
+    - 2-11-constraint-first-complete-single-city-planning
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    engineering_conditions: []
+    note: 2.11的初始ValidationRun合同已覆盖，虽然Requirements行未显式列FR9；3.1触发、3.4修复依次交付。
+  FR10:
+    summary: AI 行程细节完善
+    source_line: 153
+    source_sha256: da6d987550d930ba54521f8dc4c96d3a0a2365b224d3741fc09e9932ace6e7d5
+    scope: mvp
+    delivery_story_keys:
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    engineering_conditions: []
+  FR11:
+    summary: 导出行程图片
+    source_line: 154
+    source_sha256: 475a288c1c8c7b0129c7beb7be93237fdd4f59aa8b41422d2695d47ed47221b1
+    scope: mvp
+    delivery_story_keys:
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    engineering_conditions: []
+  FR12:
+    summary: 设置页
+    source_line: 156
+    source_sha256: 80df728db782098e15247b4873ba8151e862ac4f1f4a9ffb2660c6d50d149b41
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    engineering_conditions: []
+  FR13:
+    summary: 观测与评测
+    source_line: 157
+    source_sha256: a1a6089213e12c71ab470411154fcc5aaca6623e824ffd08940706cd14a6e761
+    scope: mvp
+    delivery_story_keys:
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-2-reproducible-quality-regression-and-version-comparison
+    - 8-6-operations-overview-and-read-only-diagnostics
+    engineering_conditions: []
+  FR14:
+    summary: 第三方集成
+    source_line: 161
+    source_sha256: 55b3e6d15372d799c834ec4ed8660d3d5e7f927e2442b467e9ae4369acb4a846
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 5-4-revision-bound-export-generation-and-preview
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-3-task-level-provider-routing-and-safe-release
+    engineering_conditions: []
+    note: U-Link/U-App、归因及首次打开/登录恢复见source_obligations；不得只因有埋点wrapper或总FR14标签就报真实接通。
+  FR15:
+    summary: 登录等权展示
+    source_line: 163
+    source_sha256: 22586f7b6d64a2627a1ff9c18f9402564ce2329026c271853c175c8f767406c6
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    engineering_conditions: []
+  FR16:
+    summary: 行为验证触发策略
+    source_line: 164
+    source_sha256: 1193778368018c6fbf1340114da78ad868d1836498a096483bfc506f814a7e4d
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    engineering_conditions: []
+  FR17:
+    summary: 统一输入分流
+    source_line: 165
+    source_sha256: bc4fb5e4fc5abb443aae2debf327aa5c232f901aff371de252f9f8be48333660
+    scope: mvp
+    delivery_story_keys:
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    engineering_conditions: []
+  FR18:
+    summary: 多条链接粘贴
+    source_line: 166
+    source_sha256: bcf82aa80ee355964cb1d903fa460bea894302195c75e47728c32dea2bc753d8
+    scope: mvp
+    delivery_story_keys:
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-5-browser-flow-and-visual-regression-gates
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+    engineering_conditions: []
+  FR18.1:
+    summary: 导入记录与去重
+    source_line: 167
+    source_sha256: 0850ae279a0a235ebf7884ec44f16d259054f47e5bdb7988aa7644b2208f0678
+    scope: mvp
+    delivery_story_keys:
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 7-5-account-deletion-and-cleanup-results
+    engineering_conditions: []
+  FR19:
+    summary: 入库进度展示
+    source_line: 168
+    source_sha256: 9e7add22ccbaa7ce97c5c1f20b4ad05e06fa76953db5be2dd7a2e425c973d96c
+    scope: mvp
+    delivery_story_keys:
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    engineering_conditions: []
+  FR20:
+    summary: 待定位 Top-5 展示
+    source_line: 170
+    source_sha256: f9806d21ab3716d865d176b358b52a9fbcd5e313f2500aa65bea3466f29a904d
+    scope: mvp
+    delivery_story_keys:
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    engineering_conditions: []
+  FR21:
+    summary: 时间轴微调与全局撤销
+    source_line: 171
+    source_sha256: 58e8f7c7e62797951dae0af0e62f61b9c640a16449b0d2b04dc90ac0937aeb3c
+    scope: mvp
+    delivery_story_keys:
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    engineering_conditions: []
+  FR22:
+    summary: 冲突分级与后续动作
+    source_line: 172
+    source_sha256: 97ab12cb859a4efaa86177cc540c33b6f54781b9a30d09e07e03238084a7ba41
+    scope: mvp
+    delivery_story_keys:
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-4-revision-bound-export-generation-and-preview
+    engineering_conditions: []
+  FR23:
+    summary: AI 填充输出规范
+    source_line: 173
+    source_sha256: 169d28bbcbf833ccd96f643b1ac30f6f9f35ebe388a3e9e61e6293c6ca61faf1
+    scope: mvp
+    delivery_story_keys:
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    engineering_conditions: []
+  FR24:
+    summary: 导出图片规格
+    source_line: 174
+    source_sha256: ec7bdce8ca3d9a8665a928ec1fdf1cb11bbfe0896467847ea6aecd728d4cb3d9
+    scope: mvp
+    delivery_story_keys:
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    engineering_conditions: []
+  FR25:
+    summary: 操作可用性与恢复
+    source_line: 176
+    source_sha256: 74aeef71157b56995a8907306fa1314c01a9f94e16bca9267eaff21378a9e350
+    scope: mvp
+    delivery_story_keys:
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 7-3-settings-account-and-available-actions
+    engineering_conditions: []
+  FR26:
+    summary: 规划入口
+    source_line: 177
+    source_sha256: a1a1932e536b68c4a85756c81ef464b4c2a36a1f6428cd1473643bc6a587fe26
+    scope: mvp
+    delivery_story_keys:
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-7-full-city-picker-and-l3-place-intent
+    engineering_conditions: []
+  FR27:
+    summary: Planner Picker 路由与参数
+    source_line: 178
+    source_sha256: d2afe3915161670eb7175d7b2cc3a52f2e2b061cd4f43b9267fb996862db4ab9
+    scope: mvp
+    delivery_story_keys:
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-7-full-city-picker-and-l3-place-intent
+    engineering_conditions: []
+  FR27.1:
+    summary: 规划输入流程分为 S2 `旅行时间` 与 S3 `住宿安排`。旅行时间显示整体日期和天数、每天几点出门，并允许到达/离开分别使用精
+    source_line: 179
+    source_sha256: 9760ff890bd57c9ce031711880352a44de2e7987077be0de34d9b086c7f24aa7
+    scope: mvp
+    delivery_story_keys:
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    engineering_conditions: []
+  FR28:
+    summary: S5 `规划前确认` 在选点后展示地点意图摘要，并要求用户在 `悠闲 / 从容 / 充实` 中完成首次节奏对齐
+    source_line: 180
+    source_sha256: b5b6c8ed343b3e57f6bef7955acae9c891ac7806f18806bc74f881a193c7d0f2
+    scope: mvp
+    delivery_story_keys:
+    - 2-6-preplanning-pace-and-additional-constraints
+    engineering_conditions: []
+  FR28.1:
+    summary: 玩法与兴趣信号
+    source_line: 181
+    source_sha256: 9a6b6739eebc652348d7f6d9e73bf2d5a5bf7d30d922696e97aca24ea2ce60fe
+    scope: mvp
+    delivery_story_keys:
+    - 1-9-production-image-text-understanding-and-evidence
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-11-constraint-first-complete-single-city-planning
+    engineering_conditions: []
+  FR29:
+    summary: Picker 以 `全城检查` 为主界面，展示目标城市 L1 地图和 L2 汇总；点击 L2 进入设计状态 `选择 L3`，应用内
+    source_line: 182
+    source_sha256: 412de0f7df931ccb661b68aa0b0936935d76465486adaaa9dfecc272ffc5d3a2
+    scope: mvp
+    delivery_story_keys:
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    engineering_conditions: []
+  FR30:
+    summary: L3 行右侧提供互斥图标意图
+    source_line: 183
+    source_sha256: 3c94f68ce173fce6af98cfc4d9a008f5217d9810a06215891d507d3a2af7b7ff
+    scope: mvp
+    delivery_story_keys:
+    - 2-7-full-city-picker-and-l3-place-intent
+    engineering_conditions: []
+  FR31:
+    summary: Picker 所有视图共享同一意图状态。返回全城检查后，required 与 along_route 必须同时映射到 L3 缩略图
+    source_line: 184
+    source_sha256: 50f3cbae31bac4f63a33ae62a7fdcf27472c2b6bb26cea0e7f6fa7bb1ce2c543
+    scope: mvp
+    delivery_story_keys:
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    engineering_conditions: []
+  FR32:
+    summary: 单一可见 AI 规划
+    source_line: 185
+    source_sha256: 428de999c8e427816e9c9a9459715771ce30d2173a89f087454951a0a072e55b
+    scope: mvp
+    delivery_story_keys:
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-11-constraint-first-complete-single-city-planning
+    engineering_conditions: []
+  FR32.1:
+    summary: 内部快速降级
+    source_line: 186
+    source_sha256: 3704982a2ab9616a70904eebddffb59940c28421b1d6321c924fec203c5e3027
+    scope: mvp
+    delivery_story_keys:
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    engineering_conditions: []
+  FR32.2:
+    summary: 高质量编排
+    source_line: 187
+    source_sha256: 44a2ffbf702fdbf23d22cfbc8f85a02e918f43e458c9db433678e67abc01342f
+    scope: mvp
+    delivery_story_keys:
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    engineering_conditions: []
+  FR32.3:
+    summary: 候选与模糊补全
+    source_line: 188
+    source_sha256: d858182eb8f562d5c3cf2f2d42387334dfd004c3ecd3389408b184d50f1afcd4
+    scope: mvp
+    delivery_story_keys:
+    - 2-11-constraint-first-complete-single-city-planning
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    engineering_conditions: []
+  FR33:
+    summary: 规划任务可控性
+    source_line: 190
+    source_sha256: 7ed5a8f66b096af6098bf48f95765a90e85ffcefb80d40a1f9135f968e9f1ea7
+    scope: mvp
+    delivery_story_keys:
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    engineering_conditions: []
+  FR34:
+    summary: AnchorPool
+    source_line: 193
+    source_sha256: 0f4c1cc1d608cc8ba549afce561d14837c5a2f3b46f66be7bfad1d7c157d2f36
+    scope: mvp
+    delivery_story_keys:
+    - 2-11-constraint-first-complete-single-city-planning
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+    engineering_conditions: []
+  FR34.1:
+    summary: 平台 AnchorPool 主动冷启动
+    source_line: 195
+    source_sha256: 0c7f311c46644d49b3bef2a667084151504829017702fa68265ca3d1257110fc
+    scope: deferred
+    delivery_story_keys: []
+    engineering_conditions: []
+    deferred_story_ids:
+    - '8.7'
+    - '8.8'
+  FR35:
+    summary: Linked multi-city
+    source_line: 197
+    source_sha256: 08eda1007e0b44cedfe1d4c296f6ac97d1ac8bbf8dee4a54761e6d5a3a0b4baf
+    scope: mvp
+    delivery_story_keys:
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    engineering_conditions: []
+  FR35.1:
+    summary: 跨城一日游
+    source_line: 199
+    source_sha256: f51b959434aa284a680364d9804881e1dfeb6c93f37ce31546acac3279056024
+    scope: mvp
+    delivery_story_keys:
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    engineering_conditions: []
+  FR36:
+    summary: 酒店槽与餐饮处理
+    source_line: 202
+    source_sha256: 6cd49c6f110c45177f0703b0cc77ddc3715c53126936ef9dec1f613f6be274c3
+    scope: mvp
+    delivery_story_keys:
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-11-constraint-first-complete-single-city-planning
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    engineering_conditions: []
+  FR36.2:
+    summary: 餐饮选择池与商圈召回
+    source_line: 204
+    source_sha256: 90b78c89380675e2c0307b9c8f25f46552c8a94bcfed005f1eb0d71b89791667
+    scope: mvp
+    delivery_story_keys:
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    engineering_conditions: []
+  FR36.1:
+    summary: 酒店感知的编排偏好
+    source_line: 206
+    source_sha256: 2f6d6d301ef933333f0e11f59b0a29d275ebf39a91e59773f51b50582f3b1335
+    scope: mvp
+    delivery_story_keys:
+    - 2-11-constraint-first-complete-single-city-planning
+    engineering_conditions: []
+  FR37:
+    summary: 结果页
+    source_line: 212
+    source_sha256: 76ccd6d617ad4ee9a327ae9dcfa26091b62b75b06570afe37f91d698057bd501
+    scope: mvp
+    delivery_story_keys:
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    engineering_conditions: []
+  FR38:
+    summary: 平台 AI 额度与成本控制策略
+    source_line: 215
+    source_sha256: 070a5905f38cb31107626fb7eb06bfb8c5744edaf4ba2ac5bf29751ae3451a46
+    scope: mvp
+    delivery_story_keys:
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 3-5-controlled-conversational-local-adjustment
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-4-revision-bound-export-generation-and-preview
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    engineering_conditions: []
+  FR38.1:
+    summary: Provider 额度与不可恢复异常告警
+    source_line: 217
+    source_sha256: ad42c003d51c9080fa72863e8542af980634003cec40aea320efa34bb77c8ae1
+    scope: mvp
+    delivery_story_keys:
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    engineering_conditions: []
+  FR39:
+    summary: AI 事实引用与幻觉约束
+    source_line: 220
+    source_sha256: 71972bce2d44f2dba7426d12dedea31834f871d94bfc2ae3ead3f2e80243046c
+    scope: mvp
+    delivery_story_keys:
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    engineering_conditions: []
+  FR40:
+    summary: 计划延续与状态
+    source_line: 222
+    source_sha256: e8ba105cd8d01a78d9ac680c473d9fbce695b6343741162473f6abebda53e9a6
+    scope: mvp
+    delivery_story_keys:
+    - 7-1-recent-trips-and-context-resume
+    engineering_conditions: []
+  FR40.1:
+    summary: 照片驱动的到访标记与旅行影像
+    source_line: 223
+    source_sha256: fb8e81ac9dc871224ebf95defd5b2df7226ffbea061946a6f1a049a5957870ca
+    scope: deferred
+    delivery_story_keys: []
+    engineering_conditions: []
+    deferred_story_ids: []
+    related_deferred_draft_ids:
+    - '7.2'
+    note: 照片驱动方向待重新设计，没有正式执行Story；不能把旧手工打卡7.2自动变成照片方案的实施合同。
+  FR41:
+    summary: 酒店选择优先
+    source_line: 225
+    source_sha256: b8b0509235f6cec84ffe5bb609b0502dd1bbc8dc806a443e596cb235c969b72d
+    scope: mvp
+    delivery_story_keys:
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-11-constraint-first-complete-single-city-planning
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    engineering_conditions: []
+  FR42:
+    summary: 酒店更改与重排确认
+    source_line: 227
+    source_sha256: 07d22f0c59ba1b187e99b7b47c9aa0a672d7459536ece8af6f5ac3003d3d569d
+    scope: deferred
+    delivery_story_keys: []
+    engineering_conditions: []
+    deferred_story_ids: []
+  FR43:
+    summary: 历史步骤管理
+    source_line: 229
+    source_sha256: 31fb3bb7227a73e3103e2e10d9806cc883279888b09810bb3ef1e1057810e164
+    scope: deferred
+    delivery_story_keys: []
+    engineering_conditions: []
+    deferred_story_ids: []
+  FR44-lite:
+    summary: 文本快速搜索
+    source_line: 231
+    source_sha256: 5ec7653f5680c8a9e1ef85e56902a08bb1cfc6923989b439042b9a4abfff42b6
+    scope: mvp
+    delivery_story_keys:
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    engineering_conditions: []
+  FR45:
+    summary: 用户反馈
+    source_line: 239
+    source_sha256: bbf27cb584c5ffa8bc4c85dc8b7c0343df93816164da0b3990df4a3fca725b1a
+    scope: mvp
+    delivery_story_keys:
+    - 7-6-feedback-entry-and-reliable-submission
+    engineering_conditions: []
+  FR46:
+    summary: 行程清单
+    source_line: 249
+    source_sha256: acb0feb1f8e75d2103af56471ee15563519138e0111eaebe07a00808d90864bf
+    scope: mvp
+    delivery_story_keys:
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    engineering_conditions: []
+  FR47:
+    summary: 商圈归属
+    source_line: 250
+    source_sha256: 6be80125bc15207a651a4c461c121959b7278b14d30d8ac69a674522ed8507f8
+    scope: mvp
+    delivery_story_keys:
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    engineering_conditions: []
+  FR48:
+    summary: 旅中定位降级
+    source_line: 251
+    source_sha256: bac47f3063a5407a699bebee36b177e432014843717947fd37d2baa340f58ea6
+    scope: mvp
+    delivery_story_keys:
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    engineering_conditions: []
+  FR49:
+    summary: 阶段与转场
+    source_line: 252
+    source_sha256: f149739630122bbd593ca244af0124d2278b3f52d970d9cd5dad3f426f5ee719
+    scope: mvp
+    delivery_story_keys:
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-4-revision-bound-export-generation-and-preview
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 7-1-recent-trips-and-context-resume
+    - 9-7-typed-navigation-and-host-history
+    engineering_conditions: []
+  FR50:
+    summary: 对话式局部调整
+    source_line: 253
+    source_sha256: a5e18a1bdb88ade0eac6eb42bb7aaa8fef36585cf70c08cf5a301d7499a38152
+    scope: mvp
+    delivery_story_keys:
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-7-day-excursion-editing-and-scope-guards
+    engineering_conditions: []
+  FR51:
+    summary: 跨日负荷与天气上下文
+    source_line: 254
+    source_sha256: 9e672ebcfa10d0e54dde9ddae0d3543ed37cc3ed66cb10bf5e412f5797724e41
+    scope: mvp
+    delivery_story_keys:
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    engineering_conditions: []
+  NFR1:
+    summary: 国内可用三方服务优先；外部依赖需有可替代方案或降级策略。
+    source_line: 259
+    source_sha256: 242715b84600240817f3ca257192ef41d56c599f10b7f37b6c072040ad67a775
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 8-3-task-level-provider-routing-and-safe-release
+    engineering_conditions: []
+  NFR2:
+    summary: 前后端以 SSE 展示异步进度；事件使用单调 cursor 和可恢复持久记录，客户端/服务重启后从最后确认位置重连，不把内存队列当
+    source_line: 260
+    source_sha256: f5309539be2004021e963c53d8ba508524343c59367f18772858cd6f16ae69b3
+    scope: mvp
+    delivery_story_keys:
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-4-revision-bound-export-generation-and-preview
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    engineering_conditions:
+    - METRICS-01
+  NFR3:
+    summary: AI 安全与成本控制
+    source_line: 262
+    source_sha256: 74ddfd04eeb1920b391b762b008f0b5b11f8ae11de615df30e31c45d9385cb42
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-9-production-image-text-understanding-and-evidence
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-4-platform-budget-and-usage-policy-management
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-4-component-workbench-and-enforced-code-quality
+    - 9-5-browser-flow-and-visual-regression-gates
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+    engineering_conditions:
+    - OPS-02
+    - METRICS-01
+  NFR4:
+    summary: 性能目标
+    source_line: 264
+    source_sha256: 12b4b9d0c395c37f510795f4fdd801d8f3927f03729b594a4f548fcc52a742a0
+    scope: mvp
+    delivery_story_keys:
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-4-revision-bound-export-generation-and-preview
+    - 8-1-cross-flow-observability-and-fault-localization
+    engineering_conditions:
+    - METRICS-01
+    - METRICS-02
+  NFR5:
+    summary: 质量指标
+    source_line: 265
+    source_sha256: b81576ccb85a6fb9d2bbda37e52c8b55c7cbd3c605950d164596a2866eb572f9
+    scope: mvp
+    delivery_story_keys:
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-11-constraint-first-complete-single-city-planning
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 8-2-reproducible-quality-regression-and-version-comparison
+    engineering_conditions:
+    - METRICS-01
+    - METRICS-02
+    - METRICS-03
+  NFR6:
+    summary: 可观测性
+    source_line: 266
+    source_sha256: e5c858f6919adcfe8f35781672bce368c178ab12731d665ab42b744bc129002c
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-2-reproducible-quality-regression-and-version-comparison
+    engineering_conditions:
+    - METRICS-01
+    - METRICS-02
+    - METRICS-03
+  NFR7:
+    summary: 合规与隐私
+    source_line: 268
+    source_sha256: be7b97703143f05257fe9d5530e898156e5e6938ac790d9b4ad5b2f1ae78698f
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-4-component-workbench-and-enforced-code-quality
+    engineering_conditions:
+    - OPS-01
+    - OPS-02
+  NFR8:
+    summary: 交互体验
+    source_line: 270
+    source_sha256: 5bdd3a2004b456fea674fe8d0dc06bedb865c18b7ed0bb7d0daaf60fa26b01ed
+    scope: mvp
+    delivery_story_keys:
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 7-3-settings-account-and-available-actions
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-4-component-workbench-and-enforced-code-quality
+    - 9-5-browser-flow-and-visual-regression-gates
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    engineering_conditions:
+    - UI-COMPONENT-01
+    - UI-WORKBENCH-01
+    - CODE-QUALITY-01
+    - UI-BROWSER-01
+  NFR9:
+    summary: 行程细节完善不得改动日期、时间与顺序；任何重排必须走独立的可预览调整流程并生成新版本。
+    source_line: 273
+    source_sha256: 85f7bb66daf1daae9ea706e84d2c7b7c42471c5549a43a60fb6ef464056f5d69
+    scope: mvp
+    delivery_story_keys:
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    engineering_conditions: []
+  NFR10:
+    summary: 初始规划安全性
+    source_line: 274
+    source_sha256: fadda6926abc8f1b9dd019927f4f3de59da29c93f6a1bffb85ad1d4f836dd2bd
+    scope: mvp
+    delivery_story_keys:
+    - 2-11-constraint-first-complete-single-city-planning
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    engineering_conditions: []
+  NFR11:
+    summary: Linked-trip 性能与一致性
+    source_line: 275
+    source_sha256: b580bafe5542edbe35aa2d19be57675f8dcc7d88a13da44b26fe930c69b79d06
+    scope: mvp
+    delivery_story_keys:
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 5-4-revision-bound-export-generation-and-preview
+    engineering_conditions: []
+  NFR12:
+    summary: 引用可追溯性
+    source_line: 276
+    source_sha256: af2bf7b37a56c1aff52a7b9fbfb83b26c3a444bda5b66c6e8019520436f3e6ed
+    scope: mvp
+    delivery_story_keys:
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-8-shared-poi-information-sheet
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    engineering_conditions: []
+  NFR13:
+    summary: 采集稳定性与重试责任
+    source_line: 277
+    source_sha256: 13492a3ad35df557f14388515caccf8f0d11ed7cc748c76c26d5626d14cafa5e
+    scope: mvp
+    delivery_story_keys:
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    engineering_conditions: []
+  NFR14:
+    summary: 许可与合规
+    source_line: 278
+    source_sha256: e73cad48e8aebcbdba5ee0d0d00feb87847dad43a2d83ad26ea0c8368402e914
+    scope: mvp
+    delivery_story_keys:
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    engineering_conditions: []
+  NFR15:
+    summary: 反馈隐私与安全
+    source_line: 279
+    source_sha256: c83867189aae862968174d63fb7e2a74cf1dbe6ab308faa773d717e61dec4127
+    scope: mvp
+    delivery_story_keys:
+    - 7-6-feedback-entry-and-reliable-submission
+    engineering_conditions: []
+  NFR16:
+    summary: 反馈运行环境与状态
+    source_line: 280
+    source_sha256: 866cc6559bd7eee3917e25ad79be8e7b117117868f3483d30ca5e0bf7d3ba24a
+    scope: mvp
+    delivery_story_keys:
+    - 7-6-feedback-entry-and-reliable-submission
+    engineering_conditions: []
+  NFR17:
+    summary: LLM 提供商可替换与回退
+    source_line: 281
+    source_sha256: 0f6720b8efd0f3a0a18a78ab4cd2206191156442e6b773f7fc5e0c3ac1ea1365
+    scope: mvp
+    delivery_story_keys:
+    - 1-9-production-image-text-understanding-and-evidence
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 8-3-task-level-provider-routing-and-safe-release
+    engineering_conditions: []
+  NFR18:
+    summary: 定位隐私
+    source_line: 282
+    source_sha256: b6709bfe40bf6fb7f421534d34e4a76b4fb63bc75415c6f4cbf2f1d8a472a713
+    scope: mvp
+    delivery_story_keys:
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    engineering_conditions: []
+  NFR19:
+    summary: Picker 状态一致性
+    source_line: 283
+    source_sha256: a434a2cf18beaf1f3ee58260099241e5f473cf60fd47c174951867b9a7f4a99f
+    scope: mvp
+    delivery_story_keys:
+    - 2-7-full-city-picker-and-l3-place-intent
+    engineering_conditions: []
+    note: 2.7的GWT 3/8/9/12明确统一意图状态、回映、持久恢复；不能只按NFR标签误判由Epic4首次交付。
+  NFR20:
+    summary: 导入所有权
+    source_line: 284
+    source_sha256: 47749fbb54b72336f018eb30ca689a9209b3d3d3d2b9e5b3584be225737ad157
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 7-5-account-deletion-and-cleanup-results
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+    engineering_conditions:
+    - DB-CHANGE-01
+    - OPS-02
+  NFR21:
+    summary: 证据诚实性
+    source_line: 285
+    source_sha256: f82c5073785e2ea2b7ae61e06125a12b3ef8e1149b2401cbb6ecad5cefd56f29
+    scope: mvp
+    delivery_story_keys:
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-8-shared-poi-information-sheet
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    engineering_conditions: []
+  NFR22:
+    summary: Trip 原子一致性
+    source_line: 286
+    source_sha256: 95d1ee560099f59a6175b5303ea848d7ae4f56308f33070b243a3b706c82bfa9
+    scope: mvp
+    delivery_story_keys:
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-4-revision-bound-export-generation-and-preview
+    engineering_conditions:
+    - DB-CHANGE-01
+    - METRICS-01
+  NFR23:
+    summary: 路线与动态事实诚实性
+    source_line: 287
+    source_sha256: 828179ff8429b17bfc2013a7bffaf69380959d58ac24aec621c01799a61a6f06
+    scope: mvp
+    delivery_story_keys:
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    engineering_conditions: []
+  NFR24:
+    summary: 运营告警可靠性与隐私
+    source_line: 288
+    source_sha256: ea9cc020908757c41d1e06b7a4a8fc17d5b98c18a9fac7f41900e192c9390594
+    scope: mvp
+    delivery_story_keys:
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    engineering_conditions: []
+  FR52:
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-4-component-workbench-and-enforced-code-quality
+    - 9-5-browser-flow-and-visual-regression-gates
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+    engineering_conditions:
+    - APP-BUILD-01
+    - APP-HOST-01
+    - APP-DISTRIBUTE-01
+    source_line: 256
+    source_sha256: a72498bc18646d4dc034877ed1fd4d1aa2a8e7c5e0dbd5f7538cf0014ca6e593
+    summary: 首期网页、Android APK、iOS TestFlight与各业务原生切片
+  NFR25:
+    scope: mvp
+    delivery_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-4-component-workbench-and-enforced-code-quality
+    - 9-5-browser-flow-and-visual-regression-gates
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    engineering_conditions:
+    - APP-BUILD-01
+    - APP-HOST-01
+    - APP-DISTRIBUTE-01
+    - UI-COMPONENT-01
+    - UI-WORKBENCH-01
+    - CODE-QUALITY-01
+    - UI-BROWSER-01
+    source_line: 290
+    source_sha256: f3324e51f676bb77cf0aef833ee93583436e814950a2838daab3669aee40b6b2
+    summary: App可重复构建、真实宿主/安装/分发及发布版本证据
+story_requirement_bindings:
+  1-0-production-login-and-multi-device-sessions:
+  - FR1
+  - FR12
+  - FR14
+  - FR15
+  - FR16
+  - FR52
+  - NFR1
+  - NFR3
+  - NFR6
+  - NFR7
+  - NFR8
+  - NFR20
+  - NFR25
+  1-6-home-multi-link-import-queue-and-honest-status:
+  - FR2
+  - FR3
+  - FR14
+  - FR17
+  - FR18
+  - FR19
+  - FR49
+  - FR52
+  - NFR6
+  - NFR8
+  - NFR25
+  1-7-durable-import-progress-and-restart-recovery:
+  - FR4
+  - FR19
+  - FR52
+  - NFR2
+  - NFR25
+  1-8-owner-import-records-and-versioned-deduplication:
+  - FR5
+  - FR6
+  - FR18.1
+  - FR20
+  - NFR8
+  - NFR20
+  - NFR25
+  1-9-production-image-text-understanding-and-evidence:
+  - FR4
+  - FR6
+  - FR14
+  - FR28.1
+  - FR38
+  - NFR1
+  - NFR3
+  - NFR12
+  - NFR13
+  - NFR14
+  - NFR17
+  1-10-adaptive-video-understanding-and-local-frame-resampling:
+  - FR4
+  - FR38
+  - NFR12
+  - NFR13
+  - NFR14
+  1-11-amap-poi-verification-branch-disambiguation-and-manual-correction:
+  - FR4
+  - FR4.1
+  - FR4.2
+  - FR5
+  - FR6
+  - FR14
+  - FR20
+  - NFR1
+  - NFR5
+  - NFR8
+  - NFR12
+  - NFR21
+  - NFR23
+  - NFR25
+  2-3-single-city-travel-time-and-boundary-confirmation:
+  - FR26
+  - FR27
+  - FR27.1
+  - FR49
+  - NFR8
+  - NFR25
+  2-4-unified-flight-and-rail-service-lookup:
+  - FR14
+  - FR27.1
+  - NFR1
+  - NFR8
+  - NFR23
+  - NFR25
+  2-5-preplanning-nightly-stays-breakfast-and-luggage:
+  - FR27.1
+  - FR36
+  - FR41
+  - FR44-lite
+  - FR49
+  - NFR8
+  - NFR25
+  2-6-preplanning-pace-and-additional-constraints:
+  - FR28
+  - FR28.1
+  - FR49
+  - NFR8
+  - NFR25
+  2-7-full-city-picker-and-l3-place-intent:
+  - FR14
+  - FR26
+  - FR27
+  - FR29
+  - FR30
+  - FR31
+  - FR49
+  - NFR7
+  - NFR8
+  - NFR19
+  - NFR25
+  2-8-shared-poi-information-sheet:
+  - FR29
+  - FR31
+  - NFR8
+  - NFR12
+  - NFR21
+  - NFR25
+  2-9-single-planning-job-and-stable-timeline-transition:
+  - FR32
+  - FR32.1
+  - FR32.2
+  - FR33
+  - FR38
+  - FR49
+  - FR52
+  - NFR2
+  - NFR3
+  - NFR4
+  - NFR6
+  - NFR8
+  - NFR17
+  - NFR25
+  2-10-authoritative-route-facts-and-timeline-transport:
+  - FR14
+  - FR32
+  - NFR1
+  - NFR8
+  - NFR23
+  - NFR25
+  2-11-constraint-first-complete-single-city-planning:
+  - FR7
+  - FR9
+  - FR28.1
+  - FR32
+  - FR32.3
+  - FR34
+  - FR36
+  - FR36.1
+  - FR41
+  - NFR5
+  - NFR10
+  2-12-amap-candidate-expansion-and-nonblocking-candidate-list:
+  - FR32.3
+  - FR34
+  - NFR8
+  - NFR25
+  2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots:
+  - FR32.3
+  - FR34
+  2-14-daily-load-estimation-and-explainable-summary:
+  - FR51
+  - NFR5
+  - NFR8
+  - NFR23
+  - NFR25
+  2-15-post-plan-place-search-and-manual-candidates:
+  - FR32.3
+  - FR44-lite
+  - NFR8
+  - NFR25
+  3-1-minute-timeline-editing-and-plan-wide-undo:
+  - FR8
+  - FR9
+  - FR21
+  - FR22
+  - FR49
+  - NFR8
+  - NFR10
+  - NFR25
+  3-2-controlled-candidate-placement-and-free-time-filling:
+  - FR8
+  - FR32.3
+  - FR44-lite
+  - NFR8
+  - NFR25
+  3-3-post-plan-nightly-stay-breakfast-and-luggage-editing:
+  - FR36
+  - FR41
+  - FR44-lite
+  - NFR8
+  - NFR25
+  3-4-incremental-validation-and-typed-conflict-fixes:
+  - FR9
+  - FR22
+  - FR51
+  - NFR4
+  - NFR5
+  - NFR8
+  - NFR10
+  - NFR23
+  - NFR25
+  3-5-controlled-conversational-local-adjustment:
+  - FR38
+  - FR50
+  - NFR8
+  - NFR25
+  4-1-cross-city-intent-and-linked-trip-input-draft:
+  - FR35
+  - FR49
+  - NFR8
+  - NFR11
+  - NFR25
+  4-2-adjacent-city-transfers-and-handoff-day-boundaries:
+  - FR35
+  - NFR8
+  - NFR25
+  4-3-independent-city-planning-and-atomic-linked-trip-publication:
+  - FR35
+  - FR51
+  - NFR2
+  - NFR8
+  - NFR11
+  - NFR22
+  - NFR25
+  4-4-active-city-editing-and-linked-trip-revision-rebinding:
+  - FR35
+  - FR50
+  - FR51
+  - NFR8
+  - NFR11
+  - NFR22
+  - NFR25
+  4-5-day-excursion-intent-and-round-trip-transfer-draft:
+  - FR35.1
+  - FR49
+  - NFR8
+  - NFR25
+  4-6-day-excursion-planning-and-atomic-timeline-publication:
+  - FR35.1
+  - FR51
+  - NFR8
+  - NFR22
+  - NFR25
+  4-7-day-excursion-editing-and-scope-guards:
+  - FR35.1
+  - FR50
+  - FR51
+  - NFR8
+  - NFR22
+  - NFR25
+  5-1-revision-bound-ai-detail-enrichment:
+  - FR10
+  - FR22
+  - FR23
+  - FR25
+  - FR37
+  - FR38
+  - FR39
+  - FR49
+  - NFR2
+  - NFR3
+  - NFR4
+  - NFR8
+  - NFR9
+  - NFR12
+  - NFR17
+  - NFR21
+  - NFR25
+  5-2-verifiable-result-sheet-and-citation-reading:
+  - FR10
+  - FR37
+  - FR39
+  - NFR8
+  - NFR12
+  - NFR25
+  5-3-line-level-detail-editing-and-ai-preservation:
+  - FR10
+  - FR23
+  - FR37
+  - NFR8
+  - NFR9
+  - NFR25
+  5-4-revision-bound-export-generation-and-preview:
+  - FR11
+  - FR14
+  - FR22
+  - FR24
+  - FR25
+  - FR38
+  - FR49
+  - FR52
+  - NFR2
+  - NFR4
+  - NFR8
+  - NFR11
+  - NFR22
+  - NFR25
+  5-5-whole-trip-image-download-and-system-sharing:
+  - FR11
+  - FR24
+  - FR25
+  - FR52
+  - NFR8
+  - NFR25
+  6-1-planned-meal-slots-and-primary-alternative-pool:
+  - FR36
+  - FR36.2
+  - FR49
+  - NFR5
+  - NFR8
+  - NFR25
+  6-2-foreground-location-meal-recall-and-plan-context-fallback:
+  - FR14
+  - FR36.2
+  - FR48
+  - FR52
+  - NFR8
+  - NFR18
+  - NFR23
+  - NFR25
+  6-3-normalized-business-areas-and-owner-food-hints:
+  - FR36.2
+  - FR47
+  - NFR8
+  - NFR21
+  - NFR25
+  6-4-trip-checklist-and-direct-or-ai-record-entry:
+  - FR25
+  - FR38
+  - FR46
+  - FR49
+  - NFR8
+  - NFR25
+  6-5-lightweight-shopping-notes-and-label-shortcuts:
+  - FR46
+  - NFR8
+  - NFR25
+  7-1-recent-trips-and-context-resume:
+  - FR40
+  - FR49
+  - FR52
+  - NFR8
+  - NFR25
+  7-3-settings-account-and-available-actions:
+  - FR12
+  - FR25
+  - FR52
+  - NFR8
+  - NFR25
+  7-4-account-data-copy-export:
+  - FR12
+  - FR52
+  - NFR2
+  - NFR7
+  - NFR8
+  - NFR25
+  7-5-account-deletion-and-cleanup-results:
+  - FR12
+  - FR18.1
+  - FR52
+  - NFR2
+  - NFR7
+  - NFR8
+  - NFR20
+  - NFR25
+  7-6-feedback-entry-and-reliable-submission:
+  - FR12
+  - FR45
+  - FR52
+  - NFR8
+  - NFR15
+  - NFR16
+  - NFR25
+  8-1-cross-flow-observability-and-fault-localization:
+  - FR13
+  - FR14
+  - FR52
+  - NFR3
+  - NFR4
+  - NFR6
+  - NFR25
+  8-2-reproducible-quality-regression-and-version-comparison:
+  - FR13
+  - NFR5
+  - NFR6
+  8-3-task-level-provider-routing-and-safe-release:
+  - FR14
+  - FR33
+  - FR38
+  - NFR1
+  - NFR8
+  - NFR17
+  - NFR25
+  8-4-platform-budget-and-usage-policy-management:
+  - FR33
+  - FR38
+  - FR38.1
+  - NFR3
+  - NFR8
+  - NFR25
+  8-5-terminal-ai-amap-incidents-and-telegram-alerts:
+  - FR38.1
+  - NFR8
+  - NFR24
+  - NFR25
+  8-6-operations-overview-and-read-only-diagnostics:
+  - FR13
+  - NFR8
+  - NFR25
+  9-1-capacitor-app-installation-and-host-foundation:
+  - FR52
+  - NFR3
+  - NFR7
+  - NFR8
+  - NFR25
+  9-2-android-apk-and-ios-testflight-delivery:
+  - FR52
+  - NFR3
+  - NFR7
+  - NFR8
+  - NFR25
+  9-3-shared-ui-components-and-safe-app-sheet:
+  - FR1
+  - FR18
+  - FR52
+  - NFR3
+  - NFR7
+  - NFR8
+  - NFR25
+  9-4-component-workbench-and-enforced-code-quality:
+  - FR52
+  - NFR3
+  - NFR7
+  - NFR8
+  - NFR25
+  9-5-browser-flow-and-visual-regression-gates:
+  - FR1
+  - FR18
+  - FR52
+  - NFR3
+  - NFR8
+  - NFR25
+  9-6-identity-scoped-server-read-queries:
+  - FR2
+  - FR3
+  - FR18
+  - FR52
+  - NFR3
+  - NFR8
+  - NFR20
+  - NFR25
+  9-7-typed-navigation-and-host-history:
+  - FR18
+  - FR49
+  - FR52
+  - NFR3
+  - NFR8
+  - NFR20
+  - NFR25
+source_obligations:
+  login-attribution:
+    requirements:
+    - FR14
+    - NFR6
+    story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    source: docs/prd.md
+    source_heading: '### 1) 账号与合规（首屏登录影响）'
+    task: 1.0承接Web/PWA、Android与iOS的真实首次打开/注册/登录/恢复、U-App/U-Link、隐私选择、稳定owner绑定与切换清理；消费9.1宿主，不记录秘密/原始来源，不把App可用当纯Web统计已接通。
+    evidence: 双端实际安装候选及适用Web路径的真实能力/供应商事件查询与失败证据；Key/SDK/wrapper不算接通，未核验保留未验收。
+  input-attribution:
+    requirements:
+    - FR14
+    - FR2
+    - FR3
+    - NFR6
+    story_keys:
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    source: docs/prd.md
+    source_heading: '### 2) 统一输入与深链'
+    task: 准备1.6时把已有冷启动深链/用户触发粘贴、登录后恢复同一动作、渠道/点击标识最小归因的适用能力与隐私边界写入Tasks及验收；不自动读剪贴板或因重放重复启动导入。 本期Android/iOS冷暖启动深链与用户主动粘贴分别验收，重复/进程重建不重交任务。
+    evidence: 合法/失效/跨owner/登录中断/重复深链、剪贴板拒绝恢复与适用宿主真实集成证据；未接通明确未完成。复用1.0身份与现有输入，不等待8.1总览。
+  analytics-consolidation:
+    requirements:
+    - FR14
+    - NFR6
+    story_keys:
+    - 8-1-cross-flow-observability-and-fault-localization
+    source: docs/prd.md
+    source_heading: '### 10) 观测与质量'
+    task: 8.1复核并汇总先前1.0/1.6等首次消费的U-App事件/归因和METRICS-01字典、窗口、脱敏及失败覆盖；不把友盟要求静默替换为Sentry/Langfuse。 按Web/Android/iOS、App
+      build/Web bundle与实际分母拆分，核验JS/native桥接双计数和原生故障符号。
+    evidence: 真实已启用宿主与配置/回执及失败路径；无法获得服务证据保持未验收。无新平台、移动运营页或提前部署要求。
+  map-copyright:
+    requirements:
+    - NFR7
+    story_keys:
+    - 2-7-full-city-picker-and-l3-place-intent
+    source: docs/prd.md
+    source_heading: '### 11) 法务与上架'
+    task: 2.7首个统一AMap地图容器承接Logo/版权等适用地图级展示与弱网列表降级；普通POI/候选/交通卡不逐卡增加版权徽标。
+    evidence: 按当前获准SDK/宿主核验地图容器截图及实际要求，保留2.8/2.10既有普通卡片边界。
+  app-build-delivery:
+    requirements:
+    - FR52
+    - NFR25
+    story_keys:
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    source: docs/prd.md
+    source_heading: '## Capacitor 首期交付（2026-09-19 已批准）'
+    task: 9.1提供可安装宿主与明确构建/设备矩阵；9.2完成签名APK、指定测试组实际可用TestFlight与安装升级、完整跨端证据，网页保持。
+    evidence: 原生/Web构建输入、真实设备安装/交互、最终候选/签名安全引用、TestFlight可用与有效期；源码/配置/模拟器/IPA/上传受理均非完成证明。
+  shared-ui-adoption:
+    story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+    requirements:
+    - NFR8
+    - NFR25
+    source: docs/architecture/ui-foundation.md
+    source_heading: '## 页面迁移责任'
+    task: 落实共享组件、品牌、Portal身份、焦点/返回/状态与本Story平台回归；旧组件记录迁移责任
+    evidence: 当前源码组件/浏览器/适用原生证据，逐Story关闭
+  ui-quality-tooling:
+    story_keys:
+    - 9-4-component-workbench-and-enforced-code-quality
+    - 9-5-browser-flow-and-visual-regression-gates
+    requirements:
+    - NFR3
+    - NFR8
+    - NFR25
+    source: docs/ops/ui-validation.md
+    source_heading: '## 当前证据边界'
+    task: 交付可运行工作台/真实lint/浏览器门禁和旧探针对照，开发替身不入产品
+    evidence: 正反例实际退出码/CI产物与源码对应，不代替真实设备
+  identity-scoped-read-adoption:
+    story_keys:
+    - 9-6-identity-scoped-server-read-queries
+    requirements:
+    - FR2
+    - FR3
+    - NFR3
+    - NFR20
+    source: docs/architecture/frontend-data-navigation.md
+    source_heading: '## AR27'
+    task: Home/Planner读取迁移，owner隔离/取消/刷新重试受控；保留auth/journal权威
+    evidence: 真实消费点与跨owner/恢复反例及独立回退
+  typed-navigation-adoption:
+    story_keys:
+    - 9-7-typed-navigation-and-host-history
+    requirements:
+    - FR18
+    - FR49
+    - NFR3
+    - NFR8
+    source: docs/architecture/frontend-data-navigation.md
+    source_heading: '## AR28'
+    task: typed route、Web刷新/直达、已验证深链、唯一host返回与草稿/身份保护
+    evidence: 现有页面Web/原生证据，导航不写业务，缺失页面不假可达
+selection_rules:
+  prepare: 按当前preparation_order选择首个未准备合同，当前9.4；合同准备不解除stop_after_story或paused。
+  develop: 先核对stop_after_story和明确恢复记录；本次UI批准同步范围，不自动启动9.3–9.7或越过1.7。满足正式合同、依赖与local_slice_dependencies后再派发。
+  inherited_contract: 新3.1准备时保留development_status=in-progress；实施文件Status同为in-progress，另置contract_ready=true，开始条件满足前paused=true保持。不得为兼容通用create-story先降为backlog/ready。
+  snapshot_vs_live: 2026-09-15 migration的authorization/execution_state是SP时点快照；当前授权与逐Story工程条件进展在sprint-status维护，不能永久锁在false/not-started。
+  scope: 2026-09-20完整UI与Query/Router范围已批准，当前1.7后停止优先；文件不授予真实资源操作权。
+integration_boundaries:
+- stories:
+  - '1.0'
+  - '1.6'
+  - '1.7'
+  - '1.9'
+  check: 身份与测量在首次使用进入；批量呈现1.6复用旧单链接API，跨进程恢复归1.7；真实多模态与对象生命周期归1.9/1.10，不能由历史1.3的done代替。
+- stories:
+  - '2.3'
+  - '2.5'
+  - '2.6'
+  - '2.7'
+  - '2.9'
+  - '2.10'
+  - '2.11'
+  check: S2/S3→S4→S5→单一任务/完整计划；2.6可在既有Picker输入边界先交S5，2.7再交三态Picker接线；2.9承接现有引擎，2.11关闭完整初始编排，不以中间slice冒充完整流程。
+- stories:
+  - '2.11'
+  - '2.12'
+  - '2.13'
+  check: Top-50读取/降级随2.11/2.12；2.13池返回missing/stale/insufficient且不等待8.7/8.8。向量仅实际触发时工作。
+- stories:
+  - '3.1'
+  - '3.2'
+  - '3.3'
+  - '3.4'
+  - '3.5'
+  check: 3.1继承且需上游合同；自身触发校验，3.4再交FixSheet，无前向循环；3.2候选落位/3.3住宿/3.5AI调整各自保留版本、校验、undo。
+- stories:
+  - '4.1'
+  - '4.2'
+  - '4.3'
+  - '4.4'
+  - '4.5'
+  - '4.6'
+  - '4.7'
+  check: 输入草稿→交通边界→原子发布→当前城市编辑；一日游以child Plan与去返双交通独立，4.6新增限目标host日，4.7显式日期修改验证旧/新host日。
+- stories:
+  - '5.1'
+  - '5.2'
+  - '5.3'
+  - '5.4'
+  - '5.5'
+  check: 5.1先交最小S10宿主/S9实际来源/返回，5.2同路由增强，5.3保留逐行覆盖；基础导出不等填充或5.5，5.5才交整趟/城市边界part与能力化分享。
+- stories:
+  - '6.1'
+  - '6.2'
+  - '6.3'
+  - '6.4'
+  - '6.5'
+  check: 餐次确认才改计划；定位只读单次fix、无计划基准不编造；商圈不等定位；清单独立版本/轻购物不占排期，不引入7.2或6.6。
+- stories:
+  - '7.1'
+  - '7.3'
+  - '7.4'
+  - '7.5'
+  - '7.6'
+  check: 7.1只恢复真实状态；7.3按已交付能力开放入口，不等待7.4–7.6；副本/删除/反馈独立闭环，7.6首次实体自接导出/清理登记。
+- stories:
+  - '8.1'
+  - '8.2'
+  - '8.3'
+  - '8.4'
+  - '8.5'
+  - '8.6'
+  check: 早期安全/测量/规则不等待全套运营UI；8.2人评不统一硬失败否决；8.4金额来源区分，8.5终态告警，8.6只读不重建权威；全为桌面运营。
+- stories:
+  - '9.1'
+  - '1.0'
+  - '1.6'
+  - '5.5'
+  - '6.2'
+  - '8.1'
+  - '9.2'
+  check: 9.1安装入口前置，身份/归因/文件/位置/观测各首次消费；9.2最后真实APK/TestFlight。无9.1↔1.0循环，不用Web证据关闭App。
+- 'UI scope: 遵守ui-foundation和frontend-data-navigation，领域controller/identity/journal权威保持。'
+epic_completion_rule: 只有当前Epic全部Story达done才可标done；历史回顾事实不覆盖扩围，Epic1新增范围回顾另存证据；真实生产开放还须检查适用OPS/METRICS条件。
+scope_revision: ui-foundation-2026-09-20

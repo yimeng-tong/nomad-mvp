@@ -221,6 +221,10 @@ const validStory20Payload = {
 };
 
 async function main() {
+  // Explicit isolated fixture authorization; never enable this profile in a deployment.
+  process.env.AUTH_RUNTIME_MODE = 'test';
+  process.env.AUTH_PROVIDER = 'fixture';
+  process.env.AUTH_TEST_ADAPTER_ENABLED = 'true';
   assertGeneratedPlannerContracts();
   const { app, repository } = await buildPlannerApp();
   try {

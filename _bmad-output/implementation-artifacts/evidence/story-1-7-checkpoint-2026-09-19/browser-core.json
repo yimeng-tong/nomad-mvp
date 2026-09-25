@@ -1,0 +1,31 @@
+{
+  "result": "passed",
+  "checks": [
+    "v1-upgrade-preserves-operations-claims-nonextractable-key-and-decryptable-payload",
+    "snapshot-and-cursor-encrypted-in-one-durable-checkpoint",
+    "cross-tab-late-resync-low-seq-gap-and-low-version-high-seq-cannot-overwrite",
+    "owner-isolation-and-unbound-job-write-denial",
+    "failed-to-new-attempt-keeps-contiguous-seq-and-rejects-late-high-seq-old-attempt",
+    "noteDone-max-survives-concurrent-resync-and-namespace-cas",
+    "corrupt-cipher-and-malformed-checkpoint-require-explicit-revision-matched-resync",
+    "valid-shaped-aad-tampering-is-quarantined-and-cannot-be-overwritten-by-normal-event",
+    "late-corruption-quarantine-cannot-overwrite-another-tab-repaired-revision",
+    "transaction-abort-and-identity-change-do-not-acknowledge-received-event",
+    "subscription-abort-cancels-pending-idb-checkpoint-transaction",
+    "real-browser-sigkill-after-receive-before-idb-commit-retains-old-ack",
+    "real-browser-sigkill-after-commit-before-ui-restores-facts-and-ack-together",
+    "checkpoint-capacity-fails-closed-and-expired-cache-is-pruned"
+  ],
+  "actualIndexedDb": true,
+  "actualWebCrypto": true,
+  "browserProcesses": 3,
+  "browserSigkills": 2,
+  "serverRequests": 0,
+  "sourceSha256": {
+    "apps/mobile/src/home/operation-journal.ts": "b8e799eecd0f02bd329925cc8bab6bc1fea96cfa04f753a3a3c4dc622ba753d7",
+    "apps/mobile/src/home/ingest-checkpoint-store.ts": "7f03328cf52da654c49ed330b526f4a496d1f957db99615e4c944a1836457e8f",
+    "apps/mobile/src/home/ingest-protocol.ts": "99c4c43f15e8e765f5f40e5a0c09e31180786299782d43adc68a9162cf4cfd9e"
+  },
+  "controllerIntegrationVerified": false,
+  "nativeDeviceVerified": false
+}

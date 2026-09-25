@@ -1,0 +1,54 @@
+{
+  "manifest": {
+    "measurementVersion": "nomad.import.v1",
+    "workload": "WL-IMPORT-DOCK",
+    "mode": "fixture",
+    "clockId": "8645c6d6-a38d-4b33-aa48-5dea59606c50",
+    "plannedLogicalRequests": 1,
+    "windowStartMs": 298.89999997615814,
+    "windowEndMs": 7311.399999976158,
+    "deadlineMs": 7000,
+    "fixtureVersion": "import-baseline-single-v1",
+    "sampling": 1
+  },
+  "samples": [
+    {
+      "logicalId": "0ad6f56d-9d0c-4114-8fc3-0962feefa24b",
+      "clockId": "8645c6d6-a38d-4b33-aa48-5dea59606c50",
+      "scenario": "single",
+      "outcome": "done",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "0ad6f56d-9d0c-4114-8fc3-0962feefa24b"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "transportRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 0,
+      "observedStages": [
+        "created",
+        "done"
+      ],
+      "visibleMs": 1759.7000000476837,
+      "times": {
+        "confirmed": 308.10000002384186,
+        "prepared": 360.60000002384186,
+        "accepted": 369.60000002384186,
+        "firstFact": 5550.100000023842,
+        "terminal": 5550.100000023842,
+        "presented": 5551.699999928474,
+        "presentationEnded": null
+      }
+    }
+  ],
+  "fixturePlan": [
+    {
+      "scenario": "single",
+      "count": 1
+    }
+  ],
+  "forbiddenExternalRequests": 0
+}

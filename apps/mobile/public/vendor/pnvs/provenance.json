@@ -1,0 +1,8 @@
+{
+  "source": "https://static.alicaptcha.com/v4/ct4.js",
+  "retrieved": "2026-09-19",
+  "sha256": "f2e9d00c14e079590367bff6dbeb09b142f6d4b1353c56afb3caa4d7d0164861",
+  "bytes": 14783,
+  "modified": false,
+  "officialIntegrationGuide": "https://help.aliyun.com/zh/pnvs/developer-reference/integrate-the-sdk-with-h5-pages"
+}

@@ -1,0 +1,13 @@
+{
+  "scope": "recovery-http-and-bounded-pg-page-reader-only",
+  "layers": 3,
+  "runtimeFindings": 0,
+  "contractFindings": 1,
+  "fixed": [
+    "declare-Last-Event-ID-header-and-conflict-resync-rules-in-recovery-operation"
+  ],
+  "recheckedBy": "acceptance-reviewer",
+  "remainingScopedFindings": 0,
+  "sseReviewed": false,
+  "clientReviewed": false
+}

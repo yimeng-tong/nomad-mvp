@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Nomad physical PostgreSQL backup (%i)
+
+[Timer]
+OnCalendar=*-*-* 03:15:00 UTC
+RandomizedDelaySec=5min
+Persistent=true
+Unit=nomad-pg-backup@%i.service
+
+[Install]
+WantedBy=timers.target

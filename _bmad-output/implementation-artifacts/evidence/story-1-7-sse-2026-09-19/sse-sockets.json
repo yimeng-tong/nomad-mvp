@@ -1,0 +1,32 @@
+{
+  "result": "passed",
+  "checks": [
+    "two-process-socket-replay-after-disconnect-and-server-kill-has-contiguous-seq-and-live-tail",
+    "old-terminal-does-not-cut-new-attempt-and-control-has-no-id",
+    "paced-replay-stays-below-native-100-events-per-second",
+    "confirmed-terminal-head-only-emits-complete",
+    "owner-first-typed-cursor-errors-and-retention-resync-over-real-sockets",
+    "retry-committed-during-terminal-send-authentication-is-not-cut-off-by-old-complete",
+    "actual-small-receive-window-nonreading-socket-times-out-with-bounded-server-buffer-and-resumes-original-cursor",
+    "heartbeat-continues-during-paced-business-replay-without-business-id",
+    "actual-isolated-database-interruption-closes-without-fake-resync-and-replays-after-recovery",
+    "long-idle-heartbeats-without-seq-and-idle-session-revocation",
+    "application-preClose-ends-active-durable-stream-before-database-close",
+    "preClose-includes-stream-initialization-blocked-in-first-database-read"
+  ],
+  "independentServerProcesses": true,
+  "serverKillAndRestart": true,
+  "actualIsolatedDatabaseInterruption": true,
+  "maxBusinessFramesPerSecond": 50,
+  "maxIdleHeartbeatGapMs": 3022.1378110000005,
+  "realProviderCalls": 0,
+  "transport": "real-loopback-http-with-explicit-trusted-proxy-fixture-headers",
+  "slowConsumerSocketVerified": true,
+  "slowConsumer": {
+    "backpressureWrites": 1,
+    "maxQueuedBytes": 66006,
+    "businessFramesBeforeClose": 660
+  },
+  "clientDurableAckVerified": false,
+  "nativeDeviceVerified": false
+}

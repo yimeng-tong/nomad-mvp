@@ -1,0 +1,19 @@
+{
+  "result": "passed",
+  "checks": [
+    "wrong-owner-before-cursor-and-zero-event-payload-read",
+    "recovery-does-not-ack-head-or-dispatch-and-explicit-resync-is-coherent",
+    "malformed-conflicting-foreign-and-ahead-cursors-rejected",
+    "more-than-128-events-paged-in-order-with-between-page-commit-and-empty-tail",
+    "old-attempt-terminal-does-not-complete-running-retry-and-confirmed-head-is-not-resent",
+    "expired-floor-requires-explicit-resync-control",
+    "legacy-recovery-adopts-one-current-checkpoint-without-fabricated-history",
+    "actual-recovery-route-with-pg-session-auth-owner-duplicate-parameter-and-revocation-checks",
+    "missing-internal-event-never-silently-skipped",
+    "tail-read-rechecks-current-owner-qualification"
+  ],
+  "realProviderCalls": 0,
+  "syntheticFloorWithoutDeletion": true,
+  "sseSocketReplayVerified": false,
+  "clientDurableAckVerified": false
+}

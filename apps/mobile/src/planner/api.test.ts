@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createPlannerApiClient } from './api';
+import { commitIdentity, markChecking } from '../auth/session-context';
 
 class FakeEventSource {
   static readonly CLOSED = 2;
@@ -150,4 +151,42 @@ describe('planner timeline edit client', () => {
       }),
     );
   });
+});
+
+
+it('stale SSE callbacks are discarded during authority checks and after an account change', () => {
+  vi.stubGlobal('EventSource', FakeEventSource);
+  commitIdentity({ ownerId: 'a', sessionId: 's-a' });
+  const onEvent = vi.fn();
+  const dispose = createPlannerApiClient('https://api.example.test').watchPlanJob({ sseUrl: '/sse/plan/job-1', onEvent, onError: vi.fn() });
+  const old = FakeEventSource.latest!;
+  expect(new URL(old.url).searchParams.get('auth_user_id')).toBe('a');
+  markChecking(false); old.emit('plan', { phase: 'running' }); expect(onEvent).not.toHaveBeenCalled();
+  commitIdentity({ ownerId: 'a', sessionId: 's-a' });
+  const resumed = FakeEventSource.latest!; expect(resumed).not.toBe(old);
+  resumed.emit('plan', { phase: 'running' }); expect(onEvent).toHaveBeenCalledOnce();
+  commitIdentity({ ownerId: 'b', sessionId: 's-b' });
+  resumed.emit('plan', { phase: 'running' }); expect(onEvent).toHaveBeenCalledOnce();
+  expect(resumed.readyState).toBe(FakeEventSource.CLOSED);
+  dispose(); commitIdentity(null); vi.unstubAllGlobals();
+});
+
+it('an unknown generation result retries with the same idempotency key', async () => {
+  const fetchMock = vi.fn().mockRejectedValueOnce(new Error('network')).mockResolvedValue(new Response('{}'));
+  vi.stubGlobal('fetch', fetchMock);
+  const client = createPlannerApiClient('https://api.example.test');
+  const body = {} as Parameters<typeof client.generatePlan>[0];
+  await expect(client.generatePlan(body)).rejects.toThrow('network');
+  await client.generatePlan(body);
+  const key = (index: number) => new Headers(fetchMock.mock.calls[index][1].headers).get('Idempotency-Key');
+  expect(key(0)).toBe(key(1)); vi.unstubAllGlobals();
+});
+
+
+it('an SSE server rejection in CLOSED state triggers recovery instead of waiting forever', () => {
+  vi.stubGlobal('EventSource', FakeEventSource); commitIdentity({ ownerId: 'a', sessionId: 's-a' });
+  const onError = vi.fn();
+  const dispose = createPlannerApiClient('https://api.example.test').watchPlanJob({ sseUrl: '/sse/plan/job-1', onEvent: vi.fn(), onError });
+  const stream = FakeEventSource.latest!; stream.readyState = FakeEventSource.CLOSED; stream.onerror?.();
+  expect(onError).toHaveBeenCalledOnce(); dispose(); commitIdentity(null); vi.unstubAllGlobals();
 });

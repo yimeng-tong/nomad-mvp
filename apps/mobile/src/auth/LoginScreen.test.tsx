@@ -176,3 +176,33 @@ describe('LoginScreen', () => {
     expect(onAuthenticated).not.toHaveBeenCalled();
   });
 });
+
+it('PNVS binds retry to one intent and says unknown delivery truthfully', async () => {
+  const config: AuthConfigResponse = { privacy_url: '/legal/privacy', user_agreement_url: '/legal/terms', enabled_methods: [{ id: 'phone', label: '手机号', type: 'phone', enabled: true }], ios_equal_weight_order: ['phone'], captcha: { provider: 'aliyun-pnvs', mode: 'risk', app_id: 'public', sdk_url: '/vendor/pnvs/ct4.js' } };
+  const startOtp = vi.fn().mockRejectedValueOnce(new Error('network')).mockResolvedValue({ sent: false, captcha_required: false, retry_after_sec: 60, challenge_id: 'challenge', delivery_state: 'unknown' });
+  const client = createApiClient({ getConfig: async () => config, startOtp });
+  render(<LoginScreen apiClient={client} />);
+  fireEvent.change(await screen.findByLabelText('手机号'), { target: { value: '13800138000' } });
+  fireEvent.click(screen.getByRole('button', { name: '获取验证码' }));
+  await screen.findByText('发送结果尚未确认，可重试确认同一次发送');
+  fireEvent.click(screen.getByRole('button', { name: '重试确认发送结果' }));
+  await screen.findByText('发送结果尚未确认；如已收到验证码，可继续登录');
+  expect(startOtp.mock.calls[0][0].request_id).toMatch(/^[a-f0-9-]{36}$/);
+  expect(startOtp.mock.calls[1][0].request_id).toBe(startOtp.mock.calls[0][0].request_id);
+  expect(screen.queryByText('验证码已发送')).toBeNull();
+  fireEvent.change(screen.getByLabelText('验证码'), { target: { value: '123456' } });
+  fireEvent.click(screen.getByRole('button', { name: '登录' }));
+  await waitFor(() => expect(client.verifyOtp).toHaveBeenCalledWith(expect.objectContaining({ challenge_id: 'challenge' })));
+});
+
+it('a late send response for an edited phone cannot restore the old challenge', async () => {
+  let resolve!: (value: any) => void;
+  const client = createApiClient({ startOtp: () => new Promise((done) => { resolve = done; }) });
+  render(<LoginScreen apiClient={client} />);
+  fireEvent.change(await screen.findByLabelText('手机号'), { target: { value: '13800138000' } });
+  fireEvent.click(screen.getByRole('button', { name: '获取验证码' }));
+  fireEvent.change(screen.getByLabelText('手机号'), { target: { value: '13900139000' } });
+  resolve({ sent: true, retry_after_sec: 60, captcha_required: false });
+  await waitFor(() => expect(screen.getByRole('button', { name: '获取验证码' })).not.toBeDisabled());
+  expect(screen.queryByText('验证码已发送')).toBeNull();
+});

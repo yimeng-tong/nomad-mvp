@@ -1,3 +1,6 @@
+import { getAuthSnapshot } from '../auth/session-context';
+import { watchBoundStream } from '../auth/stream';
+import { createBoundJsonRequest } from '../auth/transport';
 import type { components } from 'nomad-types/src/api-types';
 import { AuthApiError, getApiBaseUrl } from '../auth/api';
 import type { LibraryCitiesResponse, LibraryInspirationsResponse } from '../home/api';
@@ -66,47 +69,34 @@ async function parseError(response: Response) {
   }
 }
 
-async function requestJson<T>(baseUrl: string, path: string, init: RequestInit = {}) {
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...init,
-    credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
-      ...init.headers,
-    },
-  });
-
-  if (!response.ok) throw await parseError(response);
-  return (await response.json()) as T;
-}
 
 export function createPlannerApiClient(baseUrl = getApiBaseUrl()): PlannerApiClient {
+  const scope = getAuthSnapshot();
+  const bound = createBoundJsonRequest(baseUrl, parseError);
+  const pendingGenerations = new Map<string, string>();
+  const requestJson = <T>(_baseUrl: string, path: string, init?: RequestInit) => bound<T>(path, init);
   return {
     getCities: () => requestJson<LibraryCitiesResponse>(baseUrl, '/library/cities'),
     getInspirations: () => requestJson<LibraryInspirationsResponse>(baseUrl, '/library/inspirations'),
     searchPoi: ({ city, q, topk = 5 }) => requestJson<{ items?: SearchPoiItem[] }>(baseUrl, `/search/poi?city=${encodeURIComponent(city)}&q=${encodeURIComponent(q)}&topk=${topk}`),
-    generatePlan: (body) => requestJson<PlanGenerateResponse>(baseUrl, '/plan/generate', {
-      method: 'POST',
-      headers: { 'Idempotency-Key': crypto.randomUUID() },
-      body: JSON.stringify(body),
-    }),
-    watchPlanJob: ({ sseUrl, onEvent, onError }) => {
-      const source = new EventSource(`${baseUrl}${sseUrl}`, { withCredentials: true });
-      source.addEventListener('plan', (message) => {
-        try {
-          const event = JSON.parse((message as MessageEvent<string>).data) as PlanJobEvent;
-          if (event.phase === 'done' || event.phase === 'failed') source.close();
-          onEvent(event);
-        } catch {
-          onError();
-        }
-      });
-      source.onerror = () => {
-        if (source.readyState !== EventSource.CLOSED) onError();
-      };
-      return () => source.close();
+    generatePlan: async (body) => {
+      const serialized = JSON.stringify(body);
+      const intent = pendingGenerations.get(serialized) ?? crypto.randomUUID();
+      pendingGenerations.set(serialized, intent);
+      try {
+        const result = await requestJson<PlanGenerateResponse>(baseUrl, '/plan/generate', {
+          method: 'POST', headers: { 'Idempotency-Key': intent }, body: serialized,
+        });
+        pendingGenerations.delete(serialized); return result;
+      } catch (error) {
+        // Keep the nonce through unknown result/auth recheck; a retry must recover the same accepted job.
+        if (error instanceof AuthApiError && [400,403,422].includes(error.status)) pendingGenerations.delete(serialized);
+        throw error;
+      }
     },
+    watchPlanJob: ({ sseUrl, onEvent, onError }) => watchBoundStream<PlanJobEvent>(scope, baseUrl, sseUrl, 'plan', (event) => {
+      onEvent(event); return event.phase === 'done' || event.phase === 'failed';
+    }, onError),
     getPlan: (planId) => requestJson<DayPlanResponse>(baseUrl, `/plan/${encodeURIComponent(planId)}`),
     getPlanVersion: (planId, versionId) =>
       requestJson<DayPlanResponse>(

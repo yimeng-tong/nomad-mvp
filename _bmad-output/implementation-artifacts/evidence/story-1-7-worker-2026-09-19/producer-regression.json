@@ -1,0 +1,25 @@
+{
+  "result": "ingest-authority-probe-passed",
+  "realProviderCalls": 0,
+  "independentWorkerProcesses": true,
+  "verified": [
+    "one-dispatch-across-processes",
+    "durable-command-recovery",
+    "command-conflict",
+    "owner-isolation",
+    "retry-cas-and-replay",
+    "late-attempt-fenced",
+    "atomic-result-and-snapshot",
+    "partial-content-retained",
+    "db-failure-no-publication",
+    "account-qualification",
+    "late-cache-publication-fenced",
+    "legacy-authoritative-sse-result",
+    "legacy-partial-projection",
+    "all-producer-transactions-append-events",
+    "legacy-current-fact-checkpoint-only",
+    "result-assets-candidates-event-failure-full-rollback",
+    "legacy-adopt-two-process-single-checkpoint",
+    "wrong-owner-does-not-adopt-log"
+  ]
+}

@@ -1,6 +1,7 @@
+import { registerHostBackHandler } from '../platform/host';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Analytics } from '../auth/analytics';
-import { createNoopAnalytics, sanitizeAnalyticsProps } from '../auth/analytics';
+import { createNoopAnalytics, trackAnalytics } from '../auth/analytics';
 import type { LibraryCitySummary, LibraryInspirationItem, PlannerHandoff, PlannerHandoffSelectedItem } from '../home/api';
 import { createPlannerApiClient, type PlanGenerateRequest, type PlannerApiClient, type PlannerTimeHint, type SearchPoiItem } from './api';
 import type { PlanGenerateResponse } from './api';
@@ -268,6 +269,14 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
   const [activeL2, setActiveL2] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [planStart, setPlanStart] = useState<PlanGenerateResponse | null>(null);
+  useEffect(() => registerHostBackHandler(() => {
+    if (submitting) return true;
+    if (planStart) { setPlanStart(null); return true; }
+    if (activeL2) { setActiveL2(null); return true; }
+    if (viewMode !== 'confirm') { setViewMode('confirm'); return true; }
+    return false;
+  }, 10), [submitting, planStart, activeL2, viewMode]);
+
   const [confirm, setConfirm] = useState<ConfirmState>(() => ({
     city: routeParams.city,
     startDate: routeParams.startDate,
@@ -286,7 +295,7 @@ export function PlannerScreen({ handoff, apiClient, analytics, onBack }: Planner
 
   const track = (event: Parameters<Analytics['track']>[0], props?: Parameters<Analytics['track']>[1]) => {
     try {
-      tracker.track(event, sanitizeAnalyticsProps(props));
+      trackAnalytics(tracker, event, props);
     } catch {
       // Analytics must not affect planning.
     }

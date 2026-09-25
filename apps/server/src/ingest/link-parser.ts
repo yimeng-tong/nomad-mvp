@@ -29,7 +29,8 @@ export function isXhsUrl(value: string) {
   try {
     const parsed = new URL(cleanUrl(value));
     const hostname = parsed.hostname.toLowerCase();
-    return xhsHosts.has(hostname) || hostname.endsWith('.xiaohongshu.com') || hostname.endsWith('.xhslink.com');
+    return ['http:', 'https:'].includes(parsed.protocol) && !parsed.username && !parsed.password && !parsed.port
+      && (xhsHosts.has(hostname) || hostname.endsWith('.xiaohongshu.com') || hostname.endsWith('.xhslink.com'));
   } catch {
     return false;
   }
@@ -74,4 +75,33 @@ export function parseXhsInput(input: IngestInput): XhsParseResult {
         }
       : undefined,
   };
+}
+
+
+export type XhsBatch = {
+  links: Array<{ url: string; position: number }>;
+  link_occurrences: Array<{ url: string; position: number }>;
+  unrecognized: Array<{ text: string; reason: 'unsupported_url' | 'not_a_link' }>;
+  duplicate_count: number;
+};
+/** The same basic normalizer as the single-link route, not Story1.8 canonical/short-link resolution. */
+export function parseXhsBatch(text: string): XhsBatch {
+  const result: XhsBatch = { links: [], link_occurrences: [], unrecognized: [], duplicate_count: 0 };
+  const seen = new Set<string>(); let end = 0;
+  const unknown = (value: string, reason: 'unsupported_url' | 'not_a_link') => {
+    const trimmed = value.trim().replace(/^[),.;，。；、）\s]+|[),.;，。；、）\s]+$/gu, '');
+    if (trimmed) result.unrecognized.push({ text: trimmed, reason });
+  };
+  // Some shares join URLs with Chinese punctuation and no spaces.
+  for (const match of text.matchAll(/https?:\/\/[^\s"'<>，。；、）]+/gi)) {
+    unknown(text.slice(end, match.index), 'not_a_link'); end = match.index + match[0].length;
+    const candidate = cleanUrl(match[0]);
+    if (!isXhsUrl(candidate)) { unknown(candidate, 'unsupported_url'); continue; }
+    const url = normalizeXhsUrl(candidate);
+    result.link_occurrences.push({ url, position: match.index });
+    if (seen.has(url)) { result.duplicate_count++; continue; }
+    seen.add(url); result.links.push({ url, position: match.index });
+  }
+  unknown(text.slice(end), 'not_a_link');
+  return result;
 }

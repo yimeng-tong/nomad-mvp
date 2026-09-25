@@ -24,6 +24,9 @@ tags:
 paths:
   /home/input/parse:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Home]
       summary: Classify unified Home input into ingest, trip params, or unknown
       operationId: parseHomeInput
@@ -33,7 +36,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/HomeInputParseRequest'
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Input classification result
           content:
@@ -47,10 +57,15 @@ paths:
 
   /library/cities:
     get:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Library]
       summary: List user-owned inspiration city aggregates
       operationId: listLibraryCities
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: City aggregates for the authenticated user's inspirations
           content:
@@ -62,6 +77,9 @@ paths:
 
   /library/inspirations:
     get:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Library]
       summary: List user-owned inspirations for Home and Library
       operationId: listLibraryInspirations
@@ -73,6 +91,8 @@ paths:
           name: locate_status
           schema: { type: string, enum: [resolved, pending] }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Inspiration list for the authenticated user
           content:
@@ -84,6 +104,9 @@ paths:
 
   /library/inspirations/{inspiration_id}/candidates:
     get:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Library]
       summary: List sanitized pending-location candidates for an inspiration
       operationId: listLibraryCandidates
@@ -93,6 +116,8 @@ paths:
           required: true
           schema: { type: string }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Top-5 sanitized candidates
           content:
@@ -105,6 +130,9 @@ paths:
 
   /ingest/start:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Ingest]
       summary: Start ingest of a single Xiaohongshu link (async)
       operationId: startIngest
@@ -116,7 +144,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IngestStartRequest'
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '202':
           description: Accepted; ingest job created
           headers:
@@ -134,6 +169,9 @@ paths:
 
   /ingest/xhs:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Ingest]
       summary: Start ingest by Xiaohongshu share link (async)
       operationId: ingestXhs
@@ -143,29 +181,198 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IngestXhsRequest'
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '202':
           description: Accepted; ingest job created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IngestStartResponse'
+                $ref: '#/components/schemas/IngestAcceptedResponse'
         '400': { $ref: '#/components/responses/Error400' }
         '401': { $ref: '#/components/responses/Error401' }
         '429': { $ref: '#/components/responses/Error429' }
         '500': { $ref: '#/components/responses/Error500' }
 
-  /ingest/{job_id}/events:
+  /ingest/{job_id}:
     get:
-      tags: [SSE]
-      summary: SSE stream for ingest job events (alias path)
-      operationId: ingestEvents
+      tags: [Ingest]
+      operationId: readIngestSnapshot
+      security: [{ SessionAuth: [] }, { BearerAuth: [] }]
       parameters:
         - in: path
           name: job_id
           required: true
           schema: { type: string }
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '200':
+          description: Current owner-qualified committed facts, without redispatching existing work
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IngestSnapshot' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '404': { $ref: '#/components/responses/Error404' }
+        '409': { $ref: '#/components/responses/Error409' }
+        '429': { $ref: '#/components/responses/Error429' }
+        '503': { $ref: '#/components/responses/Error503' }
+
+  /ingest/{job_id}/recovery:
+    get:
+      tags: [Ingest]
+      operationId: recoverIngestProgress
+      description: Owner-qualified recovery without job creation or redispatch. A legacy job may adopt one current-fact log checkpoint. Replay does not acknowledge the head. Explicit resync requires no cursor in either header or query and returns one atomic authoritative snapshot/cursor pair. If both cursor sources are supplied, they must match exactly; malformed, duplicate or conflicting values are rejected after ownership validation.
+      security: [{ SessionAuth: [] }, { BearerAuth: [] }]
+      parameters:
+        - in: path
+          name: job_id
+          required: true
+          schema: { type: string }
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
+        - in: header
+          name: Last-Event-ID
+          schema: { $ref: '#/components/schemas/IngestCursor' }
+        - in: query
+          name: last_event_id
+          schema: { $ref: '#/components/schemas/IngestCursor' }
+        - in: query
+          name: mode
+          schema: { type: string, enum: [replay, resync], default: replay }
+      responses:
+        '200':
+          description: Replay from a confirmed cursor or explicitly replace a missing/expired checkpoint with the supplied authoritative pair
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IngestRecoveryResponse' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '404': { $ref: '#/components/responses/Error404' }
+        '409': { $ref: '#/components/responses/Error409' }
+        '429': { $ref: '#/components/responses/Error429' }
+        '503': { $ref: '#/components/responses/Error503' }
+
+  /ingest/{job_id}/result:
+    get:
+      tags: [Ingest]
+      operationId: readIngestResult
+      security: [{ SessionAuth: [] }, { BearerAuth: [] }]
+      parameters:
+        - in: path
+          name: job_id
+          required: true
+          schema: { type: string }
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
+      responses:
+        '200':
+          description: Current owner-qualified committed facts, without redispatching existing work
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LibraryInspirationItem' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '404': { $ref: '#/components/responses/Error404' }
+        '409': { $ref: '#/components/responses/Error409' }
+        '429': { $ref: '#/components/responses/Error429' }
+        '503': { $ref: '#/components/responses/Error503' }
+
+  /ingest/{job_id}/retry:
+    post:
+      tags: [Ingest]
+      operationId: retryIngestJob
+      security: [{ SessionAuth: [] }, { BearerAuth: [] }]
+      parameters:
+        - in: path
+          name: job_id
+          required: true
+          schema: { type: string }
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
+        - $ref: '#/components/parameters/RequestOrigin'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/IngestRetryRequest' }
+      responses:
+        '200':
+          description: Current owner-qualified committed facts, without redispatching existing work
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IngestAcceptedResponse' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '404': { $ref: '#/components/responses/Error404' }
+        '409': { $ref: '#/components/responses/Error409' }
+        '429': { $ref: '#/components/responses/Error429' }
+        '503': { $ref: '#/components/responses/Error503' }
+
+  /ingest/commands/{operation_id}:
+    get:
+      tags: [Ingest]
+      operationId: readIngestCommand
+      security: [{ SessionAuth: [] }, { BearerAuth: [] }]
+      parameters:
+        - in: path
+          name: operation_id
+          required: true
+          schema: { type: string }
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
+      responses:
+        '200':
+          description: Current owner-qualified committed facts, without redispatching existing work
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IngestAcceptedResponse' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '404': { $ref: '#/components/responses/Error404' }
+        '409': { $ref: '#/components/responses/Error409' }
+        '429': { $ref: '#/components/responses/Error429' }
+        '503': { $ref: '#/components/responses/Error503' }
+
+  /ingest/{job_id}/events:
+    get:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
+      tags: [SSE]
+      summary: SSE stream for ingest job events (alias path)
+      operationId: ingestEvents
+      description: Durable ingest replay then database tail. Conflicting header/query cursors are rejected. Business frames use cursor id and IngestDurableEvent; ingest_control carries resync/complete without id. Heartbeats are comments at most 10 seconds apart and never advance a business cursor. Clients must persist applied facts before acknowledging a cursor.
+      parameters:
+        - in: header
+          name: Last-Event-ID
+          schema: { $ref: '#/components/schemas/IngestCursor' }
+        - in: query
+          name: last_event_id
+          schema: { $ref: '#/components/schemas/IngestCursor' }
+        - $ref: '#/components/parameters/StreamExpectedOwner'
+        - $ref: '#/components/parameters/StreamExpectedSession'
+        - in: path
+          name: job_id
+          required: true
+          schema: { type: string }
+      responses:
+        '400': { $ref: '#/components/responses/Error400' }
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Server-Sent Events stream
           content:
@@ -175,28 +382,40 @@ paths:
               examples:
                 example:
                   value: |
-                    id: 01J0...
+                    id: i1:11111111-1111-4111-8111-111111111111:1
                     event: ingest
-                    data: {"trace_id":"t-1","ingest_id":"ing_123","state":"created","retry":0,"ts":1730000000}
+                    data: {"schema_version":1,"kind":"fact","seq":"1","cursor":"i1:11111111-1111-4111-8111-111111111111:1","trace_id":"33333333-3333-4333-8333-333333333333","ingest_id":"ing_22222222-2222-4222-8222-222222222222","state":"created","stage":"created","occurred_at":"2026-09-19T00:00:00.000Z","attempt":1,"state_version":0,"snapshot":{"ingest_id":"ing_22222222-2222-4222-8222-222222222222","attempt":1,"state_version":0,"state":"created","source_title":null,"result":null,"partial":false,"retriable":false,"updated_at":"2026-09-19T00:00:00.000Z","actions":{"retry":false,"view":false},"head_cursor":"i1:11111111-1111-4111-8111-111111111111:1"},"ts":1789776000000}
 
-                    event: ping
-                    data: {"seq":1,"heartbeat_ms":10000,"ts":1730000010}
+                    : heartbeat
         '401': { $ref: '#/components/responses/Error401' }
         '404': { $ref: '#/components/responses/Error404' }
 
   /sse/ingest/{ingest_id}:
     get:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [SSE]
       summary: SSE stream for ingest job events
       operationId: sseIngest
       deprecated: true
-      description: Use GET /ingest/{job_id}/events instead.
+      description: Durable ingest replay then database tail. Conflicting header/query cursors are rejected. Business frames use cursor id and IngestDurableEvent; ingest_control carries resync/complete without id. Heartbeats are comments at most 10 seconds apart and never advance a business cursor. Clients must persist applied facts before acknowledging a cursor.
       parameters:
+        - in: header
+          name: Last-Event-ID
+          schema: { $ref: '#/components/schemas/IngestCursor' }
+        - in: query
+          name: last_event_id
+          schema: { $ref: '#/components/schemas/IngestCursor' }
         - in: path
           name: ingest_id
           required: true
           schema: { type: string }
       responses:
+        '400': { $ref: '#/components/responses/Error400' }
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Server-Sent Events stream
           headers:
@@ -208,16 +427,15 @@ paths:
             text/event-stream:
               schema:
                 type: string
-                description: SSE lines (id/event/data) where data conforms to IngestEvent schema
+                description: SSE business data conforms to IngestDurableEvent; ingest_control has no id and conforms to IngestControl.
               examples:
                 example:
                   value: |
-                    id: 01J0...
+                    id: i1:11111111-1111-4111-8111-111111111111:1
                     event: ingest
-                    data: {"trace_id":"t-1","ingest_id":"ing_123","state":"created","retry":0,"ts":1730000000}
+                    data: {"schema_version":1,"kind":"fact","seq":"1","cursor":"i1:11111111-1111-4111-8111-111111111111:1","trace_id":"33333333-3333-4333-8333-333333333333","ingest_id":"ing_22222222-2222-4222-8222-222222222222","state":"created","stage":"created","occurred_at":"2026-09-19T00:00:00.000Z","attempt":1,"state_version":0,"snapshot":{"ingest_id":"ing_22222222-2222-4222-8222-222222222222","attempt":1,"state_version":0,"state":"created","source_title":null,"result":null,"partial":false,"retriable":false,"updated_at":"2026-09-19T00:00:00.000Z","actions":{"retry":false,"view":false},"head_cursor":"i1:11111111-1111-4111-8111-111111111111:1"},"ts":1789776000000}
 
-                    event: ping
-                    data: {"seq":1,"heartbeat_ms":10000,"ts":1730000010}
+                    : heartbeat
         '401': { $ref: '#/components/responses/Error401' }
         '404': { $ref: '#/components/responses/Error404' }
 
@@ -228,7 +446,11 @@ paths:
       operationId: planGenerate
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: header
           name: Idempotency-Key
           required: false
@@ -241,6 +463,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PlanGenerateRequest'
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '202':
           description: Accepted; plan job created
           headers:
@@ -263,12 +487,19 @@ paths:
       operationId: ssePlan
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
+        - $ref: '#/components/parameters/StreamExpectedOwner'
+        - $ref: '#/components/parameters/StreamExpectedSession'
+        - $ref: '#/components/parameters/StreamCursor'
         - in: path
           name: plan_job_id
           required: true
           schema: { type: string }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Server-Sent Events stream for plan phases
           content:
@@ -303,7 +534,11 @@ paths:
       operationId: editPlanSlot
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: plan_id
           required: true
@@ -318,6 +553,8 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/SlotEditRequest' }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Slot edited
           content:
@@ -335,6 +572,7 @@ paths:
       operationId: getPlanRecentAction
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
         - in: path
           name: plan_id
@@ -344,6 +582,8 @@ paths:
           name: day_index
           schema: { type: integer, minimum: 0, maximum: 13 }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Latest eligible recent action, if any
           content:
@@ -360,7 +600,11 @@ paths:
       operationId: undoPlanEdit
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: plan_id
           required: true
@@ -371,6 +615,8 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/PlanEditUndoRequest' }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Edit undone into a new immutable plan version
           content:
@@ -383,6 +629,9 @@ paths:
 
   /plan/ai-fill:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Plans]
       summary: Start one-shot AI fill over remaining controllable slots (async)
       operationId: aiFill
@@ -394,7 +643,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AiFillRequest'
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '202':
           description: Accepted; fill run created
           content:
@@ -408,6 +664,9 @@ paths:
 
   /fill/apply:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Plans]
       summary: Apply AI fill over remaining controllable slots (async)
       operationId: fillApply
@@ -417,7 +676,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AiFillRequest'
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '202':
           description: Accepted; fill run created
           content:
@@ -431,6 +697,9 @@ paths:
 
   /plan/{plan_id}/result-sheet:
     get:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [ResultSheet]
       summary: Get read-only result sheet (slots + AI suggestions + citations)
       operationId: getResultSheet
@@ -440,6 +709,8 @@ paths:
           required: true
           schema: { type: string }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Result sheet
           content:
@@ -455,12 +726,15 @@ paths:
       operationId: getPlan
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
         - in: path
           name: plan_id
           required: true
           schema: { type: string }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Current day plan
           content:
@@ -476,6 +750,7 @@ paths:
       operationId: getPlanVersion
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
         - in: path
           name: plan_id
@@ -486,6 +761,8 @@ paths:
           required: true
           schema: { type: string }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Requested plan version
           content:
@@ -501,7 +778,11 @@ paths:
       operationId: resolveEmptyPlanSlot
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: plan_id
           required: true
@@ -516,6 +797,8 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/EmptySlotResolveRequest' }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Empty slot resolved
           content:
@@ -533,7 +816,11 @@ paths:
       operationId: resetPlanSeed
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: plan_id
           required: true
@@ -544,6 +831,9 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/PlanRevisionRequest' }
       responses:
+        '400': { $ref: '#/components/responses/Error400' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Seed placements reset
           content:
@@ -560,7 +850,11 @@ paths:
       operationId: undoPlanSeed
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: plan_id
           required: true
@@ -571,6 +865,8 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/SeedUndoRequest' }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Seed placement undone
           content:
@@ -583,10 +879,16 @@ paths:
 
   /plan/slots/{slot_id}/status:
     patch:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Plans]
       summary: Toggle or set slot status (checked)
       operationId: patchSlotStatus
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: slot_id
           required: true
@@ -597,6 +899,9 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/SlotStatusPatchRequest' }
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Status updated
           content:
@@ -607,10 +912,16 @@ paths:
 
   /plan/slots/{slot_id}/overrides:
     patch:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Plans]
       summary: Set or update slot text overrides (do/prepare/notice)
       operationId: patchSlotOverrides
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: slot_id
           required: true
@@ -621,6 +932,9 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/SlotOverridesPatchRequest' }
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Overrides updated
           content:
@@ -629,20 +943,33 @@ paths:
         '400': { $ref: '#/components/responses/Error400' }
         '401': { $ref: '#/components/responses/Error401' }
     delete:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Plans]
       summary: Clear slot text overrides (revert to AI)
       operationId: deleteSlotOverrides
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: slot_id
           required: true
           schema: { type: string }
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '204': { description: Cleared }
         '401': { $ref: '#/components/responses/Error401' }
 
   /sse/fill/{fill_run_id}:
     get:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [SSE]
       summary: SSE stream for AI fill run
       operationId: sseFill
@@ -652,6 +979,9 @@ paths:
           required: true
           schema: { type: string }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Server-Sent Events stream for fill phases and result updates
           content:
@@ -667,6 +997,9 @@ paths:
 
   /export/png:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Export]
       summary: Export itinerary as PNG/WebP, auto-slicing by day when needed
       operationId: exportPng
@@ -676,7 +1009,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ExportPngRequest'
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Exported files
           content:
@@ -691,6 +1031,9 @@ paths:
   # --- Plan Validation & Fix ---
   /plan/validate:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Plans]
       summary: Validate plan feasibility and return conflicts/suggestions
       operationId: planValidate
@@ -703,7 +1046,14 @@ paths:
               required: [plan_id]
               properties:
                 plan_id: { type: string }
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Validation results
           content:
@@ -721,6 +1071,9 @@ paths:
 
   /plan/fix:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Plans]
       summary: Apply a suggested fix or atomic ops to reduce conflicts
       operationId: planFix
@@ -737,7 +1090,13 @@ paths:
                 apply_sequence:
                   type: array
                   items: { $ref: '#/components/schemas/FixAtomicOperation' }
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200': { description: Fix applied }
         '400': { $ref: '#/components/responses/Error400' }
         '401': { $ref: '#/components/responses/Error401' }
@@ -751,12 +1110,20 @@ paths:
       operationId: hqStart
       security:
         - SessionAuth: []
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema: { $ref: '#/components/schemas/HqStartRequest' }
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '202':
           description: HQ job started
           content:
@@ -772,12 +1139,15 @@ paths:
       operationId: hqStatus
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
         - in: query
           name: hq_job_id
           required: true
           schema: { type: string }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: HQ status
           content:
@@ -793,12 +1163,20 @@ paths:
       operationId: hqAdopt
       security:
         - SessionAuth: []
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema: { $ref: '#/components/schemas/HqAdoptRequest' }
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: HQ version adopted
           content:
@@ -815,12 +1193,20 @@ paths:
       operationId: byokValidate
       security:
         - SessionAuth: []
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema: { $ref: '#/components/schemas/ByokValidateRequest' }
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Validation result
           content:
@@ -836,12 +1222,20 @@ paths:
       operationId: byokSave
       security:
         - SessionAuth: []
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema: { $ref: '#/components/schemas/ByokSaveRequest' }
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Saved key status
           content:
@@ -853,6 +1247,9 @@ paths:
 
   /search/poi:
     get:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Search]
       summary: Text-only POI search (MVP FR44-lite)
       operationId: searchPoi
@@ -870,6 +1267,7 @@ paths:
           required: false
           schema: { type: integer, default: 5, minimum: 1, maximum: 10 }
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
         '200':
           description: Top‑K results
           content:
@@ -888,10 +1286,16 @@ paths:
 
   /plans/{plan_id}/candidates:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Plans]
       summary: Manually add a candidate by name/address/coords (MVP minimal)
       operationId: addCandidate
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: plan_id
           required: true
@@ -902,6 +1306,9 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/CandidateAddRequest' }
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Added candidate
           content:
@@ -912,10 +1319,16 @@ paths:
 
   /plan/days/{day}/hotel:
     patch:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Plans]
       summary: Set or change hotel for a day (display-only slot)
       operationId: setHotel
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: day
           required: true
@@ -926,6 +1339,9 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/SetHotelRequest' }
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200': { description: Hotel updated }
         '400': { $ref: '#/components/responses/Error400' }
         '401': { $ref: '#/components/responses/Error401' }
@@ -953,7 +1369,13 @@ paths:
         content:
           application/json:
             schema: { $ref: '#/components/schemas/OtpStartRequest' }
+      parameters:
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
+        - $ref: '#/components/parameters/RequestOrigin'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: OTP send status or captcha requirement
           content:
@@ -974,7 +1396,13 @@ paths:
         content:
           application/json:
             schema: { $ref: '#/components/schemas/OtpVerifyRequest' }
+      parameters:
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
+        - $ref: '#/components/parameters/RequestOrigin'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Session created
           headers:
@@ -989,6 +1417,67 @@ paths:
         '403': { $ref: '#/components/responses/Error403' }
         '429': { $ref: '#/components/responses/Error429' }
 
+  /auth/native/otp/start:
+    post:
+      tags: [Auth]
+      summary: Start OTP flow (SMS)
+      operationId: native_authOtpStart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OtpStartRequest' }
+      parameters:
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
+        - $ref: '#/components/parameters/NativeAudience'
+        - $ref: '#/components/parameters/NativeBinding'
+      responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '503': { $ref: '#/components/responses/Error503' }
+        '200':
+          description: OTP send status or captcha requirement
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OtpStartResponse' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '429':
+          $ref: '#/components/responses/Error429'
+
+
+  /auth/native/otp/verify:
+    post:
+      tags: [Auth]
+      summary: Verify OTP and create session
+      operationId: native_authOtpVerify
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OtpVerifyRequest' }
+      parameters:
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
+        - $ref: '#/components/parameters/NativeAudience'
+        - $ref: '#/components/parameters/NativeBinding'
+      responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '503': { $ref: '#/components/responses/Error503' }
+        '200':
+          description: Session created
+          headers:
+            X-Device-Id:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NativeOtpVerifyResponse'
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '429': { $ref: '#/components/responses/Error429' }
+
   /me:
     get:
       tags: [Sessions]
@@ -996,7 +1485,10 @@ paths:
       operationId: me
       security:
         - SessionAuth: []
+        - BearerAuth: []
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Current user and session
           content:
@@ -1012,7 +1504,10 @@ paths:
       operationId: sessionsMe
       security:
         - SessionAuth: []
+        - BearerAuth: []
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Current session
           content:
@@ -1028,7 +1523,10 @@ paths:
       operationId: sessionsList
       security:
         - SessionAuth: []
+        - BearerAuth: []
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Sessions
           content:
@@ -1044,12 +1542,20 @@ paths:
       operationId: sessionsDelete
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
         - in: path
           name: id
           required: true
           schema: { type: string }
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Deleted
           content:
@@ -1058,12 +1564,73 @@ paths:
         '401': { $ref: '#/components/responses/Error401' }
         '404': { $ref: '#/components/responses/Error404' }
 
+  /ops/me:
+    get:
+      security: [{ SessionAuth: [] }]
+      tags: [Auth]
+      operationId: readOperatorAccess
+      summary: Read currently granted desktop operator capabilities
+      description: Web session only. Ordinary login, client roles and knowing this URL grant no operator authority. Grants are checked from the persistent authority on each request.
+      parameters:
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
+      responses:
+        '200':
+          description: Current effective scoped grants
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OperatorAccessResponse' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
+  /ops/access-check:
+    post:
+      security: [{ SessionAuth: [] }]
+      tags: [Auth]
+      operationId: checkOperatorAccess
+      summary: Verify scoped write authority and create an audit receipt
+      description: Locks the qualified caller and the exact current grant in the audit-write transaction. This writes only an access-check receipt, not business data or a permission grant. Retries retain operation_id; revoked or changed grants never replay a successful old receipt.
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OperatorAccessCheckRequest' }
+      responses:
+        '200':
+          description: Durable authorization-check receipt
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OperatorAccessCheckResponse' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '409': { $ref: '#/components/responses/Error409' }
+        '503': { $ref: '#/components/responses/Error503' }
+
   /logout:
     post:
       tags: [Sessions]
-      summary: Clear current session cookie
+      summary: Revoke the current session and clear its cookie
       operationId: logout
+      description: Confirms durable current-session revocation before clearing the cookie; other device sessions remain valid. Unknown storage outcomes return 503 and must not be reported as successful logout. The same operation_id and expected public identity confirm a lost response even after cookie clearing; this receipt never authenticates a user or revokes a newer session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LogoutRequest' }
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Logged out
           content:
@@ -1078,6 +1645,7 @@ paths:
       operationId: getFeedbackLink
       security:
         - SessionAuth: []
+        - BearerAuth: []
       parameters:
         - in: query
           name: source
@@ -1085,6 +1653,8 @@ paths:
           schema: { type: string }
           description: Source page or context for analytics.
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Product URL
           content:
@@ -1101,7 +1671,16 @@ paths:
       operationId: accountExport
       security:
         - SessionAuth: []
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Account export task
           content:
@@ -1116,7 +1695,16 @@ paths:
       operationId: accountDelete
       security:
         - SessionAuth: []
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Account deletion task
           content:
@@ -1126,6 +1714,9 @@ paths:
 
   /auth/bind/apple:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Auth]
       summary: Bind Apple identity
       operationId: bindApple
@@ -1138,12 +1729,23 @@ paths:
               required: [id_token]
               properties:
                 id_token: { type: string }
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200': { description: Bound }
         '401': { $ref: '#/components/responses/Error401' }
-  
+
   /auth/bind/wechat:
     post:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
       tags: [Auth]
       summary: Bind WeChat identity
       operationId: bindWeChat
@@ -1156,7 +1758,15 @@ paths:
               required: [code]
               properties:
                 code: { type: string }
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200': { description: Bound }
         '401': { $ref: '#/components/responses/Error401' }
 
@@ -1168,7 +1778,10 @@ paths:
       operationId: getUserKey
       security:
         - SessionAuth: []
+        - BearerAuth: []
       responses:
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Key status
           content:
@@ -1181,12 +1794,20 @@ paths:
       operationId: setUserKey
       security:
         - SessionAuth: []
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema: { $ref: '#/components/schemas/ByokSaveRequest' }
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '200':
           description: Saved key status
           content:
@@ -1200,20 +1821,77 @@ paths:
       operationId: deleteUserKey
       security:
         - SessionAuth: []
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RequestOrigin'
+        - $ref: '#/components/parameters/ExpectedUser'
+        - $ref: '#/components/parameters/ExpectedSession'
       responses:
+        '409': { $ref: '#/components/responses/Error409' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
         '204': { description: Deleted }
         '401': { $ref: '#/components/responses/Error401' }
 
 components:
+  parameters:
+    RequestOrigin:
+      in: header
+      name: Origin
+      required: true
+      description: Exact configured browser origin required on unsafe requests; never derived from Host or forwarded headers.
+      schema: { type: string }
+    ExpectedUser:
+      in: header
+      name: X-Auth-User-Id
+      required: false
+      description: Required for authenticated browser resource requests. Login/OTP requests use anonymous when the initiating page is unauthenticated. Expected owner from the initiating page; only compared AFTER real session authentication, never a credential or an identity selector.
+      schema: { type: string, maxLength: 128 }
+    NativeAudience:
+      in: header
+      name: X-Nomad-Auth-Audience
+      required: true
+      description: Native fixed API origin. HTTPS required; browser Origin and Cookie are rejected.
+      schema: { type: string, format: uri }
+    NativeBinding:
+      in: header
+      name: X-Nomad-Login-Binding
+      required: true
+      description: Secret generated and retained by the native plugin. Never available to JavaScript or logs.
+      schema: { type: string, pattern: '^[A-Za-z0-9_-]{43}$' }
+    StreamExpectedOwner:
+      in: query
+      name: auth_user_id
+      description: Web EventSource expected public owner reference; never a credential.
+      schema: { type: string }
+    StreamExpectedSession:
+      in: query
+      name: auth_session_id
+      description: Web EventSource expected public session reference; never a credential.
+      schema: { type: string }
+    StreamCursor:
+      in: query
+      name: last_event_id
+      description: Last delivered attempt and sequence for browser reconnect; Last-Event-ID header takes precedence.
+      schema: { type: string, maxLength: 128 }
+    ExpectedSession:
+      in: header
+      name: X-Auth-Session-Id
+      required: false
+      description: Required for authenticated browser resource requests. Login/OTP requests use anonymous when the initiating page is unauthenticated. Public session reference from the initiating page; stale or mismatched context returns AUTH_CONTEXT_CHANGED (409).
+      schema: { type: string, maxLength: 128 }
   securitySchemes:
     SessionAuth:
       type: apiKey
       in: cookie
-      name: sid
+      name: __Host-nomad-sid-{public_session_id}
+      description: HttpOnly Secure cookie family. Each login writes a distinct public-session suffix; delayed login/logout responses cannot overwrite newer credentials. The suffix is public and never authenticates without the opaque cookie value.
     BearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT
+      bearerFormat: opaque
+      description: Native only. Requires HTTPS, X-Nomad-Auth-Audience matching AUTH_API_ORIGIN, and no Origin or Cookie. The credential is held by the native plugin and is never returned to JavaScript.
   schemas:
     FeedbackLinkResponse:
         type: object
@@ -1273,8 +1951,49 @@ components:
       type: object
       required: [provider, mode]
       properties:
-        provider: { type: string, enum: [tencent] }
+        provider: { type: string, enum: [tencent, aliyun-pnvs, fixture] }
         mode: { type: string, enum: [off, risk, always] }
+        app_id: { type: string, nullable: true, description: Public graphic H5 identifier only; no appKey or cloud credential. }
+        sdk_url: { type: string, nullable: true, description: Server-approved H5 SDK asset URL. }
+
+    PnvsCaptchaProof:
+      type: object
+      additionalProperties: false
+      required: [lot_number, captcha_output, pass_token, gen_time]
+      properties:
+        lot_number: { type: string, minLength: 1, maxLength: 128 }
+        captcha_output: { type: string, minLength: 1, maxLength: 4096 }
+        pass_token: { type: string, minLength: 1, maxLength: 1024 }
+        gen_time: { type: string, minLength: 1, maxLength: 32 }
+
+    OperatorGrant:
+      type: object
+      required: [capability, scope, version]
+      properties:
+        capability: { type: string, enum: [places.correct, brand.rules, ops.workbench, ops.prompts, ops.rollout, ops.usage] }
+        scope: { type: string, minLength: 1, maxLength: 128 }
+        version: { type: integer, minimum: 1 }
+    OperatorAccessResponse:
+      type: object
+      required: [user_id, grants]
+      properties:
+        user_id: { type: string, format: uuid }
+        grants: { type: array, items: { $ref: '#/components/schemas/OperatorGrant' } }
+    OperatorAccessCheckRequest:
+      type: object
+      additionalProperties: false
+      required: [capability, scope, expected_grant_version, operation_id]
+      properties:
+        capability: { type: string, enum: [places.correct, brand.rules, ops.workbench, ops.prompts, ops.rollout, ops.usage] }
+        scope: { type: string, minLength: 1, maxLength: 128 }
+        expected_grant_version: { type: integer, minimum: 1 }
+        operation_id: { type: string, format: uuid }
+    OperatorAccessCheckResponse:
+      type: object
+      required: [receipt_id, verified_at]
+      properties:
+        receipt_id: { type: string, format: uuid }
+        verified_at: { type: string, format: date-time }
 
     AuthConfigResponse:
       type: object
@@ -1282,6 +2001,7 @@ components:
       properties:
         privacy_url: { type: string }
         user_agreement_url: { type: string }
+        availability: { type: string, enum: [ready, unavailable, fixture] }
         enabled_methods:
           type: array
           items: { $ref: '#/components/schemas/LoginMethod' }
@@ -1290,50 +2010,66 @@ components:
           items: { type: string, enum: [apple, phone, wechat] }
         captcha: { $ref: '#/components/schemas/AuthCaptchaConfig' }
 
+    NativeOtpVerifyResponse:
+      description: Internal HTTPS response consumed only by the native plugin. The plugin stores and strips the credential before resolving any JavaScript promise.
+      allOf:
+        - $ref: '#/components/schemas/OtpVerifyResponse'
+        - type: object
+          required: [native_session_credential]
+          properties:
+            native_session_credential: { type: string, pattern: '^[A-Za-z0-9_-]{43}$' }
+
     OtpStartRequest:
       type: object
       required: [phone]
       properties:
-        phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\\+?[0-9][0-9 -]{4,30}[0-9]$' }
+        phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\+?[0-9][0-9 -]{4,30}[0-9]$' }
         region: { type: string, minLength: 2, maxLength: 8, pattern: '^[A-Z]{2,8}$', default: CN }
-        captcha_token: { type: string, minLength: 1, maxLength: 2048, nullable: true }
+        request_id: { type: string, format: uuid, description: Required in real mode; one browser intent retains this ID across an unknown-result retry. }
+        captcha: { $ref: '#/components/schemas/PnvsCaptchaProof' }
+        captcha_token: { type: string, minLength: 1, maxLength: 2048, nullable: true, description: Legacy isolated fixture only; never accepted as real PNVS proof. }
 
     OtpStartResponse:
       type: object
       required: [sent, retry_after_sec, captcha_required]
       properties:
-        sent: { type: boolean }
+        sent: { type: boolean, description: Provider accepted this send; does not prove handset delivery or login. }
         retry_after_sec: { type: integer, minimum: 1 }
+        challenge_id: { type: string, format: uuid, nullable: true }
+        delivery_state: { type: string, enum: [sent, unknown, captcha_required] }
         captcha_required: { type: boolean }
-        captcha_provider: { type: string, nullable: true, enum: [tencent] }
+        captcha_provider: { type: string, nullable: true, enum: [tencent, aliyun-pnvs, fixture] }
 
     OtpVerifyRequest:
-      oneOf:
-        - type: object
-          required: [phone, otp]
-          properties:
-            phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\\+?[0-9][0-9 -]{4,30}[0-9]$' }
-            otp: { type: string, minLength: 4, maxLength: 12 }
-            code: { type: string, minLength: 4, maxLength: 12, description: Compatibility alias for otp. If supplied with otp, it must match. }
-            device_fingerprint: { type: string, minLength: 1, maxLength: 128 }
-            device_id: { type: string, minLength: 1, maxLength: 128, description: Compatibility alias for device_fingerprint. }
-        - type: object
-          required: [phone, code]
-          properties:
-            phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\\+?[0-9][0-9 -]{4,30}[0-9]$' }
-            otp: { type: string, minLength: 4, maxLength: 12, description: Compatibility alias for code. If supplied with code, it must match. }
-            code: { type: string, minLength: 4, maxLength: 12 }
-            device_fingerprint: { type: string, minLength: 1, maxLength: 128 }
-            device_id: { type: string, minLength: 1, maxLength: 128, description: Compatibility alias for device_fingerprint. }
+      type: object
+      description: Accepts otp or the compatibility alias code; when both are supplied they must match (validated by the server). Real mode requires the server-issued challenge_id and its HttpOnly browser-binding cookie. Device fields are metadata only.
+      required: [phone]
+      anyOf:
+        - required: [otp]
+        - required: [code]
+      properties:
+        phone: { type: string, minLength: 6, maxLength: 32, pattern: '^\+?[0-9][0-9 -]{4,30}[0-9]$' }
+        challenge_id: { type: string, format: uuid }
+        otp: { type: string, minLength: 4, maxLength: 12 }
+        code: { type: string, minLength: 4, maxLength: 12 }
+        device_fingerprint: { type: string, minLength: 1, maxLength: 128 }
+        device_id: { type: string, minLength: 1, maxLength: 128, description: Compatibility alias for device_fingerprint. }
 
     Session:
       type: object
       required: [id, device_id, expires_at]
       properties:
-        id: { type: string }
+        id: { type: string, description: Public session reference; not a cookie credential and never usable to authenticate. }
         device_id: { type: string }
         expires_at: { type: string, format: date-time }
         created_at: { type: string, format: date-time }
+
+    LogoutRequest:
+      type: object
+      additionalProperties: false
+      required: [operation_id]
+      properties:
+        operation_id: { type: string, format: uuid, description: One browser-generated operation ID reused for recovery of the same logout, never a login credential. }
 
     SessionResponse:
       type: object
@@ -1441,6 +2177,32 @@ components:
       properties:
         type: { type: string, enum: [xhs_link, trip_params, unknown] }
         original_text: { type: string }
+        links:
+          type: array
+          items:
+            type: object
+            required: [url, position]
+            properties:
+              url: { type: string, format: uri }
+              position: { type: integer, minimum: 0 }
+        duplicate_count: { type: integer, minimum: 0 }
+        link_occurrences:
+          type: array
+          description: Every recognized URL occurrence, including duplicates; position is the UTF-16 offset in original_text.
+          items:
+            type: object
+            required: [url, position]
+            properties:
+              url: { type: string, format: uri }
+              position: { type: integer, minimum: 0 }
+        unrecognized:
+          type: array
+          items:
+            type: object
+            required: [text, reason]
+            properties:
+              text: { type: string }
+              reason: { type: string, enum: [unsupported_url, not_a_link] }
         url: { type: string, format: uri, nullable: true }
         warning:
           nullable: true
@@ -1593,12 +2355,134 @@ components:
         url: { type: string, format: uri, nullable: true }
         force: { type: boolean, description: 'Bypass idempotency (admin/feature-flag)' }
 
+    IngestSequence:
+      type: string
+      maxLength: 19
+      pattern: '^(0|[1-9][0-9]{0,18})$(?![\s\S])'
+      description: Canonical decimal PostgreSQL bigint from 0 through 9223372036854775807. Never coerce through a JavaScript Number.
+    IngestCursor:
+      type: string
+      maxLength: 128
+      pattern: '^i1:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}:(0|[1-9][0-9]{0,18})$(?![\s\S])'
+      description: Public per-job log namespace plus decimal seq, not an authentication credential. Bare 0, leading zeros, duplicates and out-of-range values are invalid.
+    IngestRecoveryResponse:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required: [mode, ingest_id, cursor, head_cursor, head_seq, replay_floor]
+          properties:
+            mode: { type: string, enum: [replay] }
+            ingest_id: { type: string }
+            cursor: { $ref: '#/components/schemas/IngestCursor' }
+            head_cursor: { $ref: '#/components/schemas/IngestCursor' }
+            head_seq: { $ref: '#/components/schemas/IngestSequence' }
+            replay_floor: { $ref: '#/components/schemas/IngestSequence' }
+        - type: object
+          additionalProperties: false
+          required: [mode, reason, ingest_id, cursor, head_cursor, head_seq, replay_floor, snapshot]
+          properties:
+            mode: { type: string, enum: [resync] }
+            reason: { type: string, enum: [retention, checkpoint_missing] }
+            ingest_id: { type: string }
+            cursor: { $ref: '#/components/schemas/IngestCursor' }
+            head_cursor: { $ref: '#/components/schemas/IngestCursor' }
+            head_seq: { $ref: '#/components/schemas/IngestSequence' }
+            replay_floor: { $ref: '#/components/schemas/IngestSequence' }
+            snapshot: { $ref: '#/components/schemas/IngestSnapshot' }
+    IngestControl:
+      type: object
+      additionalProperties: false
+      required: [kind, ingest_id, cursor, attempt, state_version]
+      properties:
+        kind: { type: string, enum: [complete, resync] }
+        ingest_id: { type: string }
+        cursor: { $ref: '#/components/schemas/IngestCursor' }
+        attempt: { type: integer, minimum: 1 }
+        state_version: { type: integer, minimum: 0 }
+      description: A no-id control frame, processed after prior business frames. Resync instructs a protected recovery read; complete only ends the current confirmed head, never an older attempt.
+    IngestDurableEvent:
+      allOf:
+        - $ref: '#/components/schemas/IngestEvent'
+        - type: object
+          required: [schema_version, kind, seq, cursor, stage, occurred_at, attempt, state_version, snapshot]
+          properties:
+            schema_version: { type: integer, enum: [1] }
+            kind: { type: string, enum: [fact, checkpoint] }
+            seq: { $ref: '#/components/schemas/IngestSequence' }
+            cursor: { $ref: '#/components/schemas/IngestCursor' }
+            stage: { type: string, enum: [created, fetching, parsing, geo, storing, done, failed] }
+            occurred_at: { type: string, format: date-time }
+            attempt: { type: integer, minimum: 1 }
+            state_version: { type: integer, minimum: 0 }
+            snapshot: { $ref: '#/components/schemas/IngestSnapshot' }
+            sub_stage: { type: string, enum: [media_prep, speech_detect, frame_extract, asr, multimodal], nullable: true }
+          description: Immutable stored facts. Checkpoint is an explicit legacy baseline, not fabricated past stages. stage and state agree; seq spans all user attempts of this job.
+    IngestSnapshot:
+      type: object
+      description: Current committed facts. state_version orders snapshots and differs from durable seq. head_cursor is only a current-head hint; ordinary snapshot reads must not acknowledge unconsumed events.
+      required: [ingest_id, attempt, state_version, state, source_title, result, partial, retriable, updated_at, actions]
+      properties:
+        head_cursor: { $ref: '#/components/schemas/IngestCursor' }
+        sub_stage: { type: string, enum: [media_prep, speech_detect, frame_extract, asr, multimodal], nullable: true }
+        ingest_id: { type: string }
+        attempt: { type: integer, minimum: 1 }
+        state_version: { type: integer, minimum: 0 }
+        state: { type: string, enum: [created, fetching, parsing, geo, storing, done, failed] }
+        source_title: { type: string, nullable: true, maxLength: 240 }
+        fetched_count: { type: integer, minimum: 0, nullable: true }
+        parsed_count: { type: integer, minimum: 0, nullable: true }
+        candidate_count: { type: integer, minimum: 0, nullable: true, description: Actual saved candidate records once a result is committed; unknown before persistence. }
+        stored_count: { type: integer, minimum: 0, nullable: true }
+        partial: { type: boolean }
+        retriable: { type: boolean }
+        error_code: { type: string, nullable: true }
+        updated_at: { type: string, format: date-time }
+        result:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/IngestResultSummary'
+        actions:
+          type: object
+          required: [retry, view]
+          properties:
+            retry: { type: boolean }
+            view: { type: boolean }
+    IngestResultSummary:
+      type: object
+      required: [inspiration_id, locate_status, asset_count, city_name]
+      properties:
+        inspiration_id: { type: string }
+        locate_status: { type: string, enum: [resolved, pending] }
+        asset_count: { type: integer, minimum: 0 }
+        city_name: { type: string, nullable: true }
+    IngestAcceptedResponse:
+      allOf:
+        - $ref: '#/components/schemas/IngestStartResponse'
+        - type: object
+          required: [operation_id, disposition, snapshot]
+          properties:
+            operation_id: { type: string, format: uuid }
+            disposition: { type: string, enum: [created, reused, retried] }
+            snapshot: { $ref: '#/components/schemas/IngestSnapshot' }
+    IngestRetryRequest:
+      type: object
+      additionalProperties: false
+      required: [operation_id, expected_attempt, expected_state_version]
+      properties:
+        operation_id: { type: string, format: uuid }
+        expected_attempt: { type: integer, minimum: 1 }
+        expected_state_version: { type: integer, minimum: 0 }
+
     IngestStartResponse:
       type: object
+      description: Legacy compatible base. The canonical ingest endpoint returns the required version-2 accepted response below.
       required: [ingest_id, state, sse_url]
       properties:
+        operation_id: { type: string, format: uuid }
+        disposition: { type: string, enum: [created, reused, retried] }
+        snapshot: { $ref: '#/components/schemas/IngestSnapshot' }
         ingest_id: { type: string }
-        state: { type: string, enum: [created] }
+        state: { type: string, enum: [created, fetching, parsing, geo, storing, done, failed] }
         sse_url: { type: string, example: '/ingest/ing_123/events' }
         warning:
           $ref: '#/components/schemas/IngestWarning'
@@ -1618,6 +2502,7 @@ components:
         - required: [url]
         - required: [share_text]
       properties:
+        operation_id: { type: string, format: uuid, description: Retain this owner-scoped operation across an unknown acceptance; new clients always supply it. }
         url: { type: string, format: uri, nullable: true }
         share_text: { type: string, nullable: true }
 
@@ -1625,10 +2510,13 @@ components:
       type: object
       required: [trace_id, ingest_id, state, ts]
       properties:
+        snapshot: { $ref: '#/components/schemas/IngestSnapshot' }
+        attempt: { type: integer, minimum: 1 }
+        state_version: { type: integer, minimum: 0 }
         trace_id: { type: string }
         ingest_id: { type: string }
         state: { type: string, enum: [created, fetching, parsing, geo, storing, done, failed] }
-        sub_stage: { type: string, enum: [text, ocr, vision], nullable: true }
+        sub_stage: { type: string, enum: [media_prep, speech_detect, frame_extract, asr, multimodal, text, ocr, vision], nullable: true, description: Legacy text/ocr/vision values are accepted only when reading old wire events. New durable writes use the canonical five stages. }
         retry: { type: integer, minimum: 0 }
         fetched_count: { type: integer, minimum: 0 }
         parsed_count: { type: integer, minimum: 0 }
@@ -2377,10 +3265,14 @@ components:
       content:
         application/json:
           schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    Error503:
+      description: Required authoritative store or provider unavailable; unknown external results remain unknown.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
     Error500:
       description: Internal Server Error
       content:
         application/json:
           schema: { $ref: '#/components/schemas/ErrorEnvelope' }
-
 

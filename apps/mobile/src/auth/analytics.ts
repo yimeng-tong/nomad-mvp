@@ -1,4 +1,5 @@
-export type AuthEventName =
+import { sanitizeAnalyticsEvent, type TelemetryEventName } from '../telemetry/dictionary';
+export type AuthEventName = TelemetryEventName
   | 'auth_view'
   | 'auth_method_tap'
   | 'auth_otp_start'
@@ -48,53 +49,10 @@ export type Analytics = {
   track: (event: AuthEventName, props?: AnalyticsProps) => void;
 };
 
-const blockedKeys = new Set([
-  'apikey',
-  'authcode',
-  'authorization',
-  'authheader',
-  'byok',
-  'captchatoken',
-  'code',
-  'content',
-  'cookie',
-  'feedback',
-  'feedbackbody',
-  'feedbacktext',
-  'key',
-  'message',
-  'confidence',
-  'distance',
-  'duration',
-  'rawurl',
-  'rank',
-  'rating',
-  'score',
-  'otp',
-  'password',
-  'phone',
-  'phonenumber',
-  'secret',
-  'session',
-  'sessionid',
-  'sid',
-  'smsotp',
-  'token',
-  'url',
-  'xhsurl',
-]);
-
-function normalizeAnalyticsKey(key: string) {
-  return key.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-}
-
-export function sanitizeAnalyticsProps(props: AnalyticsProps = {}) {
-  return Object.fromEntries(
-    Object.entries(props).filter(([key]) => {
-      const normalized = normalizeAnalyticsKey(key);
-      return !blockedKeys.has(normalized) && !/(apikey|byok|confidence|distance|duration|feedback|score|rank|rating|secret|token|url)/i.test(normalized);
-    }),
-  ) as AnalyticsProps;
+/** Event-aware validation also applies to explicitly injected component sinks. */
+export function trackAnalytics(analytics: Analytics, event: AuthEventName, props: unknown = {}) {
+  const safe = sanitizeAnalyticsEvent(event, props); if (!safe) return;
+  try { analytics.track(safe.name, safe.props); } catch { /* Telemetry never changes domain work. */ }
 }
 
 export function createNoopAnalytics(): Analytics {

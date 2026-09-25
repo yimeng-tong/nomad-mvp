@@ -1,0 +1,107 @@
+{
+  "manifest": {
+    "measurementVersion": "nomad.import.v1",
+    "workload": "WL-IMPORT-DOCK",
+    "mode": "fixture",
+    "clockId": "356e55f9-d503-4c19-bfec-4f7a80888e42",
+    "scenarioPlan": [
+      {
+        "scenario": "single",
+        "count": 3
+      },
+      {
+        "scenario": "batch",
+        "count": 3
+      },
+      {
+        "scenario": "partial",
+        "count": 1
+      },
+      {
+        "scenario": "failure",
+        "count": 1
+      },
+      {
+        "scenario": "rejected",
+        "count": 1
+      },
+      {
+        "scenario": "unknown-ack",
+        "count": 1
+      },
+      {
+        "scenario": "reused",
+        "count": 1
+      },
+      {
+        "scenario": "retry",
+        "count": 1
+      },
+      {
+        "scenario": "reconnect",
+        "count": 1
+      },
+      {
+        "scenario": "missing-acceptance",
+        "count": 1
+      },
+      {
+        "scenario": "missing-terminal",
+        "count": 1
+      }
+    ],
+    "plannedLogicalRequests": 15,
+    "windowStartMs": 613.8000000715256,
+    "windowEndMs": 863.8000000715256,
+    "deadlineMs": 250,
+    "fixtureVersion": "import-deadline-cutoff-v1",
+    "sampling": 1
+  },
+  "samples": [],
+  "fixturePlan": [
+    {
+      "scenario": "single",
+      "count": 3
+    },
+    {
+      "scenario": "batch",
+      "count": 3
+    },
+    {
+      "scenario": "partial",
+      "count": 1
+    },
+    {
+      "scenario": "failure",
+      "count": 1
+    },
+    {
+      "scenario": "rejected",
+      "count": 1
+    },
+    {
+      "scenario": "unknown-ack",
+      "count": 1
+    },
+    {
+      "scenario": "reused",
+      "count": 1
+    },
+    {
+      "scenario": "retry",
+      "count": 1
+    },
+    {
+      "scenario": "reconnect",
+      "count": 1
+    },
+    {
+      "scenario": "missing-acceptance",
+      "count": 1
+    },
+    {
+      "scenario": "missing-terminal",
+      "count": 1
+    }
+  ]
+}

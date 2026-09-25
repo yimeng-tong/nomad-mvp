@@ -1,0 +1,254 @@
+{
+  "kind": "pre-ui-scope-approved-input-snapshot",
+  "recorded_at": "2026-09-19T16:22:11.104361+00:00",
+  "files": {
+    ".github/workflows/ci.yml": {
+      "sha256": "6aa2dd0f221c29469ee8fcf874f776b8437669fd191a90479dbbb74a236a7cbf",
+      "bytes": 4017
+    },
+    "AGENTS.md": {
+      "sha256": "db9d1f76c014571c7adf7dc24bc71c7ac11a6c3a7a698fcd19f9a9993ba836a3",
+      "bytes": 5532
+    },
+    "CURRENT.md": {
+      "sha256": "01e0ee687572ef475664e98f24562d8ead189e3c544c7a0cf32c21964e0495e6",
+      "bytes": 21746
+    },
+    "README.md": {
+      "sha256": "6d54b6674359be3ab9db2e440f247548eefbb69a6e542b633e1845307c7768fe",
+      "bytes": 1243
+    },
+    "_bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions.md": {
+      "sha256": "12f3c6523026d5a9fa57cf458e4c0f5f1e3281332987302f0c6266b8e26f835d",
+      "bytes": 54567
+    },
+    "_bmad-output/implementation-artifacts/1-6-home-multi-link-import-queue-and-honest-status.md": {
+      "sha256": "e92281571b3f782a24e4195693f31192dc81f5ae53ad199230807291348557ce",
+      "bytes": 44816
+    },
+    "_bmad-output/implementation-artifacts/1-7-durable-import-progress-and-restart-recovery.md": {
+      "sha256": "f9e90d2c3d2fab96128a6e6421add8d61567f415db01a542beae8720eff4b3a1",
+      "bytes": 41799
+    },
+    "_bmad-output/implementation-artifacts/9-1-capacitor-app-installation-and-host-foundation.md": {
+      "sha256": "d2d01bc5b2409fd08c5ea8d03a356dc3b8acaeb102014e48449a419916d96a11",
+      "bytes": 17251
+    },
+    "_bmad-output/implementation-artifacts/sprint-delivery-contract-2026-09-19.yaml": {
+      "sha256": "0d92dffbd5ed5b655ff2d84d18141f4d304982dc9c2c91afccf707b1e4bbc651",
+      "bytes": 56050
+    },
+    "_bmad-output/implementation-artifacts/sprint-migration-2026-09-19.yaml": {
+      "sha256": "82f2c28ca87b172f571c379269317d7a543dbe238eea08ca7b2975bcf3fbda92",
+      "bytes": 83841
+    },
+    "_bmad-output/implementation-artifacts/sprint-status.yaml": {
+      "sha256": "f1504cf74946e498e0391386761c428d2b452ca6f74258f12e89b8d87551867a",
+      "bytes": 28029
+    },
+    "_bmad-output/planning-artifacts/architecture.md": {
+      "sha256": "eb1fe4cbb081c630029c07bfb573e3b03581382c8dfc6d6500ae633d02cf2a07",
+      "bytes": 163970
+    },
+    "_bmad-output/planning-artifacts/epics.md": {
+      "sha256": "5668dcb7071132337196e5f6e761b182a22f84c49cdde0d926ae5ad43f2e474f",
+      "bytes": 645905
+    },
+    "_bmad-output/planning-artifacts/prd.md": {
+      "sha256": "ad359f1ede43918fe1eac8e0729bdd1dcde4da6a449464c4c806bb3ad69f739a",
+      "bytes": 123438
+    },
+    "_bmad-output/planning-artifacts/sprint-change-proposal-ui-foundation-2026-09-19.md": {
+      "sha256": "5750eef944b6f47dc910088576df724cc3bfb88c4e7ab040abf6fd3ad59f17a6",
+      "bytes": 34312
+    },
+    "_bmad-output/planning-artifacts/sprint-change-ui-contracts-2026-09-19.md": {
+      "sha256": "87ac0bbf7920cd41c8accdf4e0894082f5816079e60428756a32a2f13e059276",
+      "bytes": 30041
+    },
+    "_bmad-output/planning-artifacts/sprint-change-ui-evidence-2026-09-19.json": {
+      "sha256": "d987e323f550030d3b6afc865fdcf02ba58adc7ff0f4ece5c6775da0faa6a109",
+      "bytes": 99059
+    },
+    "_bmad-output/planning-artifacts/supporting-tech-specs.md": {
+      "sha256": "3f0c63531dfac768a48b5b0e3ad97374d6593098b76b37596e904613a52690d9",
+      "bytes": 27507
+    },
+    "_bmad-output/planning-artifacts/ux.md": {
+      "sha256": "dbba178b54a95189612d117dce7972a07499faec2be164eab63bd70829c2b054",
+      "bytes": 146066
+    },
+    "_bmad-output/project-context.md": {
+      "sha256": "ffe0fb58fd2c1a5a2db516d26e1ba8642e81eecc523a88ebcefb7f79dd58bae5",
+      "bytes": 44900
+    },
+    "apps/mobile/NATIVE.md": {
+      "sha256": "0400575027e92391077bbcfd9f1e8bdc7c7cd65892a54555a005ed2a01b0b668",
+      "bytes": 5252
+    },
+    "apps/mobile/ios/App/App.xcodeproj/project.pbxproj": {
+      "sha256": "7f04af5d720e3b132f8d5dae492f5b57250ffbf3cc1bb96c763593ab331465cd",
+      "bytes": 14921
+    },
+    "apps/mobile/ios/App/CapApp-SPM/Package.swift": {
+      "sha256": "fa666685378024c8f2c8142fbdbb18da355a31fba3863a9c143e3f21b9a506ab",
+      "bytes": 1853
+    },
+    "apps/mobile/package.json": {
+      "sha256": "c00b08fb2fddd973aa29f49608eaacca390372f70b1710004ed5486723838574",
+      "bytes": 1249
+    },
+    "apps/mobile/scripts/native-config-proof.mjs": {
+      "sha256": "d667ac87e4a5b79d59eec1c17515521036dc0e16a7734ebb1d94d2274a7ad805",
+      "bytes": 798
+    },
+    "apps/mobile/scripts/native-config-proof.test.mjs": {
+      "sha256": "0d2a76d966f42a0ee43afd10c7caf4ba3ff0c7ddd1a5149bed8ee243cf07425f",
+      "bytes": 1780
+    },
+    "apps/mobile/scripts/verify-native-project.mjs": {
+      "sha256": "b9f212e765696a9e629436ddedd0edfe1277f5356fe5f942d6480ed5c57d6871",
+      "bytes": 4918
+    },
+    "apps/mobile/src/App.tsx": {
+      "sha256": "fee3387d9972f5c31972a6780cb894b328e6b821ef672121a879eb2cd497141e",
+      "bytes": 9926
+    },
+    "apps/mobile/src/home/HomeSheet.tsx": {
+      "sha256": "cc78a0182cec06bee409ebb94fdf9d95f689a6f278fb60932baffa938ba34e17",
+      "bytes": 1641
+    },
+    "apps/mobile/src/platform/native-build-config.test.ts": {
+      "sha256": "9d56a6ab0dd8713ebabd68efc9c5e381742cf51700e5f1759fe5efb1e2db320b",
+      "bytes": 3092
+    },
+    "apps/mobile/src/platform/native-build-config.ts": {
+      "sha256": "3ac0295ce9aeb3472bd172ea5fcba27ae08ddf73f73062de1de2b57b13874b3c",
+      "bytes": 2966
+    },
+    "apps/mobile/src/styles.css": {
+      "sha256": "b36c4add6cc5a5ea0a2cdcedbcd32e21d7b3520bf588a2e01f08b22ae1b7c938",
+      "bytes": 28417
+    },
+    "apps/mobile/vite.config.ts": {
+      "sha256": "ffc9730127eab76bfc70fe2fed25e6bfaba4e9606336ce589a2520debb040c30",
+      "bytes": 479
+    },
+    "docs/architecture/app-host.md": {
+      "sha256": "4cd240cffa09d881ad47493e5f0565b7a4a7f714914fbf32c2ceb7128f8b6346",
+      "bytes": 4610
+    },
+    "docs/architecture/architect-checklist-results.md": {
+      "sha256": "31009b99c3f697e74fd8d3ff6743b4e6107df499f17bb2f89e088d1c338b0c52",
+      "bytes": 1136
+    },
+    "docs/architecture/architecture.md": {
+      "sha256": "7058a846454d37e42009c558ba1dc99128b47ffcda9fb4c471644c947262189c",
+      "bytes": 16354
+    },
+    "docs/architecture/backend-architecture.md": {
+      "sha256": "6c9861f0b0d3e205e237695146b583fbb981cbe108ec5cb9f7ce31f0680f9752",
+      "bytes": 19629
+    },
+    "docs/architecture/coding-standards.md": {
+      "sha256": "4834ce86aecaace519230fdc76644028c87d5cf72bd66751fd4e58e668458eb8",
+      "bytes": 1509
+    },
+    "docs/architecture/compatibility.md": {
+      "sha256": "5aba326c2b458ce14167222302d6dc924f8191f62f03b436e85aad7449103361",
+      "bytes": 3794
+    },
+    "docs/architecture/data-models.md": {
+      "sha256": "8962183be8520da1ba72e01ef4a226dd259e95f48f396bdadedfe365ee8e9539",
+      "bytes": 30307
+    },
+    "docs/architecture/frontend-architecture.md": {
+      "sha256": "cd7f34e1d928bb51e9b82b87d5c90825ea161f2c23b0d2157b38770419f279a6",
+      "bytes": 11176
+    },
+    "docs/architecture/index.md": {
+      "sha256": "b4b004ed693870a89e3197e2f57f0138021ba40dfce5feb6537ed9d081bee07f",
+      "bytes": 7162
+    },
+    "docs/architecture/mvp-implementation-checklist.md": {
+      "sha256": "5c9bf89b961e25d75e6ca803dbce008c28583903953048210afce35587ab3f1f",
+      "bytes": 6242
+    },
+    "docs/architecture/observability.md": {
+      "sha256": "1454b41dd372f098bc4c5c0862e5d0de8fe78be4cda463d1f758c20ed8689bbb",
+      "bytes": 15009
+    },
+    "docs/architecture/planner-autoplace-v1.md": {
+      "sha256": "607e61da525aaab5cf8200840cb282ab8c4e3b0c1ff193e236cbbc5ef9aa82ba",
+      "bytes": 3755
+    },
+    "docs/architecture/planner-orchestration-v2.md": {
+      "sha256": "55d687f39534ff31ae0a59d7e344b0c2a18fc5a6ef5fbb0cfe2567ac98835e44",
+      "bytes": 8839
+    },
+    "docs/architecture/repo-structure.md": {
+      "sha256": "6dd496b5b7bf9159dd8005a1c05a62b6f190537af833d14776bc971c39c844b0",
+      "bytes": 248
+    },
+    "docs/architecture/rest-api-spec.md": {
+      "sha256": "5db170fc6c27956c6ca6987cee5ca3fdbb1aa9dbcaad34beeb471830fdc2c8f0",
+      "bytes": 20433
+    },
+    "docs/architecture/source-tree.md": {
+      "sha256": "76f6cd0ed00c808dc681dada952c9f458c65e3287f9634688667275357d0bfd4",
+      "bytes": 1616
+    },
+    "docs/architecture/tech-stack.md": {
+      "sha256": "691d6a60a927bdcd57fef6b373ec4bcca84897884af783e3dd8aea8409f7ac64",
+      "bytes": 4258
+    },
+    "docs/architecture/testing-strategy.md": {
+      "sha256": "cd0856542c9c2e38a7aecf6c1eb423f74645416412bf7c7bd0258ea264660598",
+      "bytes": 13986
+    },
+    "docs/front-end-spec.md": {
+      "sha256": "82588b69fe79e619fad092c83ef26b0f84317823a466707c569eb477014d9490",
+      "bytes": 54037
+    },
+    "docs/prd.md": {
+      "sha256": "ad359f1ede43918fe1eac8e0729bdd1dcde4da6a449464c4c806bb3ad69f739a",
+      "bytes": 123438
+    },
+    "docs/tech-spec-epic-2.md": {
+      "sha256": "cfad5fa328bbc25957de2d12686e1be3178d68d2b2fb7f5f731e37e86e818ca1",
+      "bytes": 14998
+    },
+    "docs/tech-spec-epic-3.md": {
+      "sha256": "12c447b96b41f8412c44de11ffb3e492677a7d0ce25a2945db47d900d592881c",
+      "bytes": 12098
+    },
+    "docs/ux/mobile-ia.md": {
+      "sha256": "66877c05b20f21e7ae07a5d06b41197e39b075c028898593b28a25a8d1ca760b",
+      "bytes": 29276
+    },
+    "docs/ux/prototype-coverage.md": {
+      "sha256": "3cb2e1e1918927c4d4eeedc55a3eceffaf69acbc265ff42a07d0828a7ec34ee4",
+      "bytes": 58177
+    },
+    "package.json": {
+      "sha256": "e7d06633e525e1843412fb012c39672356bfd1b867e75e32fa636c63a788a503",
+      "bytes": 1392
+    },
+    "scripts/check-capacitor-scope.mjs": {
+      "sha256": "c1822cae8139378c617c528eed8dd80b810aae6693ac06a0111c99aeaed2a580",
+      "bytes": 12927
+    },
+    "scripts/check-handoff.mjs": {
+      "sha256": "60976b7233c2f70afe793b7cdf7c03cb42d26cd82e540655784b94f031035d49",
+      "bytes": 32172
+    },
+    "scripts/check-handoff.test.mjs": {
+      "sha256": "18249fa4df3b40aa8eeaf293dbf5ca9cb1e02eef8935147b55cdfbc561aeba2d",
+      "bytes": 30918
+    },
+    "scripts/check-sprint-delivery.mjs": {
+      "sha256": "49237c4e97a7f869ba11ddb31e5d5fb39ee5d634460760945e56cd9fa6191d63",
+      "bytes": 5815
+    }
+  }
+}

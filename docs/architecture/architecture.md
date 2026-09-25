@@ -15,7 +15,7 @@ Provide a pragmatic, end-to-end architecture aligned with PRD/UX, NFRs, and SSE-
 - Maps/Geo: AMap Web API (search/geocode/matrix)
 - Auth: Authing + Captcha; Sessions in DB
 - Storage/CDN: Tencent COS + CDN; server-managed Provider secrets for AI usage
-- Export: Puppeteer (PNG/WebP, day-slice)
+- Export: Puppeteer capture with one long artifact per revision-derived city unit, WebP output and JPEG compatibility/size fallback
 - Observability: Sentry, Langfuse, structured logs; synthetic probes
 - Feature flags: Unleash
 - Feedback: 兔小巢（support.qq.com/product/{PRODUCT_ID}，WebView 打开）
@@ -42,7 +42,7 @@ infra/               # IaC, CI/CD, monitoring
   - Post‑MVP 预留：multi‑city segmentation by `transport_slot` boundaries（v1.0）。
 - Filler: AI one-shot fill（validate 3×30 chars per field, with citations）
 - ResultSheet: materialization for preview/export + light edit（slot-level overrides）
-- Export: puppeteer renderer with slicing
+- Export: puppeteer renderer with internal strip composition and one public long image per city unit
 - FeedbackLink: 官方 product URL 生成（PRODUCT_ID），可选“产品自己的用户登录态”参数；客户端 WebView 打开，禁止内嵌则回退系统浏览器；失败降级内置极简表单。
 
 ### Planner Autoplace v1（MVP）
@@ -98,7 +98,7 @@ See `docs/api/openapi.yaml`.
 - GET /plan/{plan_id}/result-sheet → aggregated view (slots + suggestions + citations)
 - PATCH /plan/slots/{slot}/status → toggle/check status (打卡)
 - PATCH /plan/slots/{slot}/overrides → set/clear slot text overrides；DELETE 同路径恢复 AI 内容
-- POST /export/png → files (webp/jpeg)
+- POST /export/png → compatibility route for files (WebP by default, JPEG fallback); Story 5.4 owns canonical image-export migration
 -- MVP FR44-lite:
 - GET /search/poi → text-only Top-5
 - POST /plans/{plan_id}/candidates → manual add candidate
@@ -274,3 +274,8 @@ Tie-breaker：更少原子操作数→更少跨日移动→更少对用户已编
 - 反爬策略：
   - 应用级限流（user/IP/device）；代理池与 Cookie 轮换（由采集器负责）；请求节流与抖动；
   - 监控：抓取/解析/地理消歧各阶段指标；DLQ 追踪；SLA 告警。
+
+
+## UI foundation amendment (2026-09-20)
+
+本期已批准shadcn/ui＋Base UI＋Tailwind4、Nomad共享层、Storybook/MSW/真实lint/Playwright，以及分别验收的Query9.6/Router9.7。现行平台与组件、数据、导航边界见app-host.md、ui-foundation.md、frontend-data-navigation.md。保持领域模型、历史done、3.1暂停与当前1.7后停止；安装/浏览器/真机证据分别记录。

@@ -1,0 +1,18 @@
+{
+  "CURRENT.md": {
+    "source": "CURRENT.md",
+    "sha256": "43462c05e7bcb16252a6b8a4866d81118c737a34eef3e25f718dcd82b634e3f7"
+  },
+  "project-context.md": {
+    "source": "_bmad-output/project-context.md",
+    "sha256": "4c240cbd34bdbcb78dce1ba4fee041bbf2cea777e6278657559d97626967f74c"
+  },
+  "sprint-status.yaml": {
+    "source": "_bmad-output/implementation-artifacts/sprint-status.yaml",
+    "sha256": "a5c8cc71d414834a4762f2c3dde03e38f733f287837f116c2bbd7fd610833a46"
+  },
+  "1-0-production-login-and-multi-device-sessions.md": {
+    "source": "_bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions.md",
+    "sha256": "5dc46c1be9276fc9e3d2b22317526513e4e497c1f157a118a3f8d40dc575a73e"
+  }
+}

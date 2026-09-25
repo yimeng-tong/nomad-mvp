@@ -1,0 +1,37 @@
+{
+  "result": "passed",
+  "sourceDatabase": "nomad_auth_test_4bb4e8f8be64_recovery_src",
+  "restoredDatabase": "nomad_auth_test_4bb4e8f8be64_recovery_copy",
+  "directory": "/tmp/nomad-ingest-restore-8jy4nzp_",
+  "dumpSha256": "407814b7dc0e7635e572a3271e13f3f3de1facb143d5ce583b9a439f8b4825d9",
+  "dumpBytes": 254027,
+  "seed": {
+    "result": "seeded",
+    "nonterminalJobs": 2,
+    "checkpoint": "fetched",
+    "baselineSha256": "b632e52aebe6a69a41fbd6808c695ec0c564f9f9fce85a74e1eb4e5488c53d48"
+  },
+  "restore": {
+    "result": "passed",
+    "checks": [
+      "restored-users-jobs-events-seq-floor-lease-checkpoint-command-exactly-match-source",
+      "restored-fastify-start-with-expired-active-checkpoint-and-disabled-owner-dispatches-zero",
+      "controlled-enable-resumes-original-fetched-checkpoint-with-fetch-disabled-and-no-new-job-attempt-command",
+      "disabled-owner-remains-suppressed-after-worker-enable"
+    ],
+    "realProviderCalls": 0,
+    "productionPitrVerified": false,
+    "activeCheckpointRestoreVerified": true
+  },
+  "source": {
+    "result": "passed",
+    "sourceUnchanged": true,
+    "baselineSha256": "b632e52aebe6a69a41fbd6808c695ec0c564f9f9fce85a74e1eb4e5488c53d48"
+  },
+  "retainedSourceRestoreAndBackup": true,
+  "deployedDatabaseChanged": false,
+  "sourceSha256": {
+    "apps/server/scripts/auth-ingest-restore-probe.ts": "0f5f14b2cfa7dd663fb15e1af075d4fa6c987d793bf9cc9c3025226b0de2bf87",
+    "ops/pve-staging/run-ingest-restore-probe.py": "e6855e3161878f2086e5c21a13c44b0a6dabb6bfdf98514db9a4f034aa63c0a8"
+  }
+}

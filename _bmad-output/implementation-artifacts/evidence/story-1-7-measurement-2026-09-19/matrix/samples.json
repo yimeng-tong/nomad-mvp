@@ -1,0 +1,579 @@
+{
+  "manifest": {
+    "measurementVersion": "nomad.import.v1",
+    "workload": "WL-IMPORT-DOCK",
+    "mode": "fixture",
+    "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+    "scenarioPlan": [
+      {
+        "scenario": "single",
+        "count": 3
+      },
+      {
+        "scenario": "batch",
+        "count": 3
+      },
+      {
+        "scenario": "partial",
+        "count": 1
+      },
+      {
+        "scenario": "failure",
+        "count": 1
+      },
+      {
+        "scenario": "rejected",
+        "count": 1
+      },
+      {
+        "scenario": "unknown-ack",
+        "count": 1
+      },
+      {
+        "scenario": "reused",
+        "count": 1
+      },
+      {
+        "scenario": "retry",
+        "count": 1
+      },
+      {
+        "scenario": "reconnect",
+        "count": 1
+      },
+      {
+        "scenario": "missing-acceptance",
+        "count": 1
+      },
+      {
+        "scenario": "missing-terminal",
+        "count": 1
+      }
+    ],
+    "plannedLogicalRequests": 15,
+    "windowStartMs": 919.2000000476837,
+    "windowEndMs": 25919.200000047684,
+    "deadlineMs": 25000,
+    "fixtureVersion": "import-matrix-v1",
+    "sampling": 1
+  },
+  "samples": [
+    {
+      "logicalId": "d8c4c0b6-c9c1-4fb4-8f87-ce2b465df1ee",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "single",
+      "outcome": "done",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "d8c4c0b6-c9c1-4fb4-8f87-ce2b465df1ee"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 2,
+      "observedStages": [
+        "created",
+        "fetching",
+        "parsing",
+        "storing",
+        "done"
+      ],
+      "visibleMs": 10077.600000023842,
+      "times": {
+        "confirmed": 932.2000000476837,
+        "prepared": 1006.2000000476837,
+        "accepted": 1046.9000000953674,
+        "firstFact": 1049.2000000476837,
+        "terminal": 1091.1000000238419,
+        "presented": 1093,
+        "presentationEnded": 11170.600000023842
+      }
+    },
+    {
+      "logicalId": "77093f30-61ba-44cb-885d-6e2d4b2b4aec",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "single",
+      "outcome": "done",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "77093f30-61ba-44cb-885d-6e2d4b2b4aec"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 3,
+      "observedStages": [
+        "created",
+        "fetching",
+        "parsing",
+        "storing",
+        "done"
+      ],
+      "visibleMs": 10246.200000047684,
+      "times": {
+        "confirmed": 1133.5,
+        "prepared": 1142.4000000953674,
+        "accepted": 1151.4000000953674,
+        "firstFact": 1165.3000000715256,
+        "terminal": 1225.3000000715256,
+        "presented": 11174.5,
+        "presentationEnded": 21420.700000047684
+      }
+    },
+    {
+      "logicalId": "671fcca7-6a91-4828-b51d-966f0b9d5419",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "single",
+      "outcome": "done",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "671fcca7-6a91-4828-b51d-966f0b9d5419"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 3,
+      "observedStages": [
+        "created",
+        "fetching",
+        "parsing",
+        "storing",
+        "done"
+      ],
+      "visibleMs": 4494.799999952316,
+      "times": {
+        "confirmed": 1267.7000000476837,
+        "prepared": 1275.9000000953674,
+        "accepted": 1284.6000000238419,
+        "firstFact": 1298.4000000953674,
+        "terminal": 1358.4000000953674,
+        "presented": 21424.400000095367,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "084fbcc6-cd53-4643-a33e-bc3176d98bfb",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "batch",
+      "outcome": "done",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "084fbcc6-cd53-4643-a33e-bc3176d98bfb"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 3,
+      "observedStages": [
+        "created",
+        "fetching",
+        "parsing",
+        "storing",
+        "done"
+      ],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 1400,
+        "prepared": 1416.8000000715256,
+        "accepted": 1430,
+        "firstFact": 1439.9000000953674,
+        "terminal": 1500,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "9d70ea32-edd7-43d6-afcd-69c728e1e0d1",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "batch",
+      "outcome": "done",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "9d70ea32-edd7-43d6-afcd-69c728e1e0d1"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 0,
+      "observedStages": [
+        "created",
+        "done"
+      ],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 1400,
+        "prepared": 1416.8000000715256,
+        "accepted": 1444.8000000715256,
+        "firstFact": 1564.4000000953674,
+        "terminal": 1564.4000000953674,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "cada9c5a-97d7-429c-911d-642497ffae06",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "batch",
+      "outcome": "done",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "cada9c5a-97d7-429c-911d-642497ffae06"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 0,
+      "observedStages": [
+        "created",
+        "done"
+      ],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 1400,
+        "prepared": 1416.8000000715256,
+        "accepted": 1455.6000000238419,
+        "firstFact": 1699.3000000715256,
+        "terminal": 1699.3000000715256,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "a1c108ab-74b7-41ef-9d83-faa41150479c",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "partial",
+      "outcome": "partial",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "a1c108ab-74b7-41ef-9d83-faa41150479c"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 0,
+      "observedStages": [
+        "created",
+        "failed"
+      ],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 1544.7000000476837,
+        "prepared": 1553.1000000238419,
+        "accepted": 1562,
+        "firstFact": 2094.9000000953674,
+        "terminal": 2094.9000000953674,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "65c795ea-b007-4c11-8676-b598a1875531",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "failure",
+      "outcome": "failed",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "65c795ea-b007-4c11-8676-b598a1875531"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 0,
+      "observedStages": [
+        "created",
+        "failed"
+      ],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 1678.1000000238419,
+        "prepared": 1687.6000000238419,
+        "accepted": 1696.8000000715256,
+        "firstFact": 2126.600000023842,
+        "terminal": 2126.600000023842,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "6d67bc9f-629e-4b81-98f1-2204d79ae165",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "rejected",
+      "outcome": "rejected",
+      "disposition": "unknown",
+      "acceptanceSource": "unknown",
+      "operations": [
+        "6d67bc9f-629e-4b81-98f1-2204d79ae165"
+      ],
+      "attemptsObserved": [],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 0,
+      "observedStages": [],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 1813,
+        "prepared": 1823.9000000953674,
+        "accepted": null,
+        "firstFact": null,
+        "terminal": 1832.4000000953674,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "8d5c7946-a00d-4139-a6f1-6f2e93632120",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "unknown-ack",
+      "outcome": "done",
+      "disposition": "created",
+      "acceptanceSource": "reconciled",
+      "operations": [
+        "8d5c7946-a00d-4139-a6f1-6f2e93632120"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 0,
+      "observedStages": [
+        "done"
+      ],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 1950,
+        "prepared": 1960.4000000953674,
+        "accepted": 2091.8000000715256,
+        "firstFact": 2091.8000000715256,
+        "terminal": 2091.8000000715256,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "fec3aa6f-c354-4d1f-b4f4-33cb27a6ead0",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "reused",
+      "outcome": "done",
+      "disposition": "reused",
+      "acceptanceSource": "direct",
+      "operations": [
+        "fec3aa6f-c354-4d1f-b4f4-33cb27a6ead0"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 0,
+      "observedStages": [
+        "done"
+      ],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 2098.2000000476837,
+        "prepared": 2112.4000000953674,
+        "accepted": 2122.3000000715256,
+        "firstFact": 2122.3000000715256,
+        "terminal": 2122.3000000715256,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "1419285f-75fc-455c-bbcb-c5951dc7af39",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "retry",
+      "outcome": "done",
+      "disposition": "retried",
+      "acceptanceSource": "direct",
+      "operations": [
+        "1419285f-75fc-455c-bbcb-c5951dc7af39",
+        "34e71c15-c95d-4f20-9e40-1cdd4c333767"
+      ],
+      "attemptsObserved": [
+        1,
+        2
+      ],
+      "commandRequests": 2,
+      "reconnects": 0,
+      "duplicateFrames": 6,
+      "observedStages": [
+        "created",
+        "fetching",
+        "parsing",
+        "storing",
+        "failed",
+        "done"
+      ],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 2239.2000000476837,
+        "prepared": 2249.7000000476837,
+        "accepted": 2260.8000000715256,
+        "firstFact": 2274,
+        "terminal": 2466.2000000476837,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "aa50eaac-7b41-4c8e-8da8-af574e12b1ee",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "reconnect",
+      "outcome": "done",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "aa50eaac-7b41-4c8e-8da8-af574e12b1ee"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 1,
+      "duplicateFrames": 0,
+      "observedStages": [
+        "created",
+        "done"
+      ],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 2518,
+        "prepared": 2528.7000000476837,
+        "accepted": 2538.7000000476837,
+        "firstFact": 6187,
+        "terminal": 6187,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "cf3609ed-9ec5-4bf7-b2b4-a3d7ee4cfcc8",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "missing-acceptance",
+      "outcome": "unknown",
+      "disposition": "unknown",
+      "acceptanceSource": "unknown",
+      "operations": [
+        "cf3609ed-9ec5-4bf7-b2b4-a3d7ee4cfcc8"
+      ],
+      "attemptsObserved": [],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 0,
+      "observedStages": [],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 2655.9000000953674,
+        "prepared": 2666.2000000476837,
+        "accepted": null,
+        "firstFact": null,
+        "terminal": null,
+        "presented": null,
+        "presentationEnded": null
+      }
+    },
+    {
+      "logicalId": "0f92f231-f5ab-450c-a22f-50d2e9c8d054",
+      "clockId": "90a891ff-c4b1-41bf-a044-ed63dd8cfdaf",
+      "scenario": "missing-terminal",
+      "outcome": "running",
+      "disposition": "created",
+      "acceptanceSource": "direct",
+      "operations": [
+        "0f92f231-f5ab-450c-a22f-50d2e9c8d054"
+      ],
+      "attemptsObserved": [
+        1
+      ],
+      "commandRequests": 1,
+      "reconnects": 0,
+      "duplicateFrames": 0,
+      "observedStages": [
+        "created",
+        "fetching"
+      ],
+      "visibleMs": null,
+      "times": {
+        "confirmed": 2793.7000000476837,
+        "prepared": 2805.600000023842,
+        "accepted": 2819.100000023842,
+        "firstFact": 6190.5,
+        "terminal": null,
+        "presented": null,
+        "presentationEnded": null
+      }
+    }
+  ],
+  "fixturePlan": [
+    {
+      "scenario": "single",
+      "count": 3
+    },
+    {
+      "scenario": "batch",
+      "count": 3
+    },
+    {
+      "scenario": "partial",
+      "count": 1
+    },
+    {
+      "scenario": "failure",
+      "count": 1
+    },
+    {
+      "scenario": "rejected",
+      "count": 1
+    },
+    {
+      "scenario": "unknown-ack",
+      "count": 1
+    },
+    {
+      "scenario": "reused",
+      "count": 1
+    },
+    {
+      "scenario": "retry",
+      "count": 1
+    },
+    {
+      "scenario": "reconnect",
+      "count": 1
+    },
+    {
+      "scenario": "missing-acceptance",
+      "count": 1
+    },
+    {
+      "scenario": "missing-terminal",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,2307 @@
+schema_version: 3
+project: nomad-mvp
+date: '2026-09-20'
+purpose: Approved UI successor; planning and execution state are separate
+authoritative_epics: _bmad-output/planning-artifacts/epics.md
+epics_sha256: 6440ed71f6aac8e5788ebc96dbbe305f911913f38bdb62cab34db7a4aa8ee3f4
+scope_counts:
+  epics: 9
+  stories: 67
+  historical_stories: 7
+  current_target_stories: 60
+  gwt_scenarios: 1089
+  functional_requirements: 66
+  mvp_functional_requirements: 62
+  deferred_functional_requirements: 4
+  nonfunctional_requirements: 25
+workflow:
+  skill: .agents/skills/bmad-sprint-planning/SKILL.md
+  customization: resolved-no-prepend-no-append-no-on-complete
+  project_name: nomad-mvp
+  user_name: yimeng-tong
+  communication_language: 中文
+  document_output_language: 中文
+  missing_config_resolution: BMM/core未设置名称/语言；按project-context和当前用户交接继承，不写入技能配置。
+  epics_discovery: 仅epics.md；覆盖报告、拆分提案和archive不入清单。
+  file_detection: 只检测显式唯一key的实施文件；规划批准/原型/同号旧文件不升级ready-for-dev。
+snapshot:
+  directory: _bmad-output/implementation-artifacts/archive/sprint-planning-2026-09-15
+  manifest: _bmad-output/implementation-artifacts/archive/sprint-planning-2026-09-15/snapshot-manifest.json
+  scope_note: _bmad-output/implementation-artifacts/archive/sprint-planning-2026-09-15/scope.md
+  legacy_sprint: _bmad-output/implementation-artifacts/archive/sprint-planning-2026-09-15/sprint-status.before.yaml
+  head_at_handoff: 7250a8a131a370698bff53538a4405c2ddb94c1c
+story_catalog:
+  1-0-production-login-and-multi-device-sessions:
+    story_id: '1.0'
+    title: 生产登录与多设备会话补齐
+    scope: current-target
+    gwt_scenarios: 19
+    contract_sha256: 1b2306196fb9b9ebc1284e3404004112349d7a0a352a1622bebf5a7188f77c4b
+    implementation_file: _bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions.md
+  1-1-login-session-and-compliance-contract:
+    story_id: '1.1'
+    title: 登录会话与账号边界（历史已交付）
+    scope: historical
+    gwt_scenarios: 2
+    contract_sha256: a22860fcbc33cba430df181e7912df9bf6224cdb9650e1af3e242ae1fd9fe2e9
+    implementation_file: _bmad-output/implementation-artifacts/1-1-login-session-and-compliance-contract.md
+    historical_file_sha256: abc0cdf6c0eae964b64ca37b160bfbd53b29e6f7dff5a669f256b2afa32d0d24
+  1-2-mobile-login-first-screen:
+    story_id: '1.2'
+    title: 移动登录首屏（历史已交付）
+    scope: historical
+    gwt_scenarios: 2
+    contract_sha256: 186b88d3558f6d48e988a63dd01dbb1e4bfa8f9f82464fa3b843b22c7992536f
+    implementation_file: _bmad-output/implementation-artifacts/1-2-mobile-login-first-screen.md
+    historical_file_sha256: dccb86eb75e4f6613f4709ddfb82c4d0b21893bae896b7ebae7d56f99370b9db
+  1-3-single-xhs-ingest-with-sse-progress:
+    story_id: '1.3'
+    title: 单链接异步导入基线（历史已交付）
+    scope: historical
+    gwt_scenarios: 2
+    contract_sha256: ae82950f9ca66f950b354ac038085ffbaa30502bed3d1ea384c7d591172c142e
+    implementation_file: _bmad-output/implementation-artifacts/1-3-single-xhs-ingest-with-sse-progress.md
+    historical_file_sha256: 76d190ade099ffae559e30b1f1a85da4aff2f7bd7d81b56ea1f9ea7e6ef61b11
+  1-4-home-unified-input-and-inspiration-library:
+    story_id: '1.4'
+    title: 首页统一输入与灵感库基线（历史已交付）
+    scope: historical
+    gwt_scenarios: 2
+    contract_sha256: d538d689779c0320807abcfa74e5dcc713d2d656d2db48a2043a9ae7996d4cde
+    implementation_file: _bmad-output/implementation-artifacts/1-4-home-unified-input-and-inspiration-library.md
+    historical_file_sha256: 2f2011e3002c9fa71a1712ca7a48d727d1b384fe6233ce00ec9603d427523508
+  1-5-settings-feedback-and-account-entry-points:
+    story_id: '1.5'
+    title: 设置、反馈与账号入口基线（历史已交付）
+    scope: historical
+    gwt_scenarios: 2
+    contract_sha256: c929fbde81d7f747c07690f933b6ace1ac7fe213a9e7c2b29325d0fda1a94ae7
+    implementation_file: _bmad-output/implementation-artifacts/1-5-settings-feedback-and-account-entry-points.md
+    historical_file_sha256: 8a9e5db26169984ee19cde172181bc70b268d7636d2c257966dd6c1d308e00b0
+  1-6-home-multi-link-import-queue-and-honest-status:
+    story_id: '1.6'
+    title: 首页多链接导入队列与诚实状态展示
+    scope: current-target
+    gwt_scenarios: 12
+    contract_sha256: a6ce5304455dc1883ad6641bcd2a5d0f1943364f5a53e93a8cf208779f9724df
+    implementation_file: _bmad-output/implementation-artifacts/1-6-home-multi-link-import-queue-and-honest-status.md
+  1-7-durable-import-progress-and-restart-recovery:
+    story_id: '1.7'
+    title: 可跨重启恢复的导入进度
+    scope: current-target
+    gwt_scenarios: 11
+    contract_sha256: b3693e38e6f12681da44a3cf9e954b06ce8cc0fc09d6b683928ef002b2e6e5e9
+    implementation_file: _bmad-output/implementation-artifacts/1-7-durable-import-progress-and-restart-recovery.md
+  1-8-owner-import-records-and-versioned-deduplication:
+    story_id: '1.8'
+    title: Owner 导入记录与版本化去重
+    scope: current-target
+    gwt_scenarios: 11
+    contract_sha256: 135cd811caa220b54791a1846c3c359d7d40407c4c2fd1ee429f61c74193b535
+    implementation_file: _bmad-output/implementation-artifacts/1-8-owner-import-records-and-versioned-deduplication.md
+  1-9-production-image-text-understanding-and-evidence:
+    story_id: '1.9'
+    title: 生产级图文多模态理解与证据
+    scope: current-target
+    gwt_scenarios: 11
+    contract_sha256: c8d19b462211ec060b7ca3d26b73907de9ad1a3a30f63425e7b728f18a36a238
+    implementation_file: _bmad-output/implementation-artifacts/1-9-production-image-text-understanding-and-evidence.md
+  1-10-adaptive-video-understanding-and-local-frame-resampling:
+    story_id: '1.10'
+    title: 自适应与局部二次抽帧的视频理解
+    scope: current-target
+    gwt_scenarios: 12
+    contract_sha256: e7b4c61c1bf505b9a18ebbeeda713d2e76129c3bef3e335ed560c59e5c55f435
+    implementation_file: _bmad-output/implementation-artifacts/1-10-adaptive-video-understanding-and-local-frame-resampling.md
+  1-11-amap-poi-verification-branch-disambiguation-and-manual-correction:
+    story_id: '1.11'
+    title: 高德 POI 验证、分店消歧与运营手工纠错
+    scope: current-target
+    gwt_scenarios: 22
+    contract_sha256: 3b22fcdb1720910ff0bc832b62402a3655cc473dc9d3e50b4e26f5039f8c9585
+    implementation_file: _bmad-output/implementation-artifacts/1-11-amap-poi-verification-branch-disambiguation-and-manual-correction.md
+  2-0-confirm-and-planner-picker:
+    story_id: '2.0'
+    title: Confirm 与 Planner Picker 基线（历史已交付）
+    scope: historical
+    gwt_scenarios: 2
+    contract_sha256: 4d6eabf79275b386915ddc2f0cb94620579b5d00045524a82fba52d3b782d82e
+    implementation_file: _bmad-output/implementation-artifacts/2-0-confirm-and-planner-picker.md
+    historical_file_sha256: 6a8aadcd1028370fc2f70a9c859b6ca7547aa64b84701489736e466f5c4fa427
+  2-1-generate-day-skeleton-with-quick-and-hq-planning:
+    story_id: '2.1'
+    title: Quick/HQ 日计划基线（历史已交付）
+    scope: historical
+    gwt_scenarios: 2
+    contract_sha256: 4388ca167eb3f5de2e5cd4947ec7103b0c61d1cc88f9af41534180928cde1dca
+    implementation_file: _bmad-output/implementation-artifacts/2-1-generate-day-skeleton-with-quick-and-hq-planning.md
+    historical_file_sha256: dbe1028a9002be6e71868cac2758de4fb066a745bba149fb9b494fa08f7ca0ac
+  2-3-single-city-travel-time-and-boundary-confirmation:
+    story_id: '2.3'
+    title: 单城旅行时间与边界确认
+    scope: current-target
+    gwt_scenarios: 11
+    contract_sha256: 1428d9ceeafc7058789b2431729ac45a0e0fbba0e1cdecf856f2990d51e36aed
+    implementation_file: _bmad-output/implementation-artifacts/2-3-single-city-travel-time-and-boundary-confirmation.md
+  2-4-unified-flight-and-rail-service-lookup:
+    story_id: '2.4'
+    title: 统一班次识别与航班/铁路查询
+    scope: current-target
+    gwt_scenarios: 14
+    contract_sha256: dba3820da64fa52fa659fd6e4a9b74b3fb0fdbd120139023ef07a63a0b063a28
+    implementation_file: _bmad-output/implementation-artifacts/2-4-unified-flight-and-rail-service-lookup.md
+  2-5-preplanning-nightly-stays-breakfast-and-luggage:
+    story_id: '2.5'
+    title: 规划前逐晚住宿与行李确认
+    scope: current-target
+    gwt_scenarios: 15
+    contract_sha256: c838289fd9877b9b5386917d24bb2a53986995395c8e9d1da31df2544103e6b0
+    implementation_file: _bmad-output/implementation-artifacts/2-5-preplanning-nightly-stays-breakfast-and-luggage.md
+  2-6-preplanning-pace-and-additional-constraints:
+    story_id: '2.6'
+    title: 规划前节奏与附加约束确认
+    scope: current-target
+    gwt_scenarios: 13
+    contract_sha256: bfcc65bed33e59b96b0977f60c83469e7971c4b3551cc111974814bcab2edf43
+    implementation_file: _bmad-output/implementation-artifacts/2-6-preplanning-pace-and-additional-constraints.md
+  2-7-full-city-picker-and-l3-place-intent:
+    story_id: '2.7'
+    title: 全城 Picker 与 L3 意图选择
+    scope: current-target
+    gwt_scenarios: 17
+    contract_sha256: ed485864e110aa929c9984b85f877d8ca9d06b51d48d5b94253cd12f363dfdc3
+    implementation_file: _bmad-output/implementation-artifacts/2-7-full-city-picker-and-l3-place-intent.md
+  2-8-shared-poi-information-sheet:
+    story_id: '2.8'
+    title: 通用 POI 信息 Sheet
+    scope: current-target
+    gwt_scenarios: 12
+    contract_sha256: 5bca61990b51b508dcfdf3fe2ac10909ff47a708cb671efeffd7c4278db62eff
+    implementation_file: _bmad-output/implementation-artifacts/2-8-shared-poi-information-sheet.md
+  2-9-single-planning-job-and-stable-timeline-transition:
+    story_id: '2.9'
+    title: 单一 PlanningJob 与稳定时间轴转场
+    scope: current-target
+    gwt_scenarios: 17
+    contract_sha256: 34818aeeb1ed29896164a9840a29370489419ef53f924771f358ddda1fb7b7a7
+    implementation_file: _bmad-output/implementation-artifacts/2-9-single-planning-job-and-stable-timeline-transition.md
+  2-10-authoritative-route-facts-and-timeline-transport:
+    story_id: '2.10'
+    title: 可信通勤事实与时间轴交通摘要
+    scope: current-target
+    gwt_scenarios: 16
+    contract_sha256: 9fe9395356fe494ca6dd64cf6397db4ace89b544f9918b6dbc2512079b840657
+    implementation_file: _bmad-output/implementation-artifacts/2-10-authoritative-route-facts-and-timeline-transport.md
+  2-11-constraint-first-complete-single-city-planning:
+    story_id: '2.11'
+    title: 约束优先的完整单城初始编排
+    scope: current-target
+    gwt_scenarios: 21
+    contract_sha256: d4b18f9922c1ff7aa26497a3615096531140a25c2d87dc0f8dc2aa8188ccdedb
+    implementation_file: _bmad-output/implementation-artifacts/2-11-constraint-first-complete-single-city-planning.md
+  2-12-amap-candidate-expansion-and-nonblocking-candidate-list:
+    story_id: '2.12'
+    title: 高德候选补全与非阻塞候选区
+    scope: current-target
+    gwt_scenarios: 19
+    contract_sha256: 449dda93296f65ffbc2b49fa8f2f013dc988fd3de362efcf8846690f90e12586
+    implementation_file: _bmad-output/implementation-artifacts/2-12-amap-candidate-expansion-and-nonblocking-candidate-list.md
+  2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots:
+    story_id: '2.13'
+    title: 平台 AnchorPool 分桶、共享准入与版本快照
+    scope: current-target
+    gwt_scenarios: 16
+    contract_sha256: 0df22825a49829463821b6a19d36a2e49efec056bb229afaede7d6cf94f2f6ad
+    implementation_file: _bmad-output/implementation-artifacts/2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots.md
+  2-14-daily-load-estimation-and-explainable-summary:
+    story_id: '2.14'
+    title: 每日负荷估算与可解释摘要
+    scope: current-target
+    gwt_scenarios: 13
+    contract_sha256: 410fcec12546d264c63f0a958f04b9809d87e3ebbc504bbc799d609cccca2d56
+    implementation_file: _bmad-output/implementation-artifacts/2-14-daily-load-estimation-and-explainable-summary.md
+  2-15-post-plan-place-search-and-manual-candidates:
+    story_id: '2.15'
+    title: 行程后地点搜索与手动候选补点
+    scope: current-target
+    gwt_scenarios: 14
+    contract_sha256: 414153fd5af0e87831dba68f834e5f536e59df298635da4b98e99ed33480be4b
+    implementation_file: _bmad-output/implementation-artifacts/2-15-post-plan-place-search-and-manual-candidates.md
+  3-1-minute-timeline-editing-and-plan-wide-undo:
+    story_id: '3.1'
+    title: 分钟级时间轴编辑与全计划撤销
+    scope: current-target
+    gwt_scenarios: 18
+    contract_sha256: e8b50ab21ad5672a9baabea080fcccf557790c416fe0768891289ff72ae8354d
+    implementation_file: _bmad-output/implementation-artifacts/3-1-minute-timeline-editing-and-plan-wide-undo.md
+  3-2-controlled-candidate-placement-and-free-time-filling:
+    story_id: '3.2'
+    title: 候选地点受控落位与自由时间填充
+    scope: current-target
+    gwt_scenarios: 20
+    contract_sha256: 90adbfd226652e7ae5aa1c4ae6e9e65bebdfac074a6427e2ee2b670cc02fadca
+    implementation_file: _bmad-output/implementation-artifacts/3-2-controlled-candidate-placement-and-free-time-filling.md
+  3-3-post-plan-nightly-stay-breakfast-and-luggage-editing:
+    story_id: '3.3'
+    title: 规划后单晚住宿、早餐与行李修改
+    scope: current-target
+    gwt_scenarios: 22
+    contract_sha256: b8d871c2b7ba55acade53ba636c565ea95b3466072cd84dc8b6d688ad479a8a0
+    implementation_file: _bmad-output/implementation-artifacts/3-3-post-plan-nightly-stay-breakfast-and-luggage-editing.md
+  3-4-incremental-validation-and-typed-conflict-fixes:
+    story_id: '3.4'
+    title: 增量校验与类型化冲突修复
+    scope: current-target
+    gwt_scenarios: 23
+    contract_sha256: ffc379ada91dac9abdafd4ee88b0b97c0b4baf916e0de421d7ae4a71818e5838
+    implementation_file: _bmad-output/implementation-artifacts/3-4-incremental-validation-and-typed-conflict-fixes.md
+  3-5-controlled-conversational-local-adjustment:
+    story_id: '3.5'
+    title: 受控对话式局部调整
+    scope: current-target
+    gwt_scenarios: 25
+    contract_sha256: 3bb8a362fff92fd909414ffa61e562f9a9c133ef2fc61b7a6519ed140f422dce
+    implementation_file: _bmad-output/implementation-artifacts/3-5-controlled-conversational-local-adjustment.md
+  4-1-cross-city-intent-and-linked-trip-input-draft:
+    story_id: '4.1'
+    title: 多城跨城意图确认与联程输入草稿
+    scope: current-target
+    gwt_scenarios: 20
+    contract_sha256: 91dc133ecd34d6141d68515fddae803119e9d8820c1e763c89aa7c1a18bc5852
+    implementation_file: _bmad-output/implementation-artifacts/4-1-cross-city-intent-and-linked-trip-input-draft.md
+  4-2-adjacent-city-transfers-and-handoff-day-boundaries:
+    story_id: '4.2'
+    title: 相邻城市交通确认与交接日切分
+    scope: current-target
+    gwt_scenarios: 22
+    contract_sha256: d57fb18ba267f5beffc78066ea2f469de1c77b6cc03c51b77554323100a118b7
+    implementation_file: _bmad-output/implementation-artifacts/4-2-adjacent-city-transfers-and-handoff-day-boundaries.md
+  4-3-independent-city-planning-and-atomic-linked-trip-publication:
+    story_id: '4.3'
+    title: 多城独立编排与原子联程发布
+    scope: current-target
+    gwt_scenarios: 24
+    contract_sha256: 43ee598f71ae60c741f5407368c4df8227d5e32d6165e313f209d725416952bc
+    implementation_file: _bmad-output/implementation-artifacts/4-3-independent-city-planning-and-atomic-linked-trip-publication.md
+  4-4-active-city-editing-and-linked-trip-revision-rebinding:
+    story_id: '4.4'
+    title: 已发布联程的当前城市安全编辑与版本重绑定
+    scope: current-target
+    gwt_scenarios: 22
+    contract_sha256: 18527f768dac036a2bf06b49638e153b11e0537fedf7a8c414e6056e3307a787
+    implementation_file: _bmad-output/implementation-artifacts/4-4-active-city-editing-and-linked-trip-revision-rebinding.md
+  4-5-day-excursion-intent-and-round-trip-transfer-draft:
+    story_id: '4.5'
+    title: 跨城一日游意图与往返交通草稿
+    scope: current-target
+    gwt_scenarios: 19
+    contract_sha256: ab0808c732897d78b34642ea0505e40a39ec75d609ad112d525033e7f8fdafa8
+    implementation_file: _bmad-output/implementation-artifacts/4-5-day-excursion-intent-and-round-trip-transfer-draft.md
+  4-6-day-excursion-planning-and-atomic-timeline-publication:
+    story_id: '4.6'
+    title: 跨城一日游独立编排与原子时间轴发布
+    scope: current-target
+    gwt_scenarios: 24
+    contract_sha256: e4be4026b33142b4db273cb40a5515e3e6d3efc54f3f7cfa6a2506c586ee98c1
+    implementation_file: _bmad-output/implementation-artifacts/4-6-day-excursion-planning-and-atomic-timeline-publication.md
+  4-7-day-excursion-editing-and-scope-guards:
+    story_id: '4.7'
+    title: 已发布跨城一日游的安全编辑与范围约束
+    scope: current-target
+    gwt_scenarios: 28
+    contract_sha256: ef3d18c05ecbec9df7f0cd6fc27283d02e298bbe77280d6b722f0eb55fe4bc6b
+    implementation_file: _bmad-output/implementation-artifacts/4-7-day-excursion-editing-and-scope-guards.md
+  5-1-revision-bound-ai-detail-enrichment:
+    story_id: '5.1'
+    title: 版本绑定的 AI 行程细节完善
+    scope: current-target
+    gwt_scenarios: 24
+    contract_sha256: f898bfb69ad6cbefcedf39166fe31fdae948ba0fdff437d2440f9f3061779317
+    implementation_file: _bmad-output/implementation-artifacts/5-1-revision-bound-ai-detail-enrichment.md
+  5-2-verifiable-result-sheet-and-citation-reading:
+    story_id: '5.2'
+    title: 可核查的行程单与引用查看
+    scope: current-target
+    gwt_scenarios: 23
+    contract_sha256: 812e64100a2a9cc00edd9b130e0bfda6a88792d6ee380a6980b152f390991beb
+    implementation_file: _bmad-output/implementation-artifacts/5-2-verifiable-result-sheet-and-citation-reading.md
+  5-3-line-level-detail-editing-and-ai-preservation:
+    story_id: '5.3'
+    title: 逐条行程细节修改与 AI 保留
+    scope: current-target
+    gwt_scenarios: 19
+    contract_sha256: 751d059da8fa46cd16d373da8860c01bf845367adc27d19b3cc0a53950605e6c
+    implementation_file: _bmad-output/implementation-artifacts/5-3-line-level-detail-editing-and-ai-preservation.md
+  5-4-revision-bound-export-generation-and-preview:
+    story_id: '5.4'
+    title: 版本绑定的导出生成与预览
+    scope: current-target
+    gwt_scenarios: 28
+    contract_sha256: bd0319c2f1c7516cd8261655945619b0a31d1907d3cd10e409598980caf5871d
+    implementation_file: _bmad-output/implementation-artifacts/5-4-revision-bound-export-generation-and-preview.md
+  5-5-whole-trip-image-download-and-system-sharing:
+    story_id: '5.5'
+    title: 整趟长图下载与系统分享
+    scope: current-target
+    gwt_scenarios: 24
+    contract_sha256: 8e65af9dd6f0291c51667531ead114dffca5e3596ddfe8f32d901c0d4d2a2d63
+    implementation_file: _bmad-output/implementation-artifacts/5-5-whole-trip-image-download-and-system-sharing.md
+  6-1-planned-meal-slots-and-primary-alternative-pool:
+    story_id: '6.1'
+    title: 计划餐饮槽与一主两备选择池
+    scope: current-target
+    gwt_scenarios: 21
+    contract_sha256: af269588b5fc16837a77e6e73d81f1f43173a774578023872c62b8426a3c368f
+    implementation_file: _bmad-output/implementation-artifacts/6-1-planned-meal-slots-and-primary-alternative-pool.md
+  6-2-foreground-location-meal-recall-and-plan-context-fallback:
+    story_id: '6.2'
+    title: 前台定位餐饮召回与计划上下文降级
+    scope: current-target
+    gwt_scenarios: 22
+    contract_sha256: 4a9ce0b2488b54fbcad9a1f7791c0b1df92ab5b3e13f8e6a6ec166020ea11722
+    implementation_file: _bmad-output/implementation-artifacts/6-2-foreground-location-meal-recall-and-plan-context-fallback.md
+  6-3-normalized-business-areas-and-owner-food-hints:
+    story_id: '6.3'
+    title: 规范化商圈与“附近吃什么”
+    scope: current-target
+    gwt_scenarios: 21
+    contract_sha256: bdf3e5642ccdb2b1c30250d8be5d38d54cdd473c91041aee126f7edd66daceb2
+    implementation_file: _bmad-output/implementation-artifacts/6-3-normalized-business-areas-and-owner-food-hints.md
+  6-4-trip-checklist-and-direct-or-ai-record-entry:
+    story_id: '6.4'
+    title: 行程清单与直接／AI 添加记录
+    scope: current-target
+    gwt_scenarios: 23
+    contract_sha256: 093f04e217f6fcab9e63d863d0657fb944e6260a0645ab7b1e9e7fc1df831fc0
+    implementation_file: _bmad-output/implementation-artifacts/6-4-trip-checklist-and-direct-or-ai-record-entry.md
+  6-5-lightweight-shopping-notes-and-label-shortcuts:
+    story_id: '6.5'
+    title: 轻量购物记录与标签快捷输入
+    scope: current-target
+    gwt_scenarios: 15
+    contract_sha256: e12999867b7e4cd0c0011b070feb5ff1f7b8bbcba97716571d85a07bc6b4c8bf
+    implementation_file: _bmad-output/implementation-artifacts/6-5-lightweight-shopping-notes-and-label-shortcuts.md
+  7-1-recent-trips-and-context-resume:
+    story_id: '7.1'
+    title: 最近行程与继续使用
+    scope: current-target
+    gwt_scenarios: 23
+    contract_sha256: ccf5bbceea081388681f35175e7670c86194ef9b7c07c6912e9942fbc7482647
+    implementation_file: _bmad-output/implementation-artifacts/7-1-recent-trips-and-context-resume.md
+  7-3-settings-account-and-available-actions:
+    story_id: '7.3'
+    title: 设置页账号与可用操作
+    scope: current-target
+    gwt_scenarios: 15
+    contract_sha256: 00ebace7faeb29282e7d41d872c101acf6e6cf44b098df26ce22ecde5387198c
+    implementation_file: _bmad-output/implementation-artifacts/7-3-settings-account-and-available-actions.md
+  7-4-account-data-copy-export:
+    story_id: '7.4'
+    title: 账号数据副本导出
+    scope: current-target
+    gwt_scenarios: 21
+    contract_sha256: 535db894d951a821d7b7603fab0cfe497b24f7416a9203b758be9a4d34da54af
+    implementation_file: _bmad-output/implementation-artifacts/7-4-account-data-copy-export.md
+  7-5-account-deletion-and-cleanup-results:
+    story_id: '7.5'
+    title: 账号删除与清理结果
+    scope: current-target
+    gwt_scenarios: 23
+    contract_sha256: b52ac1f7756c0e36bdb815f637ae236a8e5670c9c67a34ba173e5e3af71feee9
+    implementation_file: _bmad-output/implementation-artifacts/7-5-account-deletion-and-cleanup-results.md
+  7-6-feedback-entry-and-reliable-submission:
+    story_id: '7.6'
+    title: 反馈入口与可靠提交
+    scope: current-target
+    gwt_scenarios: 21
+    contract_sha256: 5552595820ea9daad62dd186945f84097122a92078ec412981c989f865ab10df
+    implementation_file: _bmad-output/implementation-artifacts/7-6-feedback-entry-and-reliable-submission.md
+  8-1-cross-flow-observability-and-fault-localization:
+    story_id: '8.1'
+    title: 跨流程观测与故障定位
+    scope: current-target
+    gwt_scenarios: 22
+    contract_sha256: f4673758be2ea38edc92a5c8a111fedad12bee56748f269589d8deb9b16e19f4
+    implementation_file: _bmad-output/implementation-artifacts/8-1-cross-flow-observability-and-fault-localization.md
+  8-2-reproducible-quality-regression-and-version-comparison:
+    story_id: '8.2'
+    title: 可复现的质量回归与版本对比
+    scope: current-target
+    gwt_scenarios: 24
+    contract_sha256: e68296a8562358cd723ece68224444190c689a9eb3a78b37d0491cb448df89fc
+    implementation_file: _bmad-output/implementation-artifacts/8-2-reproducible-quality-regression-and-version-comparison.md
+  8-3-task-level-provider-routing-and-safe-release:
+    story_id: '8.3'
+    title: 任务级 Provider 路由与安全切换
+    scope: current-target
+    gwt_scenarios: 24
+    contract_sha256: ae2ea6f83e0ee3ba6508895549fd877285457b91ea3ba39e22e2a41d0fdcaf8b
+    implementation_file: _bmad-output/implementation-artifacts/8-3-task-level-provider-routing-and-safe-release.md
+  8-4-platform-budget-and-usage-policy-management:
+    story_id: '8.4'
+    title: 平台预算与用量策略管理
+    scope: current-target
+    gwt_scenarios: 26
+    contract_sha256: df8bd2ad5a6fbff086ca5c0678a539f6f5a706fb1af0f65f88485a014efb11c1
+    implementation_file: _bmad-output/implementation-artifacts/8-4-platform-budget-and-usage-policy-management.md
+  8-5-terminal-ai-amap-incidents-and-telegram-alerts:
+    story_id: '8.5'
+    title: AI/高德终态异常与 Telegram 告警
+    scope: current-target
+    gwt_scenarios: 24
+    contract_sha256: 132d099be8225c7f6f2ea00f6ddd7b85e5e161746e37bd9ec37c2a032f166b05
+    implementation_file: _bmad-output/implementation-artifacts/8-5-terminal-ai-amap-incidents-and-telegram-alerts.md
+  8-6-operations-overview-and-read-only-diagnostics:
+    story_id: '8.6'
+    title: 运营总览与只读排障入口
+    scope: current-target
+    gwt_scenarios: 20
+    contract_sha256: 75dfa63c4dc5c90a88230994b3ea67d377ebe46e9e2f6c5286ade0f876602934
+    implementation_file: _bmad-output/implementation-artifacts/8-6-operations-overview-and-read-only-diagnostics.md
+  9-1-capacitor-app-installation-and-host-foundation:
+    story_id: '9.1'
+    title: 安装 Nomad App 并使用现有入口
+    scope: current-target
+    gwt_scenarios: 9
+    contract_sha256: b3b1a64ed359c2d2ecd20820b787f803232fe10b4322c7f69b21e9a269e5202b
+    implementation_file: _bmad-output/implementation-artifacts/9-1-capacitor-app-installation-and-host-foundation.md
+  9-2-android-apk-and-ios-testflight-delivery:
+    story_id: '9.2'
+    title: Android APK 与 iOS TestFlight 内测交付
+    scope: current-target
+    gwt_scenarios: 7
+    contract_sha256: 8ac7ffd52f7e11073afa5c33b38b0a9f9dee0d06ed755674307171f0ec07df31
+    implementation_file: _bmad-output/implementation-artifacts/9-2-android-apk-and-ios-testflight-delivery.md
+  9-3-shared-ui-components-and-safe-app-sheet:
+    story_id: '9.3'
+    scope: current-target
+    implementation_file: _bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet.md
+    title: 在现有入口使用统一且安全的 Nomad 组件
+    gwt_scenarios: 8
+    contract_sha256: 1068161ce8180a56148f85f34f668ba8d5451ff2d4dd6c818fad26bbbf68e323
+  9-4-component-workbench-and-enforced-code-quality:
+    story_id: '9.4'
+    scope: current-target
+    implementation_file: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md
+    title: 用可运行状态工作台与真实检查维护组件
+    gwt_scenarios: 6
+    contract_sha256: a120d2b064bfa7ba8a362f51aee771e61db8c04083817f7366250ae4d55adf27
+  9-5-browser-flow-and-visual-regression-gates:
+    story_id: '9.5'
+    scope: current-target
+    implementation_file: _bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates.md
+    title: 在固定浏览器环境保护关键入口与组件迁移
+    gwt_scenarios: 6
+    contract_sha256: 54dc15b7f578eeb46e8b93566b2fb6a26deffc99aa8a88ed9c8cfd5692f44ad6
+  9-6-identity-scoped-server-read-queries:
+    story_id: '9.6'
+    scope: current-target
+    implementation_file: _bmad-output/implementation-artifacts/9-6-identity-scoped-server-read-queries.md
+    title: 以身份隔离的共享读取层展示城市与灵感
+    gwt_scenarios: 6
+    contract_sha256: 489871535ac1504f9947c67a81b224886d2a1d9254882169f6bc5af7d93ed65c
+  9-7-typed-navigation-and-host-history:
+    story_id: '9.7'
+    scope: current-target
+    implementation_file: _bmad-output/implementation-artifacts/9-7-typed-navigation-and-host-history.md
+    title: 通过统一导航打开和返回现有页面
+    gwt_scenarios: 7
+    contract_sha256: 01f153d0a0ed7e04c3ee65f29d5771d0b062470df5504a1cc63c594adc27185f
+legacy_story_mappings:
+  1-1-login-session-and-compliance-contract:
+    previous_status: done
+    disposition: preserved-historical
+    current_story_keys:
+    - 1-1-login-session-and-compliance-contract
+    inherit_status: true
+  1-2-mobile-login-first-screen:
+    previous_status: done
+    disposition: preserved-historical
+    current_story_keys:
+    - 1-2-mobile-login-first-screen
+    inherit_status: true
+  1-3-single-xhs-ingest-with-sse-progress:
+    previous_status: done
+    disposition: preserved-historical
+    current_story_keys:
+    - 1-3-single-xhs-ingest-with-sse-progress
+    inherit_status: true
+  1-4-home-unified-input-and-inspiration-library:
+    previous_status: done
+    disposition: preserved-historical
+    current_story_keys:
+    - 1-4-home-unified-input-and-inspiration-library
+    inherit_status: true
+  1-5-settings-feedback-and-account-entry-points:
+    previous_status: done
+    disposition: preserved-historical
+    current_story_keys:
+    - 1-5-settings-feedback-and-account-entry-points
+    inherit_status: true
+  2-0-confirm-and-planner-picker:
+    previous_status: done
+    disposition: preserved-historical
+    current_story_keys:
+    - 2-0-confirm-and-planner-picker
+    inherit_status: true
+  2-1-generate-day-skeleton-with-quick-and-hq-planning:
+    previous_status: done
+    disposition: preserved-historical
+    current_story_keys:
+    - 2-1-generate-day-skeleton-with-quick-and-hq-planning
+    inherit_status: true
+  2-2-timeline-editing-undo-and-history:
+    previous_status: in-progress
+    disposition: migrated-in-progress
+    current_story_keys:
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    inherit_status: true
+    legacy_story_id: 2-2-timeline-editing-undo-and-history
+    legacy_file: _bmad-output/implementation-artifacts/2-2-timeline-editing-undo-and-history.md
+    baseline_commit: 10f940c49e2d61ddcb1233cffddd071ed1c9284c
+    working_branch: codex/story-2-2-timeline-editing
+    contract_preparation: pending-create-story-and-keep-change-remove-audit
+  2-3-feasibility-validation-and-one-click-fixes:
+    previous_status: backlog
+    disposition: superseded-scope
+    current_story_keys:
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    inherit_status: false
+    deferred_story_ids: []
+    note: 同号新2.3是时间确认；旧校验范围由3.4承接，基础校验随2.11/3.1首次交付。
+  2-4-export-itinerary-png:
+    previous_status: backlog
+    disposition: superseded-scope
+    current_story_keys:
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    inherit_status: false
+    deferred_story_ids: []
+    note: 同号新2.4是班次查询；旧PNG范围已按当前WebP/JPEG与整趟图片合同重拆。
+  3-1-one-shot-ai-fill-result-sheet-and-citations:
+    previous_status: backlog
+    disposition: superseded-scope
+    current_story_keys:
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    inherit_status: false
+    deferred_story_ids: []
+    note: 新3.1是编辑唯一身份；5.1先有最小S10/S9来源返回，5.2增强，5.3保留用户逐行修改。
+  3-2-observability-evaluation-and-provider-routing:
+    previous_status: backlog
+    disposition: superseded-scope
+    current_story_keys:
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-2-reproducible-quality-regression-and-version-comparison
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    inherit_status: false
+    deferred_story_ids:
+    - '8.7'
+    - '8.8'
+    note: 旧运营组合拆入六张当前Story；后续范围扩展不是旧交付证明，平台采集继续延期。
+  3-3-account-privacy-quota-and-compliance-controls:
+    previous_status: backlog
+    disposition: superseded-scope
+    current_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-4-platform-budget-and-usage-policy-management
+    inherit_status: false
+    deferred_story_ids: []
+    note: 生产认证先补齐；设置/副本/清理/反馈与内部预算分工；BYOK不恢复为MVP用户路径。
+  3-4-recent-trips-and-check-in-state:
+    previous_status: backlog
+    disposition: superseded-scope
+    current_story_keys:
+    - 7-1-recent-trips-and-context-resume
+    inherit_status: false
+    deferred_story_ids:
+    - '7.2'
+    note: 最近行程承接当前范围；打卡仅作延期登记。
+retrospective_scope:
+  epic-1-retrospective:
+    completed_scope: historical-1.1-through-1.5
+    evidence: _bmad-output/implementation-artifacts/epic-1-retro-2026-06-19.md
+    evidence_sha256: f4ad86411c2a021049466009992cfb3d73a26f9182c8f3b9aebc5acec06a91ee
+    completed_story_keys:
+    - 1-1-login-session-and-compliance-contract
+    - 1-2-mobile-login-first-screen
+    - 1-3-single-xhs-ingest-with-sse-progress
+    - 1-4-home-unified-input-and-inspiration-library
+    - 1-5-settings-feedback-and-account-entry-points
+    additional_scope_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    expanded_scope_review_required: true
+preparation_order:
+- 9-1-capacitor-app-installation-and-host-foundation
+- 1-0-production-login-and-multi-device-sessions
+- 1-6-home-multi-link-import-queue-and-honest-status
+- 1-7-durable-import-progress-and-restart-recovery
+- 9-4-component-workbench-and-enforced-code-quality
+- 9-5-browser-flow-and-visual-regression-gates
+- 9-3-shared-ui-components-and-safe-app-sheet
+- 1-8-owner-import-records-and-versioned-deduplication
+- 1-9-production-image-text-understanding-and-evidence
+- 1-10-adaptive-video-understanding-and-local-frame-resampling
+- 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+- 9-6-identity-scoped-server-read-queries
+- 9-7-typed-navigation-and-host-history
+- 2-3-single-city-travel-time-and-boundary-confirmation
+- 2-4-unified-flight-and-rail-service-lookup
+- 2-5-preplanning-nightly-stays-breakfast-and-luggage
+- 2-6-preplanning-pace-and-additional-constraints
+- 2-7-full-city-picker-and-l3-place-intent
+- 2-8-shared-poi-information-sheet
+- 2-9-single-planning-job-and-stable-timeline-transition
+- 2-10-authoritative-route-facts-and-timeline-transport
+- 2-11-constraint-first-complete-single-city-planning
+- 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+- 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+- 2-14-daily-load-estimation-and-explainable-summary
+- 2-15-post-plan-place-search-and-manual-candidates
+- 3-1-minute-timeline-editing-and-plan-wide-undo
+- 3-2-controlled-candidate-placement-and-free-time-filling
+- 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+- 3-4-incremental-validation-and-typed-conflict-fixes
+- 3-5-controlled-conversational-local-adjustment
+- 4-1-cross-city-intent-and-linked-trip-input-draft
+- 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+- 4-3-independent-city-planning-and-atomic-linked-trip-publication
+- 4-4-active-city-editing-and-linked-trip-revision-rebinding
+- 4-5-day-excursion-intent-and-round-trip-transfer-draft
+- 4-6-day-excursion-planning-and-atomic-timeline-publication
+- 4-7-day-excursion-editing-and-scope-guards
+- 5-1-revision-bound-ai-detail-enrichment
+- 5-2-verifiable-result-sheet-and-citation-reading
+- 5-3-line-level-detail-editing-and-ai-preservation
+- 5-4-revision-bound-export-generation-and-preview
+- 5-5-whole-trip-image-download-and-system-sharing
+- 6-1-planned-meal-slots-and-primary-alternative-pool
+- 6-2-foreground-location-meal-recall-and-plan-context-fallback
+- 6-3-normalized-business-areas-and-owner-food-hints
+- 6-4-trip-checklist-and-direct-or-ai-record-entry
+- 6-5-lightweight-shopping-notes-and-label-shortcuts
+- 7-1-recent-trips-and-context-resume
+- 7-3-settings-account-and-available-actions
+- 7-4-account-data-copy-export
+- 7-5-account-deletion-and-cleanup-results
+- 7-6-feedback-entry-and-reliable-submission
+- 8-1-cross-flow-observability-and-fault-localization
+- 8-2-reproducible-quality-regression-and-version-comparison
+- 8-3-task-level-provider-routing-and-safe-release
+- 8-4-platform-budget-and-usage-policy-management
+- 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+- 8-6-operations-overview-and-read-only-diagnostics
+- 9-2-android-apk-and-ios-testflight-delivery
+ordering_note: 保留已准备9.1/1.0/1.6/1.7；随后9.4→9.5→9.3；9.6/9.7在2.3前；原队列相对顺序保持、9.2末尾。准备不解除stop_after_story。
+paused_story_contract:
+  story_key: 3-1-minute-timeline-editing-and-plan-wide-undo
+  legacy_story_id: 2-2-timeline-editing-undo-and-history
+  baseline_commit: 10f940c49e2d61ddcb1233cffddd071ed1c9284c
+  working_branch: codex/story-2-2-timeline-editing
+  start_after:
+  - 1-0-production-login-and-multi-device-sessions
+  - 2-7-full-city-picker-and-l3-place-intent
+  - 2-9-single-planning-job-and-stable-timeline-transition
+  - 2-10-authoritative-route-facts-and-timeline-transport
+  - 2-11-constraint-first-complete-single-city-planning
+  start_conditions:
+  - 准备新3.1实施合同并完成旧代码keep/change/remove审计；保留仍适用的测试。
+  - 现有owner/幂等/revision/PlanVersion/EditEvent/补偿式undo按原Git历史复用。
+  - 验证新的PlaceIntent、单一PlanningJob/current revision、可信RouteFact和初始校验合同可消费。
+  - 获后续实施授权；每次DB变化按DB-CHANGE-01，真实PG/route/浏览器证据在对应实施阶段提供。
+  not_prerequisites:
+  - 3-2-controlled-candidate-placement-and-free-time-filling
+  - 3-4-incremental-validation-and-typed-conflict-fixes
+  - 4-1-cross-city-intent-and-linked-trip-input-draft
+  - 5-1-revision-bound-ai-detail-enrichment
+  - 8-1-cross-flow-observability-and-fault-localization
+  - 8-2-reproducible-quality-regression-and-version-comparison
+  own_delivery: 3.1自身承担新revision增量ValidationRun触发及状态，不能等待3.4 FixSheet。
+implementation_conditions:
+  OPS-01:
+    primary_story: 1-0-production-login-and-multi-device-sessions
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    delivery_role: 运维/数据库工程
+    verification_role: 后端负责人及QA的独立证据核对步骤
+    applies_to:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-11-constraint-first-complete-single-city-planning
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-2-reproducible-quality-regression-and-version-comparison
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    - 9-2-android-apk-and-ios-testflight-delivery
+    trigger: 首个承载真实用户数据的生产数据库开放前；后续持久化Story复用并扩充恢复fixture。
+    start_conditions:
+    - 清点实际环境/数据库/数据目录、旧备份与保留配置；既有数据先核对现状。
+    - 真实资源操作另获授权；生产鉴权对外开放前完成1.0。
+    close_conditions:
+    - 每日全量与15分钟增量/PITR的实际链可检查。
+    - 在隔离新实例恢复指定时点，验证事务标记、关键引用/owner/Job/revision；不覆盖源库或旧备份。
+    - 记录实际恢复窗口/耗时/失败与容量，不把15分钟目标当实测RPO。
+    source_section: OPS-01：数据库备份、PITR 与新实例恢复
+    source: _bmad-output/planning-artifacts/implementation-prerequisites-2026-09-15.md
+    execution_state: not-started
+  OPS-02:
+    primary_story: 1-9-production-image-text-understanding-and-evidence
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    delivery_role: 对象存储/后端工程
+    verification_role: 隐私边界及QA的独立证据核对步骤
+    applies_to:
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    trigger: 1.9首次生产私有媒体；后续新增对象类型在所属Story扩充矩阵。
+    start_conditions:
+    - 1.0身份、owner/共享对象引用、COS/CDN实际能力与操作授权。
+    close_conditions:
+    - 原图180天转低频而不删除；缩略图长期，临时/导出/账号副本/反馈各有专属生命周期。
+    - 私有签名、179/180/181天、迟到写入、共享引用/撤权/清理竞态的隔离测试与实际服务证据。
+    - 无引用清理先干跑并在删除前重验引用，真实删除另获授权；记录费用及取回限制。
+    source_section: OPS-02：媒体生命周期与引用安全
+    source: _bmad-output/planning-artifacts/implementation-prerequisites-2026-09-15.md
+    execution_state: not-started
+  DB-CHANGE-01:
+    primary_story: 1-0-production-login-and-multi-device-sessions
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    delivery_role: 每张变更Story的后端作者
+    verification_role: 数据库负责人及QA的独立证据核对步骤
+    applies_to:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-11-constraint-first-complete-single-city-planning
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-2-reproducible-quality-regression-and-version-comparison
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    trigger: 每次schema/回填/索引/扩展/迁移/恢复策略变化；无变化只登记可核验的不适用依据。
+    start_conditions:
+    - 第一次共享环境执行前形成绑定migration ID/代码版本的恢复方案。
+    - 依赖备份的路径先取得OPS-01对应恢复点证据；生产应用前完成适用演练。
+    close_conditions:
+    - 按真实数据语义选择可逆、前向修复或PITR，不承诺任意DDL天然无损回滚。
+    - 匹配目标PostgreSQL/扩展的隔离库正向和恢复验证；owner/幂等/revision/EditEvent/不可变历史保持。
+    source_section: DB-CHANGE-01：每次数据库变更的恢复方案
+    source: _bmad-output/planning-artifacts/implementation-prerequisites-2026-09-15.md
+    execution_state: not-started
+  DATA-VECTOR-01:
+    primary_story: 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    delivery_role: 首次实际消费或升级向量的现有Story作者
+    verification_role: 2.13数据负责人及QA的独立证据核对步骤
+    applies_to:
+    - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+    trigger: 首次启用向量或实际改变模型/维度/归一/距离/索引兼容性时；当前尚未评估触发，不声称已升级。
+    extension_rule: 若其他Story先消费向量，在该Story添加本条件并通知2.13归属；不新增产品Story。
+    start_conditions:
+    - 证明当前Story确有向量消费；DB-CHANGE-01；真实embedding外发另获样本/预算授权。
+    close_conditions:
+    - 未触发时给出代码/schema/策略依据；不提前建设升级平台。
+    - 触发时有兼容版本、可恢复重建、同样本比较、原子切换及失败恢复；保留被引用旧向量/索引。
+    source_section: DATA-VECTOR-01：需要时才执行的向量版本变更
+    source: _bmad-output/planning-artifacts/implementation-prerequisites-2026-09-15.md
+    execution_state: not-started
+  METRICS-01:
+    primary_story: 1-0-production-login-and-multi-device-sessions
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    delivery_role: 1.0建立公共测量合同、各能力作者随首次交付接入
+    verification_role: 8.1负责人及QA的独立证据核对步骤
+    applies_to:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-11-constraint-first-complete-single-city-planning
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-2-reproducible-quality-regression-and-version-comparison
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    trigger: 从1.0认证、1.6/1.7任务开始，最迟1.9首次真实生产能力验收前具备；不等待8.x界面。
+    start_conditions:
+    - 具名workload/fixture、版本与事件阶段边界；确定性检查先行，真实批次按授权。
+    close_conditions:
+    - 版本化manifest和可执行本地报告；正常/失败/重连/重复/缺字段具有真实分母与覆盖。
+    - P50/P95按同口径nearest-rank与有效N；未知费用/未完成/采样缺口单列，不平均P95。
+    - 真实服务基线必须有实际环境/版本/N，纯回放不关闭真实性能验收。
+    source_section: METRICS-01：各生产能力从首次交付采集基线
+    source: _bmad-output/planning-artifacts/implementation-prerequisites-2026-09-15.md
+    execution_state: not-started
+  METRICS-02:
+    primary_story: 8-1-cross-flow-observability-and-fault-localization
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    decision_assignee: yimeng-tong
+    delivery_role: 8.1观测负责人汇总；性能工程/QA分析
+    verification_role: 架构/运维核验资源条件；产品负责人决定体验费用取舍
+    applies_to:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-11-constraint-first-complete-single-city-planning
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-2-reproducible-quality-regression-and-version-comparison
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    trigger: 每个能力面向真实用户开放前完成目标定版；若早于8.1交付，由8.1责任人提前完成该能力条件。
+    start_conditions:
+    - METRICS-01实际staging基线、窗口/版本/样本N与成本证据或明确未知。
+    close_conditions:
+    - 实际基线、yimeng-tong的版本化目标决定、发布候选同口径结果可对应。
+    - 没有真实基线或目标决定保持未关闭，不猜毫秒/成功率，不用旧Quick/HQ数字补缺。
+    source_section: METRICS-02：8.1 汇总与生产前目标定版
+    source: _bmad-output/planning-artifacts/implementation-prerequisites-2026-09-15.md
+    execution_state: not-started
+  METRICS-03:
+    primary_story: 8-2-reproducible-quality-regression-and-version-comparison
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    human_evaluation_assignee: yimeng-tong
+    delivery_role: 领域作者保留fixtures；8.2统一执行与逐项比较
+    verification_role: QA核验完整性；真实运营/产品人评由yimeng-tong完成
+    applies_to:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-11-constraint-first-complete-single-city-planning
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-2-reproducible-quality-regression-and-version-comparison
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    trigger: 领域能力首次实现留规则fixture；8.2汇总，在对应模型/提示/编排变更发布前按适用策略消费。
+    start_conditions:
+    - 封存样本/规则/版本；8.2受限入口；真实比较/外发另获明确授权。
+    close_conditions:
+    - 完整case/variant/repeat结果、逐规则计分/提醒/人评、失败与缺失覆盖。
+    - 8.2有实际运营者评分/评语/逐例比较及封存快照，不用合成截图或可选摘要代替人评。
+    - 不恢复统一硬失败否决；运行时安全/owner/revision门禁独立保留；早期基本规则测试不等待8.2。
+    source_section: METRICS-03：8.2 逐规则回归与真实人评
+    source: _bmad-output/planning-artifacts/implementation-prerequisites-2026-09-15.md
+    execution_state: not-started
+  APP-BUILD-01:
+    primary_story: 9-1-capacitor-app-installation-and-host-foundation
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    delivery_role: App工程及所属业务负责人
+    verification_role: 分离的证据核验步骤
+    applies_to:
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    trigger: 首次原生工程/构建；9.2候选重新核验。
+    start_conditions:
+    - 消费当前已批准Story和平台资源记录；缺项明确标记并继续独立工作。
+    close_conditions:
+    - 锁定工具链/资源摘要/实际应用标识与环境。
+    - Web构建及Android/iOS真实构建安装、升级/秘密排除证据；缺平台保持未完成。
+    source_section: APP-BUILD-01：原生工程与可重复构建安装
+    source: _bmad-output/planning-artifacts/app-implementation-prerequisites-2026-09-19.md
+    execution_state: not-started
+  APP-HOST-01:
+    primary_story: 9-1-capacitor-app-installation-and-host-foundation
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    delivery_role: App工程及所属业务负责人
+    verification_role: 分离的证据核验步骤
+    applies_to:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+    trigger: 各宿主交互/原生能力首次消费及实际变更。
+    start_conditions:
+    - 消费当前已批准Story和平台资源记录；缺项明确标记并继续独立工作。
+    close_conditions:
+    - 本Story的Android/iOS交互、权限、恢复、owner隔离及真实结果矩阵有证据。
+    - Web回归与原业务语义保持；不适用分支给出可核验依据，不全局关闭。
+    source_section: APP-HOST-01：逐业务宿主交互与恢复
+    source: _bmad-output/planning-artifacts/app-implementation-prerequisites-2026-09-19.md
+    execution_state: not-started
+  APP-DISTRIBUTE-01:
+    primary_story: 9-2-android-apk-and-ios-testflight-delivery
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    delivery_role: App工程及所属业务负责人
+    verification_role: 分离的证据核验步骤
+    applies_to:
+    - 9-2-android-apk-and-ios-testflight-delivery
+    trigger: 本期可安装测试包最终交付。
+    start_conditions:
+    - 消费当前已批准Story和平台资源记录；缺项明确标记并继续独立工作。
+    close_conditions:
+    - 签名APK与指定组可用TestFlight的真实安装/升级和候选记录。
+    - 最终业务/故障/隐私矩阵、版本/期限和停止分发/替换说明。
+    source_section: APP-DISTRIBUTE-01：APK 与 TestFlight 交付
+    source: _bmad-output/planning-artifacts/app-implementation-prerequisites-2026-09-19.md
+    execution_state: not-started
+  UI-COMPONENT-01:
+    primary_story: 9-3-shared-ui-components-and-safe-app-sheet
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    source: _bmad-output/planning-artifacts/ui-implementation-prerequisites-2026-09-20.md
+    source_section: UI-COMPONENT-01
+    trigger: 共享组件消费与私有Portal/宿主行为
+    start_conditions:
+    - 正式源合同与当前执行窗口
+    - 适用工作台/本地切片证据可用
+    close_conditions:
+    - 实际消费与本Story状态/身份/平台回归；真实native证据独立
+    - 逐Story具体summary及现存evidence；保留真实运行门槛
+    execution_state: not-started
+    applies_to:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+  UI-WORKBENCH-01:
+    primary_story: 9-4-component-workbench-and-enforced-code-quality
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    source: _bmad-output/planning-artifacts/ui-implementation-prerequisites-2026-09-20.md
+    source_section: UI-WORKBENCH-01
+    trigger: 新改UI有可重现状态与交互示例
+    start_conditions:
+    - 正式源合同与当前执行窗口
+    - 适用工作台/本地切片证据可用
+    close_conditions:
+    - 可运行示例/a11y、替身隔离和当前源码证据
+    - 逐Story具体summary及现存evidence；保留真实运行门槛
+    execution_state: not-started
+    applies_to:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-4-component-workbench-and-enforced-code-quality
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+  CODE-QUALITY-01:
+    primary_story: 9-4-component-workbench-and-enforced-code-quality
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    source: _bmad-output/planning-artifacts/ui-implementation-prerequisites-2026-09-20.md
+    source_section: CODE-QUALITY-01
+    trigger: 新增/修改的TypeScript与React源代码
+    start_conditions:
+    - 正式源合同与当前执行窗口
+    - 适用工作台/本地切片证据可用
+    close_conditions:
+    - 真实typed lint及失败负例，历史例外不增长
+    - 逐Story具体summary及现存evidence；保留真实运行门槛
+    execution_state: not-started
+    applies_to:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-11-constraint-first-complete-single-city-planning
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-1-cross-flow-observability-and-fault-localization
+    - 8-2-reproducible-quality-regression-and-version-comparison
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-4-component-workbench-and-enforced-code-quality
+    - 9-5-browser-flow-and-visual-regression-gates
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+  UI-BROWSER-01:
+    primary_story: 9-5-browser-flow-and-visual-regression-gates
+    delivery_assignee: Codex
+    verification_assignee: Codex
+    source: _bmad-output/planning-artifacts/ui-implementation-prerequisites-2026-09-20.md
+    source_section: UI-BROWSER-01
+    trigger: UI或实际render/恢复行为变更
+    start_conditions:
+    - 正式源合同与当前执行窗口
+    - 适用工作台/本地切片证据可用
+    close_conditions:
+    - 当前浏览器/截图与原探针对照；不以fixture替代native
+    - 逐Story具体summary及现存evidence；保留真实运行门槛
+    execution_state: not-started
+    applies_to:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    - 2-3-single-city-travel-time-and-boundary-confirmation
+    - 2-4-unified-flight-and-rail-service-lookup
+    - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+    - 2-6-preplanning-pace-and-additional-constraints
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-8-shared-poi-information-sheet
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+    - 2-14-daily-load-estimation-and-explainable-summary
+    - 2-15-post-plan-place-search-and-manual-candidates
+    - 3-1-minute-timeline-editing-and-plan-wide-undo
+    - 3-2-controlled-candidate-placement-and-free-time-filling
+    - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+    - 3-4-incremental-validation-and-typed-conflict-fixes
+    - 3-5-controlled-conversational-local-adjustment
+    - 4-1-cross-city-intent-and-linked-trip-input-draft
+    - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+    - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+    - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+    - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+    - 4-6-day-excursion-planning-and-atomic-timeline-publication
+    - 4-7-day-excursion-editing-and-scope-guards
+    - 5-1-revision-bound-ai-detail-enrichment
+    - 5-2-verifiable-result-sheet-and-citation-reading
+    - 5-3-line-level-detail-editing-and-ai-preservation
+    - 5-4-revision-bound-export-generation-and-preview
+    - 5-5-whole-trip-image-download-and-system-sharing
+    - 6-1-planned-meal-slots-and-primary-alternative-pool
+    - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+    - 6-3-normalized-business-areas-and-owner-food-hints
+    - 6-4-trip-checklist-and-direct-or-ai-record-entry
+    - 6-5-lightweight-shopping-notes-and-label-shortcuts
+    - 7-1-recent-trips-and-context-resume
+    - 7-3-settings-account-and-available-actions
+    - 7-4-account-data-copy-export
+    - 7-5-account-deletion-and-cleanup-results
+    - 7-6-feedback-entry-and-reliable-submission
+    - 8-3-task-level-provider-routing-and-safe-release
+    - 8-4-platform-budget-and-usage-policy-management
+    - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+    - 8-6-operations-overview-and-read-only-diagnostics
+    - 9-1-capacitor-app-installation-and-host-foundation
+    - 9-2-android-apk-and-ios-testflight-delivery
+    - 9-3-shared-ui-components-and-safe-app-sheet
+    - 9-5-browser-flow-and-visual-regression-gates
+    - 9-6-identity-scoped-server-read-queries
+    - 9-7-typed-navigation-and-host-history
+story_condition_bindings:
+  1-0-production-login-and-multi-device-sessions:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  1-6-home-multi-link-import-queue-and-honest-status:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  1-7-durable-import-progress-and-restart-recovery:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-BROWSER-01
+  1-8-owner-import-records-and-versioned-deduplication:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  1-9-production-image-text-understanding-and-evidence:
+  - OPS-01
+  - OPS-02
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - CODE-QUALITY-01
+  1-10-adaptive-video-understanding-and-local-frame-resampling:
+  - OPS-01
+  - OPS-02
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - CODE-QUALITY-01
+  1-11-amap-poi-verification-branch-disambiguation-and-manual-correction:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-3-single-city-travel-time-and-boundary-confirmation:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-4-unified-flight-and-rail-service-lookup:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-5-preplanning-nightly-stays-breakfast-and-luggage:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-6-preplanning-pace-and-additional-constraints:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-7-full-city-picker-and-l3-place-intent:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-8-shared-poi-information-sheet:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-9-single-planning-job-and-stable-timeline-transition:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-10-authoritative-route-facts-and-timeline-transport:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-11-constraint-first-complete-single-city-planning:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - CODE-QUALITY-01
+  2-12-amap-candidate-expansion-and-nonblocking-candidate-list:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots:
+  - OPS-01
+  - DB-CHANGE-01
+  - DATA-VECTOR-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - CODE-QUALITY-01
+  2-14-daily-load-estimation-and-explainable-summary:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  2-15-post-plan-place-search-and-manual-candidates:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  3-1-minute-timeline-editing-and-plan-wide-undo:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  3-2-controlled-candidate-placement-and-free-time-filling:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  3-3-post-plan-nightly-stay-breakfast-and-luggage-editing:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  3-4-incremental-validation-and-typed-conflict-fixes:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  3-5-controlled-conversational-local-adjustment:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  4-1-cross-city-intent-and-linked-trip-input-draft:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  4-2-adjacent-city-transfers-and-handoff-day-boundaries:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  4-3-independent-city-planning-and-atomic-linked-trip-publication:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  4-4-active-city-editing-and-linked-trip-revision-rebinding:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  4-5-day-excursion-intent-and-round-trip-transfer-draft:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  4-6-day-excursion-planning-and-atomic-timeline-publication:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  4-7-day-excursion-editing-and-scope-guards:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  5-1-revision-bound-ai-detail-enrichment:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  5-2-verifiable-result-sheet-and-citation-reading:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  5-3-line-level-detail-editing-and-ai-preservation:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  5-4-revision-bound-export-generation-and-preview:
+  - OPS-01
+  - OPS-02
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  5-5-whole-trip-image-download-and-system-sharing:
+  - OPS-01
+  - OPS-02
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  6-1-planned-meal-slots-and-primary-alternative-pool:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  6-2-foreground-location-meal-recall-and-plan-context-fallback:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  6-3-normalized-business-areas-and-owner-food-hints:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  6-4-trip-checklist-and-direct-or-ai-record-entry:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  6-5-lightweight-shopping-notes-and-label-shortcuts:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  7-1-recent-trips-and-context-resume:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  7-3-settings-account-and-available-actions:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  7-4-account-data-copy-export:
+  - OPS-01
+  - OPS-02
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  7-5-account-deletion-and-cleanup-results:
+  - OPS-01
+  - OPS-02
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  7-6-feedback-entry-and-reliable-submission:
+  - OPS-01
+  - OPS-02
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  8-1-cross-flow-observability-and-fault-localization:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  8-2-reproducible-quality-regression-and-version-comparison:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - CODE-QUALITY-01
+  8-3-task-level-provider-routing-and-safe-release:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  8-4-platform-budget-and-usage-policy-management:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  8-5-terminal-ai-amap-incidents-and-telegram-alerts:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  8-6-operations-overview-and-read-only-diagnostics:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  9-1-capacitor-app-installation-and-host-foundation:
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-BUILD-01
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  9-2-android-apk-and-ios-testflight-delivery:
+  - OPS-01
+  - DB-CHANGE-01
+  - METRICS-01
+  - METRICS-02
+  - METRICS-03
+  - APP-BUILD-01
+  - APP-HOST-01
+  - APP-DISTRIBUTE-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  9-3-shared-ui-components-and-safe-app-sheet:
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  9-4-component-workbench-and-enforced-code-quality:
+  - CODE-QUALITY-01
+  - UI-WORKBENCH-01
+  9-5-browser-flow-and-visual-regression-gates:
+  - CODE-QUALITY-01
+  - UI-BROWSER-01
+  9-6-identity-scoped-server-read-queries:
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+  9-7-typed-navigation-and-host-history:
+  - APP-HOST-01
+  - CODE-QUALITY-01
+  - UI-COMPONENT-01
+  - UI-WORKBENCH-01
+  - UI-BROWSER-01
+assignment_note: 工程交付/数据库/存储/观测/评测职责指派给当前项目执行者Codex；复核使用分离步骤与可查证据，不冒称另有人已独立审过。yimeng-tong负责产品决策和实际人评；当前均未执行。 2026-09-19新增App条件独立按Story记录；持续执行和决策自主权见本次用户批准。
+condition_transfer_rule: 后续create-story将绑定条件的源章节、适用性、责任人、Tasks/Subtasks及开始/关闭证据写入所属Story；SP本轮不创建这些实施文件。跨Story条件每次触发单独验收，不能一次关闭全局。
+deferred_story_ids:
+- '7.2'
+- '8.7'
+- '8.8'
+deferred_requirements:
+- FR34.1
+- FR40.1
+- FR42
+- FR43
+deferred_registry: _bmad-output/implementation-artifacts/deferred-work.md
+excluded_nonexecutables:
+- path: _bmad-output/implementation-artifacts/2-2-timeline-editing-undo-and-history.md
+  reason: 保留的旧在制合同，只能经3.1继承，不独立派发。
+- path: _bmad-output/planning-artifacts/story-7-2-review-2026-09-06.md
+  reason: 延期7.2旧手工打卡草稿。
+- path: _bmad-output/planning-artifacts/epic-7-story-breakdown-proposal-2026-09-06.md
+  reason: 拆分来源与历史范围，当前Story只取epics.md。
+- path: _bmad-output/planning-artifacts/epic-8-story-breakdown-proposal-2026-09-07.md
+  reason: 包含延期8.7/8.8的提案，不是额外实施Story。
+- path: _bmad-output/implementation-artifacts/visual
+  reason: 原型与旧探索图片均不触发ready-for-dev；实施阶段再补对应证据。
+- path: _bmad-output/implementation-artifacts/archive/sprint-planning-2026-09-15
+  reason: 旧Sprint/脚本/合同只作历史证据，不作为当前队列。
+authorization:
+  sprint_planning: true
+  create_story: false
+  implementation: false
+  real_services: false
+  deployment: false
+  data_operations: false
+scope_change:
+  id: ui-foundation-2026-09-20
+  decision: _bmad-output/planning-artifacts/ui-foundation-scope-decision-2026-09-20.md
+  decision_sha256: d6368fd03b443fc2308a0517f679c2da075eac66939d33243e9ae9fc0bbfba0b
+  baseline_migration: _bmad-output/implementation-artifacts/sprint-migration-2026-09-19.yaml
+  baseline_migration_sha256: 82f2c28ca87b172f571c379269317d7a543dbe238eea08ca7b2975bcf3fbda92
+  snapshot_directory: _bmad-output/implementation-artifacts/archive/ui-foundation-2026-09-20
+  snapshot_manifest: _bmad-output/implementation-artifacts/archive/ui-foundation-2026-09-20/snapshot-manifest.json
+  snapshot_manifest_sha256: a06497838947b64a07926efc85fd14d0383a1db426ab44c85b125a9ae85deb2f
+  readiness_report: _bmad-output/planning-artifacts/implementation-readiness-ui-foundation-2026-09-20.md
+  approved_appendix: _bmad-output/implementation-artifacts/archive/ui-foundation-2026-09-20/_bmad-output/planning-artifacts/sprint-change-ui-contracts-2026-09-19.md
+dependencies:
+  1-0-production-login-and-multi-device-sessions: []
+  1-6-home-multi-link-import-queue-and-honest-status: []
+  1-7-durable-import-progress-and-restart-recovery: []
+  1-8-owner-import-records-and-versioned-deduplication: []
+  1-9-production-image-text-understanding-and-evidence: []
+  1-10-adaptive-video-understanding-and-local-frame-resampling: []
+  1-11-amap-poi-verification-branch-disambiguation-and-manual-correction: []
+  2-3-single-city-travel-time-and-boundary-confirmation: []
+  2-4-unified-flight-and-rail-service-lookup: []
+  2-5-preplanning-nightly-stays-breakfast-and-luggage: []
+  2-6-preplanning-pace-and-additional-constraints: []
+  2-7-full-city-picker-and-l3-place-intent: []
+  2-8-shared-poi-information-sheet: []
+  2-9-single-planning-job-and-stable-timeline-transition: []
+  2-10-authoritative-route-facts-and-timeline-transport: []
+  2-11-constraint-first-complete-single-city-planning: []
+  2-12-amap-candidate-expansion-and-nonblocking-candidate-list: []
+  2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots: []
+  2-14-daily-load-estimation-and-explainable-summary: []
+  2-15-post-plan-place-search-and-manual-candidates: []
+  3-1-minute-timeline-editing-and-plan-wide-undo:
+  - 1-0-production-login-and-multi-device-sessions
+  - 2-7-full-city-picker-and-l3-place-intent
+  - 2-9-single-planning-job-and-stable-timeline-transition
+  - 2-10-authoritative-route-facts-and-timeline-transport
+  - 2-11-constraint-first-complete-single-city-planning
+  3-2-controlled-candidate-placement-and-free-time-filling: []
+  3-3-post-plan-nightly-stay-breakfast-and-luggage-editing: []
+  3-4-incremental-validation-and-typed-conflict-fixes: []
+  3-5-controlled-conversational-local-adjustment: []
+  4-1-cross-city-intent-and-linked-trip-input-draft: []
+  4-2-adjacent-city-transfers-and-handoff-day-boundaries: []
+  4-3-independent-city-planning-and-atomic-linked-trip-publication: []
+  4-4-active-city-editing-and-linked-trip-revision-rebinding: []
+  4-5-day-excursion-intent-and-round-trip-transfer-draft: []
+  4-6-day-excursion-planning-and-atomic-timeline-publication: []
+  4-7-day-excursion-editing-and-scope-guards: []
+  5-1-revision-bound-ai-detail-enrichment: []
+  5-2-verifiable-result-sheet-and-citation-reading: []
+  5-3-line-level-detail-editing-and-ai-preservation: []
+  5-4-revision-bound-export-generation-and-preview: []
+  5-5-whole-trip-image-download-and-system-sharing: []
+  6-1-planned-meal-slots-and-primary-alternative-pool: []
+  6-2-foreground-location-meal-recall-and-plan-context-fallback: []
+  6-3-normalized-business-areas-and-owner-food-hints: []
+  6-4-trip-checklist-and-direct-or-ai-record-entry: []
+  6-5-lightweight-shopping-notes-and-label-shortcuts: []
+  7-1-recent-trips-and-context-resume: []
+  7-3-settings-account-and-available-actions: []
+  7-4-account-data-copy-export: []
+  7-5-account-deletion-and-cleanup-results: []
+  7-6-feedback-entry-and-reliable-submission: []
+  8-1-cross-flow-observability-and-fault-localization: []
+  8-2-reproducible-quality-regression-and-version-comparison: []
+  8-3-task-level-provider-routing-and-safe-release: []
+  8-4-platform-budget-and-usage-policy-management: []
+  8-5-terminal-ai-amap-incidents-and-telegram-alerts: []
+  8-6-operations-overview-and-read-only-diagnostics: []
+  9-1-capacitor-app-installation-and-host-foundation: []
+  9-2-android-apk-and-ios-testflight-delivery:
+  - 1-0-production-login-and-multi-device-sessions
+  - 1-6-home-multi-link-import-queue-and-honest-status
+  - 1-7-durable-import-progress-and-restart-recovery
+  - 1-8-owner-import-records-and-versioned-deduplication
+  - 1-9-production-image-text-understanding-and-evidence
+  - 1-10-adaptive-video-understanding-and-local-frame-resampling
+  - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+  - 2-3-single-city-travel-time-and-boundary-confirmation
+  - 2-4-unified-flight-and-rail-service-lookup
+  - 2-5-preplanning-nightly-stays-breakfast-and-luggage
+  - 2-6-preplanning-pace-and-additional-constraints
+  - 2-7-full-city-picker-and-l3-place-intent
+  - 2-8-shared-poi-information-sheet
+  - 2-9-single-planning-job-and-stable-timeline-transition
+  - 2-10-authoritative-route-facts-and-timeline-transport
+  - 2-11-constraint-first-complete-single-city-planning
+  - 2-12-amap-candidate-expansion-and-nonblocking-candidate-list
+  - 2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots
+  - 2-14-daily-load-estimation-and-explainable-summary
+  - 2-15-post-plan-place-search-and-manual-candidates
+  - 3-1-minute-timeline-editing-and-plan-wide-undo
+  - 3-2-controlled-candidate-placement-and-free-time-filling
+  - 3-3-post-plan-nightly-stay-breakfast-and-luggage-editing
+  - 3-4-incremental-validation-and-typed-conflict-fixes
+  - 3-5-controlled-conversational-local-adjustment
+  - 4-1-cross-city-intent-and-linked-trip-input-draft
+  - 4-2-adjacent-city-transfers-and-handoff-day-boundaries
+  - 4-3-independent-city-planning-and-atomic-linked-trip-publication
+  - 4-4-active-city-editing-and-linked-trip-revision-rebinding
+  - 4-5-day-excursion-intent-and-round-trip-transfer-draft
+  - 4-6-day-excursion-planning-and-atomic-timeline-publication
+  - 4-7-day-excursion-editing-and-scope-guards
+  - 5-1-revision-bound-ai-detail-enrichment
+  - 5-2-verifiable-result-sheet-and-citation-reading
+  - 5-3-line-level-detail-editing-and-ai-preservation
+  - 5-4-revision-bound-export-generation-and-preview
+  - 5-5-whole-trip-image-download-and-system-sharing
+  - 6-1-planned-meal-slots-and-primary-alternative-pool
+  - 6-2-foreground-location-meal-recall-and-plan-context-fallback
+  - 6-3-normalized-business-areas-and-owner-food-hints
+  - 6-4-trip-checklist-and-direct-or-ai-record-entry
+  - 6-5-lightweight-shopping-notes-and-label-shortcuts
+  - 7-1-recent-trips-and-context-resume
+  - 7-3-settings-account-and-available-actions
+  - 7-4-account-data-copy-export
+  - 7-5-account-deletion-and-cleanup-results
+  - 7-6-feedback-entry-and-reliable-submission
+  - 8-1-cross-flow-observability-and-fault-localization
+  - 8-2-reproducible-quality-regression-and-version-comparison
+  - 8-3-task-level-provider-routing-and-safe-release
+  - 8-4-platform-budget-and-usage-policy-management
+  - 8-5-terminal-ai-amap-incidents-and-telegram-alerts
+  - 8-6-operations-overview-and-read-only-diagnostics
+  - 9-1-capacitor-app-installation-and-host-foundation
+  - 9-3-shared-ui-components-and-safe-app-sheet
+  - 9-4-component-workbench-and-enforced-code-quality
+  - 9-5-browser-flow-and-visual-regression-gates
+  - 9-6-identity-scoped-server-read-queries
+  - 9-7-typed-navigation-and-host-history
+  9-3-shared-ui-components-and-safe-app-sheet:
+  - 9-4-component-workbench-and-enforced-code-quality
+  - 9-5-browser-flow-and-visual-regression-gates
+  9-4-component-workbench-and-enforced-code-quality: []
+  9-5-browser-flow-and-visual-regression-gates:
+  - 9-4-component-workbench-and-enforced-code-quality
+  9-6-identity-scoped-server-read-queries:
+  - 9-4-component-workbench-and-enforced-code-quality
+  - 9-5-browser-flow-and-visual-regression-gates
+  9-7-typed-navigation-and-host-history:
+  - 9-4-component-workbench-and-enforced-code-quality
+  - 9-5-browser-flow-and-visual-regression-gates
+closure_dependencies:
+  1-0-production-login-and-multi-device-sessions:
+  - 9-1-capacitor-app-installation-and-host-foundation
+local_slice_dependencies:
+  9-6-identity-scoped-server-read-queries:
+    story_key: 9-3-shared-ui-components-and-safe-app-sheet
+    evidence_gate: shared-ui-local-regression-passed
+  9-7-typed-navigation-and-host-history:
+    story_key: 9-3-shared-ui-components-and-safe-app-sheet
+    evidence_gate: shared-ui-local-regression-passed

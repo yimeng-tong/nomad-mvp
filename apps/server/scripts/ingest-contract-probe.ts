@@ -36,6 +36,10 @@ async function buildIngestApp() {
 }
 
 async function main() {
+  // Explicit isolated fixture authorization; never enable this profile in a deployment.
+  process.env.AUTH_RUNTIME_MODE = 'test';
+  process.env.AUTH_PROVIDER = 'fixture';
+  process.env.AUTH_TEST_ADAPTER_ENABLED = 'true';
   delete process.env.DATABASE_URL;
   clearIngestStateForTests();
 
@@ -107,7 +111,7 @@ async function main() {
     assert(states.includes(expected), `pipeline should emit ${expected}`);
   }
   const parsingSubStages = completedJob.events.filter((event) => event.state === 'parsing').map((event) => event.sub_stage).join(',');
-  assert(parsingSubStages === 'text,ocr,vision', 'pipeline should emit parsing diagnostic sub-stages');
+  assert(parsingSubStages === 'multimodal', 'pipeline should emit parsing diagnostic sub-stages');
 
   process.env.INGEST_STUB_FAIL_STAGE = 'fetch,extract,geo,rehost';
   const degradedJob = await createOrGetIngestJob({
@@ -118,11 +122,10 @@ async function main() {
   await runIngestPipeline(degradedJob.id);
   delete process.env.INGEST_STUB_FAIL_STAGE;
   const degraded = getJob(degradedJob.id);
-  assert(degraded?.status === 'done', 'degraded adapter failures should still finish as done');
-  const failedCodes = degraded.events.filter((event) => event.state === 'failed').map((event) => event.error_code);
-  for (const expected of ['INGEST_XHS_FETCH_DEGRADED', 'INGEST_EXTRACTION_DEGRADED', 'INGEST_GEO_DEGRADED', 'INGEST_REHOST_DEGRADED']) {
-    assert(failedCodes.includes(expected), `degraded pipeline should record ${expected}`);
-  }
+  assert(degraded?.status === 'failed', 'a failed fetch must terminate without synthetic saved content');
+  assert(!degraded.events.some(event => event.state === 'done'), 'failed work cannot later report done');
+  assert(degraded.snapshot?.result === null, 'no actual saved result must remain absent');
+  assert(!(await listLibraryInspirationsForUser('user-a')).some(item => item.id === `mem_${degradedJob.id}`), 'all failed adapters cannot invent an inspiration');
 
   process.env.AMAP_STUB_HIGH_CONFIDENCE = 'true';
   process.env.AMAP_STUB_CITY = '未知测试城市';

@@ -1,3 +1,4 @@
+import { registerHostBackHandler } from '../platform/host';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { DayPlanResponse } from './api';
 
@@ -57,6 +58,12 @@ export function SlotEditSheet({
   const dialog = useRef<HTMLElement>(null);
   const busyRef = useRef(busy);
   const onCloseRef = useRef(onClose);
+  useEffect(() => registerHostBackHandler(() => {
+    if (busy) return true;
+    if (mode !== 'actions') setMode('actions'); else onClose();
+    return true;
+  }, 40), [busy, mode, onClose]);
+
   busyRef.current = busy;
   onCloseRef.current = onClose;
   const availableCandidates = useMemo(

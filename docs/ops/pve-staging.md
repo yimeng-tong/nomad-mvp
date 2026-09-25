@@ -34,6 +34,35 @@ DrvFs:
 
 Do not copy the private key into this repository, `/tmp`, or the guest.
 
+On 2026-09-19, direct Windows-to-guest SSH timed out, while the existing PVE
+jump route successfully authenticated to the guest without changing its LAN firewall:
+
+```bash
+/mnt/c/Windows/System32/OpenSSH/ssh.exe \
+  -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=6 \
+  -i 'C:\Users\123\.ssh\id_ed25519' \
+  -J root@192.168.31.2 nomad@192.168.31.104
+```
+
+## Resource Check — 2026-09-19
+
+The user authorized creating or reusing homelab VM/LXC resources for development
+and testing, with public-cloud publication after overall development/testing is
+complete. PVE confirmed VM104 was the existing, stopped `nomad-staging` guest
+with the configuration above and no host PCI passthrough. After checking host
+memory and storage capacity, it was started and left running; `onboot=0` remains.
+
+Guest Agent checks confirmed the configured IP, active SSH/Nomad/PostgreSQL/
+Redis/Nginx services, Node22.22.1, about55.8GiB available on the root filesystem,
+and HTTP200 `status: ok` from the guest-local `/api/health`. PostgreSQL/Redis
+listen on loopback, and UFW permits only LAN22/80. Jump-host SSH also succeeded.
+
+The running release remains `10f940c49e2d`. No new authentication code, cloud
+credentials, database migration or cleanup was deployed by this check. Current
+Story1.0 configuration is local and still requires implementation and live proof.
+See [the resource confirmation](../../_bmad-output/implementation-artifacts/research/story-1-0-resource-confirmation-2026-09-19.md).
+HTTPS/frp and a public-cloud release have not been configured by this check.
+
 ## Runtime
 
 - Node `22.22.1`
@@ -125,3 +154,8 @@ sudo -u postgres psql -d nomad_staging \
 
 To remove this environment, stop and destroy VM `104` only after confirming its
 VMID and name. Never alter VMs `189` or `190` as part of Nomad staging work.
+
+
+## Shared development API (2026-09-25)
+
+The original staging release and database remain preserved. A separate development API, private environment and database are documented in [cross-device development](cross-device-development.md). This does not turn the old staging HTTP endpoint into verified production authentication. The historical environment check above remains scoped to its date.

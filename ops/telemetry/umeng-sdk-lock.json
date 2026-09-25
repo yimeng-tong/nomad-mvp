@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "reviewedAt": "2026-09-19",
+  "scope": "candidate-sdk-artifacts-not-runtime-approval",
+  "artifacts": [
+    {
+      "name": "common",
+      "platform": "android",
+      "version": "9.9.10",
+      "url": "https://repo.maven.apache.org/maven2/com/umeng/umsdk/common/9.9.10/common-9.9.10.aar",
+      "sha256": "99a1845ece8c19ae2206dd9090905253e1ea1cb47f4a744847fb336b45c7434b"
+    },
+    {
+      "name": "asms",
+      "platform": "android",
+      "version": "1.8.7.2",
+      "url": "https://repo.maven.apache.org/maven2/com/umeng/umsdk/asms/1.8.7.2/asms-1.8.7.2.aar",
+      "sha256": "67a1baf41988e49139accd32e9325dcfc889590c31259f173660c86b9939822d"
+    },
+    {
+      "name": "UMCommon",
+      "platform": "ios",
+      "version": "7.6.7",
+      "url": "https://umplus-sdk-download.oss-cn-shanghai.aliyuncs.com/iOS/UMCommon/UMCommon_7.6.7.zip",
+      "sha256": "e194bcfbaf6f85f3396ab37675a62c210c53c194829bc1233adaba212fb71163"
+    },
+    {
+      "name": "UMDevice",
+      "platform": "ios",
+      "version": "3.6.0",
+      "url": "https://umplus-sdk-download.oss-cn-shanghai.aliyuncs.com/iOS/UMDevice/UMDevice_3.6.0.zip",
+      "sha256": "d2cda7bec252a5a425cbf079589147854ca56afaa007adcc2c25f7ed8cbde04c"
+    }
+  ]
+}

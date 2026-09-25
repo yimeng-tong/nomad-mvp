@@ -129,9 +129,12 @@ enum EvidenceSource {
 }
 
 model User {
+  ingestCommands IngestCommand[]
   id           String          @id @default(uuid()) @db.Uuid
   phone        String?         @unique
   region       String?
+  authState    String          @default("legacy-unverified") @map("auth_state")
+  authVersion  Int             @default(0) @map("auth_version")
   createdAt    DateTime        @default(now()) @map("created_at")
   identities   OAuthIdentity[]
   sessions     Session[]
@@ -142,6 +145,8 @@ model User {
   plans        Plan[]
   planJobs     PlanJob[]
   hqJobs       HqJob[]
+  legacyAuthBindings AuthLegacyOwnerBinding[]
+  operatorGrants AuthOperatorGrant[]
 }
 
 model OAuthIdentity {
@@ -150,18 +155,120 @@ model OAuthIdentity {
   userId    String   @db.Uuid
   provider  String
   subject   String
+  issuer    String   @default("legacy-unverified")
+  tenant    String   @default("")
+  clientId  String   @default("") @map("client_id")
+  verifiedAt DateTime? @map("verified_at")
   createdAt DateTime @default(now()) @map("created_at")
 
-  @@unique([provider, subject])
+  @@unique([provider, issuer, tenant, clientId, subject], map: "OAuthIdentity_trusted_namespace_key")
 }
 
 model Session {
+  transport String @default("web")
+  audience String @default("web")
   id        String   @id @default(uuid()) @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   @db.Uuid
   deviceId  String?  @map("device_fingerprint")
   expiresAt DateTime @map("expires_at")
   createdAt DateTime @default(now()) @map("created_at")
+  credentialHash String? @unique @map("credential_hash")
+  authVersion Int @default(0) @map("auth_version")
+  revokedAt DateTime? @map("revoked_at")
+  browserBindingHash String? @map("browser_binding_hash")
+  browserGeneration Int? @map("browser_generation")
+  browser AuthBrowser? @relation(fields: [browserBindingHash], references: [bindingHash], onDelete: Restrict)
+
+  @@index([userId, expiresAt])
+}
+
+model AuthLoginTransaction {
+  transport String @default("web")
+  audience String @default("web")
+  id String @id @default(uuid()) @db.Uuid
+  requestId String @db.Uuid @map("request_id")
+  browserBindingHash String @map("browser_binding_hash")
+  browserGeneration Int @default(0) @map("browser_generation")
+  browser AuthBrowser @relation(fields: [browserBindingHash], references: [bindingHash], onDelete: Restrict)
+  initialSessionHash String @map("initial_session_hash")
+  phone String
+  deliveryState String @default("reserved") @map("delivery_state")
+  attempts Int @default(0)
+  verificationGeneration Int @default(0) @map("verification_generation")
+  verificationLeaseUntil DateTime? @map("verification_lease_until")
+  expiresAt DateTime @map("expires_at")
+  nextAllowedAt DateTime @map("next_allowed_at")
+  consumedAt DateTime? @map("consumed_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([browserBindingHash, requestId], map: "AuthLoginTransaction_request_key")
+  @@index([phone, nextAllowedAt])
+  @@index([expiresAt])
+}
+
+model AuthBrowser {
+  bindingHash String @id @map("binding_hash")
+  loginGeneration Int @default(0) @map("login_generation")
+  sessionGeneration Int @default(0) @map("session_generation")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  sessions Session[]
+  transactions AuthLoginTransaction[]
+}
+
+model AuthCaptchaUse {
+  proofHash String @id @map("proof_hash")
+  requestId String @db.Uuid @map("request_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime @map("expires_at")
+
+  @@index([expiresAt])
+}
+
+model AuthRateLimit {
+  bucket String @id
+  windowStart DateTime @map("window_start")
+  count Int @default(0)
+  expiresAt DateTime @map("expires_at")
+
+  @@index([expiresAt])
+}
+
+model AuthLegacyOwnerBinding {
+  legacyActor String @id @map("legacy_actor")
+  userId String @db.Uuid @map("user_id")
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  evidenceReference String @map("evidence_reference")
+  approvedBy String @map("approved_by")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+}
+
+model AuthOperatorGrant {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid @map("user_id")
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  capability String
+  scope String
+  version Int @default(1)
+  revokedAt DateTime? @map("revoked_at")
+  grantedBy String @map("granted_by")
+  evidenceReference String @map("evidence_reference")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, capability, scope])
+}
+
+model AuthAuditEvent {
+  id String @id @default(uuid()) @db.Uuid
+  userId String? @db.Uuid @map("user_id")
+  action String
+  targetId String? @map("target_id")
+  evidenceReference String? @map("evidence_reference")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
 }
 
 model UserSettings {
@@ -280,6 +387,23 @@ model PoiMembership {
 }
 
 model IngestJob {
+  eventStreamId String? @unique @map("event_stream_id") @db.Uuid
+  lastEventSeq BigInt @default(0) @map("last_event_seq")
+  replayFloorSeq BigInt @default(0) @map("replay_floor_seq")
+  executionPending Boolean @default(false) @map("execution_pending")
+  leaseOwner String? @map("lease_owner") @db.Uuid
+  leaseFence BigInt @default(0) @map("lease_fence")
+  leaseExpiresAt DateTime? @map("lease_expires_at") @db.Timestamptz(3)
+  nextExecutionAt DateTime? @map("next_execution_at") @db.Timestamptz(3)
+  executionFailureCount Int @default(0) @map("execution_failure_count")
+  checkpointVersion Int @default(0) @map("checkpoint_version")
+  checkpointJson Json? @map("checkpoint_json")
+  durableEvents IngestEventRecord[]
+  @@index([executionPending, nextExecutionAt, leaseExpiresAt], map: "IngestJob_execution_due_idx")
+  stateVersion Int @default(0) @map("state_version")
+  snapshotJson Json? @map("snapshot_json")
+  commands IngestCommand[]
+  authVersion Int? @map("auth_version")
   id           String        @id @default(uuid()) @db.Uuid
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String        @db.Uuid
@@ -293,6 +417,22 @@ model IngestJob {
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @default(now()) @map("updated_at")
   inspirations Inspiration[]
+}
+
+model IngestEventRecord {
+  jobId String @map("job_id") @db.Uuid
+  job IngestJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  seq BigInt
+  schemaVersion Int @default(1) @map("schema_version")
+  kind String
+  attempt Int
+  stateVersion Int @map("state_version")
+  stage IngestStatus
+  subStage String? @map("sub_stage")
+  traceId String @map("trace_id")
+  occurredAt DateTime @default(now()) @map("occurred_at") @db.Timestamptz(3)
+  snapshotJson Json @map("snapshot_json")
+  @@id([jobId, seq])
 }
 
 model Inspiration {
@@ -489,6 +629,7 @@ model PlanSlot {
 }
 
 model PlanJob {
+  authVersion Int? @map("auth_version")
   id              String               @id @default(uuid()) @db.Uuid
   user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String               @db.Uuid
@@ -562,6 +703,7 @@ model PlanVersion {
 }
 
 model HqJob {
+  authVersion Int? @map("auth_version")
   id           String       @id @default(uuid()) @db.Uuid
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String       @db.Uuid
@@ -790,4 +932,21 @@ model ExportJob {
   traceId        String?  @map("trace_id")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @default(now()) @map("updated_at")
+}
+
+
+// Durable command receipts are not the event log/cursor delivered by Story1.7.
+model IngestCommand {
+  userId String @db.Uuid @map("user_id")
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  operationId String @db.Uuid @map("operation_id")
+  kind String
+  requestHash String @map("request_hash")
+  jobId String @db.Uuid @map("job_id")
+  job IngestJob @relation(fields: [jobId], references: [id], onDelete: Restrict)
+  attempt Int
+  disposition String
+  createdAt DateTime @default(now()) @map("created_at")
+  @@id([userId, operationId])
+  @@index([jobId])
 }

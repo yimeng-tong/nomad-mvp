@@ -57,12 +57,13 @@ function shouldFailStub(stage: string) {
     .includes(stage);
 }
 
-export async function fetchXhsPost(url: string): Promise<XhsFetchedPost> {
+export async function fetchXhsPost(url: string, options: { signal?: AbortSignal } = {}): Promise<XhsFetchedPost> {
   if (shouldFailStub('fetch')) throw new Error('stub fetch failed');
 
   if (process.env.XHS_DOWNLOADER_URL) {
     const response = await fetch(process.env.XHS_DOWNLOADER_URL, {
       method: 'POST',
+      signal: options.signal,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),
     });

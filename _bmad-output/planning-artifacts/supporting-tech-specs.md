@@ -1,328 +1,452 @@
 # Nomad MVP Supporting Technical Specs
 
-Generated: 2026-06-19
+Generated: 2026-08-20
+Status: Approved Epic 2 boundary and current Epic 3 planning target
 
-These technical specs are supplemental planning input. This filename intentionally avoids `epic` so sprint planning only consumes `epics.md` as the work-item source.
+This packet supplements `epics.md`; it does not create work-item identity for Sprint Planning.
 
 ---
+
+Capacitor amendment approved 2026-09-19; source packet regenerated from current source files.
 
 ## Source: `docs/tech-spec-epic-2.md`
 
-# Epic 技术规格书：Epic 2 Planning & Editing（天级骨架、候选抽屉、长按编辑、可行性修复、导出）
+# Epic 2 Technical Specification: Initial Single-City Planning v0.6
 
-Date: 2025-11-08
-Author: BMad
+Date: 2026-08-20
+Validated source sync: 2026-09-14
 Epic ID: 2
-Status: Draft
+Status: Story definitions approved through Story 2.15
+Authority: PRD v0.6, `docs/architecture/index.md`, current UX sources and BMAD `epics.md`
 
----
+## 1. Overview
 
-## 概述（Overview）
+Epic 2 collects single-city travel boundaries, per-night accommodation, place intent, pace and
+optional constraints, then creates one complete initial plan in one stable timeline shell. It also
+supplies trustworthy route facts, non-blocking candidate completion, versioned AnchorPool inputs,
+explainable daily load and a post-plan search path that saves candidates without mutating the plan.
 
-本 Epic 面向“规划与编辑”的核心能力，承接 Epic 1 的“从灵感开始”，在灵感选择页（Planner Picker）内完成上下文锚点挑选，生成“部分填充”的天级骨架；在骨架上支持空槽候选/AI 建议/自由活动、长按编辑（替换/移动至 D±1/调时/删除/撤销）、顶部可行性校验与一键修复，并提供导出 PNG。并行启用“快速版（L2 粒度）→优先呈现”与“高质量 LLM 编排（后台并行，完成后可切换-采用）”。2026-07-26 语义收口后，Confirm 按日期收集可留空酒店、酒店子项早餐和换酒店行李；预约/门票及 dawn/sunset/night/night-market 等强时段由上传内容证据驱动，Planner 负责酒店感知编排与模糊 slot 补全。
-权威来源：PRD（docs/prd.md）Epic 2、相关 FR/NFR、小节 3.x/5.x/6.x/7.x/9.x；架构 v0.4 分片（docs/architecture/*）；厦门验证样本（方法论总结、任务规划、skeleton_final.json、行程单_final.md）。
+Stories 2.0 and 2.1 are historical delivery baselines. Their visible 2h/4h partial skeleton,
+Quick/HQ adoption and `selected_required`-only UI do not define the current product. The in-progress
+legacy Story 2.2 belongs to Epic 3 migration. Linked trips, editing/repair, detail/export,
+meal/checklist and platform operations belong to Epics 3-8.
 
-## 目标与范围（Objectives and Scope）
+Scope clarification (2026-09-06): initial planning remains a MVP focus and does not depend on
+visit/check-in or album data. Story 7.2 is excluded; FR40.1 photo-based marks and photo/video outputs
+are future design, not an input requirement or additional planning pipeline in this specification.
 
-- In Scope
-  - Story 2.0 Confirm + Planner Picker（起床/到离/按日期可留空酒店及早餐子项/行李，上下文 L2/L3 灵感选择，路由与参数、城市 Tabs + 地图联动、已选篮/“开始规划” CTA）。
-  - Story 2.1 生成天级骨架（2h/4h 槽，dawn/sunset/night/night-market 强时间槽，预布局 seed 及撤销、空槽大弹窗、酒店槽与酒店感知软约束、酒店选择逻辑与换酒店缓冲、multi_city 分段边界定义在 Post‑MVP）。
-  - Story 2.2 长按编辑与撤销（替换/移动 D±1/调时/删除；8 秒撤销与最近操作入口；步进与吸附；seed 操作优先撤销；完整历史时间线与任意快照回滚为 Post-MVP）。
-  - Story 2.3 可行性校验与一键修复（硬/软冲突分类、修复提案、进入 AI 填充门控）。
-  - Story 2.4 导出 PNG（宽度、切片、WebP/JPEG、预览与埋点，冲突提示来源于 Validator 的修复建议）。
-- Out of Scope
-  - 一次性 AI 填充与质量评测、灰度调优（Epic 3）。
-  - 多城市/transport_slot/hotel_slot 的完整路径为 Post‑MVP，在本 Epic 内仅保证边界兼容。
+## 2. Approved Story Boundaries
 
-## 架构对齐（System Architecture Alignment）
+| Story | Technical outcome | Explicit exclusion |
+| --- | --- | --- |
+| 2.3 | Single-city dates, daily start and exact/window/AI boundary modes | Provider lookup implementation |
+| 2.4 | Unified flight/rail recognition, lookup, manual fallback and honest facts | Ticketing or booking |
+| 2.5 | Optional per-night hotel, breakfast and contextual luggage draft | Post-plan stay editing |
+| 2.6 | Required pace plus optional additional constraints and inferred interests | Second play-style questionnaire |
+| 2.7 | Full-city/L3 Picker with required/along-route/unselected intent | Cross-city Trip creation |
+| 2.8 | Reusable factual POI Sheet and reservation evidence | Booking state or public quality enums |
+| 2.9 | One durable PlanningJob, fenced attempts, reconnect and one visible completion | Quick/HQ adoption UI |
+| 2.10 | Nullable server RouteFact and timeline commute summary | Flight/rail timetable facts |
+| 2.11 | Complete constraint-first initial single-city schedule | Post-edit mutation or linked trip |
+| 2.12 | AMap nearby completion, non-blocking candidates and honest free time | XHS keyword search/session flow |
+| 2.13 | Versioned shared AnchorPool buckets and safe snapshot admission | User-session search acquisition |
+| 2.14 | Revision-bound DayLoadEstimate and per-day explanations | Cross-day validation (Story 3.4), precise step prediction or auto-replan |
+| 2.15 | Post-plan Top-5 search and exact/proxy/unresolved candidate save | Timeline placement or validation |
 
-- Planner 双路：Quick（L2、2h/4h、同 L1 优先、2.5h 阈值对齐）先呈现；HQ（后台并行）完成后可“切换-采用”。［backend-architecture.md、PRD 3.x/5.x］
-- 服务模块：Router/Library/Planner/Validator/Suggester/Export/HQ 控制面。［backend-architecture.md、frontend-architecture.md］
-- 旅行约束：Confirm 输出 per-date hotels（含 breakfast_included/leave_blank）、luggage_plan、wake_preference 与 hard_time_hints；预约/门票和特殊时段从上传内容证据派生，不使用独立 Confirm 输入。Planner 必须把明确酒店与强时间槽作为输入约束。
-- 远程配置：Unleash/Env 提供 planner_autoplace_v1、alpha_autoplace、K_min/K_max 及 mmr_lambda 等。［PRD 3.3］
-- 观察性：Langfuse、promptfoo、Sentry；关键漏斗（登录→入库→选择→骨架→AI 填充→导出）。［PRD NFR6、FR13］
+No Story depends on a later Story. Persistence and shared entities are added only in the first
+vertical slice that uses them.
 
-## 详细设计（Detailed Design）
+## 3. Aggregate and Module Boundaries
 
-### 服务与模块（Services and Modules）
+- `PlanningDraft` owns S2-S5 input revisions before a Plan exists.
+- `Plan` remains associated with one `City` and owns immutable `PlanRevision` snapshots.
+- `PlanningJob` is the one user-visible async unit; internal `PlanningAttempt` values are fenced.
+- `Planner` creates the complete initial schedule. Epic 3 `SlotEditor`/`Validator` own post-plan
+  mutation and repair. Epic 5 `Filler` may enrich details only without changing schedule fields.
+- `CanonicalPOI`, source attribution and verified external facts are shared inputs, not copies inside
+  prompt-only JSON.
+- OpenAPI is the API source of truth. Contract changes precede implementation and regenerate
+  `packages/types`; generated files are never hand-edited.
 
-- Planner
-  - 生成：根据 {city,start_date,days,pace,selected_items[],candidate_items[],hotels?,luggage_plan?,wake_preference?,hard_time_hints?} 输出骨架（2h/4h）；selected_items 均为 selected_required，candidate_items 仅供可选补全；支持 seed 预布局配额 quota=ceil(α×S_left) 与撤销；Quick 结果先呈现，HQ 后台并行。
-  - 维护：支持空槽弹窗候选与 AI 建议构建、自由活动插入、酒店槽写入；dawn/sunset/night/night-market 强时间槽不可被普通候选挤占。
-  - 模糊 slot 补全：已有笔记 → 小红书补搜 → AMap 附近搜索 → 仍不确定则询问用户；不得静默落位低置信结果。
-- Validator
-  - 冲突：硬冲突（无坐标/闭店/跨日不可达）与软冲突（略超时/通勤略远）；输出一键修复提案（换序/替换候选/缩短停留/挪日 等）。
-- SlotEditor
-  - 长按编辑：替换、移动至 D±1、调时、删除；时间步进 15 分钟；拖拽吸附 30/60 分钟；跨日正确。
-  - 撤销：8 秒撤销 + 最近操作入口；撤销生成新的不可变版本。完整历史时间线、自动重排/酒店变更快照和任意回滚为 Post-MVP。
-- Suggester
-  - 候选构建：时窗贴合 > 距离 > 用户标签（vibe）> 热度；Top‑5 搜索（AMap 文本）/候选/AI 建议；给出 ≤16 字 why。
-  - POI 输入：仅使用 AMap 已验证或显式标记待确认的候选；推荐需保留 source_attribution 与质量等级。
-- Export
-  - PNG 导出：宽 1080（可 1242）、按天切片；WebP 优先，退化 JPEG 75–80%；预览与埋点。
+Every protected draft write, job start and candidate save is owner-scoped, idempotent and guarded
+by expected revision or attempt generation. Current pointers and immutable rows publish
+transactionally.
 
-### 数据模型与契约（Data Models and Contracts）
+## 4. Detailed Design
 
-- Plan(id, user_id, city_id, start_date, days, pace, slot_minutes, state)
-- Journey(id, plan_id, created_at)
-- HQJob(id, plan_id, status, created_at, finished_at, result_ref)
-- Event(id, plan_id, journey_id, session_id, ts, name, props_json)
-- Slot/PlanSlot（概念）：包含时间窗、POI/L2Group 引用、origin（ai_seed/hand）、可冲突标记。
-［data-models.md、PRD 数据层与观测章节］
+### 4.1 Travel time and boundary facts (Stories 2.3-2.4)
 
-### API 与接口（APIs and Interfaces）
+`TripBoundary` is a discriminated union:
 
-- Planner / Skeleton
-  - POST /plan/generate {city,start_date,days,pace,selected_items[],candidate_items[],hotels?,luggage_plan?,hard_time_hints?} → 202 {plan_id,plan_job_id,sse_url}
-  - GET  /plan/{plan_id}
-  - POST /plan/validate {plan_id} → {hard_cnt,soft_cnt,suggestions[]}
-  - POST /plan/fix {plan_id, action} → 应用修复提案
-- Planner / HQ
-  - POST /plan/hq/start {plan_id} → {hq_job_id}
-  - GET  /plan/hq/status?hq_job_id → {state:'running|done|failed'}
-  - POST /plan/hq/adopt {plan_id,hq_job_id} → 合并 & 版本
-- Export
-  - POST /export/png {plan_id, width_px, slice_by_day}
-（SSOT：docs/api/openapi.yaml；本文为概要）［rest-api-spec.md、PRD 2.x/3.x/4.x］
+```ts
+type TripBoundary =
+  | { inputMode: 'exact'; direction: 'arrival' | 'departure'; mode: TransportMode;
+      scheduledAt: string; terminalPoiId?: string; terminalText?: string; serviceCode?: string;
+      source: BoundarySource; provider?: string; observedAt?: string;
+      validUntil?: string; status: 'confirmed' | 'provisional' | 'stale' }
+  | { inputMode: 'window_2h'; direction: 'arrival' | 'departure'; mode?: TransportMode;
+      windowStartAt: string; windowEndAt: string; terminalPoiId?: string;
+      source: 'user_window' }
+  | { inputMode: 'ai_decide'; direction: 'arrival' | 'departure';
+      source: 'ai_provisional' };
+```
 
-### 工作流与时序（Workflows and Sequencing）
+- The two-hour window is one continuous 120-minute local-time interval.
+- AI-decide may choose provisional usable time but cannot invent a service, ticket, terminal or
+  booking.
+- One input accepts flight or rail identifiers. Format is only a routing hint: ambiguous values may
+  query both adapters and are resolved by provider facts plus user selection, never regex alone.
+- Exact lookup covers no match, multiple matches, stale/unavailable provider and manual date/time/
+  terminal fallback. Facts retain source, observed/valid time and status.
+- Arrival and departure each require an explicit mode confirmation, as approved in Story 2.3.
+  A user can mix exact, window and AI-decide modes; untouched empty boundaries cannot continue.
+  Exact manual terminal text may remain unresolved, with no invented canonical identity or route.
 
-- Confirm（起床/到离/按日期可留空酒店及早餐子项/行李）→ Picker → “开始规划”（Quick 先呈现；HQ 后台并行）→ 空槽候选/AI 建议/AMap 搜索/自由活动 → 长按编辑/撤销 → 顶部校验与一键修复 → 预览导出。
-- Seed 预布局：started→freeze→selected_anchor→quota→candidates→place→validate→persist→done；origin=ai_seed，支持 5–8 秒撤销与“一键重置预布局”。［PRD 3.1、3.2、3.3、5.x、7.x、9.x］
-- 酒店感知：hotel_slot 展示住宿信息，同时作为早晚半径、区域聚类、换酒店缓冲、行李处理和夜间活动半径的输入；near_hotel 加分不突破硬约束；选择/更换酒店可提示是否重排（仅晚段/整日/取消）。［PRD 5.1/6.1/2.1/2.4/2.5/2.6］
+### 4.2 Per-night stay, luggage and pace (Stories 2.5-2.6)
 
-## 非功能需求（Non-Functional Requirements）
+- Accommodation is stored per stay night and may be explicitly blank. Hotel text is matched to an
+  AMap `CanonicalPOI` when possible; unresolved text remains honest and does not enable near-hotel
+  routing.
+- Breakfast and luggage are child fields on every night. Breakfast is tri-state. Luggage includes
+  contextual first-night, continuing stay, hotel change, hub storage and final-departure choices,
+  including `undecided`.
+- `Same as previous` is a per-night command. It copies stay/breakfast into a new draft revision but
+  recomputes luggage; it never silently copies an invalid transition.
+- Pace is required and uses `leisurely | balanced | full` with the approved user-facing consequences.
+- One default-collapsed optional field accepts companion, mobility, diet and unacceptable-condition
+  constraints. Parsed constraints retain the raw input and can be corrected.
+- Play style is inferred as source/confidence-bearing trip-scoped `InterestSignal` data from natural
+  language, imports and L3 intent; it is not a second questionnaire or a permanent user label.
 
-- 性能
-  - 核心交互 120–200ms；Quick 路径低延迟；距离矩阵/检索 24h 缓存；HQ 后台不阻塞 Quick。
-- 可靠性
-  - 编辑幂等；撤销/回滚稳定；修复提案可解释；HQ 失败可回退 Quick。
-- 可观测性
-  - 关键漏斗与操作埋点；Langfuse 追踪关键调用（含 seed/hq）；promptfoo 小集回归。
-- 兼容与降级
-  - 弱网：地图降级清单视图；搜索失败提示与兜底。
-［PRD NFR2/NFR6/NFR10/NFR11 等］
+### 4.3 Full-city Picker and POI information (Stories 2.7-2.8)
 
-## 依赖与集成（Dependencies and Integrations）
+```ts
+type PlaceIntent = 'required' | 'along_route' | 'unselected';
+```
 
-- AMap SDK+Web API（检索、逆地理、距离矩阵）；
-- Unleash/Env（planner_autoplace_v1、alpha_autoplace、K_min/K_max、mmr_lambda、hotel_stickiness_enabled 等）；
-- COS/CDN（导出相关媒介资源访问）；
-- 观察性与埋点系统（Langfuse/promptfoo/Sentry/友盟 U‑Link）。
+- S4 starts at a non-expandable full-city L1/L2 overview. L2 is navigation/context only.
+- Only L3/CanonicalPOI receives intent. Check-circle means required; Route means along-route;
+  active re-click clears. The controls are mutually exclusive.
+- One intent store derives row, marker, thumbnail, L2 split counts, global counts and submit payload,
+  including the along-route state after returning to the overview.
+- The L3 screen alone exposes nearby/full-city map modes and has a list fallback. Zero selection is
+  valid.
+- Cross-city L3 selection creates an explicit pending add-city decision for Epic 4; it cannot enter
+  the current single-city payload silently.
+- The reusable POI Sheet shows standard name, address, opening facts, rating, suggested stay, source
+  and optional reservation evidence. Freshness/quality remain internal; inferred evidence is not a
+  confirmed reservation or booking.
 
-## 验收标准（权威）（Acceptance Criteria）
+### 4.4 One PlanningJob and trustworthy routes (Stories 2.9-2.10)
 
-- E2‑AC0（Story 2.0 Planner Picker）
-  1) 入口与路由：/planner/pick?city&start&days&source&rec_id。
-  2) Confirm 参数：城市/日期/天数、pace、起床/早出发、到离时间、按日期可留空酒店及早餐子项、换酒店行李处理、智能编排；预约/门票与特殊时段由上传内容证据派生。
-  3) 视图结构：城市 Tabs（按距离排序，灵感量>1 才展示）+ 卡片 + 地图联动（Sheet 吸附位 High→Split→Map‑Full；弱网回退清单）。
-  4) 已选篮与 CTA：吸底“已选 N｜开始规划”；仅 L3 可选，选中即为 selected_required，L2 仅显示选中子项数量；允许 0 选规划。
-- E2‑AC1（Story 2.1 生成天级骨架）
-  1) 2h/4h 槽位（pace 映射）；selected_required/time_hint 与 dawn/sunset/night/night-market 优先；transport_slot 作为分段边界；AI 预布局 quota；空选时基于 AnchorPool。
-  2) 空槽弹窗：候选抽屉（时窗/距离/vibe 重排，含“未落位”）、AI 建议、自由活动。
-  3) seed 块 origin=ai_seed，5–8s 撤销与“一键重置”；硬冲突不落位、软冲突仅提示。
-  4) 仅明确选择的 per-date hotel 写入 hotel_slot 并参与早晚半径、区域聚类、换酒店缓冲和行李处理；用户选择留空时不得静默代选。酒店更换自动重排与历史快照属于 Post-MVP。
-  5) 模糊 slot 按已有笔记 → 小红书补搜 → AMap 附近搜索 → 询问用户的顺序补全。
-- E2‑AC2（Story 2.2 编辑与撤销）
-  1) 长按编辑：替换/移动至 D±1/调时/删除；
-  2) 撤销 8 秒与“最近操作”入口；
-  3) 步进 15 分钟；吸附 30/60 分钟；跨日正确；
-  4) seed 操作撤销优先；最近操作可再撤一条；完整历史步骤与任意回滚不在 MVP。
-- E2‑AC3（Story 2.3 可行性校验与一键修复）
-  1) 顶部校验并区分硬/软冲突；
-  2) 一键修复提案；
-  3) 门控：硬冲突禁用进入 AI 填充；仅软冲突可进入且保留提醒。
-- E2‑AC4（Story 2.4 导出 PNG）
-  1) 导出长图：宽 1080（可 1242），超长按天切片；
-  2) WebP 优先，不兼容降级 JPEG（75–80%）；参数 width_px、slice_by_day 与预览提示；
-  3) 埋点完整；冲突时导出前提示当前冲突状态及可修复建议（来自 Validator）。
-［逐条对应 PRD 2.0–2.4 AC 与 FR27/32/33/37/44 等］
+- Input is an immutable snapshot of boundaries, stays/luggage, intents, pace, constraints, interests
+  and evidence.
+- Factual stages are `accepted`, `context`, `constraints`, `candidates`, `arranging`, `validating`,
+  `persisting`, `done` or `failed`. Durable cursor/sequence supports reconnect and restart recovery.
+- Internal Provider or deterministic attempts may fall back, but only the fenced current attempt may
+  publish one visible result. A late attempt cannot overwrite a newer input or first user edit.
+- S6 and S7 share one stable shell; there is no separate completion interstitial or adoption choice.
+- Adjacent commute is a server-owned nullable `RouteFact` with endpoint, mode, duration/distance,
+  source, observed/valid time and known/stale/unavailable status. The client never fabricates it.
+- AMap route/distance is separate from flight/rail schedules. Timeout, quota and unavailable states
+  preserve the plan with an honest unknown summary.
 
-## 可追溯性映射（Traceability Mapping）
+### 4.5 Complete planning, candidates, anchors and load (Stories 2.11-2.14)
 
-| AC | PRD 引用 | 组件/API | 测试思路 |
-| --- | --- | --- | --- |
-| E2‑AC0 | Story 2.0 | Picker + 路由 + 参数 | 集成：路由/参数；E2E：上下文选择到生成 |
-| E2‑AC1 | Story 2.1；FR32 | POST /plan/generate；seed 撤销 | 单元：配额/种子标记；集成：候选/未落位；E2E：生成→编辑 |
-| E2‑AC2 | Story 2.2 | SlotEditor | 单元：移动/撤销；E2E：跨日与回滚 |
-| E2‑AC3 | Story 2.3 | /plan/validate、/plan/fix | 单元：分类与提案；E2E：门控路径 |
-| E2‑AC4 | Story 2.4；FR24 | POST /export/png | 集成：参数与切片；E2E：预览/冲突提示 |
+The initial scheduler applies this order:
 
-## 风险、假设与开放问题（Risks, Assumptions, Open Questions）
+1. exact boundary, reservation and strong-time constraints;
+2. feasible required L3 items;
+3. stay/luggage, check-in/out and near-hotel preferences when a verified hotel exists;
+4. along-route items only when route fit is positive;
+5. owner imported unselected candidates, then approved shared candidates.
 
-- 风险
-  - HQ/Quick 差异导致切换不一致 → 方案：版本化合并与冲突提示。
-  - 候选构建依赖数据不足 → 方案：回退城市热门/Top‑K，来源标注。
-  - 酒店/行李/强时间槽遗漏会导致计划不可执行 → 方案：Confirm 必填/可跳过分层，缺失时生成前提示影响。
-  - 编辑与撤销栈复杂性 → 方案：快照策略最小覆盖、严控幂等。
-- 假设
-  - L2/L1 数据可用；AnchorPool 服务正常或有回退。
-  - 远程配置与开关可动态应用且有默认安全值。
-- 开放问题
-  - 导出 PNG 的服务器端资源限制与排队策略。
-  - 修复提案的“替换候选”来源与可解释性模板。
+It accounts for opening hours, stay duration, route time, meal/free-time needs, luggage and
+dawn/sunset/night/night-market constraints. An infeasible required item becomes
+`unresolved_required` with a reason; it is not forced or silently discarded.
 
-## 测试策略摘要（Test Strategy Summary）
+Candidate completion is:
 
-- 单元（P0）
-  - 配额/seed 标记、撤销与重置、Slot 编辑幂等、校验分类与提案。
-- 集成（P0）
-  - 生成→校验→修复链路；HQ 后台完成与切换；导出参数/切片与预览。
-- 端到端（P1）
-  - Confirm→Picker→Quick→编辑→校验→导出；覆盖可留空酒店/早餐子项/行李与上传内容派生的 dawn/sunset/night/night-market；弱网地图降级。
-- 观察性与性能（P1）
-  - 漏斗事件覆盖；Langfuse/promptfoo；交互 120–200ms 与缓存命中。
+1. owner imported and verified inspiration;
+2. immutable versioned AnchorPool/city Top-50 snapshot;
+3. bounded AMap nearby search around city/L2/scheduled POI/verified hotel/free-time context;
+4. non-blocking candidate or explicit free time when confidence remains insufficient.
 
+Candidate presentation keeps three independent fields: `intent`, `origin` and `locationMode`.
+The UI groups first by intent (`未安排的必去 / 顺路候选 / 其他候选`) and renders provenance on
+each row (`来自灵感 / 城市热门 / 附近推荐 / 我添加的`). One candidate appears once; generic
+`AI` is not persisted or displayed as a source.
 
+No PlanningJob pauses for XHS keyword search or candidate confirmation. XHS search, login/Cookie,
+captcha and result selection are Post-MVP Epic 8 operator cold-start work, isolated from user
+sessions.
+
+AnchorPool admission requires AMap-verified CanonicalPOI, dedupe, city/season/time/category bucket,
+source policy and immutable snapshot version. A shared cache cannot expose another owner's import,
+plan, hotel or selection.
+
+`DayLoadEstimate` binds one PlanRevision and reports ranges for primary items, walking, commute,
+start/end and free time with reasons/confidence. It emits consecutive early/high-load and recovery
+findings, never false precision. Initial load may inform validation but never silently changes the
+published schedule.
+
+### 4.6 Post-plan search and manual candidate fallback (Story 2.15)
+
+- S7 search is city-scoped text-only AMap Top-5. Exact save creates an owner candidate with
+  `locationMode=canonical`; it does not mutate the timeline.
+- If no accurate result exists, manual add requires a target name and optionally accepts one
+  same-city verified nearby landmark.
+- Landmark use creates `locationMode=landmark_proxy`. Route/distance resolves to the landmark and
+  must show `附近估算`, landmark identity and possible error.
+- The target never inherits the landmark's canonical identity, address, coordinates as exact target
+  facts, opening hours, rating, price, phone or reservation evidence.
+- Without a landmark, `locationMode=unresolved`; route facts are invalidated and placement is blocked.
+- Create/update is owner-scoped, idempotent and revision-checked. It does not restart PlanningJob,
+  alter Picker intent or publish a PlanRevision.
+- Epic 3 owns later explicit target placement, diff confirmation, validation, publication and undo.
+
+## 5. API Capability Map
+
+Final paths are set story-by-story in OpenAPI. Epic 2 requires:
+
+- PlanningDraft read/write for dates, daily start, boundary, stay/breakfast/luggage, pace and
+  constraints;
+- unified flight/rail lookup plus manual/AI-decision fallback;
+- Picker catalog, intent update/summary and reusable POI information;
+- PlanningJob start/detail/SSE/reconnect and current Plan hydration;
+- server RouteFact and typed unavailable states;
+- candidate-stage provenance, unresolved-required/candidate/free-time outcomes;
+- AnchorPool snapshot lookup/admission policy and DayLoadEstimate;
+- post-plan candidate search/save with `canonical | landmark_proxy | unresolved`.
+
+Compatibility HQ/adopt and `smart_planning` inputs may remain read-only during migration, but the
+current client must not invoke them.
+
+## 6. Non-Functional and Test Gates
+
+- **Consistency:** transactional revision publication, fenced attempts and no mixed input snapshot.
+- **Security:** owner guard before lookup; redacted sources, exact private location and secrets.
+- **Reliability:** durable SSE cursor, capped retry/DLQ, typed degradation and no fake success.
+- **Performance:** stage P50/P95, bounded candidate counts, route/AMap cache and indexed owner/geo
+  queries.
+- **Accessibility:** 44pt actions, labels/roles, non-color intent, list fallback, focus return,
+  keyboard-safe Sheets and reduced motion.
+- **Evidence:** opening, reservation, route, transport and attribution retain source/time/status;
+  inference stays distinct from user-confirmed constraints.
+
+Every Story runs focused tests, `pnpm -r build`, `git diff --check` and OpenAPI generation when the
+contract changes. Persistence changes require migration plus real PostgreSQL probes. Flight/rail,
+AMap, route and Provider changes require redacted real-service staging checks in addition to
+deterministic doubles. Mobile work requires loading, empty, failure, reconnect, disabled,
+accessibility and supported-width screenshots.
+
+The Xiamen methodology, `skeleton_final.json` and `output/行程单_final.md` are regression inputs;
+they do not authorize copying private source data into telemetry.
+
+## 7. Completion and Handoff
+
+Epic 2 is complete at planning level when Stories 2.3-2.15 cover every listed requirement with GWT
+acceptance criteria and no forward dependency. It hands Epic 3 one readable, feasible current
+single-city PlanRevision plus candidate, RouteFact and DayLoad contracts. It does not claim that
+those approved stories are implementation-complete until Sprint Planning and their individual dev
+workflows say so.
+
+## Capacitor Host Acceptance (Approved 2026-09-19)
+
+复用当前业务设计与所有 owner/revision/幂等/校验/撤销规则；旅行者UI在适用 Android/iOS 宿主消费 APP-HOST-01/UX-DR36。返回/键盘/安全区不隐式提交，前台/杀进程恢复先核验身份再读取当前 job/revision/scope，不创建新规划或重放未知写入。2.9拥有App单任务恢复，3.1的暂停及旧2.2唯一迁移条件不变。依据 `docs/architecture/app-host.md`，浏览器截图不能替代原生证据。
 
 ---
 
 ## Source: `docs/tech-spec-epic-3.md`
 
-# Epic 技术规格书：Epic 3 AI Fill & Evaluation（一次性 AI 填充、观测评测、灰度与调优）
+# Epic 3 Technical Specification: Safe Itinerary Editing and Adjustment v0.6
 
-Date: 2025-11-08
-Author: BMad
+Date: 2026-08-20
+Validated source sync: 2026-09-14
 Epic ID: 3
-Status: Draft
+Status: Stories 3.1-3.5 approved; legacy Story 2.2 implementation remains paused until planning gates
+
+## 1. Overview
+
+Epic 3 starts from one feasible, published single-city `PlanRevision` produced by Epic 2. It lets
+the owner edit that plan at minute precision, place an explicit candidate, revise one night's stay
+or luggage, undo recent changes at plan scope, repair typed conflicts and request a bounded AI
+adjustment without losing the current version.
+
+This Epic owns S7/S8 mutation behavior. It does not create linked-city aggregates or transfer legs
+(Epic 4), enrich `do / prepare / notice` or export a ResultSheet (Epic 5), add meal/checklist/location
+features (Epic 6), or implement account and platform operations (Epics 7-8).
+
+Scope clarification (2026-09-06): on-trip controlled editing/replanning remains a MVP focus.
+Story 7.2 check-in is excluded, so no visit/photo evidence is needed to edit or request adjustment.
+Current-city AI scope, explicit preview/confirmation, revisions, validation and undo stay intact;
+linked city/date/transport changes still use Epic 4's draft/republish flow. FR40.1 album/location
+recognition, album video, nine-grid and AI beautification require later design and do not authorize
+background tracking or a broader automatic/cross-city replanner.
+
+## 2. Brownfield Migration Boundary
+
+The existing implementation branch and story file named Story 2.2 remain the migration source.
+The first Epic 3 execution story must carry `legacy_story_id: 2-2-timeline-editing-undo-and-history`
+and preserve its Git history.
+
+### Keep
+
+- Owner-scoped plan routes and authorization.
+- Immutable `PlanVersion`/`PlanRevision` lineage, `EditEvent`, expected-revision checks and
+  idempotency keys.
+- Auditable command records, hard-constraint rejection and compensating undo.
+- Existing focused unit, repository, route and mobile tests that still assert approved behavior.
+
+### Change
+
+- Replace old D-1/D+1 movement with previous/other/next and every valid same-segment date.
+- Replace the 15-minute user control and 30/60-minute snap language with one-minute user precision.
+- Replace day-scoped recent actions with one plan-level history/`Undo 8` control.
+- Replace bottom recent-operation UI, brand/version labels and `编辑安排` hierarchy with the
+  approved full-screen waterfall timeline.
+- Treat deletion as explicit free time plus candidate restoration when eligible, not as a user-owned
+  `待安排` task that blocks an otherwise complete AI plan.
+
+### Remove or defer
+
+- Public Quick/HQ adoption, seed reset and a second visible completion version.
+- Arbitrary history browsing or rollback beyond the latest eligible extra undo (FR43 remains
+  Post-MVP).
+- Cross-segment/cross-city movement, automatic hotel-triggered replanning and direct LLM JSON
+  mutation.
+
+## 3. Capability Slices
+
+Story numbering is assigned only as each story is approved in the BMAD workflow. The implementation
+order must preserve these dependency boundaries.
+
+### 3.1 Timeline commands and plan-global undo
+
+- Support replace, move, retime and delete through typed server commands.
+- The edit Sheet leads with POI and date, then previous/next commute, followed by actions.
+- Move targets include every valid date in the same city segment. Previous/next are disabled on the
+  first/last day; `other` is disabled when no non-adjacent day exists.
+- User retiming accepts every valid minute. Fast scrolling changes control sensitivity only. For a
+  cross-day interval, start and end show their respective day/date; no snap copy is shown.
+- Adjacent commute is a nullable server `RouteFact`; the client never fabricates time or mode.
+- The plan-level top-right control is a history icon by default, becomes `Undo 8` after a successful
+  mutation and, after the countdown, exposes only one latest additional eligible undo.
+- A rejected, stale or failed mutation leaves the current revision and undo stack unchanged.
+
+### 3.2 Explicit candidate placement
+
+- Epic 2 search saves exact, `landmark_proxy` or `unresolved` candidates to `其他候选` with row-level provenance `我添加的`, without
+  changing the timeline. Epic 3 owns the separate placement command.
+- Placement requires an explicit candidate and target date/time or free-time region, previews the
+  typed change, publishes a revision only after confirmation and then invokes validation.
+- `landmark_proxy` placement remains visibly approximate and routes only to the verified same-city
+  landmark. The target cannot inherit the landmark's address, hours, rating, phone, source or
+  canonical identity.
+- `unresolved` candidates cannot be placed or routed until resolved.
+- Replacement or placement never silently changes Picker intent or removes source attribution.
+
+### 3.3 Post-plan accommodation and luggage editing
+
+- Tapping a day's hotel footer opens a single-night Sheet reusing the S3 hotel, breakfast and luggage
+  field rules; luggage is independently editable and does not require changing the hotel.
+- `Manage all accommodation` opens the multi-night flow focused on the selected night with a static
+  highlight, then restores the prior day and scroll position on return.
+- The final departure day edits checkout and luggage destination without creating a new stay night.
+- Only a material hotel/luggage change opens a conditional impact preview. It names potentially
+  affected evening/next-morning radius, check-in/out buffer and luggage handling without claiming a
+  conflict before validation.
+- Confirmed changes create immutable `StayRevision` and/or `LuggageTransitionRevision`, run
+  incremental validation and enter plan-global undo. They never silently move POIs or invoke FR42
+  automatic replanning.
+
+### 3.4 Incremental validation and typed repair
+
+- A structurally invalid command is rejected before publication. A valid edit that creates a derived
+  route, hours, weather, stay or load problem publishes a new revision with a typed validation result.
+- A clean plan has no permanent validation card. A conflict banner opens a `FixSheet` with one or
+  more safe alternatives and a field-level diff preview.
+- Applying a fix creates another immutable revision, reports only the changes actually made and is
+  eligible for global undo.
+- Stale revision, provider timeout, no-safe-fix and apply failure preserve the current plan and expose
+  a truthful retry or manual path.
+- Hard conflicts block detail/export gates; soft warnings remain visible but do not fabricate a block.
+- Cross-day recovery and `DayLoadEstimate` are recomputed against the edited revision. Weather may
+  participate only within a reliable forecast horizon and never silently changes the plan.
+
+### 3.5 Controlled conversational adjustment
+
+- A labeled AI-adjust control accepts natural-language intent and infers the smallest valid scope:
+  slot, segment, day, later days or the current single-city plan.
+- The interpreter returns either a safe typed intent or one structured `AdjustmentAsk` with
+  `kind=scope_clarification|risk_warning`, bounded choices and the exact input revision. Only one ask
+  is shown at a time; answering it reparses the request without mutating the plan or exposing
+  chain-of-thought.
+- Before a detailed diff, the system usually offers two concise safe directions: one directly
+  answers the request and one offers a different route. If only one safe direction exists, show
+  one; if none exists, use the no-safe state. Do not fabricate an option to reach a count of two.
+- A selected direction produces typed commands and a deterministic diff; an LLM cannot write the
+  stored plan JSON or bypass command validation.
+- Only explicit confirmation publishes the fenced revision. Completion reports `做了以下调整`
+  without exposing chain-of-thought and enters validation plus global undo.
+- Failure, cancellation or stale input leaves the current revision untouched.
+
+## 4. Data and API Contracts
+
+OpenAPI remains the contract source of truth and is updated before server/client implementation.
+Generated files are never edited by hand.
+
+- `PlanCommand(commandId, planId, expectedRevision, type, payload, idempotencyKey, actorId)`.
+- `EditEvent(commandId, beforeRevision, afterRevision?, status, reasonCode, createdAt)`.
+- `UndoEntry(sourceCommandId, expectedRevision, expiresAt, extraEligible, inverseCommand)`.
+- `ValidationRun(inputRevision, scope, status, issues[], alternatives[], factRefs[])`.
+- `AdjustmentAsk(inputRevision, kind, prompt, choices[], currentScope?, riskCodes[])`; it is an
+  ephemeral/recoverable interpretation artifact, never a Plan mutation or persistence shortcut.
+- `RouteFact(fromPoiId, toPoiId, mode?, duration?, distance?, source, observedAt, status)`.
+- `CandidateLocation(kind=canonical|landmark_proxy|unresolved, targetName, canonicalPoiId?,
+  proxyLandmarkPoiId?, approximationDisclosure?)`.
+- `StayRevision` and `LuggageTransitionRevision` retain immutable before/after lineage.
+
+Every protected write requires owner scope, idempotency, expected-revision fencing and a typed
+stale/conflict response. Provider callbacks and retries cannot publish over a newer revision.
+
+## 5. Invariants and Failure Handling
+
+1. The currently published revision remains readable while any edit, validation or AI adjustment is
+   pending or fails.
+2. No client-only timeline mutation becomes domain truth.
+3. No command crosses a linked-trip segment boundary; Epic 4 owns transfer-boundary edits.
+4. Undo is a new compensating revision, never destructive history deletion.
+5. An approximate landmark route is never presented as the target's verified location or facts.
+6. Validation and AI suggestions may propose changes but cannot apply them without explicit user
+   confirmation.
+7. Route, weather and external-fact unavailability is a typed degraded state, not invented data.
+8. Logs, traces, analytics and error reports exclude protected source URLs, exact private location,
+   secrets and unredacted prompts/evidence.
+
+## 6. Tests and Acceptance Gates
+
+- Unit: minute/cross-day time math, move-target boundaries, inverse commands, candidate-location
+  rules, impact gating, issue classification and typed diff generation.
+- Repository/API: owner isolation, idempotent replay, stale revision, immutable lineage, concurrent
+  mutation fencing, undo compensation and late-provider attempt rejection.
+- Integration: nullable routing, weather horizon/degradation, AMap proxy facts, stay/luggage changes
+  and validation/fix application.
+- Mobile: waterfall timeline hierarchy, disabled move targets, one-minute time control, default/history/
+  countdown undo states, candidate placement, accommodation impact, FixSheet and AI-adjust states.
+- Accessibility: 44pt targets, labels/roles for icons, non-color state, focus containment/return,
+  keyboard-safe Sheets, reduced motion and concise live-region updates.
+- Visual regression: supported mobile widths plus desktop preview for loading, empty, failure, stale,
+  disabled, cross-day and recovery states; no overlapping text or bottom recent-action row.
+- Required commands: OpenAPI generation when contracts change, focused tests, `pnpm -r build`,
+  `git diff --check` and real-service staging checks for changed AMap/route/weather/Provider behavior.
+
+Epic 3 is complete only when all published mutations are versioned, reversible within the approved
+undo policy, validated against current facts and incapable of silently replacing the user's current
+plan.
+
+## Capacitor Host Acceptance (Approved 2026-09-19)
+
+复用当前业务设计与所有 owner/revision/幂等/校验/撤销规则；旅行者UI在适用 Android/iOS 宿主消费 APP-HOST-01/UX-DR36。返回/键盘/安全区不隐式提交，前台/杀进程恢复先核验身份再读取当前 job/revision/scope，不创建新规划或重放未知写入。2.9拥有App单任务恢复，3.1的暂停及旧2.2唯一迁移条件不变。依据 `docs/architecture/app-host.md`，浏览器截图不能替代原生证据。
 
 ---
-
-## 概述（Overview）
-
-本 Epic 聚焦“一次性 AI 填充（不改时间与顺序）”与“观测/评测、灰度与调优”。在 Epic 2 的天级骨架基础上，对“剩余可控非自由活动块”进行一次性编排，并为“所有块”补全「做什么/准备/注意」；对事实引用进行可追溯性约束（无来源时降级为“通用建议”并标注“注意事实核查”）；同时完成 Langfuse/promptfoo/Sentry 等观测与评测接入，配置平台 AI 额度、成本控制、隐私、账号删除与数据导出闭环、国内依赖降级策略等合规要求。
-来源：PRD（docs/prd.md）Epic 3、FR39/FR40/FR37/NFR12/NFR3/NFR7/NFR17；架构 v0.4 分片。
-
-## 目标与范围（Objectives and Scope）
-
-- In Scope
-  - Story 3.1 一次性 AI 填充：仅对“剩余可控块”做编排；对“所有块”补齐文案；不改变时间/顺序；可“应用全部”。
-  - Story 3.2 观测与评测：Langfuse 记录提示版本与调用追踪；promptfoo 离线 A/B 评测；前后端接入 Sentry；指标看板与关键质量指标。
-  - Story 3.3 账号隐私、额度与合规控制：平台 Provider secrets 服务端管理、AI 额度/成本/限流/熔断、隐私与删除导出闭环、版权与国内依赖降级策略。
-- Out of Scope
-  - 规划/编辑/导出等属于 Epic 2；
-  - 多城市/transport/hotel 的完整编排体验不在本 Epic。
-
-## 架构对齐（System Architecture Alignment）
-
-- Filler 服务：对 Plan 的“剩余可控块”执行一次性编排；对所有槽输出文案与引用；不修改 Slot 时间/顺序。
-- Provider 抽象：OpenAI 兼容（api_base + model）；远程切换/回退，服务端统一管理 Provider secrets；Langfuse 追踪；超时/重试/限流；成本预算与降级策略。
-- 观察性体系：Langfuse（prompt_version 与 trace）、promptfoo（离线小集回归）、Sentry（前后端）。
-- 合规：Provider secrets 不下发前端、对象存储签名 URL、最小必要数据、账号删除/数据导出闭环。
-［backend-architecture.md、testing-strategy.md、observability.md、PRD 技术假设/NFR/FR］
-
-## 详细设计（Detailed Design）
-
-### 服务与模块（Services and Modules）
-
-- Filler（一次性填充）
-  - 输入：plan_id、scope='all|slot'、slot_id?
-  - 规则：仅“剩余可控块”做编排；所有块都补齐 3×30 字上限的“做什么/准备/注意”；无可用事实引用时降级为“通用建议”并标注“注意事实核查”。
-  - 产出：slot-level notes/attachments/why_short 与引用来源（来源 ID/时间戳/摘要）；不改变已有时间/顺序。
-- ResultSheet（结果页）
-  - 只读预览；“应用全部”将写回；seed/编辑路径回 Epic 2。
-- Observability
-  - Langfuse：记录 prompt_version、工具 I/O 摘要、trace/span；
-  - promptfoo：离线 A/B；
-  - Sentry：错误与上下文。
-- Security/Privacy
-  - Provider secrets：仅服务端读取；COS 私有读写 + 签名 URL；日志/埋点/Langfuse/Sentry 脱敏；账号删除/导出闭环。
-  - Quota/Cost：按 user/device/workspace 设置请求、并发、导出与成本上限；异常用量熔断；额度不足时排队、稍后重试、低成本模型或无 AI 降级。
-
-### 数据模型与契约（Data Models and Contracts）
-
-- Plan/Journey 与 Slot：沿用 Epic 2；
-- Fill（概念）：针对每个 slot 的 notes/attachments/why_short/citations[]；
-- 观测事件：prompt_version、provider、latency_ms、cost、error_rate 等指标；
-［data-models.md、PRD NFR12/NFR17］
-
-### API 与接口（APIs and Interfaces）
-
-- Filler / AI Fill
-  - POST /fill/apply {plan_id, scope:'all|slot', slot_id?} → {updated_slots[], warnings[]}
-- Observability Hooks（可选中转）
-  - POST /events
-（SSOT：docs/api/openapi.yaml）［rest-api-spec.md、PRD 3.1/3.2/FR37/FR39］
-
-### 工作流与时序（Workflows and Sequencing）
-
-- 一次性填充：
-  1) 输入 plan_id 与 scope；
-  2) 构建待处理槽集合（“剩余可控块”）；
-  3) 生成文案：做什么（≤3×30）、准备（≤3×30，可选）、注意（≤3×30，可选）；
-  4) 附带 why_short 与引用（可追溯：来源 ID/时间戳/摘要）；
-  5) 无可用来源时降级为“通用建议”并标注“注意事实核查”；
-  6) 输出 warnings[]；
-  7) 预览（ResultSheet）→“应用全部”写回。
-- 事实引用与追溯：NFR12；失败时降级策略保持不中断用户流程。
-
-## 非功能需求（Non-Functional Requirements）
-
-- 性能
-  - 端到端 P50 目标（由架构阶段细化与监测）；后台任务/并发控制与回退优先保障交互流畅。
-- 可靠性
-  - 错误与降级路径清晰；不改时间与顺序的硬约束；
-- 可观测性
-  - Langfuse/promptfoo/Sentry 接入完备；质量指标与北极星看板；
-- 安全、隐私与成本
-  - Provider secrets 服务端托管、日志脱敏、COS 私有读写 + 签名 URL；AI 额度/成本/限流/熔断；账号删除/数据导出闭环；版权合规与国内可替代策略。
-［PRD NFR3/NFR6/NFR7/NFR12/NFR17/FR37/FR39/FR40］
-
-## 依赖与集成（Dependencies and Integrations）
-
-- LLM Provider（OpenAI 兼容接口）；
-- Langfuse/promptfoo/Sentry；
-- COS/CDN；
-- 平台额度、速率限制与成本监控配置；
-- 反馈入口（Settings/Backoffice 相关在 PRD）。
-
-## 验收标准（权威）（Acceptance Criteria）
-
-- E3‑AC1（Story 3.1 一次性 AI 填充）
-  1) 仅对“剩余可控块”做编排；
-  2) 为“所有块”补齐“做什么/准备/注意”；
-  3) 不改变时间与顺序（硬约束）；
-  4) 可“应用全部”；
-  5) 对每个槽位输出 why_short 与事实引用；若“做什么”无可用事实引用，则降级为“通用建议”并标注“注意事实核查”。
-- E3‑AC2（Story 3.2 观测与评测）
-  1) Langfuse 记录提示版本与调用追踪；
-  2) promptfoo 支持离线 A/B；
-  3) 前后端接入 Sentry；
-  4) 指标看板包含北极星与关键质量指标（seed_accept_rate、seed_conflict_rate、seed_time_ms、fallback_rate 等延伸）。
-- E3‑AC3（Story 3.3 账号隐私、额度与合规控制）
-  1) Provider secrets 仅服务端管理；AI 请求具备用户/设备/workspace 额度、速率限制、成本上限、异常熔断与降级策略；
-  2) COS 私有读写与签名 URL；日志、埋点、Sentry、Langfuse 脱敏；
-  3) 账号删除与数据导出闭环；
-  4) 版权标注规范与国内可替代/降级策略。
-［逐条对应 PRD 3.1/3.2/3.3 与相关 FR/NFR］
-
-## 可追溯性映射（Traceability Mapping）
-
-| AC | PRD 引用 | 组件/API | 测试思路 |
-| --- | --- | --- | --- |
-| E3‑AC1 | Story 3.1；NFR9；FR37/FR39 | POST /fill/apply；Result 预览 | 单元：约束与降级；集成：引用追溯；E2E：预览→应用 |
-| E3‑AC2 | Story 3.2；FR13；NFR6 | 观察性接入 | 集成/E2E：追踪与看板指标 |
-| E3‑AC3 | Story 3.3；NFR3/NFR7/NFR17 | Quota/COS/隐私流程 | 集成：额度/限流/熔断；E2E：删除/导出闭环 |
-
-## 风险、假设与开放问题（Risks, Assumptions, Open Questions）
-
-- 风险
-  - 事实引用不可用/不稳定 → 降级“通用建议”并显式标注；
-  - 成本/时延：Provider 退避、并发限制、成本预算与低成本降级；
-  - 文案上限与可读性。
-- 假设
-  - Provider 统一抽象可按任务路由；平台 Provider secrets 已在服务端配置；Langfuse/Promptfoo/Sentry 可用。
-- 开放问题
-  - 引用选择与展示策略的最终 UX 细节；
-  - “应用全部”与 slot‑level overrides 的冲突解决策略。
-
-## 测试策略摘要（Test Strategy Summary）
-
-- 单元（P0）
-  - 约束：不改时间/顺序；无引用降级逻辑；why_short 与 3×30 格式校验。
-- 集成（P0）
-  - POST /fill/apply 输出与预览；观察性事件完整；额度/限流/降级链路。
-- 端到端（P1）
-  - 骨架→一次性填充→预览→应用全部；删除/导出闭环验证。
-- 质量与性能（P1）
-  - promptfoo 小集回归；Langfuse 时延/错误率；成本监测与退避。

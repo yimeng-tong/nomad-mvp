@@ -1,0 +1,12 @@
+{
+  "name": "@nomad/native-auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/definitions.ts",
+  "exports": { ".": { "types": "./src/definitions.ts", "import": "./src/index.ts" } },
+  "peerDependencies": { "@capacitor/core": ">=8.0.0 <9" },
+  "capacitor": { "android": { "src": "android" }, "ios": { "src": "ios" } },
+  "files": ["src", "android", "ios", "NomadNativeAuth.podspec", "Package.swift"]
+}

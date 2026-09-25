@@ -1,0 +1,24 @@
+[Unit]
+Description=Nomad isolated development API
+After=network-online.target postgresql.service redis-server.service
+Wants=network-online.target
+Requires=postgresql.service redis-server.service
+
+[Service]
+Type=simple
+User=nomad
+Group=nomad
+WorkingDirectory=/opt/nomad-mvp/development/current
+Environment=NODE_ENV=development
+Environment=CI=true
+ExecStart=/usr/local/bin/node --env-file=/etc/nomad-mvp/development/runtime.env --env-file=/etc/nomad-mvp/development/providers.env /opt/nomad-mvp/development/current/apps/server/dist/apps/server/src/index.js
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/opt/nomad-mvp/development /home/nomad/.config /home/nomad/.cache
+
+[Install]
+WantedBy=multi-user.target

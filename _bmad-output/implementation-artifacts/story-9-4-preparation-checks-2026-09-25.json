@@ -1,0 +1,55 @@
+{
+  "kind": "story-preparation-validation",
+  "recorded_at": "2026-09-24T19:11:50.820829+00:00",
+  "story_id": "9.4",
+  "story_file": "_bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md",
+  "story_status": "ready-for-dev",
+  "final_story_sha256": "c6197a64e507b1c9587f895f637633d8abce374034aa4ef6edacecc434357fd0",
+  "source_contract_sha256": "a120d2b064bfa7ba8a362f51aee771e61db8c04083817f7366250ae4d55adf27",
+  "source_gwt_count": 6,
+  "narrative_requirements_and_gwt_match": true,
+  "conditions_in_actual_tasks": [
+    "CODE-QUALITY-01",
+    "UI-WORKBENCH-01"
+  ],
+  "source_obligations_in_actual_tasks": [
+    "ui-quality-tooling"
+  ],
+  "independent_reviews": 2,
+  "preparation_clarifications_applied": 4,
+  "open_findings": [],
+  "ci_handoff": {
+    "passed": true,
+    "stories": 67,
+    "gwt": 1089,
+    "ready": 1,
+    "next": "9-5-browser-flow-and-visual-regression-gates"
+  },
+  "handoff_regression": {
+    "passed": 82,
+    "failed": 0,
+    "first_run": {
+      "passed": 81,
+      "failed": 1,
+      "cause": "UI regression fixture assumed live next remained9.4"
+    },
+    "fix": "Freeze test CURRENT/Sprint/project-context to pre-preparation snapshot; runtime checkers unchanged"
+  },
+  "runtime_checker_changed": false,
+  "implementation_started": false,
+  "dependencies_installed": false,
+  "storybook_lint_or_product_runtime_executed": false,
+  "current_execution_story": "1-7-durable-import-progress-and-restart-recovery",
+  "stop_after_story": "1-7-durable-import-progress-and-restart-recovery",
+  "paused_3_1_preserved": true,
+  "formal_source_catalog_delivery_unchanged": true,
+  "artifact_sha256": {
+    "_bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md": "c6197a64e507b1c9587f895f637633d8abce374034aa4ef6edacecc434357fd0",
+    "_bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md": "2ee66e3f8d027eef53ce6d8a33714a30d464dfb5ed379829172b3d0ba5e361d5",
+    "_bmad-output/implementation-artifacts/research/story-9-4-tooling-research-2026-09-25.md": "244d3f01bab63a945574c450f18ca1e6af5d729e359fac843f83cde332b944c6",
+    "_bmad-output/implementation-artifacts/research/story-9-4-repository-context-2026-09-25.md": "345cfc2df0de17933772394e9d1bd30505ca6e8429face87e0827ce12b4e6805",
+    "_bmad-output/implementation-artifacts/research/story-9-4-contract-review-2026-09-25.md": "39040f083c68933c1e8086155e5a2ef16db4af4080697a100bdf7408bd9db47e",
+    "_bmad-output/implementation-artifacts/research/story-9-4-plan-review-2026-09-25.md": "0b64fad3929e3e1ba6ab081628a41aa2d7490c353c528635bdc976f93862a7f3",
+    "scripts/check-handoff.test.mjs": "a6bc3613fb65dcb428d44706b3c9b57ee944db27eda725605c19118c3523b9e8"
+  }
+}

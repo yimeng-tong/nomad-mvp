@@ -1,4 +1,5 @@
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
+import { assertFixtureAuthAllowed } from './runtime-boundary.js';
 
 export type AuthSession = {
   id: string;
@@ -57,6 +58,7 @@ function safeEqual(a: string, b: string) {
 }
 
 export function issueOtpChallenge(phone: string, region: string) {
+  assertFixtureAuthAllowed();
   const normalizedPhone = normalizePhone(phone);
   const now = Date.now();
   const existing = otpChallenges.get(normalizedPhone);
@@ -81,6 +83,7 @@ export function issueOtpChallenge(phone: string, region: string) {
 }
 
 export function verifyOtpChallenge(phone: string, code: string) {
+  assertFixtureAuthAllowed();
   const normalizedPhone = normalizePhone(phone);
   const challenge = otpChallenges.get(normalizedPhone);
   if (!challenge) {
@@ -99,6 +102,7 @@ export function verifyOtpChallenge(phone: string, code: string) {
 }
 
 export function createSession(userId: string, deviceId: string) {
+  assertFixtureAuthAllowed();
   const created = new Date();
   const expires = new Date(created.getTime() + getSessionTtlSec() * 1000);
   const session: AuthSession = {
@@ -113,6 +117,7 @@ export function createSession(userId: string, deviceId: string) {
 }
 
 export function getSession(sessionId: string) {
+  assertFixtureAuthAllowed();
   const session = sessions.get(sessionId);
   if (!session) return undefined;
   if (Date.parse(session.expires_at) <= Date.now()) {
@@ -123,10 +128,12 @@ export function getSession(sessionId: string) {
 }
 
 export function listSessions(userId: string) {
+  assertFixtureAuthAllowed();
   return Array.from(sessions.values()).filter((session) => getSession(session.id)?.user_id === userId);
 }
 
 export function revokeSession(sessionId: string, userId?: string) {
+  assertFixtureAuthAllowed();
   const session = getSession(sessionId);
   if (!session) return false;
   if (userId && session.user_id !== userId) return false;

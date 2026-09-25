@@ -1,0 +1,16 @@
+{
+  "result": "passed",
+  "checks": [
+    "startup-immutable-guard-required",
+    "initial-event-and-snapshot",
+    "global-client-rejected",
+    "two-client-stale-version-one-winner",
+    "event-insert-failure-rolls-back-job",
+    "post-event-failure-rolls-back-both",
+    "immutable-history-replay-from-second-client",
+    "stale-job-qualification-denied"
+  ],
+  "providerCalls": 0,
+  "routesWired": false,
+  "workerLeaseVerified": false
+}

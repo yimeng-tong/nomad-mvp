@@ -1,13 +1,38 @@
-# Compatibility (v0.3 → v0.4)
+# Compatibility (v0.4 to v0.6)
 
-| 主题 | v0.3 | v0.4 |
-|---|---|---|
-| 抽取策略 | text→OCR→VLM 分级流水线 | VLM 默认启用（图+文），失败降级“仅媒体+待定位” |
-| Provider | 无统一抽象 | OpenAI 兼容（api_base+model），远程切换/回退，服务端托管 Provider secrets，平台额度/成本控制 |
-| 数据层 | cluster + POI | L1/L2/L3；L3→L2 多归属；连锁抑制；分店≤20 & 2km 裁剪 |
-| 编排 | 2h 槽 + seed | Quick（L2 2h/4h，仅主景点）+ HQ 后台并行（“切换-采用”） |
-| 展示 | 2h 槽 | 2h/4h 槽；餐时分割 A/B 为展示模式 |
-| 观测 | 分散事件 | journey_id/plan_id/event_id/trace/span/hq_job/ingest_job 统一 |
-| 文档形态 | 单体 architecture.md | 分片：index, tech-stack, frontend/backend, data-models, rest-api-spec, observability, testing |
+| Concern | v0.4 baseline | v0.6 target | Migration owner |
+| --- | --- | --- | --- |
+| Production auth | dev identity/OTP and in-memory session baseline | verified identity, stable owner migration, durable multi-device sessions and scoped operator grants | New 1.0 before real-user/first-operator use; historical 1.1–1.5 unchanged |
+| User planning flow | Confirm -> Picker -> partial Skeleton -> AI Fill | S2/S3/S4/S5 -> one full PlanningJob -> editable timeline -> detail enrichment | Epic 2, Epic 3, Epic 5 |
+| Planner versions | Quick first, HQ switch/adopt | One current PlanningJob; internal attempts fenced and never silently overwrite edits | Story 2.9 |
+| Time | fixed 2h/4h visible slots | AI may align 15m; user edits any valid minute | Story 2.3 and Epic 3 editing |
+| Picker intent | `selected_required` only | `required / along_route / unselected`, overview mapping | Story 2.7 |
+| Validation | permanent pre-Fill gate | initial validation plus mutation-triggered incremental validation | Story 2.11 and Epic 3 repair |
+| Filler | arranges remaining blocks and enriches | enriches only; cannot change date/time/order | Epic 5 detail story |
+| Import UI | one foreground link | multiple single-link jobs + independent FIFO presentation queue | Story 1.6 |
+| Import ownership | job/inspiration foundation | owner import records and protected original URL | Story 1.8 |
+| Import processing | stub multimodal seam and text/ocr/vision diagnostics | real media sampling, VAD/ASR, evidence signals, complete nullable AMap facts | Stories 1.9-1.11 |
+| Import resume | in-memory event stream plus job final state | persisted monotonic event cursor across process restart | Story 1.7 |
+| Geography | L1/L2/L3 and scalar `business_area` hint | provider POI facts and versioned manual corrections; BusinessArea membership separately normalized | 1.11 POI/correction; 6.3 BusinessArea |
+| Multi-city | post-MVP or mixed Plan assumptions | Trip aggregate links single-city Plans with atomic TransferLeg handoff | Epic 4 |
+| Accommodation | plan-global luggage / display hotel | per-night Stay, breakfast tri-state and LuggageTransition | Story 2.5, Epic 3 and Epic 4 |
+| Preferences/load | wake/start fields and coarse pace | optional constraints, evidence-derived interests, pace soft constraints and DayLoadEstimate | Stories 1.9-1.10, 2.6 and 2.14 |
+| Meals | ordinary candidate or fixed block | MealSlot fixed/choice/undecided + owner area recall | Epic 6 |
+| Shopping | POI or notes | revisioned checklist text with optional label shortcuts; structured attributes/stores and checklist-to-schedule conversion deferred | Stories 6.4-6.5; existing travel buffers remain in Epics 2-4 |
+| Location | generic map usage | foreground permission, freshness, fallback and no tracking | Epic 6 |
+| Weather | no current contract | reliable forecast/seasonal context, typed validation and preview-only adjustment | Epic 3 |
+| Export | `/export/png` and Plan-oriented rendering | current-revision image export, WebP/JPEG output policy, durable job and hard-conflict gate | Story 5.4 |
 
-> 冲突时，以 v0.4 为准。
+Compatibility inputs may be accepted temporarily at API boundaries, but the mobile client must
+not expose deprecated Quick/HQ adoption, smart-planning toggle, fixed 2h/4h user edits or BYOK.
+Removal requires telemetry and a separately reviewed migration; deprecated input must not select
+a different user-visible workflow.
+
+## Capacitor Increment (Approved 2026-09-19)
+
+保留 Web/PWA、现有身份/领域模型与历史 done。9.1 增加双端宿主，业务 Story 在原合同上扩平台，9.2 负责实际分发。任何客户端/API 兼容窗口、升级、凭据与临时状态迁移都需证据；不通过清空旧数据、重建 owner 或无依据的强制降级解决。
+
+
+## UI foundation increment (Approved 2026-09-20)
+
+平台最低范围依app-host.md；旧iOS16.0–16.3、Firefox114–127和Safari16.0–16.3不再纳入新交付支持声明。保留历史done及旧产物证据，新增组件/读取/路由分别回归。Query不持久化首批私有缓存，Router不把私人原文写入URL；回退不清除业务数据/IDB日志，不改变身份或operation。

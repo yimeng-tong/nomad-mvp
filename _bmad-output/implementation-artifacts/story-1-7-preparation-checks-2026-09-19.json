@@ -1,0 +1,12 @@
+{
+  "story": "1.7",
+  "scope": "preparation-only",
+  "sourceBodyExact": true,
+  "gwtScenarios": 11,
+  "engineeringConditions": 6,
+  "independentPreparationReviews": 2,
+  "patchedFindings": 3,
+  "remainingPreparationFindings": 0,
+  "implementationComplete": false,
+  "fileSha256": "83ce1c5a1ce7fcec0cf0a9971861f3be90ce46b140a70f45aa072c744885f64b"
+}

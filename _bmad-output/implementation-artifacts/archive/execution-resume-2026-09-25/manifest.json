@@ -1,0 +1,30 @@
+{
+  "date": "2026-09-25",
+  "purpose": "before explicit resumption and just-in-time preparation",
+  "files": [
+    {
+      "path": "CURRENT.md",
+      "sha256": "cb7e665bb3704b71ec1c44e73699a428e618f1f37a9367dfb784d05addee5084"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "d4a4dfeb4213e848dd4232a98f207d665adbfab4599aee9f6e99f6c5256dea0b"
+    },
+    {
+      "path": "_bmad-output/project-context.md",
+      "sha256": "ff7bd5b3ee92b804ca599ae06f4da9ef96cb5df64f8683f681b42f13de6ba78c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/sprint-status.yaml",
+      "sha256": "f296507a07c78279ae86f1b550d95a88c31d9d878a7ffe715d3397488ec82d09"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md",
+      "sha256": "c6197a64e507b1c9587f895f637633d8abce374034aa4ef6edacecc434357fd0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md",
+      "sha256": "2ee66e3f8d027eef53ce6d8a33714a30d464dfb5ed379829172b3d0ba5e361d5"
+    }
+  ]
+}

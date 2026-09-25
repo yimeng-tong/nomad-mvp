@@ -1,0 +1,45 @@
+{
+  "result": "passed",
+  "checks": [
+    "count-overflow-with-real-pg-sse-idb-preserves-active-save-and-replays-remaining-events",
+    "bytes-overflow-with-real-pg-sse-idb-preserves-active-save-and-replays-remaining-events",
+    "two-visible-app-windows-share-real-idb-late-encryption-cannot-overwrite-other-window-committed-pg-event"
+  ],
+  "pressureSamples": [
+    {
+      "variant": "count",
+      "repeat": 1,
+      "outcome": "passed",
+      "receivedFramesAtClose": 65,
+      "elapsedMs": 5957.5663970000005
+    },
+    {
+      "variant": "bytes",
+      "repeat": 1,
+      "outcome": "passed",
+      "receivedFramesAtClose": 5,
+      "elapsedMs": 4547.376754000001
+    }
+  ],
+  "postgresVersion": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "actualPg": true,
+  "actualSse": true,
+  "actualIndexedDb": true,
+  "actualApp": true,
+  "duplicateFrameFaultInjection": 76,
+  "paddedFrameFaultInjection": 5,
+  "realProviderCalls": 0,
+  "newIngestPosts": 0,
+  "sourceSha256": {
+    "apps/mobile/src/App.tsx": "fee3387d9972f5c31972a6780cb894b328e6b821ef672121a879eb2cd497141e",
+    "apps/mobile/src/home/api.ts": "408d2e9092e83bd3ca8a9433ab65204e25432737aea56b7c95a9a9a6acab1a73",
+    "apps/mobile/src/home/durable-watch.ts": "3cebb45f3e8af8b86f1c7f083bd36cd07a56dc5ac2044302b76a96ca06d2f944",
+    "apps/mobile/src/auth/ordered-stream.ts": "a5a2c801f21e5b827ece752be0e7d7cf063dfdf466f6db47c71fa2797e3b1e76",
+    "apps/mobile/src/home/dock-controller.ts": "cc3f5e23de764f291c365c62debe1befa8ebd76eb592c4da3016f1586f3e3f70",
+    "apps/mobile/src/home/dock-model.ts": "e460eee431b23e17255b2af6bbb658942a0975a51827af0268489583ad67d038",
+    "apps/mobile/src/home/operation-journal.ts": "b8e799eecd0f02bd329925cc8bab6bc1fea96cfa04f753a3a3c4dc622ba753d7",
+    "apps/mobile/src/home/ingest-checkpoint-store.ts": "7f03328cf52da654c49ed330b526f4a496d1f957db99615e4c944a1836457e8f",
+    "apps/mobile/src/home/ingest-protocol.ts": "99c4c43f15e8e765f5f40e5a0c09e31180786299782d43adc68a9162cf4cfd9e",
+    "apps/mobile/src/home/HomeImportDock.tsx": "9376a616e100af1467dd111038c5477d09cfd4c17b0909e5d35964a00bf3328c"
+  }
+}

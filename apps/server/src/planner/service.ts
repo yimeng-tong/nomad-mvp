@@ -1,3 +1,4 @@
+import { runAsAcceptedJob } from '../auth/owner.js';
 import { buildQuickPlan } from './quick.js';
 import { PlannerInputError } from './resolver.js';
 import { PlannerExecutionLeaseLost } from './repository.js';
@@ -22,6 +23,11 @@ type RunQuickPlannerJobInput = {
 };
 
 export async function runQuickPlannerJob(input: RunQuickPlannerJobInput) {
+  return runAsAcceptedJob({ ownerId: input.job.userId, authVersion: input.job.ownerAuthVersion ?? -1 },
+    () => runQualifiedQuickPlannerJob(input));
+}
+
+async function runQualifiedQuickPlannerJob(input: RunQuickPlannerJobInput) {
   const base = {
     trace_id: input.job.traceId,
     plan_id: input.job.planId,

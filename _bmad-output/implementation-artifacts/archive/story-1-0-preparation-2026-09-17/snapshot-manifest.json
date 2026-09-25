@@ -1,0 +1,18 @@
+{
+  "CURRENT.md": {
+    "source": "CURRENT.md",
+    "sha256": "14c426e6340f7551e27037508ee3ab9991b74c07f26a54d0ad3839cb36eccd7e"
+  },
+  "project-context.md": {
+    "source": "_bmad-output/project-context.md",
+    "sha256": "c74c6638f8b38e7c8b822eea81600abba705c0abfad96adbecde12253b92d1fd"
+  },
+  "sprint-status.yaml": {
+    "source": "_bmad-output/implementation-artifacts/sprint-status.yaml",
+    "sha256": "ab4859f62be1ade232dafdce85095824e085be4b10785555de93b661b1223261"
+  },
+  "check-handoff.test.mjs": {
+    "source": "scripts/check-handoff.test.mjs",
+    "sha256": "5a88bc839ffecbb93a2b4b2054d4daab32f12749f8c34462ae1ecdc1acf67521"
+  }
+}

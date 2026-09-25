@@ -265,9 +265,7 @@ describe('DayPlanScreen', () => {
     expect(randomUuid).toHaveBeenCalledOnce();
     expect(apiClient.getPlan).toHaveBeenCalledTimes(2);
     expect(track).toHaveBeenCalledWith('skeleton_slot_edit', {
-      plan_id: 'pl_1',
       operation_kind: 'move_day',
-      day_delta: 1,
       result: 'success',
     });
   });
@@ -603,7 +601,7 @@ describe('DayPlanScreen', () => {
     ));
   });
 
-  it('tracks seed edits without POI, time, candidate, or token content', async () => {
+  it('keeps edit behavior while disabling obsolete seed telemetry and omitting private references', async () => {
     const seededPlan: DayPlanResponse = {
       ...quickPlan,
       day_plans: [{
@@ -624,15 +622,12 @@ describe('DayPlanScreen', () => {
     await screen.findByRole('heading', { name: '我的计划' });
     fireEvent.click(screen.getByRole('button', { name: '编辑 日光岩' }));
     fireEvent.click(screen.getByRole('button', { name: '移至 D2' }));
-    await waitFor(() => expect(track).toHaveBeenCalledWith('seed_block_edit', {
-      plan_id: 'pl_1',
-      operation_kind: 'move_day',
-      seed: true,
-    }));
-    expect(track).toHaveBeenCalledWith('undo_toast_show', {
-      plan_id: 'pl_1',
-      kind: 'move_day',
-    });
+    await waitFor(() => expect(apiClient.editSlot).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(track).toHaveBeenCalledWith('skeleton_slot_edit', { operation_kind: 'move_day', result: 'success' }));
+    expect(track).not.toHaveBeenCalledWith('seed_block_edit', expect.anything());
+    expect(track).toHaveBeenCalledWith('undo_toast_show', { kind: 'move_day' });
+    const payloads = JSON.stringify(track.mock.calls);
+    for (const privateValue of ['pl_1', 'slot-selected', '日光岩', 'undo-edit-1']) expect(payloads).not.toContain(privateValue);
   });
 
   it('explains selected locations that could not be scheduled', async () => {

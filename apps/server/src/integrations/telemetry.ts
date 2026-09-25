@@ -1,9 +1,16 @@
 import * as Sentry from '@sentry/node';
 import { Langfuse } from 'langfuse';
+import { safeAuthenticationErrorEvent } from '../auth/telemetry-privacy.js';
 
 export const sentryInit = () => {
   if (!process.env.SENTRY_DSN) return;
-  Sentry.init({ dsn: process.env.SENTRY_DSN, tracesSampleRate: 0.1 });
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN, sendDefaultPii: false,
+    beforeBreadcrumb: () => null,
+    beforeSend: (event) => safeAuthenticationErrorEvent(event),
+    // Explicit safe workload measurements replace automatic signed provider URL capture.
+    tracesSampleRate: 0, beforeSendTransaction: () => null,
+  });
 };
 
 export const langfuse = (() => {

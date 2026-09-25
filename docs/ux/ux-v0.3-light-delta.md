@@ -1,12 +1,18 @@
 # nomad-mvp UX v0.3-light Delta (MVP)
 
+> **Superseded historical snapshot.** This file is excluded from the v0.6 BMAD
+> UX packet. ResultSheet ideas may be historical input, but its skeleton, AI Fill
+> transition, hotel and navigation rules are not current authority. Use
+> `docs/front-end-spec.md` and `docs/ux/mobile-ia.md`.
+
 Date: 2025-10-28
 Owner: UX
 Refs: PRD v0.3-light (`docs/prd.md`), Mobile IA (`docs/ux/mobile-ia.md`), v0.2 Delta (`docs/ux/ux-v0.2-delta.md`)
 
 ## Scope
 
-This delta specifies UX changes required for the MVP (v0.3-light). It builds on v0.2 and introduces ResultSheet, FR44‑lite search, hotel_slot (display-only), near_hotel hints, and platform AI quota visibility. Multi-city/transport/history timeline are not exposed.
+This delta records the former v0.3-light MVP direction. Its authority was
+superseded by the v0.6 Correct Course.
 
 ## 1) IA & Navigation
 

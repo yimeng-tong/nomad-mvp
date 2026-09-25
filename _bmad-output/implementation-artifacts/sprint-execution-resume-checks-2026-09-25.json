@@ -1,0 +1,87 @@
+{
+  "recorded_at": "2026-09-25T07:24:38.810285+00:00",
+  "scope": "explicit-execution-resume-and-cross-device-checkpoint",
+  "stop_after_story": null,
+  "story_statuses": {
+    "done": 7,
+    "in_progress": 5,
+    "ready_for_dev": 1,
+    "backlog": 54
+  },
+  "current_story": "9-4-component-workbench-and-enforced-code-quality",
+  "next_story_to_prepare": "9-5-browser-flow-and-visual-regression-gates",
+  "all_story_preparation_cancelled": true,
+  "archived_unvalidated_drafts": 17,
+  "source_epics_sha256": "6440ed71f6aac8e5788ebc96dbbe305f911913f38bdb62cab34db7a4aa8ee3f4",
+  "story_9_4_sha256": "11172d21546d4dd19d8fd7430941c495d26a1a17bc26f5f1c2f4caef3616ccc9",
+  "independent_preparation_review": {
+    "path": "_bmad-output/implementation-artifacts/research/story-9-4-execution-readiness-review-2026-09-25.md",
+    "checks_passed": 18,
+    "technical_blockers": 0,
+    "required_contract_corrections": 0
+  },
+  "handoff": {
+    "result": "passed",
+    "stories": 67,
+    "gwt": 1089
+  },
+  "guard_regression": {
+    "passed": 82,
+    "failed": 0,
+    "skipped": 0
+  },
+  "runtime_checker_sha256": {
+    "scripts/check-handoff.mjs": "290e1374be99cc8c0c0ced805045b0605b865c6bd4173af13fd0b2202aa60032",
+    "scripts/check-sprint-delivery.mjs": "3441c8a38fe54a6ff9be578b5da388fbad5312ebd5e787afba09b05644f43003",
+    "scripts/check-capacitor-scope.mjs": "c1822cae8139378c617c528eed8dd80b810aae6693ac06a0111c99aeaed2a580",
+    "scripts/check-ui-scope.mjs": "aa640fd5f0597b58495757f083e3c154986bf65d00abe757939994890e524b09"
+  },
+  "workspace_build": {
+    "result": "passed",
+    "runtime": "WSL Node22.22.1 / pnpm11.7.0",
+    "real_native_or_provider_acceptance": false
+  },
+  "git_secret_scan": {
+    "files_scanned": 1516,
+    "private_values_checked": 23,
+    "secret_matches": 0,
+    "non_secret_template_matches": [
+      "Langfuse example MinIO access key ID is the default account name, not its private key"
+    ],
+    "environment_files_in_git": false
+  },
+  "case_insensitive_path_collisions": [],
+  "homelab": {
+    "provider_config_record": "_bmad-output/implementation-artifacts/evidence/cross-device-development-2026-09-25/homelab-env-placement.json",
+    "isolated_runtime_record": "_bmad-output/implementation-artifacts/evidence/cross-device-development-2026-09-25/development-database-and-runtime.json",
+    "deployment_status": "pending-git-checkpoint",
+    "https_frp_status": "configuration-location-requested"
+  },
+  "git_checkpoint": {
+    "status": "pending",
+    "branch": "codex/story-1-0-production-auth"
+  },
+  "new_development_task": {
+    "status": "not-dispatched-before-git-checkpoint"
+  },
+  "implementation_story_9_4_started": false,
+  "git_export_handoff": {
+    "result": "passed",
+    "files_exported": 1508,
+    "ignored_runtime_log_dependencies": false
+  },
+  "git_diff_check": {
+    "new_work_passed": true,
+    "pre_existing_byte_preserved_warnings": [
+      "_bmad-output/implementation-artifacts/visual/story-7-3-settings-usage-logout-r1.prompt.md",
+      "_bmad-output/implementation-artifacts/visual/story-8-2-evaluation-human-workspace-r2.prompt.md",
+      "_bmad-output/planning-artifacts/implementation-readiness-report-2026-08-13.md",
+      "_bmad-output/planning-artifacts/readiness-capacitor-requirements-2026-09-19.md",
+      "_bmad-output/planning-artifacts/readiness-ui-requirements-2026-09-20.md",
+      "apps/mobile/android/build.gradle",
+      "apps/mobile/android/gradlew.bat",
+      "apps/mobile/public/vendor/pnvs/ct4.js"
+    ],
+    "reason": "Preserve approved/historical artifacts, generated Gradle wrapper and pinned vendor bytes; no whole-repo whitespace rewrite."
+  }
+}

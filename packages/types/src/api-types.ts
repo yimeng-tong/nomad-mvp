@@ -38,15 +38,34 @@ export interface paths {
     /** Start ingest by Xiaohongshu share link (async) */
     post: operations["ingestXhs"];
   };
+  "/ingest/{job_id}": {
+    get: operations["readIngestSnapshot"];
+  };
+  "/ingest/{job_id}/recovery": {
+    /** @description Owner-qualified recovery without job creation or redispatch. A legacy job may adopt one current-fact log checkpoint. Replay does not acknowledge the head. Explicit resync requires no cursor in either header or query and returns one atomic authoritative snapshot/cursor pair. If both cursor sources are supplied, they must match exactly; malformed, duplicate or conflicting values are rejected after ownership validation. */
+    get: operations["recoverIngestProgress"];
+  };
+  "/ingest/{job_id}/result": {
+    get: operations["readIngestResult"];
+  };
+  "/ingest/{job_id}/retry": {
+    post: operations["retryIngestJob"];
+  };
+  "/ingest/commands/{operation_id}": {
+    get: operations["readIngestCommand"];
+  };
   "/ingest/{job_id}/events": {
-    /** SSE stream for ingest job events (alias path) */
+    /**
+     * SSE stream for ingest job events (alias path)
+     * @description Durable ingest replay then database tail. Conflicting header/query cursors are rejected. Business frames use cursor id and IngestDurableEvent; ingest_control carries resync/complete without id. Heartbeats are comments at most 10 seconds apart and never advance a business cursor. Clients must persist applied facts before acknowledging a cursor.
+     */
     get: operations["ingestEvents"];
   };
   "/sse/ingest/{ingest_id}": {
     /**
      * SSE stream for ingest job events
      * @deprecated
-     * @description Use GET /ingest/{job_id}/events instead.
+     * @description Durable ingest replay then database tail. Conflicting header/query cursors are rejected. Business frames use cursor id and IngestDurableEvent; ingest_control carries resync/complete without id. Heartbeats are comments at most 10 seconds apart and never advance a business cursor. Clients must persist applied facts before acknowledging a cursor.
      */
     get: operations["sseIngest"];
   };
@@ -176,6 +195,14 @@ export interface paths {
     /** Verify OTP and create session */
     post: operations["authOtpVerify"];
   };
+  "/auth/native/otp/start": {
+    /** Start OTP flow (SMS) */
+    post: operations["native_authOtpStart"];
+  };
+  "/auth/native/otp/verify": {
+    /** Verify OTP and create session */
+    post: operations["native_authOtpVerify"];
+  };
   "/me": {
     /** Get current user and session */
     get: operations["me"];
@@ -192,8 +219,25 @@ export interface paths {
     /** Revoke a session */
     delete: operations["sessionsDelete"];
   };
+  "/ops/me": {
+    /**
+     * Read currently granted desktop operator capabilities
+     * @description Web session only. Ordinary login, client roles and knowing this URL grant no operator authority. Grants are checked from the persistent authority on each request.
+     */
+    get: operations["readOperatorAccess"];
+  };
+  "/ops/access-check": {
+    /**
+     * Verify scoped write authority and create an audit receipt
+     * @description Locks the qualified caller and the exact current grant in the audit-write transaction. This writes only an access-check receipt, not business data or a permission grant. Retries retain operation_id; revoked or changed grants never replay a successful old receipt.
+     */
+    post: operations["checkOperatorAccess"];
+  };
   "/logout": {
-    /** Clear current session cookie */
+    /**
+     * Revoke the current session and clear its cookie
+     * @description Confirms durable current-session revocation before clearing the cookie; other device sessions remain valid. Unknown storage outcomes return 503 and must not be reported as successful logout. The same operation_id and expected public identity confirm a lost response even after cookie clearing; this receipt never authenticates a user or revokes a newer session.
+     */
     post: operations["logout"];
   };
   "/feedback/link": {
@@ -270,54 +314,109 @@ export interface components {
     };
     AuthCaptchaConfig: {
       /** @enum {string} */
-      provider: "tencent";
+      provider: "tencent" | "aliyun-pnvs" | "fixture";
       /** @enum {string} */
       mode: "off" | "risk" | "always";
+      /** @description Public graphic H5 identifier only; no appKey or cloud credential. */
+      app_id?: string | null;
+      /** @description Server-approved H5 SDK asset URL. */
+      sdk_url?: string | null;
+    };
+    PnvsCaptchaProof: {
+      lot_number: string;
+      captcha_output: string;
+      pass_token: string;
+      gen_time: string;
+    };
+    OperatorGrant: {
+      /** @enum {string} */
+      capability: "places.correct" | "brand.rules" | "ops.workbench" | "ops.prompts" | "ops.rollout" | "ops.usage";
+      scope: string;
+      version: number;
+    };
+    OperatorAccessResponse: {
+      /** Format: uuid */
+      user_id: string;
+      grants: components["schemas"]["OperatorGrant"][];
+    };
+    OperatorAccessCheckRequest: {
+      /** @enum {string} */
+      capability: "places.correct" | "brand.rules" | "ops.workbench" | "ops.prompts" | "ops.rollout" | "ops.usage";
+      scope: string;
+      expected_grant_version: number;
+      /** Format: uuid */
+      operation_id: string;
+    };
+    OperatorAccessCheckResponse: {
+      /** Format: uuid */
+      receipt_id: string;
+      /** Format: date-time */
+      verified_at: string;
     };
     AuthConfigResponse: {
       privacy_url: string;
       user_agreement_url: string;
+      /** @enum {string} */
+      availability?: "ready" | "unavailable" | "fixture";
       enabled_methods: components["schemas"]["LoginMethod"][];
       ios_equal_weight_order: ("apple" | "phone" | "wechat")[];
       captcha: components["schemas"]["AuthCaptchaConfig"];
+    };
+    /** @description Internal HTTPS response consumed only by the native plugin. The plugin stores and strips the credential before resolving any JavaScript promise. */
+    NativeOtpVerifyResponse: components["schemas"]["OtpVerifyResponse"] & {
+      native_session_credential: string;
     };
     OtpStartRequest: {
       phone: string;
       /** @default CN */
       region?: string;
+      /**
+       * Format: uuid
+       * @description Required in real mode; one browser intent retains this ID across an unknown-result retry.
+       */
+      request_id?: string;
+      captcha?: components["schemas"]["PnvsCaptchaProof"];
+      /** @description Legacy isolated fixture only; never accepted as real PNVS proof. */
       captcha_token?: string | null;
     };
     OtpStartResponse: {
+      /** @description Provider accepted this send; does not prove handset delivery or login. */
       sent: boolean;
       retry_after_sec: number;
+      /** Format: uuid */
+      challenge_id?: string | null;
+      /** @enum {string} */
+      delivery_state?: "sent" | "unknown" | "captcha_required";
       captcha_required: boolean;
       /** @enum {string|null} */
-      captcha_provider?: "tencent" | null;
+      captcha_provider?: "tencent" | "aliyun-pnvs" | "fixture" | null;
     };
-    OtpVerifyRequest: OneOf<[{
+    /** @description Accepts otp or the compatibility alias code; when both are supplied they must match (validated by the server). Real mode requires the server-issued challenge_id and its HttpOnly browser-binding cookie. Device fields are metadata only. */
+    OtpVerifyRequest: {
       phone: string;
-      otp: string;
-      /** @description Compatibility alias for otp. If supplied with otp */
+      /** Format: uuid */
+      challenge_id?: string;
+      otp?: string;
       code?: string;
       device_fingerprint?: string;
       /** @description Compatibility alias for device_fingerprint. */
       device_id?: string;
-    }, {
-      phone: string;
-      /** @description Compatibility alias for code. If supplied with code */
-      otp?: string;
-      code: string;
-      device_fingerprint?: string;
-      /** @description Compatibility alias for device_fingerprint. */
-      device_id?: string;
-    }]>;
+    };
     Session: {
+      /** @description Public session reference; not a cookie credential and never usable to authenticate. */
       id: string;
       device_id: string;
       /** Format: date-time */
       expires_at: string;
       /** Format: date-time */
       created_at?: string;
+    };
+    LogoutRequest: {
+      /**
+       * Format: uuid
+       * @description One browser-generated operation ID reused for recovery of the same logout
+       */
+      operation_id: string;
     };
     SessionResponse: {
       user: {
@@ -392,6 +491,23 @@ export interface components {
       /** @enum {string} */
       type: "xhs_link" | "trip_params" | "unknown";
       original_text: string;
+      links?: {
+          /** Format: uri */
+          url: string;
+          position: number;
+        }[];
+      duplicate_count?: number;
+      /** @description Every recognized URL occurrence, including duplicates; position is the UTF-16 offset in original_text. */
+      link_occurrences?: {
+          /** Format: uri */
+          url: string;
+          position: number;
+        }[];
+      unrecognized?: ({
+          text: string;
+          /** @enum {string} */
+          reason: "unsupported_url" | "not_a_link";
+        })[];
       /** Format: uri */
       url?: string | null;
       warning?: components["schemas"]["IngestWarning"];
@@ -497,10 +613,113 @@ export interface components {
       /** @description Bypass idempotency (admin/feature-flag) */
       force?: boolean;
     };
+    /** @description Canonical decimal PostgreSQL bigint from 0 through 9223372036854775807. Never coerce through a JavaScript Number. */
+    IngestSequence: string;
+    /** @description Public per-job log namespace plus decimal seq, not an authentication credential. Bare 0, leading zeros, duplicates and out-of-range values are invalid. */
+    IngestCursor: string;
+    IngestRecoveryResponse: OneOf<[{
+      /** @enum {string} */
+      mode: "replay";
+      ingest_id: string;
+      cursor: components["schemas"]["IngestCursor"];
+      head_cursor: components["schemas"]["IngestCursor"];
+      head_seq: components["schemas"]["IngestSequence"];
+      replay_floor: components["schemas"]["IngestSequence"];
+    }, {
+      /** @enum {string} */
+      mode: "resync";
+      /** @enum {string} */
+      reason: "retention" | "checkpoint_missing";
+      ingest_id: string;
+      cursor: components["schemas"]["IngestCursor"];
+      head_cursor: components["schemas"]["IngestCursor"];
+      head_seq: components["schemas"]["IngestSequence"];
+      replay_floor: components["schemas"]["IngestSequence"];
+      snapshot: components["schemas"]["IngestSnapshot"];
+    }]>;
+    /** @description A no-id control frame, processed after prior business frames. Resync instructs a protected recovery read; complete only ends the current confirmed head, never an older attempt. */
+    IngestControl: {
+      /** @enum {string} */
+      kind: "complete" | "resync";
+      ingest_id: string;
+      cursor: components["schemas"]["IngestCursor"];
+      attempt: number;
+      state_version: number;
+    };
+    IngestDurableEvent: components["schemas"]["IngestEvent"] & ({
+      /** @enum {integer} */
+      schema_version: 1;
+      /** @enum {string} */
+      kind: "fact" | "checkpoint";
+      seq: components["schemas"]["IngestSequence"];
+      cursor: components["schemas"]["IngestCursor"];
+      /** @enum {string} */
+      stage: "created" | "fetching" | "parsing" | "geo" | "storing" | "done" | "failed";
+      /** Format: date-time */
+      occurred_at: string;
+      attempt: number;
+      state_version: number;
+      snapshot: components["schemas"]["IngestSnapshot"];
+      /** @enum {string|null} */
+      sub_stage?: "media_prep" | "speech_detect" | "frame_extract" | "asr" | "multimodal" | null;
+    });
+    /** @description Current committed facts. state_version orders snapshots and differs from durable seq. head_cursor is only a current-head hint; ordinary snapshot reads must not acknowledge unconsumed events. */
+    IngestSnapshot: {
+      head_cursor?: components["schemas"]["IngestCursor"];
+      /** @enum {string|null} */
+      sub_stage?: "media_prep" | "speech_detect" | "frame_extract" | "asr" | "multimodal" | null;
+      ingest_id: string;
+      attempt: number;
+      state_version: number;
+      /** @enum {string} */
+      state: "created" | "fetching" | "parsing" | "geo" | "storing" | "done" | "failed";
+      source_title: string | null;
+      fetched_count?: number | null;
+      parsed_count?: number | null;
+      /** @description Actual saved candidate records once a result is committed; unknown before persistence. */
+      candidate_count?: number | null;
+      stored_count?: number | null;
+      partial: boolean;
+      retriable: boolean;
+      error_code?: string | null;
+      /** Format: date-time */
+      updated_at: string;
+      result: components["schemas"]["IngestResultSummary"] | null;
+      actions: {
+        retry: boolean;
+        view: boolean;
+      };
+    };
+    IngestResultSummary: {
+      inspiration_id: string;
+      /** @enum {string} */
+      locate_status: "resolved" | "pending";
+      asset_count: number;
+      city_name: string | null;
+    };
+    IngestAcceptedResponse: components["schemas"]["IngestStartResponse"] & ({
+      /** Format: uuid */
+      operation_id: string;
+      /** @enum {string} */
+      disposition: "created" | "reused" | "retried";
+      snapshot: components["schemas"]["IngestSnapshot"];
+    });
+    IngestRetryRequest: {
+      /** Format: uuid */
+      operation_id: string;
+      expected_attempt: number;
+      expected_state_version: number;
+    };
+    /** @description Legacy compatible base. The canonical ingest endpoint returns the required version-2 accepted response below. */
     IngestStartResponse: {
+      /** Format: uuid */
+      operation_id?: string;
+      /** @enum {string} */
+      disposition?: "created" | "reused" | "retried";
+      snapshot?: components["schemas"]["IngestSnapshot"];
       ingest_id: string;
       /** @enum {string} */
-      state: "created";
+      state: "created" | "fetching" | "parsing" | "geo" | "storing" | "done" | "failed";
       /** @example /ingest/ing_123/events */
       sse_url: string;
       warning?: components["schemas"]["IngestWarning"];
@@ -514,17 +733,28 @@ export interface components {
     };
     /** @description Provide either url or share_text containing a Xiaohongshu URL. */
     IngestXhsRequest: {
+      /**
+       * Format: uuid
+       * @description Retain this owner-scoped operation across an unknown acceptance; new clients always supply it.
+       */
+      operation_id?: string;
       /** Format: uri */
       url?: string | null;
       share_text?: string | null;
     };
     IngestEvent: {
+      snapshot?: components["schemas"]["IngestSnapshot"];
+      attempt?: number;
+      state_version?: number;
       trace_id: string;
       ingest_id: string;
       /** @enum {string} */
       state: "created" | "fetching" | "parsing" | "geo" | "storing" | "done" | "failed";
-      /** @enum {string|null} */
-      sub_stage?: "text" | "ocr" | "vision" | null;
+      /**
+       * @description Legacy text/ocr/vision values are accepted only when reading old wire events. New durable writes use the canonical five stages.
+       * @enum {string|null}
+       */
+      sub_stage?: "media_prep" | "speech_detect" | "frame_extract" | "asr" | "multimodal" | "text" | "ocr" | "vision" | null;
       retry?: number;
       fetched_count?: number;
       parsed_count?: number;
@@ -1121,6 +1351,12 @@ export interface components {
         "application/json": components["schemas"]["ErrorEnvelope"];
       };
     };
+    /** @description Required authoritative store or provider unavailable; unknown external results remain unknown. */
+    Error503: {
+      content: {
+        "application/json": components["schemas"]["ErrorEnvelope"];
+      };
+    };
     /** @description Internal Server Error */
     Error500: {
       content: {
@@ -1128,7 +1364,24 @@ export interface components {
       };
     };
   };
-  parameters: never;
+  parameters: {
+    /** @description Exact configured browser origin required on unsafe requests; never derived from Host or forwarded headers. */
+    RequestOrigin: string;
+    /** @description Required for authenticated browser resource requests. Login/OTP requests use anonymous when the initiating page is unauthenticated. Expected owner from the initiating page; only compared AFTER real session authentication, never a credential or an identity selector. */
+    ExpectedUser?: string;
+    /** @description Native fixed API origin. HTTPS required; browser Origin and Cookie are rejected. */
+    NativeAudience: string;
+    /** @description Secret generated and retained by the native plugin. Never available to JavaScript or logs. */
+    NativeBinding: string;
+    /** @description Web EventSource expected public owner reference; never a credential. */
+    StreamExpectedOwner?: string;
+    /** @description Web EventSource expected public session reference; never a credential. */
+    StreamExpectedSession?: string;
+    /** @description Last delivered attempt and sequence for browser reconnect; Last-Event-ID header takes precedence. */
+    StreamCursor?: string;
+    /** @description Required for authenticated browser resource requests. Login/OTP requests use anonymous when the initiating page is unauthenticated. Public session reference from the initiating page; stale or mismatched context returns AUTH_CONTEXT_CHANGED (409). */
+    ExpectedSession?: string;
+  };
   requestBodies: never;
   headers: never;
   pathItems: never;
@@ -1142,6 +1395,13 @@ export interface operations {
 
   /** Classify unified Home input into ingest, trip params, or unknown */
   parseHomeInput: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["HomeInputParseRequest"];
@@ -1156,8 +1416,11 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
   /** List user-owned inspiration city aggregates */
@@ -1170,7 +1433,9 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
   /** List user-owned inspirations for Home and Library */
@@ -1189,7 +1454,9 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
   /** List sanitized pending-location candidates for an inspiration */
@@ -1207,8 +1474,10 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
   /**
@@ -1217,6 +1486,13 @@ export interface operations {
    * @description Use POST /ingest/xhs instead.
    */
   startIngest: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["IngestStartRequest"];
@@ -1235,12 +1511,22 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Start ingest by Xiaohongshu share link (async) */
   ingestXhs: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["IngestXhsRequest"];
@@ -1250,18 +1536,174 @@ export interface operations {
       /** @description Accepted; ingest job created */
       202: {
         content: {
-          "application/json": components["schemas"]["IngestStartResponse"];
+          "application/json": components["schemas"]["IngestAcceptedResponse"];
         };
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
-  /** SSE stream for ingest job events (alias path) */
+  readIngestSnapshot: {
+    parameters: {
+      header?: {
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+      path: {
+        job_id: string;
+      };
+    };
+    responses: {
+      /** @description Current owner-qualified committed facts, without redispatching existing work */
+      200: {
+        content: {
+          "application/json": components["schemas"]["IngestSnapshot"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
+      429: components["responses"]["Error429"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  /** @description Owner-qualified recovery without job creation or redispatch. A legacy job may adopt one current-fact log checkpoint. Replay does not acknowledge the head. Explicit resync requires no cursor in either header or query and returns one atomic authoritative snapshot/cursor pair. If both cursor sources are supplied, they must match exactly; malformed, duplicate or conflicting values are rejected after ownership validation. */
+  recoverIngestProgress: {
+    parameters: {
+      query?: {
+        last_event_id?: components["schemas"]["IngestCursor"];
+        mode?: "replay" | "resync";
+      };
+      header?: {
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+        "Last-Event-ID"?: components["schemas"]["IngestCursor"];
+      };
+      path: {
+        job_id: string;
+      };
+    };
+    responses: {
+      /** @description Replay from a confirmed cursor or explicitly replace a missing/expired checkpoint with the supplied authoritative pair */
+      200: {
+        content: {
+          "application/json": components["schemas"]["IngestRecoveryResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
+      429: components["responses"]["Error429"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  readIngestResult: {
+    parameters: {
+      header?: {
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+      path: {
+        job_id: string;
+      };
+    };
+    responses: {
+      /** @description Current owner-qualified committed facts, without redispatching existing work */
+      200: {
+        content: {
+          "application/json": components["schemas"]["LibraryInspirationItem"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
+      429: components["responses"]["Error429"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  retryIngestJob: {
+    parameters: {
+      header: {
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+        Origin: components["parameters"]["RequestOrigin"];
+      };
+      path: {
+        job_id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["IngestRetryRequest"];
+      };
+    };
+    responses: {
+      /** @description Current owner-qualified committed facts, without redispatching existing work */
+      200: {
+        content: {
+          "application/json": components["schemas"]["IngestAcceptedResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
+      429: components["responses"]["Error429"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  readIngestCommand: {
+    parameters: {
+      header?: {
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+      path: {
+        operation_id: string;
+      };
+    };
+    responses: {
+      /** @description Current owner-qualified committed facts, without redispatching existing work */
+      200: {
+        content: {
+          "application/json": components["schemas"]["IngestAcceptedResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
+      429: components["responses"]["Error429"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  /**
+   * SSE stream for ingest job events (alias path)
+   * @description Durable ingest replay then database tail. Conflicting header/query cursors are rejected. Business frames use cursor id and IngestDurableEvent; ingest_control carries resync/complete without id. Heartbeats are comments at most 10 seconds apart and never advance a business cursor. Clients must persist applied facts before acknowledging a cursor.
+   */
   ingestEvents: {
     parameters: {
+      query?: {
+        last_event_id?: components["schemas"]["IngestCursor"];
+        auth_user_id?: components["parameters"]["StreamExpectedOwner"];
+        auth_session_id?: components["parameters"]["StreamExpectedSession"];
+      };
+      header?: {
+        "Last-Event-ID"?: components["schemas"]["IngestCursor"];
+      };
       path: {
         job_id: string;
       };
@@ -1273,17 +1715,27 @@ export interface operations {
           "text/event-stream": string;
         };
       };
+      400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /**
    * SSE stream for ingest job events
    * @deprecated
-   * @description Use GET /ingest/{job_id}/events instead.
+   * @description Durable ingest replay then database tail. Conflicting header/query cursors are rejected. Business frames use cursor id and IngestDurableEvent; ingest_control carries resync/complete without id. Heartbeats are comments at most 10 seconds apart and never advance a business cursor. Clients must persist applied facts before acknowledging a cursor.
    */
   sseIngest: {
     parameters: {
+      query?: {
+        last_event_id?: components["schemas"]["IngestCursor"];
+      };
+      header?: {
+        "Last-Event-ID"?: components["schemas"]["IngestCursor"];
+      };
       path: {
         ingest_id: string;
       };
@@ -1299,14 +1751,21 @@ export interface operations {
           "text/event-stream": string;
         };
       };
+      400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Generate day-level skeleton (partial fill) asynchronously */
   planGenerate: {
     parameters: {
-      header?: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
         /** @description Reuse only when retrying the same planning submission. */
         "Idempotency-Key"?: string;
       };
@@ -1328,14 +1787,21 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       409: components["responses"]["Error409"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
   /** SSE stream for plan generation events */
   ssePlan: {
     parameters: {
+      query?: {
+        auth_user_id?: components["parameters"]["StreamExpectedOwner"];
+        auth_session_id?: components["parameters"]["StreamExpectedSession"];
+        last_event_id?: components["parameters"]["StreamCursor"];
+      };
       path: {
         plan_job_id: string;
       };
@@ -1347,11 +1813,19 @@ export interface operations {
           "text/event-stream": string;
         };
       };
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Edit an owned timeline slot with optimistic locking */
   editPlanSlot: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         plan_id: string;
         slot_id: string;
@@ -1371,8 +1845,10 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
       409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Get the latest effective edit available from the recent-actions entry */
@@ -1394,12 +1870,19 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Undo the latest eligible timeline edit */
   undoPlanEdit: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         plan_id: string;
       };
@@ -1418,8 +1901,10 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
       409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /**
@@ -1428,6 +1913,13 @@ export interface operations {
    * @description Use POST /fill/apply instead.
    */
   aiFill: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["AiFillRequest"];
@@ -1442,12 +1934,22 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Apply AI fill over remaining controllable slots (async) */
   fillApply: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["AiFillRequest"];
@@ -1462,8 +1964,11 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Get read-only result sheet (slots + AI suggestions + citations) */
@@ -1481,7 +1986,9 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error400"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Get the current Quick/HQ day-plan summary */
@@ -1499,7 +2006,9 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Get an owned Quick or HQ plan version for preview */
@@ -1518,12 +2027,19 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Fill an empty slot from a candidate or mark it as free activity */
   resolveEmptyPlanSlot: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         plan_id: string;
         slot_id: string;
@@ -1543,13 +2059,20 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
       409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Reset only AI-seed placements */
   resetPlanSeed: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         plan_id: string;
       };
@@ -1566,14 +2089,22 @@ export interface operations {
           "application/json": components["schemas"]["PlanMutationResponse"];
         };
       };
+      400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
       409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Undo the latest seed placement within its short undo window */
   undoPlanSeed: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         plan_id: string;
       };
@@ -1592,13 +2123,20 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
       409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Toggle or set slot status (checked) */
   patchSlotStatus: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         slot_id: string;
       };
@@ -1617,11 +2155,19 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Clear slot text overrides (revert to AI) */
   deleteSlotOverrides: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         slot_id: string;
       };
@@ -1631,12 +2177,21 @@ export interface operations {
       204: {
         content: never;
       };
+      400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Set or update slot text overrides (do/prepare/notice) */
   patchSlotOverrides: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         slot_id: string;
       };
@@ -1655,6 +2210,9 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** SSE stream for AI fill run */
@@ -1671,10 +2229,20 @@ export interface operations {
           "text/event-stream": string;
         };
       };
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Export itinerary as PNG/WebP, auto-slicing by day when needed */
   exportPng: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["ExportPngRequest"];
@@ -1689,12 +2257,22 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Validate plan feasibility and return conflicts/suggestions */
   planValidate: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": {
@@ -1715,10 +2293,20 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Apply a suggested fix or atomic ops to reduce conflicts */
   planFix: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": {
@@ -1735,11 +2323,20 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Start high-quality background planning for a plan */
   hqStart: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["HqStartRequest"];
@@ -1754,6 +2351,9 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Get HQ job status */
@@ -1772,10 +2372,19 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Adopt the HQ plan result and merge as current plan */
   hqAdopt: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["HqAdoptRequest"];
@@ -1790,10 +2399,20 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Validate a user-provided API key without storing it */
   byokValidate: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["ByokValidateRequest"];
@@ -1808,10 +2427,20 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Save BYOK (encrypted) — alias for /user-key */
   byokSave: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["ByokSaveRequest"];
@@ -1826,6 +2455,9 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Text-only POI search (MVP FR44-lite) */
@@ -1848,6 +2480,7 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
       503: components["responses"]["Error500"];
@@ -1856,6 +2489,11 @@ export interface operations {
   /** Manually add a candidate by name/address/coords (MVP minimal) */
   addCandidate: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         plan_id: string;
       };
@@ -1874,11 +2512,19 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Set or change hotel for a day (display-only slot) */
   setHotel: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         day: number;
       };
@@ -1895,6 +2541,9 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Get login compliance and method configuration */
@@ -1910,6 +2559,13 @@ export interface operations {
   };
   /** Start OTP flow (SMS) */
   authOtpStart: {
+    parameters: {
+      header: {
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+        Origin: components["parameters"]["RequestOrigin"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["OtpStartRequest"];
@@ -1924,11 +2580,20 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
       429: components["responses"]["Error429"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Verify OTP and create session */
   authOtpVerify: {
+    parameters: {
+      header: {
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+        Origin: components["parameters"]["RequestOrigin"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["OtpVerifyRequest"];
@@ -1947,7 +2612,71 @@ export interface operations {
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
       403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
       429: components["responses"]["Error429"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  /** Start OTP flow (SMS) */
+  native_authOtpStart: {
+    parameters: {
+      header: {
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+        "X-Nomad-Auth-Audience": components["parameters"]["NativeAudience"];
+        "X-Nomad-Login-Binding": components["parameters"]["NativeBinding"];
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OtpStartRequest"];
+      };
+    };
+    responses: {
+      /** @description OTP send status or captcha requirement */
+      200: {
+        content: {
+          "application/json": components["schemas"]["OtpStartResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      429: components["responses"]["Error429"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  /** Verify OTP and create session */
+  native_authOtpVerify: {
+    parameters: {
+      header: {
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+        "X-Nomad-Auth-Audience": components["parameters"]["NativeAudience"];
+        "X-Nomad-Login-Binding": components["parameters"]["NativeBinding"];
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OtpVerifyRequest"];
+      };
+    };
+    responses: {
+      /** @description Session created */
+      200: {
+        headers: {
+          "X-Device-Id"?: string;
+        };
+        content: {
+          "application/json": components["schemas"]["NativeOtpVerifyResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      429: components["responses"]["Error429"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Get current user and session */
@@ -1960,6 +2689,8 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Get current session */
@@ -1972,6 +2703,8 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      503: components["responses"]["Error503"];
     };
   };
   /** List my sessions */
@@ -1984,11 +2717,18 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Revoke a session */
   sessionsDelete: {
     parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
       path: {
         id: string;
       };
@@ -2000,12 +2740,85 @@ export interface operations {
           "application/json": components["schemas"]["OkResponse"];
         };
       };
+      400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
-  /** Clear current session cookie */
+  /**
+   * Read currently granted desktop operator capabilities
+   * @description Web session only. Ordinary login, client roles and knowing this URL grant no operator authority. Grants are checked from the persistent authority on each request.
+   */
+  readOperatorAccess: {
+    parameters: {
+      header?: {
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
+    responses: {
+      /** @description Current effective scoped grants */
+      200: {
+        content: {
+          "application/json": components["schemas"]["OperatorAccessResponse"];
+        };
+      };
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  /**
+   * Verify scoped write authority and create an audit receipt
+   * @description Locks the qualified caller and the exact current grant in the audit-write transaction. This writes only an access-check receipt, not business data or a permission grant. Retries retain operation_id; revoked or changed grants never replay a successful old receipt.
+   */
+  checkOperatorAccess: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OperatorAccessCheckRequest"];
+      };
+    };
+    responses: {
+      /** @description Durable authorization-check receipt */
+      200: {
+        content: {
+          "application/json": components["schemas"]["OperatorAccessCheckResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  /**
+   * Revoke the current session and clear its cookie
+   * @description Confirms durable current-session revocation before clearing the cookie; other device sessions remain valid. Unknown storage outcomes return 503 and must not be reported as successful logout. The same operation_id and expected public identity confirm a lost response even after cookie clearing; this receipt never authenticates a user or revokes a newer session.
+   */
   logout: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LogoutRequest"];
+      };
+    };
     responses: {
       /** @description Logged out */
       200: {
@@ -2013,6 +2826,10 @@ export interface operations {
           "application/json": components["schemas"]["OkResponse"];
         };
       };
+      400: components["responses"]["Error400"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /**
@@ -2034,12 +2851,21 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
       429: components["responses"]["Error429"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Queue account data export */
   accountExport: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     responses: {
       /** @description Account export task */
       200: {
@@ -2047,11 +2873,22 @@ export interface operations {
           "application/json": components["schemas"]["AccountTaskResponse"];
         };
       };
+      400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Queue account deletion */
   accountDelete: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     responses: {
       /** @description Account deletion task */
       200: {
@@ -2059,11 +2896,22 @@ export interface operations {
           "application/json": components["schemas"]["AccountTaskResponse"];
         };
       };
+      400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Bind Apple identity */
   bindApple: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": {
@@ -2076,11 +2924,22 @@ export interface operations {
       200: {
         content: never;
       };
+      400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Bind WeChat identity */
   bindWeChat: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": {
@@ -2093,7 +2952,11 @@ export interface operations {
       200: {
         content: never;
       };
+      400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Get masked BYOK status */
@@ -2106,10 +2969,19 @@ export interface operations {
         };
       };
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Set or replace BYOK (encrypted and envelope stored) */
   setUserKey: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["ByokSaveRequest"];
@@ -2124,16 +2996,30 @@ export interface operations {
       };
       400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
   /** Delete BYOK */
   deleteUserKey: {
+    parameters: {
+      header: {
+        Origin: components["parameters"]["RequestOrigin"];
+        "X-Auth-User-Id"?: components["parameters"]["ExpectedUser"];
+        "X-Auth-Session-Id"?: components["parameters"]["ExpectedSession"];
+      };
+    };
     responses: {
       /** @description Deleted */
       204: {
         content: never;
       };
+      400: components["responses"]["Error400"];
       401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      409: components["responses"]["Error409"];
+      503: components["responses"]["Error503"];
     };
   };
 }

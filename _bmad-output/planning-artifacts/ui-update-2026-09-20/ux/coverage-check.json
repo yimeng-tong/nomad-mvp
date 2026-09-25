@@ -1,0 +1,20 @@
+{
+  "18_prompt_groups_unchanged": true,
+  "canonical_stages_unchanged": true,
+  "ia_and_business_flows_unchanged": true,
+  "domain_components_unchanged": true,
+  "domain_states_unchanged": true,
+  "approved_visual_refs_unchanged": true,
+  "mobile_all_screen_wireframes_unchanged": true,
+  "prototype_existing_inventory_unchanged": true,
+  "prompt_groups_count": 18,
+  "stage_count": 12,
+  "ux_dr37_present_all": true,
+  "no_current_ios16_plus": true,
+  "new_local_links_resolve": true,
+  "source_hashes": {
+    "docs/front-end-spec.md": "99873b6c406115b491d3b5d85776ae599cd05e6419a2da86a57b171adae0ec1e",
+    "docs/ux/mobile-ia.md": "dcbb05d9962097944e69735e380bfec04413ce26f70beca9bb3a2fb1cd443244",
+    "docs/ux/prototype-coverage.md": "8ee247b38ba499f6758a0d628ce28545d9a2618767f73bbd350f29c9cd8b503b"
+  }
+}

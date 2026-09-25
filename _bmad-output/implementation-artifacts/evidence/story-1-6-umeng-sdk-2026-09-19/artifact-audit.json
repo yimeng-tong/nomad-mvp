@@ -1,0 +1,252 @@
+{
+  "scope": "static-public-sdk-artifact-inspection",
+  "lockSha256": "055598b50f80874eb4435a31c76b8c0a468732ea0c94512e3b3df72c4bd16b17",
+  "scriptSha256": "25b422ca7a0ce911f29068841cca26207f0d30c6bbf83cf87c7908ac602bbbb0",
+  "artifacts": [
+    {
+      "name": "common",
+      "platform": "android",
+      "version": "9.9.10",
+      "url": "https://repo.maven.apache.org/maven2/com/umeng/umsdk/common/9.9.10/common-9.9.10.aar",
+      "sha256": "99a1845ece8c19ae2206dd9090905253e1ea1cb47f4a744847fb336b45c7434b",
+      "checksumMatched": true,
+      "manifestPermissions": [
+        "com.google.android.gms.permission.AD_ID",
+        "freemme.permission.msa"
+      ],
+      "manifestComponents": [],
+      "publicApi": [
+        "public static boolean getInitStatus();",
+        "public static void setOnAttributionListener(com.umeng.commonsdk.deeplink.OnAttributionListener);",
+        "public static void init(android.content.Context, int, java.lang.String);",
+        "public static void preInit(android.content.Context, java.lang.String, java.lang.String);",
+        "public static void submitPolicyGrantResult(android.content.Context, boolean);",
+        "public static boolean shouldOutput();",
+        "public static void init(android.content.Context, java.lang.String, java.lang.String, int, java.lang.String);",
+        "public static long getInitCompleteTs();",
+        "public static boolean needSendZcfgEnv(android.content.Context);",
+        "public static boolean isDebugLog();",
+        "public static void setLogEnabled(boolean);",
+        "public static void setEncryptEnabled(boolean);",
+        "public static java.lang.String getUMIDString(android.content.Context);",
+        "public static java.lang.String getUmengZID(android.content.Context);",
+        "public static void setProcessEvent(boolean);",
+        "public static java.lang.String[] getTestDeviceInfo(android.content.Context);",
+        "public static void getOaid(android.content.Context, com.umeng.commonsdk.listener.OnGetOaidListener);",
+        "public static void resetStorePrefix(java.lang.String);",
+        "public static void resetStorePath();",
+        "public static void setDomain(java.lang.String);",
+        "public static void enableAzxSwitch(boolean);",
+        "public static void enableUmcCfgSwitch(boolean);",
+        "public static void enableApModeSwitch(boolean);",
+        "public static void onActEvent(java.lang.String, java.lang.String, android.os.Bundle);",
+        "public static void registerActionInfo(com.umeng.ccg.ActionInfo);",
+        "public static boolean shouldCollectAid();",
+        "public static boolean shouldCollectOaid();",
+        "public static boolean shouldCollectImei();",
+        "public static boolean shouldCollectImsi();",
+        "public static boolean shouldCollectIccid();",
+        "public static boolean shouldCollectWifiMac();",
+        "public static boolean shouldCollectApl();",
+        "public static void enableImeiCollection(boolean);",
+        "public static void enableImsiCollection(boolean);",
+        "public static void enableIccidCollection(boolean);",
+        "public static void enableWiFiMacCollection(boolean);",
+        "public static void enableAplCollection(boolean);",
+        "public static void enablePi(boolean);",
+        "public static void enablePo(boolean);",
+        "public static void setCustomController(com.umeng.commonsdk.UMAnalyticsCustomController);",
+        "public static com.umeng.commonsdk.UMAnalyticsCustomController getCustomController();",
+        "public static void enableInstallReferrerCollection(boolean);",
+        "public static void setInstallReferrer(java.lang.String, java.lang.String);",
+        "public static void setLocation(double, double);",
+        "public static void setLatencyWindow(long);",
+        "public static void enableEncrypt(boolean);",
+        "public static void setCatchUncaughtExceptions(boolean);",
+        "public static void setSecret(android.content.Context, java.lang.String);",
+        "public static void setScenarioType(android.content.Context, com.umeng.analytics.MobclickAgent$EScenarioType);",
+        "public static void setSessionContinueMillis(long);",
+        "public static com.umeng.analytics.b getAgent();",
+        "public static void setCheckDevice(boolean);",
+        "public static void setOpenGLContext(javax.microedition.khronos.opengles.GL10);",
+        "public static void setPageCollectionMode(com.umeng.analytics.MobclickAgent$PageMode);",
+        "public static void onPageStart(java.lang.String);",
+        "public static void onPageEnd(java.lang.String);",
+        "public static void setDebugMode(boolean);",
+        "public static void onPause(android.content.Context);",
+        "public static void onResume(android.content.Context);",
+        "public static void reportError(android.content.Context, java.lang.String);",
+        "public static void reportError(android.content.Context, java.lang.Throwable);",
+        "public static void onEvent(android.content.Context, java.lang.String);",
+        "public static void onEvent(android.content.Context, java.lang.String, java.lang.String);",
+        "public static void onEvent(android.content.Context, java.lang.String, java.util.Map<java.lang.String, java.lang.String>);",
+        "public static void onEventObject(android.content.Context, java.lang.String, java.util.Map<java.lang.String, java.lang.Object>);",
+        "public static void onEventValue(android.content.Context, java.lang.String, java.util.Map<java.lang.String, java.lang.String>, int);",
+        "public static void onKillProcess(android.content.Context);",
+        "public static void onProfileSignIn(java.lang.String);",
+        "public static void onProfileSignIn(java.lang.String, java.lang.String);",
+        "public static void onProfileSignOff();",
+        "public static void setFirstLaunchEvent(android.content.Context, java.util.List<java.lang.String>);",
+        "public static void registerPreProperties(android.content.Context, org.json.JSONObject);",
+        "public static void unregisterPreProperty(android.content.Context, java.lang.String);",
+        "public static void clearPreProperties(android.content.Context);",
+        "public static org.json.JSONObject getPreProperties(android.content.Context);",
+        "public static void disable();",
+        "public static void userProfileMobile(java.lang.String);",
+        "public static void userProfileEMail(java.lang.String);",
+        "public static void userProfile(java.lang.String, java.lang.Object);"
+      ],
+      "disableOnlyWritesAnalyticsEnableFalse": true,
+      "fullStopAndCacheClearVerified": false
+    },
+    {
+      "name": "asms",
+      "platform": "android",
+      "version": "1.8.7.2",
+      "url": "https://repo.maven.apache.org/maven2/com/umeng/umsdk/asms/1.8.7.2/asms-1.8.7.2.aar",
+      "sha256": "67a1baf41988e49139accd32e9325dcfc889590c31259f173660c86b9939822d",
+      "checksumMatched": true,
+      "manifestPermissions": [],
+      "manifestComponents": []
+    },
+    {
+      "name": "UMCommon",
+      "platform": "ios",
+      "version": "7.6.7",
+      "url": "https://umplus-sdk-download.oss-cn-shanghai.aliyuncs.com/iOS/UMCommon/UMCommon_7.6.7.zip",
+      "sha256": "e194bcfbaf6f85f3396ab37675a62c210c53c194829bc1233adaba212fb71163",
+      "checksumMatched": true,
+      "xcframeworks": [
+        {
+          "path": "UMCommon_7.6.7/UMCommon.xcframework",
+          "libraries": [
+            {
+              "BinaryPath": "UMCommon.framework/UMCommon",
+              "LibraryIdentifier": "ios-arm64",
+              "LibraryPath": "UMCommon.framework",
+              "SupportedArchitectures": [
+                "arm64"
+              ],
+              "SupportedPlatform": "ios"
+            },
+            {
+              "BinaryPath": "UMCommon.framework/UMCommon",
+              "LibraryIdentifier": "ios-arm64_x86_64-simulator",
+              "LibraryPath": "UMCommon.framework",
+              "SupportedArchitectures": [
+                "arm64",
+                "x86_64"
+              ],
+              "SupportedPlatform": "ios",
+              "SupportedPlatformVariant": "simulator"
+            }
+          ]
+        }
+      ],
+      "privacyManifestPaths": [
+        "UMCommon_7.6.7/UMCommon.xcframework/ios-arm64_x86_64-simulator/UMCommon.framework/PrivacyInfo.xcprivacy",
+        "UMCommon_7.6.7/UMCommon.xcframework/ios-arm64/UMCommon.framework/PrivacyInfo.xcprivacy"
+      ],
+      "publicHeaderApi": [
+        "+ (BOOL)handleUrl:(NSURL *)url;",
+        "+ (BOOL)isJailbroken;",
+        "+ (BOOL)isPirated;",
+        "+ (NSString *)getSessionID;",
+        "+ (NSString *)getUmengZID;",
+        "+ (NSString *)umidString;",
+        "+ (NSString*)deviceIDForIntegration;",
+        "+ (void)beginEvent:(NSString *)eventId label:(NSString *)label;",
+        "+ (void)beginEvent:(NSString *)eventId primarykey :(NSString *)keyName attributes:(NSDictionary *)attributes;",
+        "+ (void)beginEvent:(NSString *)eventId;",
+        "+ (void)beginLogPageView:(NSString *)pageName;",
+        "+ (void)enablePi:(BOOL)flag;",
+        "+ (void)endEvent:(NSString *)eventId label:(NSString *)label;",
+        "+ (void)endEvent:(NSString *)eventId primarykey:(NSString *)keyName;",
+        "+ (void)endEvent:(NSString *)eventId;",
+        "+ (void)endLogPageView:(NSString *)pageName;",
+        "+ (void)event:(NSString *)eventId attributes:(NSDictionary *)attributes counter:(int)number;",
+        "+ (void)event:(NSString *)eventId attributes:(NSDictionary *)attributes durations:(int)millisecond;",
+        "+ (void)event:(NSString *)eventId attributes:(NSDictionary *)attributes;",
+        "+ (void)event:(NSString *)eventId durations:(int)millisecond;",
+        "+ (void)event:(NSString *)eventId label:(NSString *)label durations:(int)millisecond;",
+        "+ (void)event:(NSString *)eventId label:(NSString *)label; // label为nil或@\"\"时，等同于 event:eventId label:eventId;",
+        "+ (void)event:(NSString *)eventId; //等同于 event:eventId label:eventId;",
+        "+ (void)handleSceneWillConnectWithOptions:(id)connectionOptions;",
+        "+ (void)initWithAppkey:(NSString *)appKey channel:(NSString *)channel;",
+        "+ (void)logPageView:(NSString *)pageName seconds:(int)seconds;",
+        "+ (void)profileSignInWithPUID:(NSString *)puid provider:(NSString *)provider;",
+        "+ (void)profileSignInWithPUID:(NSString *)puid;",
+        "+ (void)profileSignOff;",
+        "+ (void)resetStorePath;",
+        "+ (void)resetStorePrefix:(NSString *)prefix;",
+        "+ (void)setASAEnabled:(BOOL)enabled;",
+        "+ (void)setAnalyticsEnabled:(BOOL)value;",
+        "+ (void)setAutoPageEnabled:(BOOL)value;",
+        "+ (void)setDomain:(NSString *)primaryDomain;",
+        "+ (void)setEncryptEnabled:(BOOL)value;",
+        "+ (void)setLatitude:(double)latitude longitude:(double)longitude;",
+        "+ (void)setLogEnabled:(BOOL)bFlag;",
+        "+ (void)setOnAttributionResultListener:(nullable UMAttributionResultBlock)listener;",
+        "+ (void)setSKANEnabled:(BOOL)enabled;",
+        "+ (void)setSecret:(NSString *)secret;",
+        "+ (void)userProfile:(id)value to:(NSString *)key;",
+        "+ (void)userProfileEMail:(NSString *)email;",
+        "+ (void)userProfileMobile:(NSString *)mobile;",
+        "+(NSDictionary *)getPreProperties;",
+        "+(void) registerPreProperties:(NSDictionary *)property;",
+        "+(void) unregisterPreProperty:(NSString *)propertyName;",
+        "+(void)clearPreProperties;",
+        "+(void)isInernational:(BOOL)bFlag;",
+        "+(void)setFirstLaunchEvent:(NSArray *)eventList;"
+      ],
+      "fullStopAndCacheClearVerified": false,
+      "macCompilationVerified": false
+    },
+    {
+      "name": "UMDevice",
+      "platform": "ios",
+      "version": "3.6.0",
+      "url": "https://umplus-sdk-download.oss-cn-shanghai.aliyuncs.com/iOS/UMDevice/UMDevice_3.6.0.zip",
+      "sha256": "d2cda7bec252a5a425cbf079589147854ca56afaa007adcc2c25f7ed8cbde04c",
+      "checksumMatched": true,
+      "xcframeworks": [
+        {
+          "path": "UMDevice_3.6.0/UMDevice.xcframework",
+          "libraries": [
+            {
+              "BinaryPath": "UMDevice.framework/UMDevice",
+              "LibraryIdentifier": "ios-arm64",
+              "LibraryPath": "UMDevice.framework",
+              "SupportedArchitectures": [
+                "arm64"
+              ],
+              "SupportedPlatform": "ios"
+            },
+            {
+              "BinaryPath": "UMDevice.framework/UMDevice",
+              "LibraryIdentifier": "ios-arm64_x86_64-simulator",
+              "LibraryPath": "UMDevice.framework",
+              "SupportedArchitectures": [
+                "arm64",
+                "x86_64"
+              ],
+              "SupportedPlatform": "ios",
+              "SupportedPlatformVariant": "simulator"
+            }
+          ]
+        }
+      ],
+      "privacyManifestPaths": [
+        "UMDevice_3.6.0/UMDevice.xcframework/ios-arm64_x86_64-simulator/UMDevice.framework/PrivacyInfo.xcprivacy",
+        "UMDevice_3.6.0/UMDevice.xcframework/ios-arm64/UMDevice.framework/PrivacyInfo.xcprivacy"
+      ],
+      "publicHeaderApi": [],
+      "fullStopAndCacheClearVerified": false,
+      "macCompilationVerified": false
+    }
+  ],
+  "sdkInitialized": false,
+  "realProviderEvents": 0,
+  "deviceExecutionVerified": false,
+  "runtimeIntegrationApproved": false
+}

@@ -1,0 +1,94 @@
+{
+  "kind": "planning-and-platform-config-validation",
+  "recorded_at": "2026-09-19T17:14:58.558453+00:00",
+  "scope_revision": "ui-foundation-2026-09-20",
+  "source_revision": "7250a8a131a370698bff53538a4405c2ddb94c1c",
+  "working_tree_source_sha256": {
+    "scripts/check-handoff.mjs": "290e1374be99cc8c0c0ced805045b0605b865c6bd4173af13fd0b2202aa60032",
+    "scripts/check-sprint-delivery.mjs": "3441c8a38fe54a6ff9be578b5da388fbad5312ebd5e787afba09b05644f43003",
+    "scripts/check-ui-scope.mjs": "aa640fd5f0597b58495757f083e3c154986bf65d00abe757939994890e524b09",
+    "scripts/ui-scope-policy.mjs": "6d29ff4378a619b028f55f0487a09ffd811e63644f31b4ce6cafb1bd147e605e",
+    "scripts/check-handoff.test.mjs": "e216faaf27027a798bb23996c1dbe0c093fe43307f02d7a653ad441dcecee9ef",
+    "apps/mobile/src/platform/native-build-config.ts": "2ac278c91bc32baadc1fd730d423f28b99522dd11913854f9af35d42d3bf1193",
+    "apps/mobile/vite.config.ts": "b674d5b29be6a0530da639ec7c51c724352b871dc3fd0d73ef0481e097e84bdc",
+    "apps/mobile/package.json": "f8ce9169c646f197e987b75756c5b882f47ec9bf662066e4d604f504d6b3a394",
+    "apps/mobile/scripts/native-config-proof.mjs": "1048465cf19af290fe410f30f42303a5cf11351c2636187f72a132d6c08148f7",
+    "apps/mobile/scripts/native-config-proof.test.mjs": "f23e017f0f0820db02759bfe8f3f31d10d3331c14afcc49babf488f0886d0008",
+    "apps/mobile/scripts/verify-native-project.mjs": "707c3214f5e409972de61b0b4e6e41fcaeeef134d63dd4c702e7639b24949564",
+    "apps/mobile/scripts/sync-native-project.mjs": "73e69825ee451b82fffe29eec33bc91baf33271197a40bbbc5cec1ea7ac6ba57",
+    "apps/mobile/ios/App/App.xcodeproj/project.pbxproj": "70b6a0b8ec3ecf73b352a8f7e37cd7cec67ab74e1df7f476488bddf419dc3025",
+    "apps/mobile/ios/App/CapApp-SPM/Package.swift": "2239e4f737c41f14ac9a134aedacb6b32bb52a031f3bda7d8b9f618ab6f42f90",
+    "apps/mobile/NATIVE.md": "ef1044d94b4d9db61bcaa11fb51197db3fbb27b1bf264b9e5b6555f7e2c4fb67",
+    "docs/prd.md": "5930d92fc7dcf4facd4f7edf7ebc0d377ef6e8c812a1a387b9446a49d3e1d151",
+    "docs/front-end-spec.md": "99873b6c406115b491d3b5d85776ae599cd05e6419a2da86a57b171adae0ec1e",
+    "docs/architecture/ui-foundation.md": "17b20ebd6d0f5671ad6ddb5c9fc231b165ea180d38b8eed0968466b7a8e98d4b",
+    "docs/architecture/frontend-data-navigation.md": "4e76ad5a757cdace704284c2c3737806320694ba014a0a142c187d8ae3cfc1e9",
+    "docs/ops/ui-validation.md": "5c0ee3d383de9ecf5eaf7b99c9ac9b6434a3c94765f65c4189f583b811abacbe",
+    "_bmad-output/planning-artifacts/epics.md": "6440ed71f6aac8e5788ebc96dbbe305f911913f38bdb62cab34db7a4aa8ee3f4",
+    "_bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml": "99515a093c68dbb948436b6106e26ee8b48f429e38b66d10ea306cdf82731c04",
+    "_bmad-output/implementation-artifacts/sprint-delivery-contract-ui-foundation-2026-09-20.yaml": "65c57d0ac60d80ef0885546e2b7d68a9676f12bae2b6c55ac30beb2f8e8cb4ec"
+  },
+  "checks": {
+    "handoff_regression": {
+      "passed": 82,
+      "failed": 0
+    },
+    "native_build_config_vitest": {
+      "passed": 19
+    },
+    "native_config_node_tests": {
+      "passed": 5
+    },
+    "mobile_typecheck_build": "passed",
+    "android_ios_sync": "passed-with-approved-spm-minor-alignment",
+    "native_verify": "passed-config-registration-and-copied-assets",
+    "scoped_review": {
+      "layers": 3,
+      "patches_fixed": 10,
+      "remaining": 0
+    },
+    "final_ci_handoff": {
+      "passed": true,
+      "epics": 9,
+      "stories": 67,
+      "gwt": 1089,
+      "done": 7,
+      "in_progress": 5,
+      "backlog": 55,
+      "next": "9-4-component-workbench-and-enforced-code-quality"
+    },
+    "diff_check": "passed"
+  },
+  "approved_minima": {
+    "ios": "16.4",
+    "safari": "16.4",
+    "firefox": 128,
+    "chromium": 111,
+    "edge": 111,
+    "android": 10,
+    "android_webview": 111
+  },
+  "web_assets": {
+    "assets/index-BOkb5WVq.js": "9f0577d9c032dc2de9541a75d47713169b136e0272e2427dff73a7332465739d",
+    "assets/index-DFzk6kMZ.css": "5e329bd06148ced420b6a90166e9071a30e9aff310733246a03113412fa96042",
+    "assets/web-CwS52geq.js": "3b8199cf3394207aa0346e39197b40c0d6ea7905ae9cc07ead18685f85bd70fa",
+    "assets/web-m_oD38as.js": "d9834373ddb03678cb99d9d8125483ffbea91b2ff2dae5ec5e4bbd217954eff9",
+    "index.html": "1a831ab6fdc0c0c974ee1e2399762fba6206f10056e1530883c845f10dfaae54",
+    "vendor/pnvs/ct4.js": "f2e9d00c14e079590367bff6dbeb09b142f6d4b1353c56afb3caa4d7d0164861",
+    "vendor/pnvs/provenance.json": "81e6406699d10940107819eb4f06e72197c1f101c1766f67848941023156cfca",
+    "webview-unavailable.html": "046534ab2c64021dcb3c48e76de9ca48a953a09f387e0502bc9e5578841c374e"
+  },
+  "real_device_verified": false,
+  "ios_built_on_mac": false,
+  "android_binary_rebuilt_this_scope": false,
+  "testflight_verified": false,
+  "new_ui_libraries_installed": false,
+  "future_story_implementation_started": false,
+  "historical_evidence_preserved": true,
+  "notes": [
+    "Existing APK/local-validation records remain historical and are not proof of this new source/target.",
+    "Web/config evidence does not satisfy real App runtime gates.",
+    "ci:lint remains the tracked9.4 implementation obligation, not completed by these guard checks."
+  ],
+  "finalized_at": "2026-09-19T17:17:48.586406+00:00"
+}

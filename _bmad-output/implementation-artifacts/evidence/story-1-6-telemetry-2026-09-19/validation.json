@@ -1,0 +1,93 @@
+{
+  "date": "2026-09-19",
+  "scope": "shared-1.0-T8-and-1.6-T6-first-use-telemetry-boundary",
+  "schemaVersion": "nomad.telemetry.v1",
+  "sourceSha256": {
+    "apps/mobile/src/telemetry/dictionary.ts": "6918d7fb6e472bec35ac85e37ec51aeffafcf9fcbb4e99376966c7f991b18db7",
+    "apps/mobile/src/telemetry/dictionary.test.ts": "2a513bcc47624e68049c3f87208c5425d57e267edcb5199924679798c52094d3",
+    "apps/mobile/src/telemetry/runtime.ts": "9f0ae1dfe894546e1175c67f61c10f8a38e0125f43cb74bb14f0a116a8686ac7",
+    "apps/mobile/src/telemetry/runtime.test.ts": "8db26283d8c1e99dddf4b38d6ac5f27523bb6c01c33b9153050d98fb6b55ecc9",
+    "apps/mobile/src/auth/analytics.ts": "9fb3bcd74575162082cb0f11b4640032a570419e780c798a6cc22b05bb38490a",
+    "apps/mobile/src/auth/analytics.test.ts": "fe714fa2de32ca0fcc03fdd492a1dcf82d178ec7fe3c77afc9409df7a6065f20",
+    "apps/mobile/src/auth/LoginScreen.tsx": "5e6a4b74dbaadfd8536f19befcd5ad60285cb7b4b6e641108c2ebb0dcf6384bb",
+    "apps/mobile/src/home/HomeScreen.tsx": "2270504f724e4978415e225c8408f880532378b6002ff160ca26562c48fe638b",
+    "apps/mobile/src/planner/PlannerScreen.tsx": "035c153a10f687a9819cbf019ad70ee8f5008e7edf99f79a612cc1fb43b56417",
+    "apps/mobile/src/planner/DayPlanScreen.tsx": "658dcc8905483099a9f42f9f21f89bf5c2415eace8b929684e3e0377112af47c",
+    "apps/mobile/src/planner/DayPlanScreen.test.tsx": "9d506f3afbe5dd54b13c046e1127a78c98652671fe2d3f20eaa8fea2cdc0f9e0",
+    "apps/mobile/src/settings/SettingsScreen.tsx": "e7354413651e18a2936319b8bec62118cc43e4ef7ecfaed79fae835144cdbdda",
+    "apps/mobile/scripts/telemetry-browser-probe.mjs": "86b35c780fb4a379da7668582960ed523d64c117298ea911e71b29283e50326c",
+    "docs/ops/telemetry-first-use-v1.md": "85b25f54cee58738fb64f24d39bf7bde62fe1d90eb689dab84bb41e44c33d231"
+  },
+  "checks": {
+    "mobileVitest": 217,
+    "nativeConfig": 3,
+    "telemetryCore": 21,
+    "workspaceBuild": "passed",
+    "homeBrowserFixture": "passed",
+    "authBrowserFixture": "passed",
+    "telemetryBrowserFixture": "passed",
+    "handoff": "passed",
+    "diffWhitespace": "passed"
+  },
+  "review": {
+    "layers": 3,
+    "patchedFindings": 7,
+    "residuals": 0,
+    "findings": [
+      "fixed-policy-configuration",
+      "monotonic-retention-clock",
+      "aborted-delivery-accounting",
+      "actual-domain-enums",
+      "initialize-cleanup-ownership",
+      "send-microtask-expiry",
+      "uuid-case-deduplication"
+    ]
+  },
+  "dictionaryConsumedByPages": true,
+  "runtimeConsumedByApplication": false,
+  "runtimeExercisedInBrowserFixture": true,
+  "realSdkInitialized": false,
+  "realProviderQueryVerified": false,
+  "nativeConsentVerified": false,
+  "realProviderCalls": 0,
+  "android": {
+    "path": "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+    "sha256": "96a9a0e62468c5f43192cac72eacc769f2b78cab99a1197a5a28358e9b216467",
+    "buildTasks": 243,
+    "buildSeconds": 11,
+    "debugV2SignatureVerified": true,
+    "nativeDeviceVerified": false
+  },
+  "nativeProjectProof": {
+    "scope": "generated-project-config-and-copied-assets",
+    "authenticationRegistered": {
+      "android": true,
+      "ios": true
+    },
+    "clipboardRegistered": {
+      "android": true,
+      "ios": true
+    },
+    "appId": "dev.nomad.mvp",
+    "files": 8,
+    "webAssetsSha256": "d22a920074329816f6461ad24eefe4b2e067cffe76bfddb2a7629fc666038191",
+    "webAssets": {
+      "assets/index-DFzk6kMZ.css": "5e329bd06148ced420b6a90166e9071a30e9aff310733246a03113412fa96042",
+      "assets/index-GqaE9cKa.js": "3a4a4b3930b0d555565d6ad0132d0a7d373bce4e2045589015c68c06d9b9248a",
+      "assets/web-Bu-q3G9N.js": "730a8253f163af07c609056dcec8e4bdf6cb4415d778931e099851e1cde78619",
+      "assets/web-C1Pto3l3.js": "ad23a946128a2a21d6dba31928eb92dc83073487ae6080bb1796c96089e4b8c8",
+      "index.html": "e74b0e139d450b127cfd596d755365fb89f25318c3eceae0ecb99756ded2ef99",
+      "vendor/pnvs/ct4.js": "f2e9d00c14e079590367bff6dbeb09b142f6d4b1353c56afb3caa4d7d0164861",
+      "vendor/pnvs/provenance.json": "81e6406699d10940107819eb4f06e72197c1f101c1766f67848941023156cfca",
+      "webview-unavailable.html": "046534ab2c64021dcb3c48e76de9ca48a953a09f387e0502bc9e5578841c374e"
+    },
+    "runtimeEvidenceAssessed": false
+  },
+  "pending": [
+    "real SDK adapter and consent UI integration",
+    "canonical auth/input event emitters and replay identities",
+    "controlled anonymous-to-owner attribution and cleanup",
+    "actual U-Link configuration and three-host verification",
+    "legal resources and Android/iOS device evidence"
+  ]
+}

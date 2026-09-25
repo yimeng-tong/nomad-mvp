@@ -3,6 +3,7 @@ import type { FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
 import { getPrisma } from '../db/prisma.js';
 import { authGuard } from '../plugins/auth.js';
+import { createAuthorizedSse } from '../auth/sse.js';
 import {
   EmptySlotResolveBody,
   HqAdoptBody,
@@ -409,10 +410,10 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
     const job = await repository.getJob(jobId, userId);
     if (!job) return reply.sendError('PLAN_JOB_NOT_FOUND', 'plan job not found', 404, false);
 
-    reply.raw.setHeader('Cache-Control', 'no-cache');
+    reply.raw.setHeader('Cache-Control', 'no-store');
     reply.raw.setHeader('Content-Type', 'text/event-stream');
     reply.raw.setHeader('Connection', 'keep-alive');
-    const lastEventId = String(req.headers['last-event-id'] ?? '');
+    const lastEventId = String(req.headers['last-event-id'] ?? (req.query as { last_event_id?: string } | undefined)?.last_event_id ?? '');
     const [requestedAttemptText, requestedSequenceText] = lastEventId.includes(':')
       ? lastEventId.split(':', 2)
       : [String(job.attempt), lastEventId];
@@ -422,6 +423,7 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
       streamAttempt = job.attempt;
       cursor = 0;
     }
+    const sender = createAuthorizedSse(req, reply);
     let closed = false;
     let polling = false;
     let pollTimer: NodeJS.Timeout | undefined;
@@ -434,6 +436,7 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
     };
     req.raw.once('close', cleanup);
     reply.raw.once('close', cleanup);
+    reply.raw.once('finish', cleanup);
 
     const replay = async () => {
       if (closed || polling) return;
@@ -452,7 +455,7 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
         const events = await repository.listJobEvents(jobId, userId, cursor);
         for (const event of events) {
           cursor += 1;
-          reply.sse({ id: `${streamAttempt}:${cursor}`, event: 'plan', data: JSON.stringify(event) });
+          if (!await sender.send({ id: `${streamAttempt}:${cursor}`, event: 'plan', data: JSON.stringify(event) })) { cleanup(); return; }
           if (event.phase === 'done' || event.phase === 'failed') {
             cleanup();
             (reply as any).sseContext?.source?.end();
@@ -465,6 +468,8 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
             (reply as any).sseContext?.source?.end();
           }
         }
+      } catch {
+        cleanup(); sender.close();
       } finally {
         polling = false;
       }
@@ -474,7 +479,7 @@ export default fp<PlannerRouteOptions>(async (app, options) => {
       pollTimer = setInterval(() => void replay(), pollMs);
       pingTimer = setInterval(() => {
         if (!closed) {
-          reply.sse({
+          void sender.send({
             event: 'ping',
             data: JSON.stringify({
               trace_id: job.traceId,

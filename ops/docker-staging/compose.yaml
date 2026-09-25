@@ -1,0 +1,100 @@
+name: nomad-staging
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: nomad_staging
+      POSTGRES_USER: nomad_app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nomad_app -d nomad_staging"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    image: nomad-staging-node:22
+    command:
+      - ./packages/prisma/node_modules/.bin/prisma
+      - migrate
+      - deploy
+      - --schema
+      - packages/prisma/schema.prisma
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://nomad_app:${POSTGRES_PASSWORD}@postgres:5432/nomad_staging?schema=public
+    working_dir: /app
+    volumes:
+      - ${NOMAD_RELEASE_DIR}:/app:ro
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    image: nomad-staging-node:22
+    command: ["node", "apps/server/dist/apps/server/src/index.js"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    env_file:
+      - ${NOMAD_ENV_FILE}
+    environment:
+      DATABASE_URL: postgresql://nomad_app:${POSTGRES_PASSWORD}@postgres:5432/nomad_staging?schema=public
+      REDIS_URL: redis://redis:6379
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ${NOMAD_RELEASE_DIR}:/app:ro
+
+  web:
+    image: nginx:1.27-alpine
+    depends_on:
+      server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - ${NOMAD_BIND_ADDRESS:-127.0.0.1}:${NOMAD_WEB_PORT:-18080}:80
+    restart: unless-stopped
+    volumes:
+      - ${NOMAD_RELEASE_DIR}/apps/mobile/dist:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  postgres-data:
+  redis-data:

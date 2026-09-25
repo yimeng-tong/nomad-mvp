@@ -67,6 +67,10 @@ async function seedInspirations() {
 }
 
 async function main() {
+  // Explicit isolated fixture authorization; never enable this profile in a deployment.
+  process.env.AUTH_RUNTIME_MODE = 'test';
+  process.env.AUTH_PROVIDER = 'fixture';
+  process.env.AUTH_TEST_ADAPTER_ENABLED = 'true';
   delete process.env.DATABASE_URL;
   clearIngestStateForTests();
   await seedInspirations();
@@ -87,7 +91,7 @@ async function main() {
     const xhsParseBody = parseJson(xhsParse);
     assert(xhsParseBody.type === 'xhs_link', 'XHS input should classify as xhs_link');
     assert(xhsParseBody.url === 'https://www.xiaohongshu.com/explore/a', 'XHS input should use first link');
-    assert(xhsParseBody.warning?.code === 'INGEST_SINGLE_LINK_ONLY', 'XHS multi-link parse should preserve warning');
+    assert(xhsParseBody.links?.length === 2, 'Home parse preserves both supported links for ordered single-link dispatch');
 
     const tripParse = await app.inject({
       method: 'POST',

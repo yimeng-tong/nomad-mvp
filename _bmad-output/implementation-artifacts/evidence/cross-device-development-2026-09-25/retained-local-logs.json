@@ -1,0 +1,95 @@
+{
+  "date": "2026-09-25",
+  "purpose": "preserve raw runtime logs outside Git as required by AGENTS.md",
+  "storage": "local-and-homelab-private-archive",
+  "remote_archive": "/var/lib/nomad-mvp/development-evidence/pre-ui-logs-2026-09-25.tar.gz",
+  "archive_sha256": "aee8113b669a1d5212b6dbf9a046f1775000ebc7e78a692bd7c334ea87256e41",
+  "files": [
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/adb-devices.txt",
+      "sha256": "36f15c2fe32964a6fbe902e914a47739d4e6304b0d3e812bf08096ff0419b7ae",
+      "bytes": 26
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/android-build.txt",
+      "sha256": "1caa219101bd18bc28577faebba3c7747fd142e5a12ed9eff580e7e4c20a832a",
+      "bytes": 19428
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/diffcheck.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/handoff.txt",
+      "sha256": "f12da189964f7985ec5b41ed7934d8c0e514a0f03303adda0ec1459776569f2f",
+      "bytes": 244
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/mobile-tests.txt",
+      "sha256": "3e3681502e1752371007c1074d276504e658f15dce4e56eb32834dd8e2d3ec4e",
+      "bytes": 1085
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/native-sync.txt",
+      "sha256": "b067f804902fca89b31bbc6796489697dfae74af4f1bce587c99d82412db2b99",
+      "bytes": 1089
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/review-fixes-tests.txt",
+      "sha256": "25dcbb7fd8f19f550d260966301abcdbc87c815b80db1b47cf3a161ede66cdd9",
+      "bytes": 230
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/type-generation.txt",
+      "sha256": "d5e50816938a72e6e47b3a68f8b259c29883dbc31489d20bee2c9227a6c0a7b1",
+      "bytes": 210
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-client-2026-09-19/workspace-build.txt",
+      "sha256": "e9ec1cf96f1bf4f3c47cd5eefe01de76cc5ecea0b1d552e868fb7bf5bd8b13a0",
+      "bytes": 1464
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-measurement-2026-09-19/bounded-runner-tests.txt",
+      "sha256": "26032a459314f20862da47bc55471fc81f3b3d38680f1a7b535eec9d1b2078c0",
+      "bytes": 100
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-measurement-2026-09-19/final-handoff.txt",
+      "sha256": "f12da189964f7985ec5b41ed7934d8c0e514a0f03303adda0ec1459776569f2f",
+      "bytes": 244
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-measurement-2026-09-19/server-reader-tests.txt",
+      "sha256": "57c50d6392f068a07392a5882d5e7cd5d0602dac608248c2d56a9dc626dd42ff",
+      "bytes": 948
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-pitr-2026-09-19/helper-tests.txt",
+      "sha256": "511bc7785bb1fca9cccc6dcd66577deba8715f5aba61666ae1ea8ec20e1f5265",
+      "bytes": 105
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-pitr-2026-09-19/timer-calendar.txt",
+      "sha256": "15d43703e5017398ff23ee4b1e183526c37584b4c710c584dd48543b07724a65",
+      "bytes": 152
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/story-1-7-pitr-2026-09-19/unit-syntax.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/investigations/evidence/vm104-postgres-restart-2026-09-19/health-after-upgrade.txt",
+      "sha256": "4b72f81c92c80ddd5a2cb186eefaef40a4e1f94a3176e06979ef6f675f265b9b",
+      "bytes": 379
+    }
+  ],
+  "remote_verification": {
+    "path": "/var/lib/nomad-mvp/development-evidence/pre-ui-logs-2026-09-25.tar.gz",
+    "sha256": "aee8113b669a1d5212b6dbf9a046f1775000ebc7e78a692bd7c334ea87256e41",
+    "bytes": 5810,
+    "permissions": "root:nomad 0640"
+  }
+}

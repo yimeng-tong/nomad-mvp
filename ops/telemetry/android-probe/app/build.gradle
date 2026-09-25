@@ -1,0 +1,11 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'dev.nomad.sdkprobe'
+    compileSdk 36
+    defaultConfig { applicationId 'dev.nomad.sdkprobe'; minSdk 29; targetSdk 36; versionCode 1; versionName '1.0'; ndk { abiFilters 'x86' } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_21; targetCompatibility JavaVersion.VERSION_21 }
+}
+dependencies {
+    implementation 'com.umeng.umsdk:common:9.9.10'
+    implementation 'com.umeng.umsdk:asms:1.8.7.2'
+}

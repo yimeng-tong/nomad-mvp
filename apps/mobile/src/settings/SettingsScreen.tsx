@@ -1,6 +1,7 @@
+import { registerHostBackHandler } from '../platform/host';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Analytics } from '../auth/analytics';
-import { createNoopAnalytics, sanitizeAnalyticsProps } from '../auth/analytics';
+import { createNoopAnalytics, trackAnalytics } from '../auth/analytics';
 import { AuthApiError, type CurrentUserResponse } from '../auth/api';
 import type { AccountTaskResponse, SettingsApiClient, UserKeyStatusResponse } from './api';
 import { createSettingsApiClient } from './api';
@@ -10,6 +11,7 @@ export type SettingsScreenProps = {
   apiClient?: SettingsApiClient;
   analytics?: Analytics;
   onBack: () => void;
+  onLogout?: () => void;
   openExternal?: (url: string) => boolean | void | Promise<boolean | void>;
 };
 
@@ -25,7 +27,7 @@ function defaultOpenExternal(url: string) {
   return Boolean(window.open(url, '_blank', 'noopener,noreferrer'));
 }
 
-export function SettingsScreen({ currentUser, apiClient, analytics, onBack, openExternal = defaultOpenExternal }: SettingsScreenProps) {
+export function SettingsScreen({ currentUser, apiClient, analytics, onBack, onLogout, openExternal = defaultOpenExternal }: SettingsScreenProps) {
   const client = useMemo(() => apiClient ?? createSettingsApiClient(), [apiClient]);
   const tracker = useMemo(() => analytics ?? createNoopAnalytics(), [analytics]);
   const [byokStatus, setByokStatus] = useState<UserKeyStatusResponse | null>(null);
@@ -35,16 +37,26 @@ export function SettingsScreen({ currentUser, apiClient, analytics, onBack, open
   const [byokUnavailable, setByokUnavailable] = useState(false);
   const [exportTask, setExportTask] = useState<AccountTaskResponse | null>(null);
   const [deleteTask, setDeleteTask] = useState<AccountTaskResponse | null>(null);
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const [confirmExport, setConfirmExport] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [accountActionPending, setAccountActionPending] = useState(false);
   const [fallbackForm, setFallbackForm] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
+  useEffect(() => registerHostBackHandler(() => {
+    if (saving || accountActionPending) return true;
+    if (confirmLogout) { setConfirmLogout(false); return true; }
+    if (confirmDelete) { setConfirmDelete(false); return true; }
+    if (confirmExport) { setConfirmExport(false); return true; }
+    if (fallbackForm) { setFallbackForm(false); return true; }
+    return false;
+  }, 20), [saving, accountActionPending, confirmLogout, confirmDelete, confirmExport, fallbackForm]);
+
 
   const track = useCallback(
     (event: Parameters<Analytics['track']>[0], props?: Parameters<Analytics['track']>[1]) => {
       try {
-        tracker.track(event, sanitizeAnalyticsProps(props));
+        trackAnalytics(tracker, event, props);
       } catch {
         // Analytics must never block Settings.
       }
@@ -215,6 +227,12 @@ export function SettingsScreen({ currentUser, apiClient, analytics, onBack, open
               <dd>{currentUser.session.device_id}</dd>
             </div>
           </dl>
+          {onLogout ? <button type="button" onClick={() => setConfirmLogout(true)}>退出当前登录</button> : null}
+          {confirmLogout ? <div role="dialog" aria-label="退出当前登录" className="inline-state">
+            <p>退出当前设备，其他设备保持登录。</p>
+            <button type="button" onClick={() => setConfirmLogout(false)}>取消</button>
+            <button type="button" onClick={onLogout}>确认退出</button>
+          </div> : null}
         </section>
 
         <section className="settings-section" aria-labelledby="settings-byok-title">

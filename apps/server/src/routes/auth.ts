@@ -11,6 +11,9 @@ import {
   type AuthSession,
 } from '../auth/session-store.js';
 import { authGuard } from '../plugins/auth.js';
+import { assertFixtureAuthAllowed } from '../auth/runtime-boundary.js';
+import { registerPersistentAuthRoutes } from '../auth/http.js';
+import type { PersistentAuthService } from '../auth/service.js';
 
 const PhoneSchema = z.string().trim().min(6).max(32).regex(/^\+?[0-9][0-9 -]{4,30}[0-9]$/);
 const RegionSchema = z.string().trim().min(2).max(8).regex(/^[A-Z]{2,8}$/);
@@ -140,7 +143,12 @@ function currentSession(req: any) {
   return req.authSession ? sessionForResponse(req.authSession) : fallbackSession(req.user!.id, risk?.device || 'current');
 }
 
-export default fp(async (app) => {
+export default fp<{ service?: PersistentAuthService }>(async (app, options) => {
+  if (options.service) {
+    registerPersistentAuthRoutes(app, options.service);
+    return;
+  }
+  assertFixtureAuthAllowed();
   app.get('/auth/config', async () => getAuthConfig());
 
   app.post('/auth/otp/start', async (req: any, reply) => {

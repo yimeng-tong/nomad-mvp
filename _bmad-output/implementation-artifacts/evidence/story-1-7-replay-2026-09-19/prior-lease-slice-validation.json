@@ -1,0 +1,92 @@
+{
+  "story": "1.7",
+  "date": "2026-09-19",
+  "status": "in-progress",
+  "scope": "cursor-event-producer-transactions-and-lease-core",
+  "sourceSha256": {
+    "apps/server/src/ingest/cursor.ts": "a85437ccd81fd9655d3b3186a146bbbf045f11e13047efb1d622323de65b13ef",
+    "apps/server/src/ingest/cursor.test.ts": "7653e3a896ff2460ee3132cd0a3a30fe0d668bea28ad07a1a947fd4412eb4a2c",
+    "apps/server/src/ingest/event-log.ts": "7aa4719fb3fcab3fa40066a9170d68500b17a9ed8dbdc32f882431fa3875f084",
+    "apps/server/src/ingest/event-log.test.ts": "5f6afa2c9c2ca2d1c0720effe37cdc6ccce0700ef5dcf424d826808337901fd6",
+    "apps/server/src/ingest/job-state.ts": "b04776f92153ff50b20e7e61e3541beab1a38f35a25e7d4edc4243a8f214cf48",
+    "apps/server/src/ingest/job-state.test.ts": "765d781ffbf77bcb59dd1fc864cd3b83e0e831b88871a2eba68ff3b5396b862b",
+    "apps/server/src/ingest/types.ts": "c0994ec23313be4b3ad6937e285d4eac8c364ed3298fb02db423e72e9285f63c",
+    "apps/server/src/ingest/store.ts": "c87435d41251469c4a305a66d5667331bfb17b79de7a6caa5407af62c0cdc8c5",
+    "apps/server/src/ingest/pipeline.ts": "f532de6e88e439b439054d7fd97dc275d13bf7f8f633947e8b5e6ee18cf25012",
+    "apps/server/scripts/auth-ingest-events-probe.ts": "eb6abb7eafad8d4b87a8ae4bb187ccf4ccf4b4235b6460b2acf77bf0bd8cc915",
+    "apps/server/scripts/auth-ingest-probe.ts": "4142673158417acfb5ad689bf80ae7790ac68edeaafe66ad9cb5d21579716568",
+    "packages/prisma/schema.prisma": "faf082cf96cf68a184b7251267e7c7b698f542e47e05e847eb207be70abb2e53",
+    "packages/prisma/migrations/20260919000300_story_1_7_ingest_event_log/migration.sql": "b4cd897d5297e2f3b96593eaed809859e61a94d6f8339a9e070ae6aec2985ce4",
+    "packages/prisma/tests/ingest-event-migration-fixture.sql": "1a8161b85e3d030359638ac311ff495a973fb47809816db325d69144d36520ef",
+    "packages/prisma/tests/ingest-event-migration-invariants.sql": "3a421d6ba4e2448eefc871ab9493f6b0ec10384dd8e9549cd83bbbe873daf8a6",
+    "packages/types/src/api-types.ts": "6efa2399c589a2370e514efe18794493d9c88eef963f006b33a18b5eb6bf3aa1",
+    "docs/api/openapi.yaml": "4d25b68ec172c61f81d166b64476c6fc3a4809380cc6b8afc0e36e4cea6964a5",
+    "docs/ops/ingest-event-recovery-v1.md": "0895d9c3594271957c394858c856a6e764964a939a248dc57c7c8e96d9c4e060",
+    "ops/pve-staging/auth-migration-preflight.py": "18675eb6a8eec2fa7ce55990ffe43418377801d2cae5b5e880778eafb2a4acb1",
+    "ops/pve-staging/run-auth-persistence-probe.py": "9b9806759a7f5cd114deef6d77a1f21f5b8db9529bd131862542306cabb778f0",
+    "apps/server/src/ingest/execution-lease.ts": "6fb867982ab5f97e37895636f7edf42366d057ae05c287c1db829996eb3662ea",
+    "apps/server/src/ingest/execution-policy.ts": "4a4abd5d524f78891fb48bbeec19072aea562d9f87e516781dabf5428fff754f",
+    "apps/server/src/ingest/execution-policy.test.ts": "4403751a06731229306f6b202f2e0237d18dd8248c22187fc73a638f751ace00",
+    "apps/server/scripts/auth-ingest-lease-probe.ts": "475ffde30b0bcae99fe682285e1d7d35e2f5646ba2d08464fb57243890b06c6d"
+  },
+  "checks": {
+    "serverIngestTests": 29,
+    "mobileVitest": 217,
+    "nativeConfigTests": 3,
+    "focusedContractTests": 2,
+    "workspaceBuild": "passed",
+    "typeGeneration": "passed",
+    "postgresEventCore": 8,
+    "postgresProducerChecks": 18,
+    "schemaAndSyntheticCheckpointRestore": "passed",
+    "handoff": "passed",
+    "diffWhitespace": "passed",
+    "postgresLeaseCore": 12,
+    "mobileVitestScope": "unchanged-mobile-source-prior-event-slice-baseline",
+    "nativeConfigScope": "unchanged-native-source-prior-event-slice-baseline"
+  },
+  "review": {
+    "layers": 3,
+    "confirmedRuntimeFindings": 0,
+    "evidenceGapsIdentified": 2,
+    "additionalEvidenceChecksPassed": 3,
+    "remainingScopedFindings": 0
+  },
+  "postgres": {
+    "database": "nomad_auth_test_32ebbc42aabc",
+    "restoredDatabase": "nomad_auth_test_32ebbc42aabc_restore",
+    "privateEnvironmentPath": "/tmp/nomad-auth-validation-wir7n3sw/test.env",
+    "workspace": "/tmp/nomad-auth-workspace-t3ktipoj",
+    "serverVersion": "16.14",
+    "backupSha256": "8a87473f1b3983f4cd3463eaf2131f0f06734dca8616b5a864c277981be40e4a",
+    "backupScope": "schema-and-fixed-SQL-checkpoint-fixture-before-producer-probe-rows"
+  },
+  "producerTransactionsWired": true,
+  "recoveryRouteWired": false,
+  "durableSseReplayVerified": false,
+  "workerLeaseVerified": true,
+  "clientDurableAcknowledgementVerified": false,
+  "realProviderCalls": 0,
+  "nativeDeviceVerified": false,
+  "productionReady": false,
+  "workerSchedulerWired": false,
+  "pipelineCheckpointRecoveryVerified": false,
+  "leaseReview": {
+    "scope": "lease-core-and-managed-writes-only",
+    "layers": 3,
+    "confirmedRuntimeFindings": 3,
+    "proofGapGroups": 2,
+    "fixes": [
+      "atomic-expiry-check-at-renew-release-event-update",
+      "skip-exclusive-owner-locks",
+      "keyset-pagination-after-32-locked-jobs"
+    ],
+    "proofs": [
+      "valid-and-missing-token-result-paths",
+      "valid-release-backoff-and-post-claim-owner-revocation"
+    ],
+    "recheck": "blind-and-acceptance-reviewers-confirmed-closed",
+    "remainingScopedFindings": 0,
+    "schedulerReviewed": false
+  }
+}

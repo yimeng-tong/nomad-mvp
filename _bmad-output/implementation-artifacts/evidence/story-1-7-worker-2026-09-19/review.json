@@ -1,0 +1,18 @@
+{
+  "scope": "durable-enqueue-worker-checkpoint-deadlines-and-application-lifecycle",
+  "layers": 3,
+  "runtimeFindings": 2,
+  "proofGapGroups": 1,
+  "fixes": [
+    "persist-inflight-replay-safety-across-configuration-change",
+    "independent-step-timeout-including-response-body"
+  ],
+  "additionalEvidence": [
+    "managed-retry-rollback-reset-partial-retention-and-new-attempt",
+    "actual-Fastify-isolation-stop-start",
+    "full-buildApplication-release-before-Prisma-disconnect"
+  ],
+  "recheck": "all-original-review-layers-confirmed-closed",
+  "remainingScopedFindings": 0,
+  "sseClientNativeReviewed": false
+}

@@ -1,0 +1,37 @@
+{
+  "result": "passed",
+  "actualIndexedDb": true,
+  "actualWebCrypto": true,
+  "browserProcesses": 2,
+  "syntheticOwnersAndInputs": true,
+  "serverRequests": 0,
+  "controllerIntegrationVerified": false,
+  "nativeDeviceVerified": false,
+  "sourceSha256": {
+    "apps/mobile/src/home/operation-journal.ts": "fea7af9ce7157b72e25f5e33d168db50c6303de6e5e7e28d173f1e9e29ba15f8"
+  },
+  "checks": [
+    "atomic-cross-tab-input-claim",
+    "encrypted-payload-only",
+    "owner-isolation",
+    "cross-owner-replay-denied",
+    "accepted-payload-erased",
+    "one-pending-retry",
+    "new-process-decryption-and-recovery",
+    "auth-change-before-commit",
+    "batch-abort-rolls-back-claim",
+    "payload-ttl-erasure",
+    "non-extractable-key-after-restart",
+    "tampered-ciphertext-rejected",
+    "replay-excludes-retries",
+    "retry-tuple-outlives-private-payload-ttl",
+    "retry-after-original-expiry",
+    "expired-claims-and-keys-pruned",
+    "owned-server-and-unchanged-source",
+    "missing-key-and-cipher-rejected-as-corrupt",
+    "expired-malformed-row-pruned",
+    "closed-connection-reopens",
+    "multi-input-claims-atomic",
+    "partial-replay-rolls-back-without-reassigning-new-input"
+  ]
+}

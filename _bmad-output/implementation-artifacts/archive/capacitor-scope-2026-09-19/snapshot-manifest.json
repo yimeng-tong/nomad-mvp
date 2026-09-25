@@ -1,0 +1,218 @@
+{
+  "created_at": "2026-09-18T19:31:36.464934+00:00",
+  "scope": "approved-capacitor-change-pre-edit-snapshot",
+  "files": {
+    ".gitignore": {
+      "sha256": "1b856bb5f0a76847339a619347f1d57c1fbec339871b83eb0976afa799d2a0e8",
+      "bytes": 159
+    },
+    "AGENTS.md": {
+      "sha256": "14f59bf29aa0e4781db006dee06fb9ca0823d85081099bb59050eb9bffe1f3fc",
+      "bytes": 4077
+    },
+    "CURRENT.md": {
+      "sha256": "15172d3dff0b21b071e62dd84f268d37e5f82629ab3b373848d4abb753fa99cf",
+      "bytes": 8246
+    },
+    "README.md": {
+      "sha256": "96f78a950836f1838c7fed85fa9b38b4d225f9bc1a1b8eee0f73e88d91a13198",
+      "bytes": 1014
+    },
+    "_bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions-validation.md": {
+      "sha256": "b8e665e1b9aac16da49774cebb936797df9fe014d713a94e833fa2c0cfb9bf8c",
+      "bytes": 6677
+    },
+    "_bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions.md": {
+      "sha256": "e9b54aaae92e4896a838a5783bc595b2724cfc8379bb1e5461e4bb7e61cb6fd6",
+      "bytes": 46473
+    },
+    "_bmad-output/implementation-artifacts/2-2-timeline-editing-undo-and-history.md": {
+      "sha256": "4f9e48d943732a4e960d9c40c6c38e89f253b63571e645d8ddf588529bdd72e2",
+      "bytes": 21623
+    },
+    "_bmad-output/implementation-artifacts/sp-revalidation-2026-09-17.md": {
+      "sha256": "2bb3ae6c2c98faf0fdc164aec3d9cc9630205320710df75f141d25db1ae9c340",
+      "bytes": 19678
+    },
+    "_bmad-output/implementation-artifacts/sprint-delivery-contract-2026-09-17.yaml": {
+      "sha256": "c0651d53ce7917cd49d102f43e4faee0066194505025e2883c72765a9533be38",
+      "bytes": 48196
+    },
+    "_bmad-output/implementation-artifacts/sprint-migration-2026-09-15.md": {
+      "sha256": "3ed69d986bf3362f3c525c21c20ef39a16b9524712a12b9e32c087454e9d22e1",
+      "bytes": 18371
+    },
+    "_bmad-output/implementation-artifacts/sprint-migration-2026-09-15.yaml": {
+      "sha256": "4f9232a332cc285451bf3f8ea10c5f169ec8a7e1f2592f5b59e2a3f5b0f6c48a",
+      "bytes": 51866
+    },
+    "_bmad-output/implementation-artifacts/sprint-status.yaml": {
+      "sha256": "d11881c1188d1091701d364647caf799c83852e25d008ce0750efaa28ec0ae57",
+      "bytes": 10390
+    },
+    "_bmad-output/planning-artifacts/architecture.md": {
+      "sha256": "d991975e004820de5614c6e5163ed7b7897b7865f1b08baab2668a6c4d0c409c",
+      "bytes": 154072
+    },
+    "_bmad-output/planning-artifacts/epics.md": {
+      "sha256": "16ad8d0e60217aa301ea3b4870da19ca0b46792ec811e391b4cffe0812f5ec86",
+      "bytes": 602833
+    },
+    "_bmad-output/planning-artifacts/implementation-prerequisites-2026-09-15.md": {
+      "sha256": "85bce48093213f88c9408f538ec9fd268dd57ceeb73525c6c8d7be009c46bbb7",
+      "bytes": 32560
+    },
+    "_bmad-output/planning-artifacts/implementation-readiness-sp-handoff-2026-09-15.md": {
+      "sha256": "4d1d1f3ec38228d0e4801ae4a4ad53f17dff9c24ac30b5903baef3eb9ce6ede0",
+      "bytes": 3858
+    },
+    "_bmad-output/planning-artifacts/prd.md": {
+      "sha256": "0d93adbc89f009642dfa31d0b877b316af962061cebdc9493b3b30ccaa194d93",
+      "bytes": 119384
+    },
+    "_bmad-output/planning-artifacts/prompt-strength-adoption-2026-09-15.md": {
+      "sha256": "f3772a3af583fb55418c351802caa809c46c8dc725f9cd58c504f99596ab4316",
+      "bytes": 6616
+    },
+    "_bmad-output/planning-artifacts/sprint-change-capacitor-contracts-2026-09-19.md": {
+      "sha256": "475c05db11745e2ee2bd00654db5519b6dac07162402ea52a32b1e8e5419f3c1",
+      "bytes": 28642
+    },
+    "_bmad-output/planning-artifacts/sprint-change-proposal-2026-09-19.md": {
+      "sha256": "b0fe74e1de28d1e75e540da4125dfc071899d29d80125d9fe26a98da24938087",
+      "bytes": 35741
+    },
+    "_bmad-output/planning-artifacts/supporting-tech-specs.md": {
+      "sha256": "0c12085c9d1f8816c9c18d32109de5aff744cf96695c79f1d624c0b9a98ccb91",
+      "bytes": 26376
+    },
+    "_bmad-output/planning-artifacts/ux.md": {
+      "sha256": "55ecf0742d4ff1d71a13cc4147fd1573716c7532178d30cfea7bdf032f86894a",
+      "bytes": 141996
+    },
+    "_bmad-output/project-context.md": {
+      "sha256": "da8910f01d31a1c2002457e4ae182d5ce626ef8a104e8d3b3df6e609bea61b99",
+      "bytes": 43183
+    },
+    "apps/mobile/package.json": {
+      "sha256": "7d27fa2dcbcdc54e13a88998d9f90982e53e0911c8e9600068678c3469d564f1",
+      "bytes": 694
+    },
+    "docs/architecture/architect-checklist-results.md": {
+      "sha256": "31009b99c3f697e74fd8d3ff6743b4e6107df499f17bb2f89e088d1c338b0c52",
+      "bytes": 1136
+    },
+    "docs/architecture/architecture.md": {
+      "sha256": "7058a846454d37e42009c558ba1dc99128b47ffcda9fb4c471644c947262189c",
+      "bytes": 16354
+    },
+    "docs/architecture/backend-architecture.md": {
+      "sha256": "a7020acba16da5752beb425b7d836c646a176801a2591d005b236c2bd3b2999a",
+      "bytes": 19279
+    },
+    "docs/architecture/coding-standards.md": {
+      "sha256": "4834ce86aecaace519230fdc76644028c87d5cf72bd66751fd4e58e668458eb8",
+      "bytes": 1509
+    },
+    "docs/architecture/compatibility.md": {
+      "sha256": "f6292ea56feb4dc60d76dca359d6141f4a9b06b9d97d2e8eece9b31d9cdddc4b",
+      "bytes": 3435
+    },
+    "docs/architecture/data-models.md": {
+      "sha256": "a026ebf43623798e083d3016a032850365fd18c8b2aed24f394f0cc7d23e1cc0",
+      "bytes": 29950
+    },
+    "docs/architecture/frontend-architecture.md": {
+      "sha256": "8ac2b7a7d6574e8f5be10849fd67dc25916d3fa0260cb5fa4af65accbe5d4f7e",
+      "bytes": 10818
+    },
+    "docs/architecture/index.md": {
+      "sha256": "a53bdc23031fefdcd89a1b96051d8fd0ff42d8667b7fa1d9ab886f05c2f7f7bc",
+      "bytes": 5899
+    },
+    "docs/architecture/mvp-implementation-checklist.md": {
+      "sha256": "a73707188f2b8c1bf79ebc25b4581cb83fb0f30b552cfe224e08c2efce8bd98a",
+      "bytes": 5804
+    },
+    "docs/architecture/observability.md": {
+      "sha256": "5fdbddf33acdfc989594ec883bc7ea26030e1fd130af00d22f2f7fd88bd53137",
+      "bytes": 14666
+    },
+    "docs/architecture/planner-autoplace-v1.md": {
+      "sha256": "607e61da525aaab5cf8200840cb282ab8c4e3b0c1ff193e236cbbc5ef9aa82ba",
+      "bytes": 3755
+    },
+    "docs/architecture/planner-orchestration-v2.md": {
+      "sha256": "55d687f39534ff31ae0a59d7e344b0c2a18fc5a6ef5fbb0cfe2567ac98835e44",
+      "bytes": 8839
+    },
+    "docs/architecture/repo-structure.md": {
+      "sha256": "6dd496b5b7bf9159dd8005a1c05a62b6f190537af833d14776bc971c39c844b0",
+      "bytes": 248
+    },
+    "docs/architecture/rest-api-spec.md": {
+      "sha256": "bd66c334dc7801f08b1aab122d764259570ae173e6a6ae8b76ca892d776c05a8",
+      "bytes": 20012
+    },
+    "docs/architecture/source-tree.md": {
+      "sha256": "6fee0b719e89b1086bde22e6daa6c70f0193fc6671148168e9cc405b8a6ab9ad",
+      "bytes": 1256
+    },
+    "docs/architecture/tech-stack.md": {
+      "sha256": "d9e64d24d39a68d6e778a92084830c6c31e5f5eb03069e8cbcbfef33cbbf8802",
+      "bytes": 3842
+    },
+    "docs/architecture/testing-strategy.md": {
+      "sha256": "d8291e6f434346873791e6c39ffe1ee04b052d01725acd64bbb4b1d25ebc4d8b",
+      "bytes": 13508
+    },
+    "docs/front-end-spec.md": {
+      "sha256": "3a99e06e0a586723628cb3bdad82e0fab40d48f0640c1842c8f29d6a080cf65c",
+      "bytes": 52407
+    },
+    "docs/ops/rate-limits.md": {
+      "sha256": "987eb1ae0a34533cda3753207e51eb2cb705a17097f1f5bfefaa061d4a7ec3fa",
+      "bytes": 14229
+    },
+    "docs/prd.md": {
+      "sha256": "0d93adbc89f009642dfa31d0b877b316af962061cebdc9493b3b30ccaa194d93",
+      "bytes": 119384
+    },
+    "docs/tech-spec-epic-2.md": {
+      "sha256": "6091550f6c55dd50863ca3def96569ac81ccfed75920b851cc143c6af887da74",
+      "bytes": 14480
+    },
+    "docs/tech-spec-epic-3.md": {
+      "sha256": "6f3634b229c5c9ed497edb2c1ae636a835371c93b59d8a6ef06525d61e6ddbd4",
+      "bytes": 11580
+    },
+    "docs/ux/home-import-dock.md": {
+      "sha256": "e94f6bcbcd634f202b9ad8eed735be98d73abab7c17316ddad5eb9ade25ecb41",
+      "bytes": 3916
+    },
+    "docs/ux/mobile-ia.md": {
+      "sha256": "61f5050f606496ece5b582313917224dc7bdd1dd17aee0694a393bd2093d5ab6",
+      "bytes": 27686
+    },
+    "docs/ux/prototype-coverage.md": {
+      "sha256": "4113b5ed3f868ff4ffaee59b6d36e508bbb9a4ec827ee96dee94884f8370dda9",
+      "bytes": 57422
+    },
+    "pnpm-lock.yaml": {
+      "sha256": "cdd5bf9477d2ff3ddc4f21bc25fd84bb7cb933a7d8247ab37e002ff11b9b75a2",
+      "bytes": 188055
+    },
+    "scripts/check-handoff.mjs": {
+      "sha256": "fb0b47cc420974c388d9cc5b39fc06db3798491a72c04d9c3a166591611e7c58",
+      "bytes": 30305
+    },
+    "scripts/check-handoff.test.mjs": {
+      "sha256": "5ba471b8d7ef57f042b1ac85d7ab1e63627db405379d461edca62cb23162c765",
+      "bytes": 19979
+    },
+    "scripts/check-sprint-delivery.mjs": {
+      "sha256": "cbdacd7f75429d11b3b0051db7bdad5f30b96a67d2d2fffed3e361a995f38997",
+      "bytes": 5327
+    }
+  }
+}

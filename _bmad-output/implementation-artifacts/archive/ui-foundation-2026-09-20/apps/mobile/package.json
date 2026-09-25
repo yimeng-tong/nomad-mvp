@@ -1,0 +1,40 @@
+{
+  "name": "nomad-mobile",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "TMPDIR=/tmp vitest run && node --import tsx --test scripts/native-config-proof.test.mjs",
+    "native:sync": "cap sync",
+    "native:preflight": "node --import tsx scripts/native-preflight.mjs",
+    "native:verify": "node --import tsx scripts/verify-native-project.mjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/app": "8.1.1",
+    "@capacitor/browser": "8.0.4",
+    "@capacitor/clipboard": "8.0.1",
+    "@capacitor/core": "8.5.2",
+    "@capacitor/ios": "8.5.2",
+    "@capacitor/keyboard": "8.0.5",
+    "@nomad/native-auth": "workspace:*",
+    "nomad-types": "workspace:*",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.2",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "jsdom": "29.1.1",
+    "vite": "8.0.16",
+    "vitest": "4.1.9"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "host": "nomad-staging",
+  "runtime_file": "/etc/nomad-mvp/development/runtime.env",
+  "permissions": "root:nomad 0640",
+  "database": "nomad_development",
+  "redis_database": 4,
+  "created": true,
+  "runtime_mode": "local",
+  "provider": "aliyun-pnvs",
+  "fixture_auth_enabled": false,
+  "legal_resources_configured": false,
+  "native_https_enabled": false,
+  "worker_dispatch_enabled": false,
+  "access": "authenticated SSH tunnel to loopback:43104",
+  "old_runtime_unchanged": true,
+  "old_release": "/opt/nomad-mvp/releases/10f940c49e2d",
+  "postgres_restarted": false,
+  "provider_requests_sent": false
+}

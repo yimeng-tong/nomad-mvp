@@ -1,0 +1,17 @@
+{
+  "host": "nomad-staging",
+  "database": "nomad_auth_test_32ebbc42aabc",
+  "restoredDatabase": "nomad_auth_test_32ebbc42aabc_restore",
+  "privateTestEnvironment": "/tmp/nomad-auth-validation-wir7n3sw/test.env",
+  "backup": "/tmp/nomad-auth-validation-wir7n3sw/synthetic-auth.dump",
+  "backupSha256": "8a87473f1b3983f4cd3463eaf2131f0f06734dca8616b5a864c277981be40e4a",
+  "ingestMigrationApplied": true,
+  "eventLogMigrationApplied": true,
+  "workerStarted": false,
+  "serverVersion": "server_version             \n---------------------------------------\n 16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)\n(1 row)",
+  "beforeMigrationRejected": true,
+  "afterMigrationPassed": true,
+  "restoredInvariantsPassed": true,
+  "existingApplicationDatabaseTouched": false,
+  "realAuthenticationVerified": false
+}

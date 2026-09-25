@@ -1,0 +1,30 @@
+{
+  "sprint-status.before.yaml": {
+    "source": "_bmad-output/implementation-artifacts/sprint-status.yaml",
+    "sha256": "0a24a3c08fc1097dd099c443ff03a24beb8d7ca0fb8436c79b8c43535953345f"
+  },
+  "CURRENT.before.md": {
+    "source": "CURRENT.md",
+    "sha256": "e97281ecfb808ed8ff4b0fd78aa5fba0cabfd133b96646085ad5102b16d71226"
+  },
+  "project-context.before.md": {
+    "source": "_bmad-output/project-context.md",
+    "sha256": "29452ee5fe0fd5e081e987cadfca8eea01c79919ca7f0cddf0d710ac183c994f"
+  },
+  "check-handoff.before.mjs": {
+    "source": "scripts/check-handoff.mjs",
+    "sha256": "15f14edaa30a11a0fec7a81e18a8184fc9c926d94d51a3c4eb473d14804ff792"
+  },
+  "legacy-2-2.before.md": {
+    "source": "_bmad-output/implementation-artifacts/2-2-timeline-editing-undo-and-history.md",
+    "sha256": "9d99cbaf84def1de3f0228b39e393a55f63e0198543a1898744d1223293c6b6b"
+  },
+  "package.before.json": {
+    "source": "package.json",
+    "sha256": "821573cb44922b976e62f251bccf9b8314b63eaf538224a405a1db1236bf9e03"
+  },
+  "pnpm-lock.before.yaml": {
+    "source": "pnpm-lock.yaml",
+    "sha256": "09b163214e655db3ce59bdbe2678a51aeea0938a1c8e687e50a3155cdccae190"
+  }
+}

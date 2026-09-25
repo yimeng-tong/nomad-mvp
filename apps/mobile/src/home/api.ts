@@ -1,3 +1,8 @@
+import { createBoundJsonRequest } from '../auth/transport';
+import { getAuthSnapshot } from '../auth/session-context';
+import {watchBoundDurableStream,type OrderedStreamHandlers} from '../auth/ordered-stream';
+import {parseIngestEvent,parseIngestControl,parseIngestRecovery,IngestProtocolError,type IngestRecovery} from './ingest-protocol';
+import { watchBoundStream } from '../auth/stream';
 import type { components } from 'nomad-types/src/api-types';
 import { AuthApiError, getApiBaseUrl } from '../auth/api';
 
@@ -5,6 +10,9 @@ export type HomeInputParseRequest = components['schemas']['HomeInputParseRequest
 export type HomeInputParseResponse = components['schemas']['HomeInputParseResponse'];
 export type IngestXhsRequest = components['schemas']['IngestXhsRequest'];
 export type IngestStartResponse = components['schemas']['IngestStartResponse'];
+export type IngestSnapshot = components['schemas']['IngestSnapshot'];
+export type IngestAcceptedResponse = components['schemas']['IngestAcceptedResponse'];
+export type IngestRetryRequest = components['schemas']['IngestRetryRequest'];
 export type LibraryCitySummary = components['schemas']['LibraryCitySummary'];
 export type LibraryCitiesResponse = components['schemas']['LibraryCitiesResponse'];
 export type LibraryInspirationItem = components['schemas']['LibraryInspirationItem'];
@@ -20,6 +28,13 @@ export type HomeApiClient = {
   getCandidates: (inspirationId: string) => Promise<LibraryCandidatesResponse>;
   parseInput: (request: HomeInputParseRequest) => Promise<HomeInputParseResponse>;
   startIngest: (request: IngestXhsRequest) => Promise<IngestStartResponse>;
+  getIngestResult?: (jobId: string) => Promise<LibraryInspirationItem>;
+  getIngestSnapshot?: (jobId: string) => Promise<IngestSnapshot>;
+  getIngestCommand?: (operationId: string) => Promise<IngestAcceptedResponse>;
+  retryIngest?: (jobId: string, request: IngestRetryRequest) => Promise<IngestAcceptedResponse>;
+  getIngestRecovery?: (jobId:string,input:{mode:'replay'|'resync';cursor?:string},signal?:AbortSignal)=>Promise<IngestRecovery>;
+  watchDurableIngest?: (jobId:string,handlers:OrderedStreamHandlers)=>()=>void;
+  watchIngest?: (jobId: string, onSnapshot: (snapshot: IngestSnapshot) => boolean, onError: () => void) => () => void;
 };
 
 function parseRetryAfter(value: string | null) {
@@ -56,20 +71,6 @@ async function parseError(response: Response) {
   }
 }
 
-async function requestJson<T>(baseUrl: string, path: string, init: RequestInit = {}) {
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...init,
-    credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
-      ...init.headers,
-    },
-  });
-
-  if (!response.ok) throw await parseError(response);
-  return (await response.json()) as T;
-}
 
 function queryString(filters?: { cityId?: string; locateStatus?: 'resolved' | 'pending' }) {
   const search = new URLSearchParams();
@@ -80,11 +81,36 @@ function queryString(filters?: { cityId?: string; locateStatus?: 'resolved' | 'p
 }
 
 export function createHomeApiClient(baseUrl = getApiBaseUrl()): HomeApiClient {
+  const scope = getAuthSnapshot();
+  const bound = createBoundJsonRequest(baseUrl, parseError);
+  const requestJson = <T>(_baseUrl: string, path: string, init?: RequestInit) => bound<T>(path, init);
   return {
     getCities: () => requestJson<LibraryCitiesResponse>(baseUrl, '/library/cities'),
     getInspirations: (filters) => requestJson<LibraryInspirationsResponse>(baseUrl, `/library/inspirations${queryString(filters)}`),
     getCandidates: (inspirationId) => requestJson<LibraryCandidatesResponse>(baseUrl, `/library/inspirations/${encodeURIComponent(inspirationId)}/candidates`),
     parseInput: (body) => requestJson<HomeInputParseResponse>(baseUrl, '/home/input/parse', { method: 'POST', body: JSON.stringify(body) }),
     startIngest: (body) => requestJson<IngestStartResponse>(baseUrl, '/ingest/xhs', { method: 'POST', body: JSON.stringify(body) }),
+    getIngestResult: (id) => bound<LibraryInspirationItem>(`/ingest/${encodeURIComponent(id)}/result`),
+    getIngestSnapshot: (id) => bound<IngestSnapshot>(`/ingest/${encodeURIComponent(id)}`),
+    getIngestCommand: (id) => bound<IngestAcceptedResponse>(`/ingest/commands/${encodeURIComponent(id)}`),
+    retryIngest: (id, body) => bound<IngestAcceptedResponse>(`/ingest/${encodeURIComponent(id)}/retry`, { method: 'POST', body: JSON.stringify(body) }),
+    getIngestRecovery: async(id,input,signal)=>{
+      const query=new URLSearchParams({mode:input.mode});if(input.cursor)query.set('last_event_id',input.cursor);
+      const response=parseIngestRecovery(await bound<unknown>(`/ingest/${encodeURIComponent(id)}/recovery?${query}`,{signal}),id);
+      if(input.mode==='resync'&&response.mode!=='resync'||response.mode==='replay'&&input.cursor!==undefined&&response.cursor!==input.cursor
+        ||input.mode==='replay'&&response.mode==='resync'&&response.reason!=='retention')throw new IngestProtocolError();
+      return response;
+    },
+    watchDurableIngest:(id,handlers)=>{
+      const current=getAuthSnapshot();if(current.epoch!==scope.epoch)throw new Error('AUTH_CONTEXT_CHANGED');
+      return watchBoundDurableStream(current,baseUrl,`/ingest/${encodeURIComponent(id)}/events`,{...handlers,
+        onEvent:async(value,context)=>{const event=parseIngestEvent(value,id);if(context.id!==event.cursor)throw new IngestProtocolError();await handlers.onEvent(event,context);},
+        onControl:async(value,context)=>handlers.onControl(parseIngestControl(value,id),context),
+      });
+    },
+    watchIngest: (id, onSnapshot, onError) => watchBoundStream<components['schemas']['IngestEvent']>(scope,baseUrl,`/ingest/${encodeURIComponent(id)}/events`,'ingest',(event)=>{
+      if (!event.snapshot) throw new Error('INGEST_SNAPSHOT_INVALID');
+      return onSnapshot(event.snapshot);
+    },onError),
   };
 }

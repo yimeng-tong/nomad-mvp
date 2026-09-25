@@ -1,0 +1,18 @@
+{
+  "scope": "lease-core-and-managed-writes-only",
+  "layers": 3,
+  "confirmedRuntimeFindings": 3,
+  "proofGapGroups": 2,
+  "fixes": [
+    "atomic-expiry-check-at-renew-release-event-update",
+    "skip-exclusive-owner-locks",
+    "keyset-pagination-after-32-locked-jobs"
+  ],
+  "proofs": [
+    "valid-and-missing-token-result-paths",
+    "valid-release-backoff-and-post-claim-owner-revocation"
+  ],
+  "recheck": "blind-and-acceptance-reviewers-confirmed-closed",
+  "remainingScopedFindings": 0,
+  "schedulerReviewed": false
+}

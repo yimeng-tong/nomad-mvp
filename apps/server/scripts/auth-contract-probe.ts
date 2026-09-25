@@ -36,6 +36,10 @@ async function buildAuthApp() {
 }
 
 async function main() {
+  // Explicit isolated fixture authorization; never enable this profile in a deployment.
+  process.env.AUTH_RUNTIME_MODE = 'test';
+  process.env.AUTH_PROVIDER = 'fixture';
+  process.env.AUTH_TEST_ADAPTER_ENABLED = 'true';
   process.env.AUTH_CAPTCHA_MODE = 'risk';
   process.env.AUTH_CAPTCHA_RISK_DEVICES = 'risky-device';
   process.env.AUTH_CAPTCHA_STUB_TOKEN = 'captcha-ok';

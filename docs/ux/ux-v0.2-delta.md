@@ -1,12 +1,18 @@
 # nomad-mvp UX v0.2 Delta
 
+> **Superseded historical snapshot.** This file is excluded from the v0.6 BMAD
+> UX packet. It is not authoritative for seed UI, skeleton phases, bottom undo,
+> reset actions or planning flow. Use `docs/front-end-spec.md` and
+> `docs/ux/mobile-ia.md`.
+
 Date: 2025-10-27
 Owner: UX
 Refs: PRD v0.2 (`docs/prd.md`), Mobile IA v0.1 (`docs/ux/mobile-ia.md`)
 
 ## Scope
 
-This delta documents UX changes introduced in PRD v0.2. It augments the Mobile IA (v0.1) without replacing it. Engineering and QA should use this as the authoritative source for UI behavior updates tied to the new AI seed/AnchorPool and skeleton SSE phases.
+This delta records UX changes introduced in PRD v0.2. Its former authority was
+superseded by the v0.6 Correct Course.
 
 ## Summary of UX Changes
 
@@ -143,5 +149,4 @@ Rules:
 - FR32/33/34 → Sections 1/2/3/4/5 (this document)
 - Microcopy updates → add to Mobile IA §5 Microcopy
 - SSE phases → Mobile IA new §10.1b Skeleton SSE
-
 

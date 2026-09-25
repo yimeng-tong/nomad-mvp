@@ -1,6 +1,13 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { Prisma } from '@prisma/client';
 import { getPrisma } from '../db/prisma.js';
+import { dbOwnerId, fixtureAuth, lockJobOwner, lockQualifiedOwner, retainedSourceHashes } from '../auth/owner.js';
+import { AuthFault, authAuthority } from '../auth/errors.js';
+import { lockIngestLease, markIngestPending, type IngestLease } from './execution-lease.js';
+import { writeIngestCheckpoint, type IngestExecutionCheckpoint } from './execution-checkpoint.js';
+import { appendSnapshotEvent } from './event-log.js';
+import { encodeIngestCursor } from './cursor.js';
+import { advanceSnapshot, initialSnapshot, retrySnapshot, type IngestSnapshot } from './job-state.js';
 import { refreshAnchorPoolForCity } from '../planner/anchor-pool.js';
 import {
   resolveCityTimezone,
@@ -9,7 +16,7 @@ import {
 import type { RankedBranchCandidate } from './branch-rules.js';
 import type { RehostedAsset, StandardizedCandidate, XhsFetchedPost } from './adapters.js';
 import type { ExtractedTimeEvidence } from './evidence.js';
-import type { IngestEvent, IngestJobRecord, IngestStage, IngestWarning, StoredInspirationResult } from './types.js';
+import type { IngestEvent, IngestWriteEvent, IngestJobRecord, IngestStage, IngestWarning, StoredInspirationResult } from './types.js';
 
 type Subscriber = (event: IngestEvent) => void;
 export type LibraryCitySummaryRecord = {
@@ -42,6 +49,7 @@ export type LibraryCandidateRecord = {
 
 type MemoryInspiration = LibraryInspirationRecord & {
   user_id: string;
+  asset_keys: string[];
   candidates: LibraryCandidateRecord[];
 };
 type CityGroupCount = {
@@ -61,7 +69,7 @@ function uuidFromStableId(value: string) {
 }
 
 export function dbUserIdFor(userId: string) {
-  return uuidFromStableId(userId);
+  return dbOwnerId(userId);
 }
 
 export function sourceHashFor(userId: string, normalizedUrl: string) {
@@ -72,155 +80,213 @@ export function getJob(id: string) {
   return jobs.get(id);
 }
 
-function hydrateJobFromDb(persisted: {
-  id: string;
-  userId: string;
-  sourceUrl: string | null;
-  sourceHash: string;
-  status: string;
-  retryCount: number;
-  lastError: string | null;
-  traceId: string | null;
-}, fallback: { traceId: string; sourceUrl?: string; warning?: IngestWarning }) {
-  const id = `ing_${persisted.id}`;
-  const status = persisted.status as IngestStage;
-  const traceId = persisted.traceId || fallback.traceId;
-  const event: IngestEvent = {
-    trace_id: traceId,
-    ingest_id: id,
-    state: status,
-    retry: persisted.retryCount,
-    error_code: persisted.lastError ?? undefined,
-    ts: Date.now(),
-  };
-  const job: IngestJobRecord = {
-    id,
-    dbId: persisted.id,
-    userId: persisted.userId,
-    dbUserId: persisted.userId,
-    sourceUrl: persisted.sourceUrl || fallback.sourceUrl || '',
-    sourceHash: persisted.sourceHash,
-    status,
-    traceId,
-    retryCount: persisted.retryCount,
-    warning: fallback.warning,
-    events: [event],
-  };
-  jobs.set(id, job);
-  sourceHashIndex.set(persisted.sourceHash, id);
-  return job;
+type PersistedJob = Prisma.IngestJobGetPayload<{}>;
+type Command = { kind: string; requestHash: string; jobId: string; attempt: number; disposition: 'created' | 'reused' | 'retried' };
+const commands = new Map<string, Command>();
+let memoryTail = Promise.resolve();
+async function memoryAuthority<T>(work: () => Promise<T> | T): Promise<T> {
+  if (!fixtureAuth()) throw new AuthFault('AUTH_AUTHORITY_UNAVAILABLE', 503, true);
+  const result = memoryTail.then(work); memoryTail = result.then(() => undefined, () => undefined); return result;
 }
-
-export async function getOrHydrateJob(id: string) {
-  const job = jobs.get(id);
-  if (job) return job;
-
-  const prisma = getPrisma();
-  const dbId = id.startsWith('ing_') ? id.slice(4) : id;
-  if (!prisma || !dbId) return undefined;
-
-  const persisted = await prisma.ingestJob.findUnique({ where: { id: dbId } }).catch(() => null);
-  if (!persisted) return undefined;
-  return hydrateJobFromDb(persisted, { traceId: persisted.traceId || randomUUID() });
-}
-
-export async function createOrGetIngestJob(input: {
-  userId: string;
-  sourceUrl: string;
-  traceId: string;
-  warning?: IngestWarning;
-}) {
-  const dbUserId = uuidFromStableId(input.userId);
-  const sourceHash = sourceHashFor(input.userId, input.sourceUrl);
-  const existingId = sourceHashIndex.get(sourceHash);
-  if (existingId) return jobs.get(existingId)!;
-
-  let dbId = randomUUID();
-  let id = `ing_${dbId}`;
-  const prisma = getPrisma();
-  if (prisma) {
-    await prisma.user.upsert({
-      where: { id: dbUserId },
-      update: {},
-      create: { id: dbUserId },
-    });
-    const existing = await prisma.ingestJob.findUnique({ where: { sourceHash } });
-    if (existing) return hydrateJobFromDb(existing, { traceId: input.traceId, sourceUrl: input.sourceUrl, warning: input.warning });
-
-    const persisted = await prisma.ingestJob.create({
-      data: {
-        id: dbId,
-        userId: dbUserId,
-        sourceType: 'xhs',
-        sourceUrl: input.sourceUrl,
-        sourceHash,
-        status: 'created' as any,
-        traceId: input.traceId,
-      },
-    });
-    dbId = persisted.id as typeof dbId;
-    id = `ing_${dbId}`;
+const commandHash = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
+function snapshotFromDb(row: PersistedJob): IngestSnapshot {
+  if (row.snapshotJson) {
+    const snapshot = row.snapshotJson as unknown as IngestSnapshot;
+    if (snapshot.ingest_id !== `ing_${row.id}` || snapshot.attempt !== row.retryCount + 1 || snapshot.state_version !== row.stateVersion
+      || snapshot.state !== row.status || !snapshot.actions || typeof snapshot.retriable !== 'boolean') throw new AuthFault('INGEST_STATE_UNAVAILABLE', 503);
+    return { ...structuredClone(snapshot), ...(row.eventStreamId ? { head_cursor: encodeIngestCursor(row.eventStreamId,row.lastEventSeq) } : {}) };
   }
-
-  const event: IngestEvent = {
-    trace_id: input.traceId,
-    ingest_id: id,
-    state: 'created',
-    retry: 0,
-    ts: Date.now(),
-  };
-  const job: IngestJobRecord = {
-    id,
-    dbId,
-    userId: input.userId,
-    dbUserId,
-    sourceUrl: input.sourceUrl,
-    sourceHash,
-    status: 'created',
-    traceId: input.traceId,
-    retryCount: 0,
-    warning: input.warning,
-    events: [event],
-  };
-  jobs.set(id, job);
-  sourceHashIndex.set(sourceHash, id);
-
-  return job;
+  return { ...initialSnapshot(`ing_${row.id}`, row.retryCount + 1, row.stateVersion), state: row.status,
+    error_code: row.lastError && /^INGEST_[A-Z_]+$/.test(row.lastError) ? row.lastError : null, updated_at: row.updatedAt.toISOString() };
 }
-
-export async function appendIngestEvent(jobId: string, event: Omit<IngestEvent, 'ingest_id' | 'trace_id' | 'ts'> & { ts?: number }) {
-  const job = jobs.get(jobId);
-  if (!job) return;
-  const next: IngestEvent = {
-    trace_id: job.traceId,
-    ingest_id: job.id,
-    retry: job.retryCount,
-    ...event,
-    ts: event.ts ?? Date.now(),
-  };
-  job.status = next.state;
-  job.events.push(next);
-  const set = subscribers.get(jobId);
-  for (const subscriber of Array.from(set ?? [])) {
-    try {
-      subscriber(next);
-    } catch {
-      set?.delete(subscriber);
+async function ensureDbEventLog(tx: Prisma.TransactionClient, row: PersistedJob): Promise<PersistedJob> {
+  if (row.eventStreamId && row.lastEventSeq > 0n) return row;
+  await tx.$queryRaw`SELECT id FROM "IngestJob" WHERE id=${row.id}::uuid AND "userId"=${row.userId}::uuid FOR UPDATE`;
+  const current = await tx.ingestJob.findFirst({where:{id:row.id,userId:row.userId}});
+  if (!current) throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
+  if (current.eventStreamId && current.lastEventSeq > 0n) return current;
+  if (current.eventStreamId !== null || current.lastEventSeq !== 0n) throw new AuthFault('INGEST_EVENT_STATE_UNAVAILABLE',503,true);
+  const snapshot = snapshotFromDb(current);
+  if (!current.snapshotJson && !snapshot.result) {
+    const result = await tx.inspiration.findFirst({where:{jobId:current.id,userId:current.userId},include:{assets:true,city:true}});
+    if (result) {
+      snapshot.result={inspiration_id:result.id,locate_status:result.locateStatus === 'resolved'?'resolved':'pending',asset_count:result.assets.length,city_name:result.city?.name ?? null};
+      snapshot.stored_count=1;snapshot.source_title=result.title?.slice(0,240) ?? null;snapshot.actions.view=true;
+      if (snapshot.state==='failed') snapshot.partial=true;
     }
   }
-  if (set?.size === 0) subscribers.delete(jobId);
-
-  const prisma = getPrisma();
-  if (prisma) {
-    await prisma.ingestJob.update({
-      where: { id: job.dbId },
-      data: {
-        status: next.state as any,
-        retryCount: job.retryCount,
-        lastError: next.error_code,
-      } as any,
-    }).catch(() => undefined);
+  return (await appendSnapshotEvent(tx,current,snapshot,'checkpoint')).row;
+}
+function hydrateJobFromDb(row: PersistedJob, fallback: { traceId: string; sourceUrl?: string; warning?: IngestWarning }) {
+  const id = `ing_${row.id}`, snapshot = snapshotFromDb(row), prior = jobs.get(id);
+  if (prior?.snapshot && prior.snapshot.state_version > snapshot.state_version) return prior;
+  const traceId = row.traceId && (uuidPattern.test(row.traceId) || fixtureAuth() && /^[a-zA-Z0-9_-]{1,128}$/.test(row.traceId)) ? row.traceId : uuidFromStableId(`ingest-trace:${row.id}`);
+  const event: IngestEvent = { ingest_id: id, trace_id: traceId, state: row.status,
+    retry: row.retryCount, attempt: snapshot.attempt, state_version: snapshot.state_version, snapshot, ts: row.updatedAt.getTime() };
+  const job: IngestJobRecord = { id, dbId: row.id, userId: row.userId, dbUserId: row.userId, authVersion: row.authVersion ?? undefined,
+    sourceUrl: row.sourceUrl || fallback.sourceUrl || '', sourceHash: row.sourceHash, status: row.status, retryCount: row.retryCount,
+    traceId, warning: fallback.warning, snapshot, legacySnapshot: row.snapshotJson === null,
+    events: prior?.snapshot?.state_version === row.stateVersion ? prior.events : [...(prior?.events ?? []).filter((item)=>(item.state_version ?? -1)<row.stateVersion),event].slice(-128) };
+  jobs.set(id, job); sourceHashIndex.set(row.sourceHash, id); return job;
+}
+function freshMemoryJob(input: { userId: string; sourceUrl: string; traceId: string; warning?: IngestWarning }): IngestJobRecord {
+  const dbId = randomUUID(), id = `ing_${dbId}`, snapshot = initialSnapshot(id);
+  const job: IngestJobRecord = { id, dbId, userId: input.userId, dbUserId: dbUserIdFor(input.userId), sourceUrl: input.sourceUrl,
+    sourceHash: sourceHashFor(input.userId, input.sourceUrl), traceId: input.traceId, status: 'created', retryCount: 0, snapshot, warning: input.warning,
+    events: [{ ingest_id: id, trace_id: input.traceId, state: 'created', attempt: 1, state_version: 0, retry: 0, snapshot, ts: Date.now() }] };
+  jobs.set(id, job); sourceHashIndex.set(job.sourceHash, id); return job;
+}
+function replayCommand(old: Command, kind: string, hash: string) {
+  if (old.kind !== kind || old.requestHash !== hash) throw new AuthFault('INGEST_COMMAND_CONFLICT', 409);
+}
+async function qualifyAcceptance(tx: Prisma.TransactionClient, userId: string, ownerId: string) {
+  if (fixtureAuth()) { const row=await tx.user.upsert({ where: { id: ownerId }, create: { id: ownerId,authState:'active' }, update: {} }); if(row.authState!=='active')throw new AuthFault('AUTH_ACCOUNT_UNAVAILABLE',403); return row.authVersion; }
+  return lockQualifiedOwner(tx, ownerId);
+}
+/** enqueue=false is reserved for internal isolated producer probes; HTTP never exposes that option. */
+export async function acceptIngestCommand(input: { userId: string; sourceUrl: string; traceId: string; operationId: string; warning?: IngestWarning; canDispatch?: () => void; enqueue?: boolean }) {
+  const ownerId = dbUserIdFor(input.userId), hash = commandHash(['start', input.sourceUrl]), db = getPrisma();
+  if (!uuidPattern.test(input.operationId)) throw new AuthFault('INGEST_PARAMS_INVALID', 400);
+  if (!db) return memoryAuthority(() => {
+    const key = `${ownerId}:${input.operationId}`, old = commands.get(key);
+    if (old) { replayCommand(old,'start',hash); return { job: jobs.get(old.jobId)!, disposition: old.disposition, shouldRun: false }; }
+    const sourceHash = sourceHashFor(input.userId, input.sourceUrl), existingId = sourceHashIndex.get(sourceHash);
+    if (!existingId) input.canDispatch?.();
+    const job = existingId ? jobs.get(existingId)! : freshMemoryJob(input), disposition = existingId ? 'reused' as const : 'created' as const;
+    commands.set(key, { kind: 'start', requestHash: hash, jobId: job.id, attempt: job.retryCount + 1, disposition });
+    return { job, disposition, shouldRun: !existingId };
+  });
+  const accepted = await authAuthority(() => db.$transaction(async (tx) => {
+    const authVersion = await qualifyAcceptance(tx, input.userId, ownerId);
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`ingest-command:${ownerId}:${input.operationId}`},0))`;
+    const old = await tx.ingestCommand.findUnique({ where: { userId_operationId: { userId: ownerId, operationId: input.operationId } } });
+    if (old) { replayCommand(old as Command,'start',hash); const row=await tx.ingestJob.findFirst({where:{id:old.jobId,userId:ownerId}}); if(!row)throw new AuthFault('INGEST_JOB_NOT_FOUND',404); return { row: await ensureDbEventLog(tx,row), disposition: old.disposition as Command['disposition'], shouldRun: false }; }
+    const sourceHash = sourceHashFor(input.userId, input.sourceUrl);
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`ingest-source:${sourceHash}`},0))`;
+    const hashes = fixtureAuth() ? [sourceHash] : await retainedSourceHashes(tx, ownerId, input.sourceUrl);
+    const existing = await tx.ingestJob.findMany({ where: { userId: ownerId, sourceHash: { in: hashes } }, take: 2 });
+    if (existing.length > 1) throw new AuthFault('AUTH_LEGACY_DEDUP_CONFLICT',409);
+    if (existing[0] && !fixtureAuth() && existing[0].authVersion === null && existing[0].status !== 'done') throw new AuthFault('AUTH_LEGACY_OWNER_UNVERIFIED',403);
+    if (!existing[0]) input.canDispatch?.();
+    const id = randomUUID();
+    const createdOrExisting = existing[0] ?? await tx.ingestJob.create({ data: { id, userId: ownerId, authVersion, sourceType: 'xhs', sourceUrl: input.sourceUrl,
+      sourceHash, traceId: input.traceId, status: 'created', snapshotJson: initialSnapshot(`ing_${id}`) as Prisma.InputJsonValue } });
+    let row = existing[0] ? await ensureDbEventLog(tx,createdOrExisting) : (await appendSnapshotEvent(tx,createdOrExisting,snapshotFromDb(createdOrExisting))).row;
+    if(!existing[0]&&input.enqueue!==false)row=await markIngestPending(tx,row.id);
+    const disposition = existing[0] ? 'reused' as const : 'created' as const;
+    await tx.ingestCommand.create({ data: { userId: ownerId, operationId: input.operationId, kind: 'start', requestHash: hash,
+      jobId: row.id, attempt: row.retryCount + 1, disposition } });
+    return { row, disposition, shouldRun: !existing[0] };
+  }));
+  return { job: hydrateJobFromDb(accepted.row, input), disposition: accepted.disposition, shouldRun: accepted.shouldRun };
+}
+export async function createOrGetIngestJob(input: { userId: string; sourceUrl: string; traceId: string; warning?: IngestWarning }) {
+  return (await acceptIngestCommand({ ...input, operationId: randomUUID() })).job;
+}
+export async function getOrHydrateJob(id: string) {
+  const db = getPrisma();
+  if (!db) { if (!fixtureAuth()) throw new AuthFault('AUTH_AUTHORITY_UNAVAILABLE',503,true); return jobs.get(id); }
+  const dbId = id.startsWith('ing_') ? id.slice(4) : id;
+  if (!uuidPattern.test(dbId)) return undefined;
+  const row = await authAuthority(() => db.ingestJob.findUnique({ where: { id: dbId } }));
+  return row ? hydrateJobFromDb(row, { traceId: row.traceId || randomUUID() }) : undefined;
+}
+export async function getIngestSnapshot(userId: string, id: string): Promise<IngestSnapshot> {
+  const db = getPrisma(), ownerId = dbUserIdFor(userId), dbId = id.startsWith('ing_') ? id.slice(4) : id;
+  if (!db) {
+    if (!fixtureAuth()) throw new AuthFault('AUTH_AUTHORITY_UNAVAILABLE',503,true);
+    const job=jobs.get(id);if(!job||job.dbUserId!==ownerId)throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
+    return structuredClone(job.snapshot ?? initialSnapshot(job.id));
   }
+  if (!uuidPattern.test(dbId)) throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
+  const committed = await authAuthority(()=>db.$transaction(async tx=>{
+    await lockQualifiedOwner(tx,ownerId);
+    const found=await tx.ingestJob.findFirst({where:{id:dbId,userId:ownerId}});
+    if(!found)throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
+    const row=await ensureDbEventLog(tx,found);
+    const snapshot=snapshotFromDb(row);
+    if(snapshot.state==='done'&&!snapshot.result)throw new AuthFault('INGEST_RESULT_UNAVAILABLE',503,true);
+    return {row,snapshot};
+  }));
+  hydrateJobFromDb(committed.row,{traceId:committed.row.traceId || committed.row.id});
+  return committed.snapshot;
+}
+export async function readIngestCommand(userId: string, operationId: string) {
+  const ownerId = dbUserIdFor(userId), db = getPrisma();
+  if (!uuidPattern.test(operationId)) throw new AuthFault('INGEST_PARAMS_INVALID',400);
+  if (!db && !fixtureAuth()) throw new AuthFault('AUTH_AUTHORITY_UNAVAILABLE',503,true);
+  const command = db ? await authAuthority(() => db.ingestCommand.findUnique({ where: { userId_operationId: { userId: ownerId, operationId } } })) : commands.get(`${ownerId}:${operationId}`);
+  if (!command) throw new AuthFault('INGEST_COMMAND_NOT_FOUND',404);
+  const jobId = command.jobId.startsWith('ing_') ? command.jobId : `ing_${command.jobId}`;
+  return { operation_id: operationId, disposition: command.disposition as Command['disposition'], ingest_id: jobId,
+    snapshot: await getIngestSnapshot(userId, jobId), sse_url: `/ingest/${jobId}/events` };
+}
+export async function retryIngestCommand(input: { userId: string; jobId: string; operationId: string; expectedAttempt: number; expectedVersion: number; canDispatch?: () => void; enqueue?: boolean }) {
+  const ownerId = dbUserIdFor(input.userId), hash = commandHash(['retry',input.jobId,input.expectedAttempt,input.expectedVersion]), db = getPrisma();
+  if (!uuidPattern.test(input.operationId)) throw new AuthFault('INGEST_PARAMS_INVALID',400);
+  if (!db) return memoryAuthority(() => {
+    const old = commands.get(`${ownerId}:${input.operationId}`);
+    if (old) { replayCommand(old,'retry',hash); return { job: jobs.get(old.jobId)!, shouldRun: false, disposition: old.disposition }; }
+    const before = jobs.get(input.jobId);
+    if (!before || before.dbUserId !== ownerId) throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
+    const snapshot = retrySnapshot(before.snapshot!,input.expectedAttempt,input.expectedVersion); input.canDispatch?.();
+    const job = { ...before, status: snapshot.state, snapshot, retryCount: snapshot.attempt - 1, events: [] };
+    jobs.set(job.id,job); commands.set(`${ownerId}:${input.operationId}`, { kind:'retry',requestHash:hash,jobId:job.id,attempt:snapshot.attempt,disposition:'retried' });
+    return { job, shouldRun: true, disposition: 'retried' as const };
+  });
+  const accepted = await authAuthority(() => db.$transaction(async (tx) => {
+    await qualifyAcceptance(tx,input.userId,ownerId);
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`ingest-command:${ownerId}:${input.operationId}`},0))`;
+    const old = await tx.ingestCommand.findUnique({ where: { userId_operationId: { userId: ownerId, operationId: input.operationId } } });
+    if (old) { replayCommand(old as Command,'retry',hash); const row=await tx.ingestJob.findFirst({where:{id:old.jobId,userId:ownerId}}); if(!row)throw new AuthFault('INGEST_JOB_NOT_FOUND',404); return { row:await ensureDbEventLog(tx,row), shouldRun:false, disposition:old.disposition as Command['disposition'] }; }
+    const id = input.jobId.replace(/^ing_/, ''); if (!uuidPattern.test(id)) throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
+    await tx.$queryRaw`SELECT id FROM "IngestJob" WHERE id=${id}::uuid AND "userId"=${ownerId}::uuid FOR UPDATE`;
+    let before = await tx.ingestJob.findFirst({where:{id,userId:ownerId}});
+    if (!before) throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
+    if (!fixtureAuth()) await lockJobOwner(tx,'IngestJob',id);
+    before = await ensureDbEventLog(tx,before);
+    const snapshot = retrySnapshot(snapshotFromDb(before),input.expectedAttempt,input.expectedVersion); input.canDispatch?.();
+    let row = (await appendSnapshotEvent(tx,before,snapshot)).row;
+    if(input.enqueue!==false)row=await markIngestPending(tx,row.id);
+    await tx.ingestCommand.create({ data:{userId:ownerId,operationId:input.operationId,kind:'retry',requestHash:hash,jobId:id,attempt:snapshot.attempt,disposition:'retried'} });
+    return { row, shouldRun:true, disposition:'retried' as const };
+  }));
+  return { job:hydrateJobFromDb(accepted.row,{traceId:accepted.row.traceId || randomUUID()}),shouldRun:accepted.shouldRun,disposition:accepted.disposition };
+}
+function publish(job: IngestJobRecord, event: IngestEvent) {
+  const current = jobs.get(job.id) ?? job;
+  if (!event.snapshot || (current.snapshot && event.snapshot.state_version < current.snapshot.state_version)
+    || event.snapshot.attempt < current.retryCount + 1) return;
+  const updated = { ...current, retryCount: event.snapshot.attempt - 1, status: event.state, snapshot: event.snapshot, events: [...current.events,event].slice(-128) };
+  jobs.set(job.id,updated);
+  const set = subscribers.get(job.id);
+  for (const subscriber of [...set ?? []]) { try { subscriber(event); } catch { set?.delete(subscriber); } }
+  if (!set?.size) subscribers.delete(job.id);
+}
+export async function appendIngestEvent(jobId: string, event: IngestWriteEvent, expectedAttempt?:number, lease?:IngestLease) {
+  const db = getPrisma(), cached = jobs.get(jobId);
+  if (!cached) throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
+  const attempt = expectedAttempt ?? cached.retryCount + 1;
+  let snapshot: IngestSnapshot;
+  if (!db) snapshot = await memoryAuthority(() => {
+    const current = jobs.get(jobId)!; const next = advanceSnapshot(current.snapshot!,event,attempt);
+    const wrapped: IngestEvent = { ...event, error_message: event.error_code ? '导入暂未完成' : undefined, ingest_id:jobId,trace_id:current.traceId,
+      state:next.state,retry:attempt-1,attempt,state_version:next.state_version,snapshot:next,ts:Date.now() };
+    publish(current,wrapped); return next;
+  });
+  else {
+    const committed = await authAuthority(() => db.$transaction(async (tx) => {
+      await lockJobOwner(tx,'IngestJob',cached.dbId);
+      await tx.$queryRaw`SELECT id FROM "IngestJob" WHERE id=${cached.dbId}::uuid FOR UPDATE`;
+      const row = await ensureDbEventLog(tx,await tx.ingestJob.findUniqueOrThrow({where:{id:cached.dbId}}));
+      const next = advanceSnapshot(snapshotFromDb(row),event,attempt);
+      return appendSnapshotEvent(tx,row,next,'fact',lease);
+    }));
+    snapshot = committed.event.snapshot;
+    publish(jobs.get(jobId) ?? cached,committed.event);
+
+  }
+  return snapshot;
 }
 
 export function subscribeToIngest(jobId: string, subscriber: Subscriber) {
@@ -240,6 +306,9 @@ export async function persistIngestOutput(input: {
   highConfidence?: StandardizedCandidate;
   candidates: RankedBranchCandidate[];
   timeEvidence: ExtractedTimeEvidence[];
+  partial?: boolean;
+  lease?: IngestLease;
+  checkpoint?: IngestExecutionCheckpoint;
 }): Promise<StoredInspirationResult> {
   const prisma = getPrisma();
   let highConfidence = input.highConfidence;
@@ -255,37 +324,51 @@ export async function persistIngestOutput(input: {
   const locateStatus = highConfidence ? 'resolved' : 'pending';
   const inspirationId = `mem_${input.job.id}`;
 
-  if (!prisma) {
-    const cityName = highConfidence?.cityName || null;
-    memoryInspirations.set(inspirationId, {
+  if (!prisma) return memoryAuthority(() => {
+    if (!fixtureAuth()) throw new AuthFault('AUTH_AUTHORITY_UNAVAILABLE',503,true);
+    const current = jobs.get(input.job.id);
+    if (!current || current.retryCount !== input.job.retryCount || ['done','failed'].includes(current.status)) throw new AuthFault('INGEST_ATTEMPT_CHANGED',409);
+    const previous = memoryInspirations.get(inspirationId);
+    const cityName = highConfidence?.cityName || previous?.city_name || null;
+    const assetKeys = [...new Set([...(previous?.asset_keys ?? []),...input.assets.map(asset=>asset.cosKey)])];
+    const record: MemoryInspiration = {
       id: inspirationId,
       user_id: input.job.userId,
-      title: input.post.title,
-      summary: input.post.text,
-      locate_status: locateStatus,
+      title: input.post.title || previous?.title || null,
+      summary: input.post.text || previous?.summary || null,
+      locate_status: highConfidence ? locateStatus : previous?.locate_status ?? locateStatus,
       city_id: cityName ? `mem_city_${createHash('sha1').update(cityName).digest('hex').slice(0, 10)}` : null,
       city_name: cityName,
-      poi_id: highConfidence ? `mem_poi_${createHash('sha1').update(highConfidence.amapId || highConfidence.name).digest('hex').slice(0, 10)}` : null,
-      poi_name: highConfidence?.name ?? null,
-      poi_address: highConfidence?.address ?? null,
-      asset_count: input.assets.length,
-      candidate_count: input.candidates.length,
+      poi_id: highConfidence ? `mem_poi_${createHash('sha1').update(highConfidence.amapId || highConfidence.name).digest('hex').slice(0, 10)}` : previous?.poi_id ?? null,
+      poi_name: highConfidence?.name ?? previous?.poi_name ?? null,
+      poi_address: highConfidence?.address ?? previous?.poi_address ?? null,
+      asset_keys: assetKeys,
+      asset_count: assetKeys.length,
+      candidate_count: input.candidates.length || previous?.candidate_count || 0,
       created_at: new Date().toISOString(),
-      candidates: input.candidates.slice(0, 5).map((candidate) => ({
+      candidates: !input.candidates.length && previous ? previous.candidates : input.candidates.slice(0, 5).map((candidate) => ({
         candidate_id: `${inspirationId}_cand_${candidate.rank}`,
         name: candidate.name,
         address: candidate.address || '待确认地址',
       })),
-    });
-    return {
-      inspirationId,
-      locateStatus,
-      assetCount: input.assets.length,
-      candidateCount: input.candidates.length,
     };
-  }
+    const snapshot = advanceSnapshot(current.snapshot!,{source_title:record.title ?? undefined,partial:input.partial,
+      result:{inspiration_id:inspirationId,locate_status:record.locate_status,asset_count:record.asset_count,city_name:record.city_name}},input.job.retryCount+1);
+    memoryInspirations.set(inspirationId,record);
+    publish(current,{ingest_id:current.id,trace_id:current.traceId,state:snapshot.state,attempt:snapshot.attempt,state_version:snapshot.state_version,snapshot,ts:Date.now()});
+    return { inspirationId, locateStatus:record.locate_status, assetCount:record.asset_count, candidateCount:record.candidate_count,cityName:record.city_name };
+  });
 
   return prisma.$transaction(async (tx) => {
+    await lockJobOwner(tx, 'IngestJob', input.job.dbId);
+    await tx.$queryRaw`SELECT id FROM "IngestJob" WHERE id=${input.job.dbId}::uuid FOR UPDATE`;
+    const currentJob = await ensureDbEventLog(tx,await tx.ingestJob.findUniqueOrThrow({where:{id:input.job.dbId}}));
+    if (currentJob.executionPending || currentJob.leaseOwner !== null) {
+      if (!input.lease || input.lease.jobId !== currentJob.id) throw new AuthFault('INGEST_LEASE_LOST',409);
+      await lockIngestLease(tx,input.lease);
+    }
+    if (currentJob.retryCount !== input.job.retryCount || ['done','failed'].includes(currentJob.status)) throw new AuthFault('INGEST_ATTEMPT_CHANGED',409);
+    const previous = await tx.inspiration.findUnique({where:{sourceHash:`${input.job.sourceHash}:inspiration`},include:{assets:true,city:true}});
     let cityId: string | undefined;
     let poiId: string | undefined;
     if (highConfidence && cityTimezone) {
@@ -338,12 +421,12 @@ export async function persistIngestOutput(input: {
     where: { sourceHash: `${input.job.sourceHash}:inspiration` },
     update: {
       jobId: input.job.dbId,
-      title: input.post.title,
-      text: input.post.text,
+      title: input.post.title || undefined,
+      text: input.post.text || undefined,
       canonicalUrl: input.job.sourceUrl,
-      locateStatus,
-      poiId: poiId ?? null,
-      cityId: cityId ?? null,
+      locateStatus: poiId ? locateStatus : previous?.locateStatus ?? locateStatus,
+      poiId: poiId ?? undefined,
+      cityId: cityId ?? undefined,
     } as any,
     create: {
       userId: input.job.dbUserId,
@@ -359,8 +442,9 @@ export async function persistIngestOutput(input: {
     } as any,
   });
 
-    await tx.asset.deleteMany({ where: { inspirationId: inspiration.id } });
+    // A retry's absent assets are not a deletion command. Keep committed partial output.
     for (const asset of input.assets) {
+      if (previous?.assets.some((old) => old.cosKey === asset.cosKey)) continue;
       await tx.asset.create({
       data: {
         inspirationId: inspiration.id,
@@ -374,11 +458,11 @@ export async function persistIngestOutput(input: {
     });
   }
 
-    if (highConfidence || input.candidates.length === 0) {
+    if (highConfidence) {
       await tx.locateCandidate.deleteMany({ where: { inspirationId: inspiration.id } });
     }
 
-    if (!highConfidence) {
+    if (!highConfidence && input.candidates.length) {
       for (const candidate of input.candidates) {
         await tx.locateCandidate.upsert({
         where: { inspirationId_rank: { inspirationId: inspiration.id, rank: candidate.rank } },
@@ -413,7 +497,7 @@ export async function persistIngestOutput(input: {
         WHERE id = ${poiId}::uuid
       `);
     }
-    await tx.$executeRaw(Prisma.sql`
+    if (cityTimezone && input.timeEvidence.length) await tx.$executeRaw(Prisma.sql`
       DELETE FROM "InspirationEvidence"
       WHERE inspiration_id = ${inspiration.id}::uuid
     `);
@@ -439,22 +523,23 @@ export async function persistIngestOutput(input: {
       `);
     }
     if (cityId && poiId) await refreshAnchorPoolForCity(tx as any, cityId);
-    await tx.$executeRaw(Prisma.sql`
-      UPDATE "IngestJob"
-      SET status = 'done'::"IngestStatus", updated_at = NOW()
-      WHERE id = ${input.job.dbId}::uuid
-    `);
-
-    return {
-      inspirationId: inspiration.id,
-      locateStatus,
-      assetCount: input.assets.length,
-      candidateCount: input.candidates.length,
-    };
+    const assetCount = await tx.asset.count({where:{inspirationId:inspiration.id}});
+    const candidateCount = await tx.locateCandidate.count({where:{inspirationId:inspiration.id}});
+    const actualLocate = inspiration.locateStatus === 'resolved' ? 'resolved' as const : 'pending' as const;
+    const cityName = highConfidence?.cityName ?? previous?.city?.name ?? null;
+    const snapshot = advanceSnapshot(snapshotFromDb(currentJob),{ source_title:inspiration.title ?? undefined,partial:input.partial,candidate_count:candidateCount,
+      result:{inspiration_id:inspiration.id,locate_status:actualLocate,asset_count:assetCount,city_name:cityName}},input.job.retryCount+1);
+    if(input.checkpoint){
+      if(!input.lease||input.checkpoint.phase!=='saved')throw new AuthFault('INGEST_CHECKPOINT_INVALID',503);
+      await writeIngestCheckpoint(tx,currentJob,input.checkpoint,input.lease);
+    }
+    await appendSnapshotEvent(tx,currentJob,snapshot,'fact',input.lease);
+    return { inspirationId:inspiration.id,locateStatus:actualLocate,assetCount,candidateCount,cityName };
   });
 }
 
 export function clearIngestStateForTests() {
+  commands.clear();
   jobs.clear();
   sourceHashIndex.clear();
   subscribers.clear();
@@ -462,7 +547,7 @@ export function clearIngestStateForTests() {
 }
 
 function toLibraryItem(item: MemoryInspiration): LibraryInspirationRecord {
-  const { user_id: _userId, candidates: _candidates, ...safeItem } = item;
+  const { user_id: _userId, candidates: _candidates, asset_keys: _assetKeys, ...safeItem } = item;
   return safeItem;
 }
 
@@ -555,7 +640,11 @@ export async function listLibraryInspirationsForUser(userId: string, filters: { 
     },
   } as any)) as any[];
 
-  return rows.map((row: any): LibraryInspirationRecord => ({
+  return rows.map(toPrismaLibraryItem);
+}
+
+function toPrismaLibraryItem(row: any): LibraryInspirationRecord {
+  return {
     id: row.id,
     title: row.title,
     summary: row.text,
@@ -568,7 +657,22 @@ export async function listLibraryInspirationsForUser(userId: string, filters: { 
     asset_count: row.assets.length,
     candidate_count: row.candidates.length,
     created_at: row.createdAt.toISOString(),
-  }));
+  };
+}
+
+export async function getIngestResult(userId: string, jobId: string): Promise<LibraryInspirationRecord> {
+  const snapshot = await getIngestSnapshot(userId,jobId);
+  if (!snapshot.result) throw new AuthFault('INGEST_RESULT_NOT_FOUND',404);
+  const db = getPrisma(), ownerId = dbUserIdFor(userId);
+  if (!db) {
+    const row = memoryInspirations.get(snapshot.result.inspiration_id);
+    if (!row || row.user_id !== userId) throw new AuthFault('INGEST_RESULT_NOT_FOUND',404);
+    return toLibraryItem(row);
+  }
+  const row = await authAuthority(() => db.inspiration.findFirst({where:{id:snapshot.result!.inspiration_id,userId:ownerId},
+    include:{city:true,poi:true,assets:{select:{id:true}},candidates:{select:{id:true}}}}));
+  if (!row) throw new AuthFault('INGEST_RESULT_NOT_FOUND',404);
+  return toPrismaLibraryItem(row);
 }
 
 export async function listLibraryCandidatesForUser(userId: string, inspirationId: string): Promise<LibraryCandidateRecord[] | null> {
@@ -596,5 +700,22 @@ export async function listLibraryCandidatesForUser(userId: string, inspirationId
       name: typeof snapshot.name === 'string' ? snapshot.name : '待确认地点',
       address: typeof snapshot.address === 'string' ? snapshot.address : '待确认地址',
     };
+  });
+}
+
+/** Fail startup before advertising a runtime whose required additive schema has not been applied. */
+export async function assertIngestSchema() {
+  const db = getPrisma();
+  if (!db) { if (!fixtureAuth()) throw new AuthFault('AUTH_AUTHORITY_UNAVAILABLE',503,true); return; }
+  await authAuthority(async () => {
+    await db.$queryRaw`SELECT state_version,snapshot_json,event_stream_id,last_event_seq,replay_floor_seq,execution_pending,lease_fence,lease_owner,lease_expires_at,next_execution_at,checkpoint_version,checkpoint_json,execution_failure_count,auth_version,retry_count FROM "IngestJob" LIMIT 0`;
+    await db.$queryRaw`SELECT job_id,seq,snapshot_json,occurred_at FROM "IngestEventRecord" LIMIT 0`;
+    await db.$queryRaw`SELECT user_id,operation_id,request_hash,job_id,attempt FROM "IngestCommand" LIMIT 0`;
+    const guards = await db.$queryRaw<Array<{ok:boolean}>>`SELECT (
+      EXISTS(SELECT 1 FROM pg_constraint WHERE conrelid='"IngestEventRecord"'::regclass AND conname='IngestEventRecord_pkey' AND contype='p')
+      AND EXISTS(SELECT 1 FROM pg_trigger WHERE tgrelid='"IngestEventRecord"'::regclass AND tgname='IngestEventRecord_no_update' AND tgenabled IN ('O','A'))
+      AND (SELECT count(*) FROM pg_constraint WHERE conrelid='"IngestJob"'::regclass AND convalidated AND conname IN ('IngestJob_log_bounds_check','IngestJob_execution_bounds_check','IngestJob_lease_pair_check'))=3
+    ) AS ok`;
+    if (!guards[0]?.ok) throw new AuthFault('INGEST_SCHEMA_NOT_READY',503,true);
   });
 }

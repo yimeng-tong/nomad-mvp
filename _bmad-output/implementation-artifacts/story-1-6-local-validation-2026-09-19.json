@@ -1,0 +1,206 @@
+{
+  "story": "1.6",
+  "date": "2026-09-19",
+  "status": "in-progress",
+  "baselineCommit": "7250a8a131a370698bff53538a4405c2ddb94c1c",
+  "checks": {
+    "mobileVitest": {
+      "files": 26,
+      "passed": 217
+    },
+    "nativeConfigTests": {
+      "passed": 3
+    },
+    "backendIngestTests": {
+      "passed": 18
+    },
+    "openapiContractTests": {
+      "passed": 8
+    },
+    "isolatedPostgresChecks": {
+      "passed": 13,
+      "providerCalls": 0
+    },
+    "workspaceBuild": "passed",
+    "browserFixture": "passed",
+    "clientReview": {
+      "layers": 3,
+      "patchedFindings": 9,
+      "residuals": 0
+    },
+    "inputBoundaryReview": {
+      "layers": 3,
+      "patchedFindings": 5,
+      "residuals": 0
+    },
+    "nativeProjectRegistration": "both-platforms-clipboard-and-auth-verified",
+    "customUrlSchemeRegistration": "both-projects-match-installed-app-id-static-proof",
+    "androidDebugBuild": {
+      "result": "passed",
+      "seconds": 11,
+      "tasks": 243
+    },
+    "clipboardVersion": "8.0.1",
+    "journalCore": {
+      "checks": 22,
+      "actualIndexedDb": true,
+      "actualWebCrypto": true,
+      "browserProcesses": 2,
+      "passed": true,
+      "controllerIntegrationVerified": false,
+      "portCollisionNegativeProbe": "passed"
+    },
+    "journalCoreReview": {
+      "layers": 3,
+      "patchedFindings": 11,
+      "residuals": 0
+    },
+    "controllerJournalIntegration": {
+      "passed": true,
+      "browserProcesses": 2,
+      "actualIndexedDb": true,
+      "authenticationApiAndDeepLinkDeliveryAreFixtures": true,
+      "duplicatePostOnRestart": false,
+      "changedOwnerReadsOldCommands": false,
+      "realProviderCalls": 0
+    },
+    "journalWiringReview": {
+      "layers": 3,
+      "patchedFindingsAndIntegrationFixes": 7,
+      "residuals": 0,
+      "dismissedConditionalFindings": 1
+    },
+    "finalUiAfterNoticeAdjustment": {
+      "passed": 25
+    },
+    "customSchemeCompatibility": {
+      "actualBrowser": "Chrome/127.0.6533.88",
+      "fixedEntryLexicalParsing": true,
+      "minimumWebViewUnchanged": 111,
+      "nativeOsDeliveryVerified": false
+    },
+    "measurementTests": {
+      "passed": 13,
+      "typecheck": "passed",
+      "cliRecalculation": "matches-overall-and-scenarios",
+      "historicalBaselineOverwrite": "rejected"
+    },
+    "measurementReview": {
+      "layers": 3,
+      "patchedFindings": 7,
+      "residuals": 0,
+      "scope": "local-fixture-measurement-and-controller-observation"
+    },
+    "controllerStreamRegression": {
+      "immediateAckSubscription": "passed",
+      "synchronousFailureKeepsAcceptance": "passed",
+      "synchronousTerminalDisposalAndStaleCallbacks": "passed",
+      "observerFailureIsolation": "passed"
+    },
+    "handoff": "passed",
+    "telemetryBoundary": {
+      "coreTests": 21,
+      "reviewLayers": 3,
+      "patchedFindings": 7,
+      "residuals": 0,
+      "actualBrowserFixtureEnvelopes": 3,
+      "realSdkInitialized": false
+    }
+  },
+  "browserEvidence": "_bmad-output/implementation-artifacts/evidence/story-1-6-browser-2026-09-19/report.json",
+  "productionReady": false,
+  "realProviderCalls": 0,
+  "nativeDeviceVerified": false,
+  "pending": [
+    "real U-Link/U-App SDK consent/attribution integration and actual query evidence",
+    "real staging WL-IMPORT-DOCK baseline, provider cost evidence and versioned target decision",
+    "actual Android/iOS input, permission and process-rebuild evidence; iOS build/signing",
+    "real authentication/legal resources and production recovery/PITR"
+  ],
+  "sourceSha256": {
+    "apps/mobile/src/App.tsx": "fee3387d9972f5c31972a6780cb894b328e6b821ef672121a879eb2cd497141e",
+    "apps/mobile/src/home/HomeScreen.tsx": "2270504f724e4978415e225c8408f880532378b6002ff160ca26562c48fe638b",
+    "apps/mobile/src/home/HomeImportDock.tsx": "9376a616e100af1467dd111038c5477d09cfd4c17b0909e5d35964a00bf3328c",
+    "apps/mobile/src/home/HomeSheet.tsx": "cc78a0182cec06bee409ebb94fdf9d95f689a6f278fb60932baffa938ba34e17",
+    "apps/mobile/src/home/dock-controller.ts": "5c8a6c9719c3a293b1dac53459d0019b49d3f70fad5883b8f9c24a8fbdbc6082",
+    "apps/mobile/src/home/dock-model.ts": "6969ac09e4e9fb4d62b4f3c0715e3ef9de106e5bbf14b6accd6489664120b797",
+    "apps/mobile/src/home/api.ts": "8fffb6f31010c6ca9831956e9a603de0472b377e1394a3229698291dd4b6b89b",
+    "apps/mobile/src/auth/stream.ts": "b87e8788f536673cc9f9e203f77929bdb530e96ff7fcc065c2d2dda584adb617",
+    "apps/mobile/src/styles.css": "b36c4add6cc5a5ea0a2cdcedbcd32e21d7b3520bf588a2e01f08b22ae1b7c938",
+    "docs/api/openapi.yaml": "c064cae23af1e75734a743d6e98ef1faa3024cd64088b53b7b0cdc3b89e27b76",
+    "packages/prisma/schema.prisma": "318fb4f23a26841e47c0c7c31e876d3f25ee5503a3607e4ca46e654756c37a8b",
+    "apps/server/src/ingest/store.ts": "04c774ed18e5d55706249e4a96c5f67fc555877089de4c2520280e8ec376f664",
+    "apps/server/src/ingest/pipeline.ts": "5120dbacd39571fb2b54d125d1ef4bcd9e495882021b91124b01ea03ffdabb40",
+    "apps/server/src/routes/ingest.ts": "4343a582c1226593b412a8f5277ecaec02568cde85360d0ff892fa0b89bf3be0",
+    "apps/mobile/src/home/clipboard.ts": "9ff088bc4419063b2afb5e68fc774db8195093f31f3dea22b0d74a3cde1e8d84",
+    "apps/mobile/src/home/input-inbox.ts": "14fc6c3c4eb5b762809bd735a5fdae3db8459cf3b4c781bd6c757ef62716f75a",
+    "apps/mobile/src/home/input-runtime.ts": "879b721a8e82e7f2fc12ccb19996e9224bd32465da9d6151b8180e61ae21a6d2",
+    "apps/mobile/src/platform/host-runtime.ts": "ad6d63e0793ce79dad9cac7c4f521abbc798702d8b3a02b0f6c5e50eff7c7c05",
+    "apps/mobile/src/platform/HostBootstrap.tsx": "9a5b649da8be357b8355f823c7374b707dba6943e09d0c4769e571807edf6075",
+    "apps/mobile/src/platform/native-build-config.ts": "3ac0295ce9aeb3472bd172ea5fcba27ae08ddf73f73062de1de2b57b13874b3c",
+    "apps/mobile/scripts/verify-native-project.mjs": "b9f212e765696a9e629436ddedd0edfe1277f5356fe5f942d6480ed5c57d6871",
+    "apps/mobile/package.json": "c00b08fb2fddd973aa29f49608eaacca390372f70b1710004ed5486723838574",
+    "pnpm-lock.yaml": "a0e3e64ebba0437bb4c00da9f384d728a3db5edd2138e0ab2933364b06165ea6",
+    "apps/mobile/src/home/operation-journal.ts": "fea7af9ce7157b72e25f5e33d168db50c6303de6e5e7e28d173f1e9e29ba15f8",
+    "apps/server/src/ingest/link-parser.ts": "d49be0fc9c848eede073606ebbfbc6fd6b5155c23eb5e54dd32e7c8b5f30d3dd",
+    "apps/server/src/routes/home.ts": "4f2c7ba2304eb644721dce319d117f7e035592f673f4c6fb56972cc6571101cd",
+    "packages/types/src/api-types.ts": "274e7fb6449b511c92ce89b54472ecbd160d98ce7d1a6307b8671b1485186b19",
+    "packages/types/src/import-measurements.ts": "c8c5aa872a24a67457150a2c41d7c9ae512adefd0a1209e0240eb37515b0a012",
+    "scripts/measurements/import-report.mts": "e8837796166d877b901748d190d8d5d9adbe080898d07916b073ddc72be24186",
+    "scripts/measurements/import-report.test.mts": "465ae38616b4f62f5bb4a904baf95e9ec5311aa5bd6dd4b6f4a1aac852d88849",
+    "scripts/measurements/run-import-dock.mts": "f681ada2b5d5f1e83c0f66ce1352166887dc7f1d730a25cf9759cd38e5335993",
+    "scripts/measurements/tsconfig.json": "b2ca7b233ec3d4011eedf2b280178063511aff36faca04cdc3b1e802f37ae0df",
+    "apps/mobile/scripts/import-measurement-harness.tsx": "72d8aea03754a06820c89327b2263e33ed895815303efac626cf04982cdfe128",
+    "packages/types/package.json": "9b85961e7978261473b23825f17716077aab767d4c73fe2c4c90b79e413f6217",
+    "package.json": "e7d06633e525e1843412fb012c39672356bfd1b867e75e32fa636c63a788a503",
+    "apps/mobile/src/telemetry/dictionary.ts": "6918d7fb6e472bec35ac85e37ec51aeffafcf9fcbb4e99376966c7f991b18db7",
+    "apps/mobile/src/telemetry/dictionary.test.ts": "2a513bcc47624e68049c3f87208c5425d57e267edcb5199924679798c52094d3",
+    "apps/mobile/src/telemetry/runtime.ts": "9f0ae1dfe894546e1175c67f61c10f8a38e0125f43cb74bb14f0a116a8686ac7",
+    "apps/mobile/src/telemetry/runtime.test.ts": "8db26283d8c1e99dddf4b38d6ac5f27523bb6c01c33b9153050d98fb6b55ecc9",
+    "apps/mobile/src/auth/analytics.ts": "9fb3bcd74575162082cb0f11b4640032a570419e780c798a6cc22b05bb38490a",
+    "apps/mobile/src/auth/analytics.test.ts": "fe714fa2de32ca0fcc03fdd492a1dcf82d178ec7fe3c77afc9409df7a6065f20",
+    "apps/mobile/src/auth/LoginScreen.tsx": "5e6a4b74dbaadfd8536f19befcd5ad60285cb7b4b6e641108c2ebb0dcf6384bb",
+    "apps/mobile/src/planner/PlannerScreen.tsx": "035c153a10f687a9819cbf019ad70ee8f5008e7edf99f79a612cc1fb43b56417",
+    "apps/mobile/src/planner/DayPlanScreen.tsx": "658dcc8905483099a9f42f9f21f89bf5c2415eace8b929684e3e0377112af47c",
+    "apps/mobile/src/planner/DayPlanScreen.test.tsx": "9d506f3afbe5dd54b13c046e1127a78c98652671fe2d3f20eaa8fea2cdc0f9e0",
+    "apps/mobile/src/settings/SettingsScreen.tsx": "e7354413651e18a2936319b8bec62118cc43e4ef7ecfaed79fae835144cdbdda",
+    "apps/mobile/scripts/telemetry-browser-probe.mjs": "86b35c780fb4a379da7668582960ed523d64c117298ea911e71b29283e50326c",
+    "docs/ops/telemetry-first-use-v1.md": "85b25f54cee58738fb64f24d39bf7bde62fe1d90eb689dab84bb41e44c33d231"
+  },
+  "androidArtifact": {
+    "path": "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+    "sha256": "96a9a0e62468c5f43192cac72eacc769f2b78cab99a1197a5a28358e9b216467",
+    "signature": "debug-v2-verified",
+    "deviceRun": false,
+    "appId": "dev.nomad.mvp"
+  },
+  "nativeProjectProof": {
+    "scope": "generated-project-config-and-copied-assets",
+    "authenticationRegistered": {
+      "android": true,
+      "ios": true
+    },
+    "clipboardRegistered": {
+      "android": true,
+      "ios": true
+    },
+    "appId": "dev.nomad.mvp",
+    "files": 8,
+    "webAssetsSha256": "d22a920074329816f6461ad24eefe4b2e067cffe76bfddb2a7629fc666038191",
+    "webAssets": {
+      "assets/index-DFzk6kMZ.css": "5e329bd06148ced420b6a90166e9071a30e9aff310733246a03113412fa96042",
+      "assets/index-GqaE9cKa.js": "3a4a4b3930b0d555565d6ad0132d0a7d373bce4e2045589015c68c06d9b9248a",
+      "assets/web-Bu-q3G9N.js": "730a8253f163af07c609056dcec8e4bdf6cb4415d778931e099851e1cde78619",
+      "assets/web-C1Pto3l3.js": "ad23a946128a2a21d6dba31928eb92dc83073487ae6080bb1796c96089e4b8c8",
+      "index.html": "e74b0e139d450b127cfd596d755365fb89f25318c3eceae0ecb99756ded2ef99",
+      "vendor/pnvs/ct4.js": "f2e9d00c14e079590367bff6dbeb09b142f6d4b1353c56afb3caa4d7d0164861",
+      "vendor/pnvs/provenance.json": "81e6406699d10940107819eb4f06e72197c1f101c1766f67848941023156cfca",
+      "webview-unavailable.html": "046534ab2c64021dcb3c48e76de9ca48a953a09f387e0502bc9e5578841c374e"
+    },
+    "runtimeEvidenceAssessed": false
+  },
+  "clipboardUsesExplicitFixture": true,
+  "journalEvidence": "_bmad-output/implementation-artifacts/evidence/story-1-6-journal-2026-09-19/report.json",
+  "measurementEvidence": "_bmad-output/implementation-artifacts/evidence/story-1-6-measurement-2026-09-19/validation.json",
+  "telemetryEvidence": "_bmad-output/implementation-artifacts/evidence/story-1-6-telemetry-2026-09-19/validation.json"
+}

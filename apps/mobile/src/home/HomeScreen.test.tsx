@@ -1,6 +1,18 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { HomeScreen } from './HomeScreen';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useEffect, useMemo } from 'react';
+import { HomeScreen as ActualHomeScreen, type HomeScreenProps } from './HomeScreen';
+import { ImportDockController } from './dock-controller';
+import { createJournalFixture } from './journal.test-support';
+import { operationJournal } from './operation-journal';
+function HomeScreen(props: HomeScreenProps) {
+  const controller = useMemo(() => new ImportDockController(props.apiClient!, createJournalFixture()), [props.apiClient]);
+  useEffect(() => { controller.activate(); return () => controller.deactivate(); }, [controller]);
+  return <ActualHomeScreen {...props} dockController={controller} />;
+}
+import { commitIdentity } from '../auth/session-context';
+import { webcrypto } from 'node:crypto';
+import { inputInbox } from './input-runtime';
 import type {
   HomeApiClient,
   HomeInputParseResponse,
@@ -90,11 +102,11 @@ function createApiClient(parseResult?: HomeInputParseResponse): HomeApiClient {
     })),
     getCandidates: vi.fn(async () => ({ candidates })),
     parseInput: vi.fn(async () => parseResult ?? ({ type: 'unknown', original_text: '随便看看' } satisfies HomeInputParseResponse)),
-    startIngest: vi.fn(async () => ({
-      ingest_id: 'ing_123',
-      state: 'created' as const,
-      sse_url: '/ingest/ing_123/events',
-      warning: { code: 'INGEST_SINGLE_LINK_ONLY' as const, message: '一次仅处理一条链接，其余请逐条粘贴', extra_count: 1 },
+    startIngest: vi.fn(async (request) => ({
+      operation_id: request.operation_id!, ingest_id: request.operation_id!, state: 'created' as const,
+      disposition: 'created' as const, sse_url: '/ingest/job/events',
+      snapshot: { ingest_id: request.operation_id!, attempt: 1, state_version: 0, state: 'created' as const,
+        source_title: null, result: null, partial: false, retriable: false, updated_at: '2026-09-19T00:00:00Z', actions: { retry: false, view: false } },
     })),
   };
 }
@@ -104,8 +116,10 @@ function createAnalytics(): Analytics {
 }
 
 describe('HomeScreen', () => {
+  beforeEach(() => { commitIdentity({ ownerId: 'home-test', sessionId: 'home-session' }); vi.spyOn(operationJournal, 'claimed').mockResolvedValue(false); });
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it('renders destination cards and library items from user-scoped API data', async () => {
@@ -140,12 +154,13 @@ describe('HomeScreen', () => {
     expect(screen.queryByText('西湖傍晚散步')).not.toBeInTheDocument();
   });
 
-  it('routes classified XHS input to canonical ingest and shows multi-link warning copy', async () => {
+  it('submits every ordered link, keeps the composer editable and reports only accepted links', async () => {
     const apiClient = createApiClient({
       type: 'xhs_link',
       original_text: 'https://www.xiaohongshu.com/explore/a https://xhslink.com/b',
       url: 'https://www.xiaohongshu.com/explore/a',
-      warning: { code: 'INGEST_SINGLE_LINK_ONLY', message: '一次仅处理一条链接，其余请逐条粘贴', extra_count: 1 },
+      links: [{ url: 'https://www.xiaohongshu.com/explore/a', position: 0 }, { url: 'https://xhslink.com/b', position: 1 }],
+      unrecognized: [{ text: 'extra', reason: 'not_a_link' }],
     });
     render(<HomeScreen apiClient={apiClient} analytics={createAnalytics()} />);
 
@@ -155,8 +170,10 @@ describe('HomeScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: '发送' }));
 
     await waitFor(() => expect(apiClient.parseInput).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(apiClient.startIngest).toHaveBeenCalledWith({ url: 'https://www.xiaohongshu.com/explore/a' }));
-    expect(await screen.findByText('一次仅处理一条链接，其余请逐条粘贴')).toBeInTheDocument();
+    await waitFor(() => expect(apiClient.startIngest).toHaveBeenCalledWith(expect.objectContaining({ url: 'https://www.xiaohongshu.com/explore/a', operation_id: expect.any(String) })));
+    expect(await screen.findByText('已添加2个链接，部分内容未识别')).toBeInTheDocument();
+    expect(screen.getByLabelText('统一输入')).toBeEnabled();
+    expect(screen.getByLabelText('统一输入')).toHaveAttribute('placeholder', '粘贴分享链接或输入想去的地点，如：厦门 3天');
   });
 
   it('routes trip text and selected anchors into a Planner handoff', async () => {
@@ -177,6 +194,11 @@ describe('HomeScreen', () => {
     fireEvent.click(await screen.findByRole('button', { name: /选择 西湖傍晚散步/ }));
     fireEvent.change(screen.getByLabelText('统一输入'), { target: { value: '杭州 2026-07-02 出发 3天 舒适' } });
     fireEvent.click(screen.getByRole('button', { name: '发送' }));
+
+    const continueButton = await screen.findByRole('button', { name: '继续规划' });
+    expect(continueButton.closest('footer')).toHaveAccessibleName('导入与旅行输入');
+    expect(screen.queryByText('comfortable')).not.toBeInTheDocument();
+    fireEvent.click(continueButton);
 
     await waitFor(() => expect(onPlannerHandoff).toHaveBeenCalledTimes(1));
     expect(onPlannerHandoff).toHaveBeenCalledWith(
@@ -249,8 +271,8 @@ describe('HomeScreen', () => {
     const sheet = await screen.findByRole('dialog', { name: '选择输入类型' });
     fireEvent.click(within(sheet).getByRole('button', { name: '作为链接入库' }));
 
-    await waitFor(() => expect(apiClient.startIngest).toHaveBeenCalledWith({ share_text: '随便看看' }));
-    expect(await screen.findByText('一次仅处理一条链接，其余请逐条粘贴')).toBeInTheDocument();
+    await waitFor(() => expect(apiClient.startIngest).toHaveBeenCalledWith(expect.objectContaining({ share_text: '随便看看', operation_id: expect.any(String) })));
+    expect(await screen.findByText('已添加1个链接')).toBeInTheDocument();
     expect(screen.queryByRole('dialog', { name: '选择输入类型' })).not.toBeInTheDocument();
   });
 
@@ -329,5 +351,72 @@ describe('HomeScreen', () => {
     expect(payloads.join(' ')).not.toContain('https://www.xiaohongshu.com');
     expect(payloads.join(' ')).not.toContain('0.72');
     expect(payloads.join(' ')).not.toContain('sid=');
+  });
+
+  it('fences reopened result requests, keeps add idempotent, and defers a second modal', async () => {
+    const apiClient = createApiClient({ type: 'xhs_link', original_text: 'https://xhslink.com/a', links: [{ url: 'https://xhslink.com/a', position: 0 }] });
+    vi.mocked(apiClient.startIngest).mockImplementation(async (request) => ({
+      operation_id: request.operation_id!, ingest_id: 'saved-job', state: 'done', disposition: 'reused', sse_url: '/ingest/saved-job/events',
+      snapshot: { ingest_id: 'saved-job', attempt: 1, state_version: 4, state: 'done', source_title: inspirations[0].title,
+        result: { inspiration_id: inspirations[0].id, asset_count: 1, city_name: '杭州', locate_status: 'resolved' }, stored_count: 1,
+        partial: false, retriable: false, updated_at: '2026-09-19T00:00:00Z', actions: { retry: false, view: true } },
+    }));
+    let rejectOld!: (error: Error) => void, resolveNew!: (item: LibraryInspirationItem) => void;
+    apiClient.getIngestResult = vi.fn()
+      .mockImplementationOnce(() => new Promise((_resolve, reject) => { rejectOld = reject; }))
+      .mockImplementationOnce(() => new Promise((resolve) => { resolveNew = resolve; }))
+      .mockResolvedValue(inspirations[0]);
+    render(<HomeScreen apiClient={apiClient} />);
+    fireEvent.change(await screen.findByLabelText('统一输入'), { target: { value: 'https://xhslink.com/a' } });
+    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+    fireEvent.click(await screen.findByRole('button', { name: '查看已保存内容' }));
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: '关闭' }));
+    fireEvent.click(screen.getByRole('button', { name: '查看已保存内容' }));
+    await act(async () => rejectOld(new Error('old response')));
+    expect(screen.getByRole('dialog', { name: '已保存的灵感' })).toHaveTextContent('正在读取已保存内容');
+    await act(async () => resolveNew(inspirations[0]));
+    fireEvent.click(screen.getByRole('button', { name: '加入已选灵感' }));
+    fireEvent.click(screen.getByRole('button', { name: '查看已保存内容' }));
+    expect(await screen.findByRole('button', { name: '已选此灵感' })).toBeDisabled();
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: '关闭' }));
+    let resolveParse!: (value: HomeInputParseResponse) => void;
+    vi.mocked(apiClient.parseInput).mockImplementationOnce(() => new Promise((resolve) => { resolveParse = resolve; }));
+    fireEvent.change(screen.getByLabelText('统一输入'), { target: { value: '慢一点的旅行想法' } });
+    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+    fireEvent.click(screen.getByRole('button', { name: '查看已保存内容' }));
+    await screen.findByRole('button', { name: '已选此灵感' });
+    await act(async () => resolveParse({ type: 'unknown', original_text: '慢一点的旅行想法' }));
+    expect(screen.getAllByRole('dialog')).toHaveLength(1);
+    expect(screen.getByRole('dialog')).toHaveAccessibleName('已保存的灵感');
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: '关闭' }));
+    expect(await screen.findByRole('dialog', { name: '选择输入类型' })).toBeInTheDocument();
+  });
+
+  it('reads clipboard only on the paste button and preserves manual input on rejection', async () => {
+    const readText = vi.fn().mockResolvedValue('厦门 3天');
+    vi.stubGlobal('navigator', { clipboard: { readText }, userActivation: { isActive: true } });
+    const apiClient = createApiClient(); render(<HomeScreen apiClient={apiClient} />);
+    await screen.findByLabelText('统一输入');
+    fireEvent(document, new Event('visibilitychange'));
+    expect(readText).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '从剪贴板粘贴' }));
+    await waitFor(() => expect(screen.getByLabelText('统一输入')).toHaveValue('厦门 3天'));
+    expect(apiClient.parseInput).not.toHaveBeenCalled(); expect(apiClient.startIngest).not.toHaveBeenCalled();
+    readText.mockRejectedValue(new DOMException('denied', 'NotAllowedError'));
+    fireEvent.click(screen.getByRole('button', { name: '从剪贴板粘贴' }));
+    expect(await screen.findByText('暂时无法读取剪贴板，可长按输入框粘贴或直接输入。')).toBeInTheDocument();
+    expect(screen.getByLabelText('统一输入')).toBeEnabled(); expect(screen.getByLabelText('统一输入')).toHaveValue('厦门 3天');
+  });
+
+  it('offers early link content in the same Dock and waits for user confirmation before any parsing or ingest', async () => {
+    vi.stubGlobal('crypto', webcrypto);
+    const apiClient = createApiClient(); render(<HomeScreen apiClient={apiClient} />);
+    fireEvent.change(await screen.findByLabelText('统一输入'), { target: { value: '保留草稿' } });
+    await act(async () => { await inputInbox.receive('dev.nomad.mvp://input?v=1&text=%E5%8E%A6%E9%97%A8', { appId: 'dev.nomad.mvp', httpsOrigins: [] }, 'home-test'); });
+    const add = screen.getByRole('button', { name: '放入输入框' });
+    expect(add.closest('footer')).toHaveAccessibleName('导入与旅行输入');
+    expect(apiClient.parseInput).not.toHaveBeenCalled();
+    fireEvent.click(add); expect(screen.getByLabelText('统一输入')).toHaveValue('保留草稿\n厦门');
+    expect(apiClient.startIngest).not.toHaveBeenCalled(); expect(screen.queryByRole('button', { name: '放入输入框' })).not.toBeInTheDocument();
   });
 });

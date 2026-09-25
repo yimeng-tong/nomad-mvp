@@ -1,0 +1,26 @@
+{
+  "CURRENT.md": {
+    "source": "CURRENT.md",
+    "sha256": "bf9804cd2cb62567c94e6b6a5d8bfae03da368ffb416a88483b74407c3189283"
+  },
+  "AGENTS.md": {
+    "source": "AGENTS.md",
+    "sha256": "9e199df547c8ffd41d375e056a0e7899e202a0156bd49fc80d7902b6df0a5b98"
+  },
+  "project-context.md": {
+    "source": "_bmad-output/project-context.md",
+    "sha256": "5c9857cd65c7eb59cf2f35b3def1e0bf983bf300adaa40526b37aa5d303e002c"
+  },
+  "sprint-status.yaml": {
+    "source": "_bmad-output/implementation-artifacts/sprint-status.yaml",
+    "sha256": "3cc49103551a9a0248db001dc7492ad119e4253d0c5bdb83a44bb3448b9b5d70"
+  },
+  "check-handoff.mjs": {
+    "source": "scripts/check-handoff.mjs",
+    "sha256": "fab22019deacdcea1c561bb6d11377dbbccb10c82069509e8cccf723d7954c48"
+  },
+  "check-handoff.test.mjs": {
+    "source": "scripts/check-handoff.test.mjs",
+    "sha256": "2bb9e8b3d99cd8975d38afc99581df57e692d7626d82b74532b6b0eb548ef16d"
+  }
+}

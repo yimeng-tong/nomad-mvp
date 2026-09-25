@@ -1,6 +1,6 @@
 import fp from 'fastify-plugin';
 import { authGuard } from '../plugins/auth.js';
-import { parseXhsInput } from '../ingest/link-parser.js';
+import { parseXhsBatch } from '../ingest/link-parser.js';
 import { HomeInputParseBody } from '../schemas.js';
 import type { IngestWarning } from '../ingest/types.js';
 
@@ -33,14 +33,12 @@ function extractTripParams(text: string): TripParams | null {
   const dateMatch = text.match(/(20\d{2})[-/.年](\d{1,2})[-/.月](\d{1,2})/u);
   const days = Number(daysMatch[1]);
   if (!Number.isInteger(days) || days < 1) return null;
-  const pace = /舒适|comfortable|normal/u.test(text) ? 'comfortable' : /紧凑|tight|特种兵|赶/u.test(text) ? 'tight' : undefined;
   const params: TripParams = { city, days };
   if (dateMatch) {
     const [, year, month, day] = dateMatch;
     if (!isValidCalendarDate(year, month, day)) return null;
     params.start_date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   }
-  if (pace) params.pace = pace;
   return params;
 }
 
@@ -48,7 +46,6 @@ function createPlannerRoute(params: TripParams, source: 'home_input' | 'home_car
   const search = new URLSearchParams({ city: params.city, source });
   if (params.start_date) search.set('start', params.start_date);
   if (params.days) search.set('days', String(params.days));
-  if (params.pace) search.set('pace', params.pace);
   return `/planner/pick?${search.toString()}`;
 }
 
@@ -69,8 +66,8 @@ export default fp(async (app) => {
     }
 
     const text = parsed.data.text;
-    const xhs = parseXhsInput({ share_text: text });
-    if (xhs.url) return reply.send(xhsResponse(text, xhs.url, xhs.warning));
+    const batch = parseXhsBatch(text);
+    if (batch.links.length) return reply.send({ ...xhsResponse(text,batch.links[0].url), ...batch });
 
     const tripParams = extractTripParams(text);
     if (tripParams) {

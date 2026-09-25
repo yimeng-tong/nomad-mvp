@@ -1,0 +1,456 @@
+{
+  "batch": "all-story-preparation-2026-09-25",
+  "phase": "superseded-by-just-in-time-preparation",
+  "input_snapshot": "_bmad-output/implementation-artifacts/archive/all-story-preparation-2026-09-25/snapshot-manifest.json",
+  "authorized_user_request": "继续并完成所有待准备项",
+  "total": 55,
+  "gwt": 1018,
+  "queue": [
+    {
+      "id": "9.5",
+      "key": "9-5-browser-flow-and-visual-regression-gates",
+      "gwt": 6,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "9.3",
+      "key": "9-3-shared-ui-components-and-safe-app-sheet",
+      "gwt": 8,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "1.8",
+      "key": "1-8-owner-import-records-and-versioned-deduplication",
+      "gwt": 11,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "1.9",
+      "key": "1-9-production-image-text-understanding-and-evidence",
+      "gwt": 11,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "1.10",
+      "key": "1-10-adaptive-video-understanding-and-local-frame-resampling",
+      "gwt": 12,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "1.11",
+      "key": "1-11-amap-poi-verification-branch-disambiguation-and-manual-correction",
+      "gwt": 22,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "9.6",
+      "key": "9-6-identity-scoped-server-read-queries",
+      "gwt": 6,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "9.7",
+      "key": "9-7-typed-navigation-and-host-history",
+      "gwt": 7,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.3",
+      "key": "2-3-single-city-travel-time-and-boundary-confirmation",
+      "gwt": 11,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.4",
+      "key": "2-4-unified-flight-and-rail-service-lookup",
+      "gwt": 14,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.5",
+      "key": "2-5-preplanning-nightly-stays-breakfast-and-luggage",
+      "gwt": 15,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.6",
+      "key": "2-6-preplanning-pace-and-additional-constraints",
+      "gwt": 13,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.7",
+      "key": "2-7-full-city-picker-and-l3-place-intent",
+      "gwt": 17,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.8",
+      "key": "2-8-shared-poi-information-sheet",
+      "gwt": 12,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.9",
+      "key": "2-9-single-planning-job-and-stable-timeline-transition",
+      "gwt": 17,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.10",
+      "key": "2-10-authoritative-route-facts-and-timeline-transport",
+      "gwt": 16,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.11",
+      "key": "2-11-constraint-first-complete-single-city-planning",
+      "gwt": 21,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.12",
+      "key": "2-12-amap-candidate-expansion-and-nonblocking-candidate-list",
+      "gwt": 19,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.13",
+      "key": "2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots",
+      "gwt": 16,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.14",
+      "key": "2-14-daily-load-estimation-and-explainable-summary",
+      "gwt": 13,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "2.15",
+      "key": "2-15-post-plan-place-search-and-manual-candidates",
+      "gwt": 14,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "3.1",
+      "key": "3-1-minute-timeline-editing-and-plan-wide-undo",
+      "gwt": 18,
+      "status": "in-progress",
+      "exists": false,
+      "paused": true
+    },
+    {
+      "id": "3.2",
+      "key": "3-2-controlled-candidate-placement-and-free-time-filling",
+      "gwt": 20,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "3.3",
+      "key": "3-3-post-plan-nightly-stay-breakfast-and-luggage-editing",
+      "gwt": 22,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "3.4",
+      "key": "3-4-incremental-validation-and-typed-conflict-fixes",
+      "gwt": 23,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "3.5",
+      "key": "3-5-controlled-conversational-local-adjustment",
+      "gwt": 25,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "4.1",
+      "key": "4-1-cross-city-intent-and-linked-trip-input-draft",
+      "gwt": 20,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "4.2",
+      "key": "4-2-adjacent-city-transfers-and-handoff-day-boundaries",
+      "gwt": 22,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "4.3",
+      "key": "4-3-independent-city-planning-and-atomic-linked-trip-publication",
+      "gwt": 24,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "4.4",
+      "key": "4-4-active-city-editing-and-linked-trip-revision-rebinding",
+      "gwt": 22,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "4.5",
+      "key": "4-5-day-excursion-intent-and-round-trip-transfer-draft",
+      "gwt": 19,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "4.6",
+      "key": "4-6-day-excursion-planning-and-atomic-timeline-publication",
+      "gwt": 24,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "4.7",
+      "key": "4-7-day-excursion-editing-and-scope-guards",
+      "gwt": 28,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "5.1",
+      "key": "5-1-revision-bound-ai-detail-enrichment",
+      "gwt": 24,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "5.2",
+      "key": "5-2-verifiable-result-sheet-and-citation-reading",
+      "gwt": 23,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "5.3",
+      "key": "5-3-line-level-detail-editing-and-ai-preservation",
+      "gwt": 19,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "5.4",
+      "key": "5-4-revision-bound-export-generation-and-preview",
+      "gwt": 28,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "5.5",
+      "key": "5-5-whole-trip-image-download-and-system-sharing",
+      "gwt": 24,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "6.1",
+      "key": "6-1-planned-meal-slots-and-primary-alternative-pool",
+      "gwt": 21,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "6.2",
+      "key": "6-2-foreground-location-meal-recall-and-plan-context-fallback",
+      "gwt": 22,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "6.3",
+      "key": "6-3-normalized-business-areas-and-owner-food-hints",
+      "gwt": 21,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "6.4",
+      "key": "6-4-trip-checklist-and-direct-or-ai-record-entry",
+      "gwt": 23,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "6.5",
+      "key": "6-5-lightweight-shopping-notes-and-label-shortcuts",
+      "gwt": 15,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "7.1",
+      "key": "7-1-recent-trips-and-context-resume",
+      "gwt": 23,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "7.3",
+      "key": "7-3-settings-account-and-available-actions",
+      "gwt": 15,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "7.4",
+      "key": "7-4-account-data-copy-export",
+      "gwt": 21,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "7.5",
+      "key": "7-5-account-deletion-and-cleanup-results",
+      "gwt": 23,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "7.6",
+      "key": "7-6-feedback-entry-and-reliable-submission",
+      "gwt": 21,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "8.1",
+      "key": "8-1-cross-flow-observability-and-fault-localization",
+      "gwt": 22,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "8.2",
+      "key": "8-2-reproducible-quality-regression-and-version-comparison",
+      "gwt": 24,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "8.3",
+      "key": "8-3-task-level-provider-routing-and-safe-release",
+      "gwt": 24,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "8.4",
+      "key": "8-4-platform-budget-and-usage-policy-management",
+      "gwt": 26,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "8.5",
+      "key": "8-5-terminal-ai-amap-incidents-and-telegram-alerts",
+      "gwt": 24,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "8.6",
+      "key": "8-6-operations-overview-and-read-only-diagnostics",
+      "gwt": 20,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    },
+    {
+      "id": "9.2",
+      "key": "9-2-android-apk-and-ios-testflight-delivery",
+      "gwt": 7,
+      "status": "backlog",
+      "exists": false,
+      "paused": false
+    }
+  ],
+  "completed": [],
+  "implementation_started": false,
+  "prepared_contracts_completed": 0,
+  "archived_draft_count": 17,
+  "archive_manifest": "_bmad-output/implementation-artifacts/archive/deferred-story-drafts-2026-09-25/manifest.json",
+  "superseding_user_request": "按照BMAD只做后续需要推进的内容，取消全量准备；移除当前开发停止边界，核对Sprint/在制剩余项/近期顺序，近期CS/VS后新启开发审阅任务。"
+}

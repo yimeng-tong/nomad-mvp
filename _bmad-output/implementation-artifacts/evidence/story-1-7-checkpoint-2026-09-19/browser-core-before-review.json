@@ -1,0 +1,27 @@
+{
+  "result": "passed",
+  "checks": [
+    "v1-upgrade-preserves-operations-claims-nonextractable-key-and-decryptable-payload",
+    "snapshot-and-cursor-encrypted-in-one-durable-checkpoint",
+    "cross-tab-late-resync-low-seq-gap-and-low-version-high-seq-cannot-overwrite",
+    "owner-isolation-and-unbound-job-write-denial",
+    "noteDone-max-survives-concurrent-resync-and-namespace-cas",
+    "corrupt-cipher-and-malformed-checkpoint-require-explicit-revision-matched-resync",
+    "transaction-abort-and-identity-change-do-not-acknowledge-received-event",
+    "real-browser-sigkill-after-receive-before-idb-commit-retains-old-ack",
+    "real-browser-sigkill-after-commit-before-ui-restores-facts-and-ack-together",
+    "checkpoint-capacity-fails-closed-and-expired-cache-is-pruned"
+  ],
+  "actualIndexedDb": true,
+  "actualWebCrypto": true,
+  "browserProcesses": 3,
+  "browserSigkills": 2,
+  "serverRequests": 0,
+  "sourceSha256": {
+    "apps/mobile/src/home/operation-journal.ts": "4724fd66c807874404f126acc2da6a876eb508320fca28917587f0920e10235f",
+    "apps/mobile/src/home/ingest-checkpoint-store.ts": "5c41f652ab847a70ab004a2a586189364217c9d8841cb26e53fd893cc1844781",
+    "apps/mobile/src/home/ingest-protocol.ts": "270c5fbffd0369d0c7fa91a843715a0b60156ad114571307908d66f8554cb5f4"
+  },
+  "controllerIntegrationVerified": false,
+  "nativeDeviceVerified": false
+}

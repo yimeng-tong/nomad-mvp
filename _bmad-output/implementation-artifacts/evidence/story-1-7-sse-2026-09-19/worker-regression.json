@@ -1,0 +1,28 @@
+{
+  "result": "passed",
+  "checks": [
+    "command-failure-rolls-back-job-pending-and-initial-event",
+    "sigkill-after-accepted-same-job-attempt-checkpoint-resume",
+    "sigkill-after-claimed-same-job-attempt-checkpoint-resume",
+    "sigkill-after-fetched-same-job-attempt-checkpoint-resume",
+    "sigkill-after-saved-same-job-attempt-checkpoint-resume",
+    "duplicate-receipt-does-not-reset-pending-lease-or-checkpoint",
+    "checkpoint-snapshot-event-rollback-together",
+    "repeated-no-progress-recovery-bounded-without-increasing-user-attempt",
+    "unknown-external-fetch-is-not-automatically-repeated",
+    "result-and-saved-checkpoint-rollback-when-event-fails",
+    "managed-retry-atomic-reset-partial-preservation-new-attempt-and-replay-no-reset",
+    "hung-response-body-has-bounded-step-deadline-and-retains-unknown-effect",
+    "actual-fastify-ready-isolation-zero-claim-close-aborts-and-releases-next-start-recovers",
+    "persisted-external-effect-survives-downloader-configuration-removal",
+    "full-buildApplication-close-releases-active-worker-before-prisma-disconnect",
+    "new-external-adapter-does-not-replace-a-recorded-pure-inflight-step"
+  ],
+  "realProviderCalls": 0,
+  "adapters": "explicit-injected-fixture-capability-with-real-pg-owner-checks",
+  "realProcessKills": 4,
+  "appLifecycleVerified": true,
+  "appLifecycleProfile": "explicit-fixture-adapters-with-actual-fastify-hooks-and-full-application-close-order",
+  "sseReplayVerified": false,
+  "nativeVerified": false
+}

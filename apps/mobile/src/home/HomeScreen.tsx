@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { registerHostBackHandler } from '../platform/host';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import type { Analytics } from '../auth/analytics';
-import { createNoopAnalytics, sanitizeAnalyticsProps } from '../auth/analytics';
+import { createNoopAnalytics, trackAnalytics } from '../auth/analytics';
 import type {
   HomeApiClient,
-  HomeInputParseResponse,
   LibraryCandidate,
   LibraryCitySummary,
   LibraryInspirationItem,
@@ -11,6 +11,10 @@ import type {
   PlannerHandoffSelectedItem,
 } from './api';
 import { createHomeApiClient } from './api';
+import { HomeImportDock } from './HomeImportDock';
+import { HomeSheet } from './HomeSheet';
+import { ImportDockController } from './dock-controller';
+import { getAuthSnapshot } from '../auth/session-context';
 import { inferPlannerTimeHint } from '../planner/timeHints';
 
 type Segment = 'plan' | 'library';
@@ -18,6 +22,7 @@ type LibraryFilter = { kind: 'all' } | { kind: 'city'; city: LibraryCitySummary 
 
 export type HomeScreenProps = {
   apiClient?: HomeApiClient;
+  dockController?: ImportDockController;
   analytics?: Analytics;
   onPlannerHandoff?: (handoff: PlannerHandoff) => void;
   onOpenSettings?: () => void;
@@ -58,28 +63,36 @@ function filtersForLibrary(filter: LibraryFilter) {
   return undefined;
 }
 
-export function HomeScreen({ apiClient, analytics, onPlannerHandoff, onOpenSettings }: HomeScreenProps) {
+export function HomeScreen({ apiClient, dockController, analytics, onPlannerHandoff, onOpenSettings }: HomeScreenProps) {
   const client = useMemo(() => apiClient ?? createHomeApiClient(), [apiClient]);
+  const controller = useMemo(() => dockController ?? new ImportDockController(client), [dockController, client]);
+  const dock = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
+  useEffect(() => { if (!dockController) controller.activate(); return () => { if (!dockController) controller.deactivate(); }; }, [controller, dockController]);
+  const shell = useRef<HTMLElement>(null);
+  const setDockHeight = useCallback((height: number) => shell.current?.style.setProperty('--dock-height', `${height}px`), []);
+  const activeResult = useRef<symbol | null>(null);
+  const [result, setResult] = useState<LibraryInspirationItem | null>(null);
+  const [resultLoading, setResultLoading] = useState(false);
   const tracker = useMemo(() => analytics ?? createNoopAnalytics(), [analytics]);
-  const activeCandidateId = useRef<string | null>(null);
+  const activeCandidateId = useRef<symbol | null>(null);
   const [segment, setSegment] = useState<Segment>('plan');
   const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>({ kind: 'all' });
   const [cities, setCities] = useState<LibraryCitySummary[]>([]);
   const [unlocatedCount, setUnlocatedCount] = useState(0);
   const [inspirations, setInspirations] = useState<LibraryInspirationItem[]>([]);
-  const [input, setInput] = useState('');
   const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [unknownInput, setUnknownInput] = useState<string | null>(null);
+  const unknownInput = dock.parsed?.type === 'unknown' ? dock.parsed.original_text : null;
   const [candidateTarget, setCandidateTarget] = useState<LibraryInspirationItem | null>(null);
   const [candidates, setCandidates] = useState<LibraryCandidate[]>([]);
   const [selectedItems, setSelectedItems] = useState<LibraryInspirationItem[]>([]);
 
+
+
   const track = useCallback(
     (event: Parameters<Analytics['track']>[0], props?: Parameters<Analytics['track']>[1]) => {
       try {
-        tracker.track(event, sanitizeAnalyticsProps(props));
+        trackAnalytics(tracker, event, props);
       } catch {
         // Analytics must never block Home.
       }
@@ -135,15 +148,15 @@ export function HomeScreen({ apiClient, analytics, onPlannerHandoff, onOpenSetti
 
   const openCandidates = async (item: LibraryInspirationItem) => {
     if (item.locate_status !== 'pending' || item.candidate_count < 1) return;
-    activeCandidateId.current = item.id;
+    const request = Symbol('candidate'); activeCandidateId.current = request;
     setCandidateTarget(item);
     setCandidates([]);
     track('library_candidate_open', { item_id: item.id, candidate_count: item.candidate_count });
     try {
       const response = await client.getCandidates(item.id);
-      if (activeCandidateId.current === item.id) setCandidates(response.candidates);
+      if (activeCandidateId.current === request) setCandidates(response.candidates);
     } catch {
-      if (activeCandidateId.current === item.id) setNotice('定位候选暂时不可用');
+      if (activeCandidateId.current === request) setNotice('定位候选暂时不可用');
     }
   };
 
@@ -180,69 +193,39 @@ export function HomeScreen({ apiClient, analytics, onPlannerHandoff, onOpenSetti
     });
   };
 
-  const handleParsedInput = async (result: HomeInputParseResponse) => {
-    track('home_input_classified', { type: result.type });
-    if (result.type === 'xhs_link' && result.url) {
-      const ingest = await client.startIngest({ url: result.url });
-      track('home_ingest_start', { result: ingest.state, warning_code: ingest.warning?.code ?? result.warning?.code });
-      setNotice(ingest.warning?.message || result.warning?.message || '已开始入库');
-      return;
-    }
-
-    if (result.type === 'trip_params' && result.planner_handoff) {
-      emitPlannerHandoff(result.planner_handoff);
-      return;
-    }
-
-    setUnknownInput(result.original_text || input);
-  };
-
-  const handleUnknownAsLink = async () => {
-    if (!unknownInput) return;
-    setSubmitting(true);
-    setNotice(null);
+  const closeResult = () => { activeResult.current = null; setResult(null); setResultLoading(false); };
+  const viewResult = async (id: string) => {
+    if (!client.getIngestResult) { setNotice('当前无法读取已保存内容，请稍后重试'); return; }
+    const auth = getAuthSnapshot(), request = Symbol('result'); activeResult.current = request; setResult(null); setResultLoading(true);
     try {
-      const ingest = await client.startIngest({ share_text: unknownInput });
-      track('home_ingest_start', { result: ingest.state, warning_code: ingest.warning?.code });
-      setUnknownInput(null);
-      setNotice(ingest.warning?.message || '已开始入库');
-    } catch {
-      setNotice('链接入库失败，请检查内容后重试');
-    } finally {
-      setSubmitting(false);
-    }
+      const item = await client.getIngestResult(id);
+      if (activeResult.current === request && getAuthSnapshot().activity === auth.activity && getAuthSnapshot().epoch === auth.epoch) setResult(item);
+    } catch { if (activeResult.current === request) { setNotice('已保存内容暂时无法读取，请重试'); closeResult(); } }
+    finally { if (activeResult.current === request) setResultLoading(false); }
   };
-
+  const closeUnknown = () => controller.clearParsed();
+  const handleUnknownAsLink = () => { if (unknownInput) controller.confirmUnknownLink(unknownInput); };
   const handleUnknownAsPlan = () => {
     if (!unknownInput) return;
-    emitPlannerHandoff({
-      route: routeForSelection(selectedItems),
-      source: 'home_input',
-      selected_items: [],
-    });
-    setUnknownInput(null);
+    closeUnknown();
+    emitPlannerHandoff({ route: routeForSelection(selectedItems), source: 'home_input', selected_items: [] });
   };
-
-  const submitInput = async () => {
-    const text = input.trim();
-    if (!text) {
-      setNotice('请输入链接或旅行想法');
-      return;
-    }
-    setSubmitting(true);
-    setNotice(null);
-    track('home_input_submit', { length: text.length });
-    try {
-      await handleParsedInput(await client.parseInput({ text }));
-    } catch {
-      setNotice('输入解析失败，请稍后重试');
-    } finally {
-      setSubmitting(false);
-    }
+  const continueRecognized = () => {
+    const parsed = controller.getSnapshot().parsed;
+    if (parsed?.type !== 'trip_params' || !parsed.planner_handoff) return;
+    controller.clearParsed(); emitPlannerHandoff(parsed.planner_handoff);
   };
+  useEffect(() => registerHostBackHandler(() => {
+    if (result || resultLoading) { closeResult(); return true; }
+    if (candidateTarget) { closeCandidates(); return true; }
+    if (unknownInput) { closeUnknown(); return true; }
+    return false;
+  }, 20), [result, resultLoading, candidateTarget, unknownInput, controller]);
+  useEffect(() => () => { activeCandidateId.current = null; activeResult.current = null; }, []);
 
   return (
-    <main className="home-shell" aria-labelledby="home-title">
+    <main ref={shell} className="home-shell" aria-labelledby="home-title">
+      <div className="home-body" inert={!!(unknownInput || candidateTarget || result || resultLoading)}>
       <header className="home-header">
         <button className="icon-button" type="button" aria-label="菜单" onClick={onOpenSettings}>
           ☰
@@ -362,57 +345,31 @@ export function HomeScreen({ apiClient, analytics, onPlannerHandoff, onOpenSetti
         ) : (
           <section className="plan-panel" aria-label="规划入口">
             <p>从目的地卡或底部输入开始。</p>
-            <p className="status-text">AI 规划由平台额度提供，额度与生成状态会在计划中显示。</p>
             {selectedItems.length > 0 ? <p>已选 {selectedItems.length} 个灵感作为锚点。</p> : null}
           </section>
         )}
       </section>
 
-      {notice ? (
-        <p className="notice home-notice" role="status">
-          {notice}
-        </p>
-      ) : null}
+      <HomeImportDock controller={controller} selectedCount={selectedItems.length} onPlan={startWithSelection} onView={(id) => void viewResult(id)} notice={notice} onHeight={setDockHeight} onRecognizedPlan={continueRecognized} active={!(unknownInput || candidateTarget || result || resultLoading)} />
 
-      <footer className="home-input-bar">
-        <label className="field">
-          <span>统一输入</span>
-          <textarea
-            aria-label="统一输入"
-            disabled={submitting}
-            onChange={(event) => setInput(event.target.value)}
-            placeholder="粘贴小红书链接，或输入：杭州 2026-07-02 出发 3天"
-            rows={3}
-            value={input}
-          />
-        </label>
-        <div className="basket-bar">
-          <span>已选 {selectedItems.length}</span>
-          <button type="button" disabled={submitting || selectedItems.length === 0} onClick={startWithSelection}>
-            开始规划
-          </button>
-          <button type="button" disabled={submitting} onClick={() => void submitInput()}>
-            {submitting ? '处理中' : '发送'}
-          </button>
-        </div>
-      </footer>
-
-      {unknownInput ? (
-        <div className="bottom-sheet" role="dialog" aria-modal="true" aria-label="选择输入类型">
+      </div>
+      {unknownInput && !candidateTarget && !result && !resultLoading ? (
+        <HomeSheet label="选择输入类型" onClose={closeUnknown}>
           <p>{unknownInput}</p>
           <div className="sheet-actions">
-            <button type="button" disabled={submitting} onClick={() => void handleUnknownAsLink()}>
+            <button type="button" onClick={handleUnknownAsLink}>
               作为链接入库
             </button>
-            <button type="button" disabled={submitting} onClick={handleUnknownAsPlan}>
+            <button type="button" onClick={handleUnknownAsPlan}>
               作为旅行规划
             </button>
           </div>
-        </div>
+          <button type="button" onClick={closeUnknown}>关闭</button>
+        </HomeSheet>
       ) : null}
 
       {candidateTarget ? (
-        <div className="bottom-sheet" role="dialog" aria-modal="true" aria-label="定位候选">
+        <HomeSheet label="定位候选" onClose={closeCandidates}>
           <h2>{titleFor(candidateTarget)}</h2>
           <div className="candidate-list">
             {candidates.map((candidate) => (
@@ -425,8 +382,16 @@ export function HomeScreen({ apiClient, analytics, onPlannerHandoff, onOpenSetti
           <button type="button" onClick={closeCandidates}>
             关闭
           </button>
-        </div>
+        </HomeSheet>
       ) : null}
+      {result || resultLoading ? <HomeSheet label="已保存的灵感" onClose={closeResult}>
+        {resultLoading ? <p role="status">正在读取已保存内容</p> : result ? <>
+          <h2>{titleFor(result)}</h2><p>{summaryFor(result)}</p>
+          <p>{result.city_name || (result.locate_status === 'pending' ? '待定位' : '已入库')} · {result.asset_count} 个素材</p>
+          <button type="button" disabled={selectedIds.includes(result.id)} onClick={() => { if (!selectedIds.includes(result.id)) toggleSelected(result); closeResult(); setSegment('library'); void refresh(); }}>{selectedIds.includes(result.id) ? '已选此灵感' : '加入已选灵感'}</button>
+        </> : null}
+        <button type="button" onClick={closeResult}>关闭</button>
+      </HomeSheet> : null}
     </main>
   );
 }

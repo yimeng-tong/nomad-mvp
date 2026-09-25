@@ -1,0 +1,15 @@
+{
+  "scope": "server-durable-SSE-raw-transport-and-lifecycle",
+  "layers": 3,
+  "confirmedFindings": 2,
+  "fixed": [
+    "register-initializing-stream-before-first-await-and-share-closing-gate",
+    "qualify-and-lock-current-head-after-send-authentication-through-control-write-and-finish"
+  ],
+  "realSocketCounterexamples": [
+    "initial-owner-row-lock-wait-during-preClose",
+    "retry-committed-during-terminal-authentication-wait"
+  ],
+  "remainingScopedFindings": 0,
+  "clientNativeCompletionClaimed": false
+}

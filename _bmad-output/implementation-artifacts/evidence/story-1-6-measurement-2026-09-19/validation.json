@@ -1,0 +1,19 @@
+{
+  "result": "passed",
+  "measurementTests": 13,
+  "mobileVitest": 196,
+  "nativeConfigTests": 3,
+  "backendIngestTests": 18,
+  "workspaceBuild": "passed",
+  "cliRecalculationMatchesRunner": true,
+  "historicalBaselineProfileRejected": true,
+  "historicalBaselineSha256": "9628f42232978183d8ec11cde3ae10bcd35c61269498a982ba3cce0e8115cef5",
+  "finalSourceFingerprintsMatch": true,
+  "review": {
+    "layers": 3,
+    "patchedFindings": 7,
+    "residuals": 0
+  },
+  "realProviderCalls": 0,
+  "productionPerformanceVerified": false
+}

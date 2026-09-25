@@ -88,12 +88,15 @@ describe('App', () => {
 
     render(<App />);
 
+    fireEvent.change(await screen.findByLabelText('统一输入'), { target: { value: '保留的旅行想法' } });
     fireEvent.click(await screen.findByRole('button', { name: '菜单' }));
     expect(await screen.findByRole('heading', { name: '设置' })).toBeInTheDocument();
     expect(screen.getByText('平台额度可继续使用')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '返回首页' }));
+    expect(await screen.findByLabelText('统一输入')).toHaveValue('保留的旅行想法');
   });
 
-  it('keeps platform-managed AI quota on the MVP home path', async () => {
+  it('keeps Home input free of obsolete quota promises', async () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
       if (url.endsWith('/me')) return jsonResponse(currentUser);
@@ -106,7 +109,8 @@ describe('App', () => {
 
     render(<App />);
 
-    expect(await screen.findByText('AI 规划由平台额度提供，额度与生成状态会在计划中显示。')).toBeInTheDocument();
+    expect(await screen.findByLabelText('统一输入')).toBeInTheDocument();
+    expect(screen.queryByText(/平台额度/)).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '配置我的 OpenAI Key' })).not.toBeInTheDocument();
   });
 });

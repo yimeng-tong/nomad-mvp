@@ -1,0 +1,17 @@
+[Unit]
+Description=Nomad retained physical PostgreSQL backup (%i)
+
+[Service]
+Type=oneshot
+User=postgres
+Group=postgres
+UMask=0077
+EnvironmentFile=/etc/nomad/postgres-backup/%i.env
+ExecStart=/usr/bin/python3 /usr/local/lib/nomad/postgres/base-backup.py --socket ${PG_SOCKET} --port ${PG_PORT} --backup-root /srv/nomad-postgres-backups/%i --expected-system-id ${EXPECTED_SYSTEM_ID}
+TimeoutStartSec=25min
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/nomad-postgres-backups/%i
+RestrictAddressFamilies=AF_UNIX

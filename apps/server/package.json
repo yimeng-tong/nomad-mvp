@@ -11,6 +11,8 @@
     "prebuild": "pnpm -F nomad-prisma run generate",
     "build": "tsc -p tsconfig.json",
     "test:auth": "TMPDIR=/tmp node --import tsx scripts/auth-contract-probe.ts",
+    "test:auth-config": "node --import tsx --test src/auth/runtime-config.test.ts src/auth/runtime-boundary.test.ts",
+    "auth:preflight": "node --import tsx scripts/auth-preflight.ts",
     "test:ingest": "TMPDIR=/tmp node --import tsx scripts/ingest-contract-probe.ts",
     "test:home-library": "TMPDIR=/tmp node --import tsx scripts/home-library-contract-probe.ts",
     "test:planner": "TMPDIR=/tmp node --import tsx scripts/planner-contract-probe.ts",
@@ -19,6 +21,9 @@
     "start": "node dist/apps/server/src/index.js"
   },
   "dependencies": {
+    "@alicloud/dypnsapi20170525": "2.0.0",
+    "@alicloud/openapi-core": "1.0.8",
+    "@darabonba/typescript": "1.0.5",
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^10.1.0",
     "@fastify/helmet": "^13.0.2",
@@ -27,7 +32,7 @@
     "@sentry/node": "^8.26.0",
     "ajv": "^8.17.1",
     "bullmq": "^5.7.8",
-    "fastify": "^5.8.5",
+    "fastify": "5.12.1",
     "fastify-plugin": "^5.1.0",
     "fastify-sse-v2": "^3.1.1",
     "langfuse": "^3.21.0",

@@ -1,9 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Analytics } from './analytics';
-import { createNoopAnalytics, sanitizeAnalyticsProps } from './analytics';
+import { createNoopAnalytics, trackAnalytics } from './analytics';
 import type { AuthApiClient, AuthConfigResponse, CurrentUserResponse, LoginMethod } from './api';
 import { createAuthApiClient } from './api';
 import { getDeviceFingerprint } from './device';
+import { requestPnvsCaptcha } from './pnvs-captcha';
+import { getAuthSnapshot, markChecking, subscribeAuth } from './session-context';
+import { getHostPlatform, openHostExternalUrl } from '../platform/host';
+import type { components } from 'nomad-types/src/api-types';
+type GraphicProof = components['schemas']['PnvsCaptchaProof'];
 
 type Platform = 'ios' | 'android' | 'web';
 type CaptchaTokenProvider = () => string | null | Promise<string | null>;
@@ -13,7 +18,7 @@ export type LoginScreenProps = {
   analytics?: Analytics;
   platform?: Platform;
   getCaptchaToken?: CaptchaTokenProvider;
-  openExternal?: (url: string) => void;
+  openExternal?: (url: string) => void | boolean | Promise<void | boolean>;
   onAuthenticated?: (response: CurrentUserResponse) => void;
 };
 
@@ -58,7 +63,7 @@ function isSafeLegalUrl(url: string) {
 }
 
 function defaultCaptchaTokenProvider() {
-  return import.meta.env.DEV ? 'captcha-ok' : null;
+  return null; // A dev build is not authorization to fabricate a captcha proof.
 }
 
 function orderMethods(config: AuthConfigResponse, platform: Platform) {
@@ -94,11 +99,21 @@ export function LoginScreen({
   const [captchaRequired, setCaptchaRequired] = useState(false);
   const [submittingOtp, setSubmittingOtp] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [challengeId, setChallengeId] = useState<string | undefined>();
+  const [sendUnconfirmed, setSendUnconfirmed] = useState(false);
+  const intent = useRef<{ phone: string; id: string; retry: boolean } | null>(null);
+  const formGeneration = useRef(0);
+  const captchaAbort = useRef<AbortController | null>(null);
+  useEffect(() => {
+    const unsubscribe = subscribeAuth(() => { formGeneration.current++; captchaAbort.current?.abort(); setSubmittingOtp(false); setVerifying(false); });
+    return () => { formGeneration.current++; captchaAbort.current?.abort(); unsubscribe(); };
+  }, []);
+
 
   const track = useCallback(
     (event: Parameters<Analytics['track']>[0], props?: Parameters<Analytics['track']>[1]) => {
       try {
-        tracker.track(event, sanitizeAnalyticsProps(props));
+        trackAnalytics(tracker, event, props);
       } catch {
         // Analytics must never block auth.
       }
@@ -143,7 +158,7 @@ export function LoginScreen({
   const methods = useMemo(() => (config ? orderMethods(config, platform) : []), [config, platform]);
   const phoneEnabled = methods.some((method) => method.id === 'phone');
 
-  const openLegalLink = (kind: 'privacy' | 'terms') => {
+  const openLegalLink = async (kind: 'privacy' | 'terms') => {
     const url = kind === 'privacy' ? config?.privacy_url : config?.user_agreement_url;
     if (!url) {
       setNotice('合规链接加载中，请稍后再试');
@@ -154,11 +169,15 @@ export function LoginScreen({
       return;
     }
     track(kind === 'privacy' ? 'auth_privacy_open' : 'auth_terms_open', { source_page: 'login' });
-    if (openExternal) {
-      openExternal(url);
-      return;
-    }
-    globalThis.open?.(url, '_blank', 'noopener,noreferrer');
+    try {
+      if (openExternal) { if (await openExternal(url) === false) setNotice('页面暂时无法打开，请重试'); return; }
+      if (getHostPlatform() !== 'web') {
+        const result = await openHostExternalUrl(url);
+        if (!result.opened) setNotice('页面暂时无法打开，请重试');
+        return;
+      }
+      if (!globalThis.open?.(url, '_blank', 'noopener,noreferrer')) setNotice('页面暂时无法打开，请重试');
+    } catch { setNotice('页面暂时无法打开，请重试'); }
   };
 
   const chooseMethod = (method: LoginMethod) => {
@@ -172,6 +191,8 @@ export function LoginScreen({
   };
 
   const handlePhoneChange = (value: string) => {
+    formGeneration.current++; captchaAbort.current?.abort(); intent.current = null;
+    setChallengeId(undefined); setSendUnconfirmed(false); setSubmittingOtp(false); setVerifying(false);
     setPhone(value);
     setOtp('');
     setOtpPhone('');
@@ -180,51 +201,61 @@ export function LoginScreen({
     setNotice(null);
   };
 
-  const startOtp = async (captchaToken?: string) => {
-    if (!phone.trim()) {
-      setNotice('请输入手机号');
-      return;
+  const startOtp = async (captchaToken?: string, proof?: GraphicProof) => {
+    if (!phone.trim()) { setNotice('请输入手机号'); return; }
+    if (captchaRequired && !captchaToken && !proof && !sendUnconfirmed) { setNotice('请先完成行为验证'); return; }
+    const generation = formGeneration.current;
+    const phoneForOtp = phone.trim();
+    const real = config?.captcha.provider === 'aliyun-pnvs';
+    if (real && (!intent.current || intent.current.phone !== phoneForOtp || !intent.current.retry)) {
+      intent.current = { phone: phoneForOtp, id: crypto.randomUUID(), retry: true };
     }
-    if (captchaRequired && !captchaToken) {
-      setNotice('请先完成行为验证');
-      return;
-    }
-    setSubmittingOtp(true);
-    setNotice(null);
+    setSubmittingOtp(true); setNotice(null);
     try {
-      const phoneForOtp = phone.trim();
-      const request = captchaToken ? { phone: phoneForOtp, region: 'CN', captcha_token: captchaToken } : { phone: phoneForOtp, region: 'CN' };
+      const request = real ? { phone: phoneForOtp, region: 'CN' as const, request_id: intent.current!.id, ...(proof ? { captcha: proof } : {}) }
+        : captchaToken ? { phone: phoneForOtp, region: 'CN', captcha_token: captchaToken } : { phone: phoneForOtp, region: 'CN' };
       const result = await client.startOtp(request);
+      if (generation !== formGeneration.current) return;
+      setSendUnconfirmed(false);
       if (result.captcha_required) {
-        setCaptchaRequired(true);
-        setCooldown(result.retry_after_sec);
-        setNotice(null);
-        track('auth_otp_start', { result: 'captcha_required', provider: result.captcha_provider ?? 'tencent' });
-        return;
+        setCaptchaRequired(true); setCooldown(result.retry_after_sec); setNotice(null);
+        track('auth_otp_start', { result: 'captcha_required', provider: result.captcha_provider }); return;
       }
-      setCaptchaRequired(false);
-      setOtp('');
-      setOtpPhone(phoneForOtp);
+      if (real && !result.challenge_id) throw new Error('unconfirmed challenge');
+      if (intent.current) intent.current.retry = false;
+      setCaptchaRequired(false); setOtp(''); setOtpPhone(phoneForOtp); setChallengeId(result.challenge_id ?? undefined);
       setCooldown(result.retry_after_sec);
-      setNotice('验证码已发送');
-      track('auth_otp_start', { result: result.sent ? 'sent' : 'accepted' });
+      setNotice(result.sent ? '验证码已发送' : '发送结果尚未确认；如已收到验证码，可继续登录');
+      track('auth_otp_start', { result: result.sent ? 'sent' : 'unknown' });
     } catch (error) {
-      const retryAfter = getRetryAfter(error);
-      if (retryAfter) setCooldown(retryAfter);
-      setNotice(getErrorMessage(error));
+      if (generation !== formGeneration.current) return;
+      const retryAfter = getRetryAfter(error); if (retryAfter) setCooldown(retryAfter);
+      const unknown = real && (!getErrorStatus(error) || ['AUTH_SEND_RESULT_UNKNOWN', 'AUTH_AUTHORITY_UNAVAILABLE'].includes(getErrorCode(error)));
+      setSendUnconfirmed(unknown);
+      if (intent.current && ['AUTH_SEND_REJECTED', 'AUTH_PROVIDER_RATE_LIMITED'].includes(getErrorCode(error))) intent.current.retry = false;
+      // Keep this intent on uncertainty. Only a confirmed completed start permits a new send action.
+      setNotice(unknown ? '发送结果尚未确认，可重试确认同一次发送' : getErrorCode(error) === 'AUTH_SEND_REJECTED' ? '验证码未发送，请稍后重试' : getErrorMessage(error));
       track('auth_otp_start', { result: 'fail', reason_code: getErrorCode(error) });
-    } finally {
-      setSubmittingOtp(false);
-    }
+    } finally { if (generation === formGeneration.current) setSubmittingOtp(false); }
   };
 
   const completeCaptchaAndRetry = async () => {
-    if (cooldown > 0) return;
-    const token = await getCaptchaToken();
-    if (!token) {
-      setNotice('请先完成行为验证');
+    if (cooldown > 0 || submittingOtp || !config) return;
+    const generation = formGeneration.current;
+    if (config.captcha.provider === 'aliyun-pnvs') {
+      const controller = new AbortController(); captchaAbort.current?.abort(); captchaAbort.current = controller;
+      setSubmittingOtp(true);
+      try {
+        const proof = await requestPnvsCaptcha(config.captcha, controller.signal);
+        if (generation === formGeneration.current) await startOtp(undefined, proof);
+      } catch (error) {
+        if (generation === formGeneration.current) setNotice(getErrorCode(error) === 'AUTH_CAPTCHA_CANCELLED' ? '验证已取消，可以重试' : '行为验证暂不可用，请重试');
+      } finally { if (generation === formGeneration.current) setSubmittingOtp(false); }
       return;
     }
+    const token = await getCaptchaToken();
+    if (generation !== formGeneration.current) return;
+    if (!token) { setNotice('请先完成行为验证'); return; }
     await startOtp(token);
   };
 
@@ -237,25 +268,33 @@ export function LoginScreen({
       setNotice('手机号已变更，请重新获取验证码');
       return;
     }
+    if (config?.captcha.provider === 'aliyun-pnvs' && !challengeId) { setNotice('请先获取验证码'); return; }
+    const generation = formGeneration.current;
     setVerifying(true);
     setNotice(null);
     let currentUser: CurrentUserResponse | undefined;
     try {
-      await client.verifyOtp({
+      const verified = await client.verifyOtp({
         phone: phone.trim(),
         otp,
         device_fingerprint: getDeviceFingerprint(),
+        ...(challengeId ? { challenge_id: challengeId } : {}),
       });
+      if (generation !== formGeneration.current) return;
       currentUser = await client.getCurrentUser();
+      if (generation !== formGeneration.current) return;
+      if (verified.user_id !== currentUser.user_id || verified.session.id !== currentUser.session.id) {
+        currentUser = undefined; markChecking(); throw new Error('AUTH_CONTEXT_CHANGED');
+      }
       setNotice('登录成功');
       track('auth_otp_verify_success', { method: 'phone' });
     } catch (error) {
       setNotice(getErrorMessage(error));
       track('auth_otp_verify_fail', { method: 'phone', reason_code: getErrorCode(error) });
     } finally {
-      setVerifying(false);
+      if (generation === formGeneration.current) setVerifying(false);
     }
-    if (currentUser) onAuthenticated?.(currentUser);
+    if (currentUser && generation === formGeneration.current && !['checking','unavailable'].includes(getAuthSnapshot().phase)) onAuthenticated?.(currentUser);
   };
 
   return (
@@ -336,10 +375,10 @@ export function LoginScreen({
             </label>
 
             <div className="action-grid">
-              <button type="button" disabled={cooldown > 0 || submittingOtp || captchaRequired} onClick={() => void startOtp()}>
-                {cooldown > 0 ? `${cooldown}秒后重发` : '获取验证码'}
+              <button type="button" disabled={cooldown > 0 || submittingOtp || captchaRequired || verifying} onClick={() => void startOtp()}>
+                {cooldown > 0 ? `${cooldown}秒后重发` : sendUnconfirmed ? '重试确认发送结果' : '获取验证码'}
               </button>
-              <button type="submit" disabled={verifying}>
+              <button type="submit" disabled={verifying || submittingOtp}>
                 {verifying ? '登录中' : '登录'}
               </button>
             </div>
@@ -352,7 +391,7 @@ export function LoginScreen({
           <div className="inline-state" role="status">
             <p>需要完成行为验证后再发送验证码</p>
             <button type="button" disabled={submittingOtp || cooldown > 0} onClick={() => void completeCaptchaAndRetry()}>
-              已完成验证，重新发送
+              {config?.captcha.provider === 'aliyun-pnvs' ? '开始行为验证' : '已完成验证，重新发送'}
             </button>
           </div>
         ) : null}
@@ -364,10 +403,10 @@ export function LoginScreen({
         ) : null}
 
         <nav className="legal-links" aria-label="合规链接">
-          <button type="button" onClick={() => openLegalLink('privacy')}>
+          <button type="button" onClick={() => void openLegalLink('privacy')}>
             隐私政策
           </button>
-          <button type="button" onClick={() => openLegalLink('terms')}>
+          <button type="button" onClick={() => void openLegalLink('terms')}>
             用户协议
           </button>
         </nav>

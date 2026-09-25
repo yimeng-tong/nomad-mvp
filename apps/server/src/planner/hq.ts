@@ -1,3 +1,4 @@
+import { runAsAcceptedJob } from '../auth/owner.js';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import { PlannerExecutionLeaseLost } from './repository.js';
@@ -447,7 +448,7 @@ function executeHqJob(input: {
   traceId: string;
 }) {
   queueMicrotask(() => {
-    void (async () => {
+    void runAsAcceptedJob({ ownerId: input.job.userId, authVersion: input.job.ownerAuthVersion ?? -1 }, async () => {
       const leaseMs = Math.max(10_000, Number(process.env.PLANNER_JOB_LEASE_MS || 60_000));
       const heartbeat = setInterval(
         () =>
@@ -486,7 +487,9 @@ function executeHqJob(input: {
       } finally {
         clearInterval(heartbeat);
       }
-    })();
+    }).catch(() => {
+      process.stderr.write(JSON.stringify({ code: 'HQ_RESULT_PERSISTENCE_UNAVAILABLE' })+'\n');
+    });
   });
 }
 

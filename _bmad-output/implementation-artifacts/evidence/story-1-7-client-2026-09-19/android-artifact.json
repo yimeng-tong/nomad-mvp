@@ -1,0 +1,9 @@
+{
+  "result": "passed",
+  "kind": "debug-apk",
+  "sha256": "e7870d8eb2134b85747ec42a7c2234f2d532ea5c959376dfe422d7b098009b88",
+  "webAssetCount": 8,
+  "webAssetsMatchDist": true,
+  "nativeDeviceVerified": false,
+  "iosCompiled": false
+}

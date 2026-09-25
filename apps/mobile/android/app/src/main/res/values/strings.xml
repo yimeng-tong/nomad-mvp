@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Nomad Dev</string>
+    <string name="title_activity_main">Nomad Dev</string>
+    <string name="package_name">dev.nomad.mvp</string>
+    <string name="custom_url_scheme">dev.nomad.mvp</string>
+</resources>

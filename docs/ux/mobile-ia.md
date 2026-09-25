@@ -1,590 +1,599 @@
-# nomad-mvp Mobile IA & Wireframes (v0.1 → v0.2/v0.3-light inline)
+# nomad-mvp Mobile IA and Text Wireframes
 
-Date: 2025-10-26
-Owner: UX
+Updated: 2026-09-20
+Status: Approved Correct Course companion to `docs/front-end-spec.md`
 
-## 0. Design Principles & Tone
-- Awe/Wanderlust: ignite the desire to go; large imagery, natural light, breathing space.
-- Companion, not Guru: gentle, specific, low-pressure guidance; avoid info overload.
-- Trust & Doable: clear timeline, commute hints, undo everywhere; confidence in execution.
-- Frame for Freedom: structure (2h slots, reachability circle) + freedom (free activities, drag/adjust).
-- Here & Now: fast, restrained micro-interactions; map & cards stay in sync.
+Current amendment: [UI foundation approval](../../_bmad-output/planning-artifacts/ui-foundation-scope-decision-2026-09-20.md). The following IA and text wireframes retain their approved layout and S0–S11 behavior. UX-DR37 adds shared implementation and presentation rules; it does not mark component migration or runtime acceptance complete.
 
-Motion: 120–200ms; Sheet snap 240–300ms; Marker activate 150–180ms; timeline insert 200ms + subtle haptic.
-Touch target: ≥ 44×44pt. Dynamic type: text scales without layout breakage.
+## 1. Navigation Model
 
-## 1. Navigation Model (Global)
-- TopSwitch (sticky): 旅行规划 | 灵感库
-- Drawer (left, ☰):
-  - 主区： 首页 / 灵感库 / 设置
-  - 分隔
-  - 历史规划：已完成/ 未完成
-    - 列表项：显示 “{城市} · {起始日期} · {天数}天” 与最近更新时间；点击进入对应 plan（保留状态）
-    - 过滤/搜索（可选，MVP 可省略）
-  - 分隔
-  - 帮助与反馈 / 关于
-- UnifiedInput (bottom, sticky): 粘贴小红书链接，或输入：杭州 11/2 起 3天
-- Tabs in planner: D1 | D2 | … | Dn (memorize each day scroll)
-
-Header Usage
-- 首页/灵感库：hamburger button + TopSwitch（计划|灵感）；
-- 规划流程页（Planner Picker / 天级骨架 / AI 填充 / 行程单）：HeaderBar（返回箭头 + 标题城市/日期 + More + ProgressBreadcrumb）
-
-### IA Tree (High Level)
-- 登录首屏
-- 首页
-  - 目的地卡片（横滑）
-  - 统一输入（粘贴/自然语言）
-- 灵感库
-  - 城市 Chips
-  - 列表：今日新增 / 已入库 / 待定位（点整行→定位弹窗）
-  - 地图联动模式（Map-to-Action Bridge）
-- 灵感选择页（Planner Picker）
-- 天级骨架（2h 槽位）
-  - 空槽大弹窗：候选抽屉 | AI 建议 | 自由活动
-  - 顶部可行性校验与一键修复
-  - 长按：替换/移动D±1/调时/删除（撤销）
-- AI 填充（一键生成→预览→应用全部）
-- 导出（PNG 卡片）
-- 设置（AI 用量、账号删除、数据导出、单位/时间制/动效开关）
-
-## 2. Global Components & Patterns
-- TopSwitch: sticky segmented control.
-- HeaderBar: 顶部通用导航栏
-  - 左侧：有前进后退关系的页面以“返回箭头”替代菜单（Planner Picker / 天级骨架 / AI 填充）；首页与灵感库保留菜单
-  - 标题：规划流程页显示“{城市} · {出行日期}”，非规划页显示页面名
-  - 右侧：More（…）轻按钮 → 菜单：导出 / 分享 / 帮助
-- ProgressBreadcrumb（极轻量）：标题右侧点/徽章：灵感✔︎ / 骨架✔︎ / AI填充✔︎ / 行程单•；可点回到上一阶段（保留状态）
-- UnifiedInput: link/intent detection; shows disambiguation panel when unknown
-  - 位置：底部吸底；视觉不“细扁”，接近常见 AI 对话框尺寸
-  - 多行自适应：最大高度 3–5 行（超出滚动）
-  - 发送：右侧发送按钮；回车行为可在设置中切换“发送/换行”
-  - 提交：Loading/禁用态避免重复提交
-  - 粘贴识别：检测 XHS 分享口令/链接 → 轻提示“识别为小红书链接”
-- Drawer: 侧边栏（hamburger 打开）
-  - 分组与项：同 1. Navigation Model 所述
-  - 历史规划项点击：
-    - 已完成 → 以只读模式打开（允许导出/分享/编辑）
-    - 未完成 → 继续编辑（跳转到上次离开页签/滚动位置）
-  - 空态：暂无历史规划 → 提示“开始一次新的规划吧”
-
-Telemetry（Drawer）
-- drawer_open, drawer_close, drawer_nav_click(page)
-- drawer_plan_open(plan_id, status=done|draft)
-
-- CityCard: name + "XX 个想去"; CTA: 开始规划 / 查看灵感。
-- PlanTimelineMobile: vertical day view, default 2h slots; blocks with duration; empty-slot placeholder.
-- FixSheet: feasibility results + one-tap fixes (换时/近邻/挪日)。
-- LocationModal: search (模糊+拼音/简称) + Top-5 (名称+地址) no confidence score.
-- SlotSuggesterList: time-window fit > distance > vibe > popularity; shows "为何推荐" ≤16 chars；来源 Chip：“来自 用户候选/AnchorPool”；可显示“靠近酒店/回程方便”等 near_hotel 解释（不显示距离/评分/置信度）。
-- AITipsList: lightweight activities (步行线/拍照点/小吃等)。
-- Buttons/CTAs: primary bottom CTA per screen; consistent copy.
-
-Accessibility: color contrast ≥ WCAG AA; large tap targets; focus order logical.
-
-## 3. Screen Wireframes (Textual)
-
-### 3.1 登录首屏
-Purpose: secure entry; pass review.
-Layout:
-- Brand minimal, privacy/terms links visible on first screen (可跳转查看)
-- 登录方式（iOS 中国区）：Apple｜手机号｜微信，并列同层等权、同尺寸；排序：Apple｜手机号｜微信
-- 行为验证：默认不打断；命中风控（IP/号段/设备指纹异常）或短信失败重试时触发；高峰期可临时切到“发送前必过”（远程开关）
-States:
-- OTP sent / resend / error / cooldown
-- Failure → surface help
-
-### 3.2 首页
-Purpose: spark action with minimal elements.
-Layout:
-- Header: hamburger button+TopSwitch（计划|灵感）
-- 最近行程入口：在内容顶部以卡片形式展示“继续上次行程：{城市} · {起始日期} · {天数}天”，根据计划状态展示 CTA：“继续编辑/查看行程单”。
-- Content: 目的地卡片横滑（城市名 + 次文案“XX 个想去”）
-- Footer: UnifiedInput（粘贴/自然语言；多行 3–5 行；发送按钮；回车行为可切换；提交 Loading/禁用；粘贴 XHS 轻提示）
-CTAs:
-- 开始规划: prefill input with city, focus for date/days; no picker
-- 查看灵感: switch to 灵感库 filtered by city
-Copy:
-- 不额外“找到N条灵感”提示条；融合在卡片次文案
-
-### 3.3 灵感库（列表 + 地图联动）
-Purpose: browse/manage inspiration; locate; pick.
-Layout:
-- Header: hamburger button+TopSwitch（计划|灵感）
-Modes:
-- List (Sheet-High≈清单) ↔ Split(≈55%) ↔ Map-Full（抽屉吸附位）
-List:
-- City chips; sections: 今日新增 / 已入库 / 待定位
-- 待定位：点整行 → 定位弹窗（搜索 + Top5 名称/地址 → 确认即入库）；不阻塞浏览
-Map-to-Action Bridge:
-- Map (top 32–40% default; lazy load; cluster)
-- CardSheet (bottom; keeps bottom action bar visible in all snaps)
-- 详情展示统一使用全高 Bottom Sheet，不跳路由
-Sync:
-- Card→Map: visible cards highlight marker; tap card → flyTo 300ms
-- Map→Card: tap marker → scroll & "lift" card (shadow)
-Action strategy:
-- 有骨架：主CTA=加入 D{n}·{上午/下午/晚间}（可改）
-- 尚无计划：主 CTA=加入候选；底条“已选 N / 开始规划”
-
-### 3.4 灵感选择页（Planner Picker）（上下文灵感选择页）
-Purpose: 在规划上下文内挑选本次要用的 UGC 素材，作为“部分填充/锚点输入”。不属于“灵感库”导航项，但复用其卡片/定位能力。
-
-Header
-- 使用 HeaderBar：左“返回”、标题“{城市} · {出行日期?占位} · {天数?占位}”、右“More”；标题右侧 ProgressBreadcrumb（灵感• / 骨架 / AI填充）
-
-Entrances & Route
-- 仅以下两条路径可进入本页；本页不出现在“灵感库”导航，其他页面不允许直接跳转。
-- 入口 A（主）：首页底部输入解析 trip_params 成功 → 进入本页
-- 入口 B（补充）：首页目的地卡“开始规划” → 进入本页
-- 路由：/planner/pick?city={CITY}&start={YYYY-MM-DD?}&days={N?}&source={home_input|home_card}&rec_id={CARD_ID?}
-
-Layout（Map-to-Action Bridge）
-- Top：MapPane 默认 32–40% 屏高；向上拖进入 Split（≈55%）/Map-Full（≈100%）
-- Bottom：CardSheet 三段吸附：Sheet-High → Split → Map-Full；任一吸附位均保留底部操作条（已选 N | 下一步）
-- 详情：统一全高 Bottom Sheet（不跳路由）
-
-Linking Rules
-- 卡片→地图：列表滚动时可见卡片的 Marker 高亮；点卡片→地图飞到该点（300ms）
-- 地图→卡片：点 Marker→滚动该卡片并“抬升”（阴影/缩进）
-- 选择一致性：卡片与地图点的“加入/已加入”实时同步
-
-Overlays（可开关）
-- UGC POI 层（与搜索结果颜色区分）
-- 可达圈：步行 10/20/30 分（约 80m/分钟），标注“约 10/20/30 分”
-- 热门拍照点热度圈
-- MVP 不上 Lasso；改用半径三档 + 类目筛选 Chips
-
-Gestures & Priority
-- 下滑 CardSheet：先到 Split，再到 Map-Full；Map-Full 上滑回 Split
-- 地图平移优先；抽屉顶部预留 24px 抓手区
-
-Performance
-- 地图懒加载：首屏停留 >300ms 或进入 Split 再加载
-- Marker 聚合；列表虚拟化；图片 LQIP + 渐进清晰；统一骨架屏
-- 弱网/无地图：自动降级 Sheet-High 清单视图，地图区灰块提示“网络不佳，稍后自动重试”
- - 降级 CTA：提供“仅列表继续”按钮（保持列表操作可用），网络恢复后提示“可切换至地图模式”。
-
-Wireframe — Planner Picker 弱网降级（仅列表继续）
-```
-[Map 区域降级占位]
-┌──────────────────────────────┐
-│ 网络不佳，稍后自动重试       │
-│ [ 仅列表继续 ]               │
-└──────────────────────────────┘
-
-[CardSheet · 列表正常可用]
-┌ 卡片 ▸ 加入候选 / 已加入 · 撤销 ┐
-│ ...（支持选择、已选篮、下一步） │
-└────────────────────────────────┘
-注：点击“仅列表继续”隐藏地图区占位，保留列表与底部操作条；网络恢复后顶部轻提示“地图可用，切换至地图模式”。
+```text
+登录
+└─ Home
+   ├─ 计划
+   │  ├─ 最近行程
+   │  └─ S0 输入旅行想法
+   │     ├─ S1 导入灵感（小红书分支）
+   │     └─ S2 旅行时间
+   │        └─ S3 住宿安排
+   │           └─ S4 选择想去地点
+   │              └─ S5 规划前确认
+   │                 └─ S6/S7 同一计划时间轴
+   │                    ├─ S8 调整与校验（循环）
+   │                    ├─ 餐饮与行程清单
+   │                    └─ S10 行程单整体核查
+   │                       ├─ S9 完善行程细节 ─┐
+   │                       │                   └─ 返回 S10
+   │                       └─ S11 导出与旅中使用
+   └─ 灵感
+      ├─ 城市目的地
+      ├─ 导入记录
+      └─ 待定位
 ```
 
-Cards & Selection
-- 卡片：4:5 封面 + 标题 + 标签 + 次信息；右下固定主 CTA
-- 主 CTA：加入候选 → 已加入（显示“已加入 · 撤销”）；低置信显示“去定位”入口，复用定位弹窗
+### Header Rules
 
-Basket & Footer
-- 已选篮（吸底左）：“已选 N”（可展开面板：移除、time_hint、stay_minutes_hint）；选中 L3 自动成为 selected_required，不提供额外“必去”开关
-- 主按钮（吸底右）：“开始规划”；无“用热门生成骨架”动作（已删除）
-- 缺参补齐：点主按钮时若缺 start/days → 弹参数 Sheet 补齐后生成
+- Home/Library：菜单 + `计划 | 灵感`；不重复显示 Nomad badge。
+- S2-S5：返回 + 页面标题 + `已自动保存`，不显示“我的计划 vN”。
+- S6-S8：返回 + `{城市链} · {天数}天` + 全计划历史/undo 控件；长城市链可滚动浏览，
+  但当前时间轴和 AI 调整始终只属于一个 active city Plan。进入 S10 的计划级动作不占
+  时间轴纵向空间；S7/S8 不显示细节待完善/已完善状态。
+- S9-S11：返回 + 阶段标题 + 当前计划上下文。
+- 右上历史控件开放给全部日期，不随当前 D tab 改变。
 
-Generate（接口语义）
-- POST /plan/generate：selected_items 作为 selected_required 锚点输入；time_hint 及上传内容派生的特殊时段为硬约束，candidate_items 供 Agent 可选补全
-- 未落位 candidate_items：不在计划主视图直接展示，而是在计划“候选”页/抽屉中展示；若 Planner Picker 的 POI 已用完则提示“已用完”
+## 2. Global Components
 
-Empty States
-- 无灵感：展示“热门 UGC/AI 建议”棚格；CTA 仍为加入候选/行程
-- 手势可发现性：抽屉顶部抓手 + “向上查看地图”细文案；首次进入给一次轻引导动画
+### HomeImportDock
 
-### 3.5 天级骨架（2h 槽位）
-Purpose: structure day; manual adjust only.
-Header
-- 使用 HeaderBar：左“返回”、标题“{城市} · {出行日期}”、右“More”；标题右侧 ProgressBreadcrumb（灵感✔︎ / 骨架• / AI填充）
-Layout:
-- Tabs D1..Dn; vertical timeline; empty-slot placeholder "空闲 · 2h"
-- Bottom primary: 下一步：进入 AI 填充（仅当所有天已确认）
-Seed:
-- `origin=ai_seed` 块显示紧凑徽标“AI 预排”（标题右侧，按压态降噪）；生成完成后一次性顶部提示：“已为你预排 N 个（均可修改）”（6s 自动隐藏，可手动关闭）。
-Interactions:
-- 空槽 → 大弹窗（搜索|候选抽屉|AI建议|自由活动）
-  - 候选抽屉：展示来自 灵感选择页（Planner Picker） 尚未用完的 POI；若已用完则提示“已用完”；按时窗/距离/vibe 重排
-  - AI 建议：依据模型能力进行推荐（不改变时间与顺序，仅作为候选）
-  - 自由活动：提供选项 购物｜city walk｜喝茶休息｜保持空白；“自由活动”表示该槽位不在后续流程自动填充
-  - 搜索（FR44‑lite）：顶部文本搜索（AMap），Top‑5 列表（无地图）；结果项：加入候选｜直接落位（遵循硬约束）；失败提示“搜索暂不可用，请稍后重试”
-- 候选卡：名称/通勤/时窗匹配 → 进入“时间调整”
-- 时间调整：拖拽起止；允许跨槽；拖拽吸附 30/60 分钟刻度；冲突→轻量修复条（换到 14:00 | 缩短 15m | 换近邻）
-- 长按块：替换/移动到D±1/调时/删除；撤销（8s Toast）+ 当日时间轴“最近操作”入口（可再撤一条）
-Undo/Reset:
-- 全局撤销 Toast 5–8s（默认 6s，单例刷新计时）；More(…) 菜单提供“一键重置预布局”（仅还原 `origin=ai_seed` 相关变更；保留手动编辑历史）。
-Fix:
-- 顶部可行性校验；提供一键修复；目标=0冲突或≤1且可修
-- 冲突分级：硬冲突（无坐标/闭店/跨日不可达）→ 禁用“进入 AI 填充”，需先修复；软冲突（略超时/通勤略远等）→ 允许进入 AI 填充，顶部保留提醒与一键修复
-
-FixSheet 示例数据（对齐 OpenAPI，参见 `docs/api/openapi.yaml`）
-```
-// ValidatorConflict example（too_far，含两条 FixSuggestion）
-{
-  "type": "too_far",
-  "severity": "soft",
-  "day": 2,
-  "slot_id": "s_abc",
-  "details": { "commute_minutes": 28, "limit_minutes": 18 },
-  "suggestions": [
-    {
-      "id": "fix_1",
-      "conflict_type": "too_far",
-      "safe": true,
-      "requires_user_input": false,
-      "score": 0.87,
-      "actions": [ { "type": "reorder", "notes": "交换前一槽以降低通勤" } ],
-      "apply_sequence": [
-        { "op": "move", "slot_id": "s_abc", "new_day": 2, "new_start": "14:00", "new_end": "16:00" },
-        { "op": "move", "slot_id": "s_prev", "new_day": 2, "new_start": "16:00", "new_end": "18:00" }
-      ]
-    },
-    {
-      "id": "fix_2",
-      "conflict_type": "too_far",
-      "safe": true,
-      "requires_user_input": true,
-      "score": 0.81,
-      "actions": [ { "type": "replace_with_alternative", "notes": "使用更近的替代项" } ],
-      "apply_sequence": [ { "op": "replace", "slot_id": "s_abc", "replace_with_poi_id": "poi_nearby_1" } ]
-    }
-  ]
-}
-
-// FixSuggestion example（最小闭环）
-{
-  "id": "fix_1",
-  "conflict_type": "too_far",
-  "safe": true,
-  "requires_user_input": false,
-  "score": 0.87,
-  "actions": [ { "type": "reorder", "notes": "交换前一槽以降低通勤" } ],
-  "apply_sequence": [ { "op": "move", "slot_id": "s_abc", "new_day": 2, "new_start": "14:00", "new_end": "16:00" } ]
-}
+```text
+┌──────────────────────────────────┐
+│ 来源标题安全截断              N/X⌄│  optional queue status
+│ 已提取 12 张图片，正在理解内容    │
+├──────────────────────────────┬───┤
+│ 粘贴分享链接或输入想去的地点… │ + │
+└──────────────────────────────┴───┘
 ```
 
-Hotel 明确选择与留空（FR41）
-- 仅将 Confirm 中按日期明确选择并经 AMap 匹配的酒店写入当日末尾 hotel_slot。
-- 用户选择“留空”时保持为空，不得根据灵感或单一候选静默代选酒店；用户可稍后进入酒店大弹窗补充。
-- 说明：MVP 不触发酒店更换自动重排；该能力属于 Post-MVP。
+- 输入有内容时 `+` 过渡为 paper-plane。
+- 状态与输入共用一个 surface；输入不因前景 job 运行而消失。
+- 展开态 chevron 向下，简态向上；完成项 FIFO 展示 10 秒。
 
-Wireframe — Hotel Slot
-```
-[Timeline DayN 末尾]
-┌──────────────────────────────┐
-│ 住宿 · {酒店名称}（展示）      │
-└──────────────────────────────┘
+### Plan Header and Day Tabs
 
-底部轻提示：
-┌─────────────────────────────────────────────┐
-│ 酒店可稍后补充，不影响先开始规划             │
-└─────────────────────────────────────────────┘
+```text
+‹              厦门 · 3天            [◷]
+D1 7/14       [D2 7/15]       D3 7/16   [清单]
 ```
 
-### 3.6 AI 填充（一键）
-Definition:
-- 编排目标：仅“剩余、可控、非自由活动块”
-- 说明补齐：为“所有块”补齐「做什么/准备/注意」
-Header
-- 使用 HeaderBar：左“返回”、标题“{城市} · {出行日期}”、右“More”；标题右侧 ProgressBreadcrumb（灵感✔︎ / 骨架✔︎ / AI填充•）
-Norms:
-- 做什么（必填）：≤ 3 行，单行 ≤ 30 字
-- 准备（可选）：≤ 3 行，单行 ≤ 30 字
-- 注意（可选）：≤ 3 行，单行 ≤ 30 字
-- 列表超长折叠；详情可展开；后端对超长硬裁并加省略号
-- 缺少“做什么”→ 直接报错并回退
-Layout:
-- Tabs D1..Dn；只读预览（按天分组）
-- CTA: 应用全部 → 写回 notes/attachments；不改时间/顺序
-Failure/Degrade:
-- 失败/配额不足：保持骨架；提示稍后/分天生成
-- 缺必需信息：跳回对应块补最小字段（如坐标）
+- 日期横向滚动，清单 icon 固定在右侧窄 rail。
+- 默认只显示有 accessibility label 的历史图标，不显示“历史”文字。mutation 后图标
+  变为 `[撤销 8]`；倒计时后恢复历史图标。
 
-Citings & Why（事实引用与简因说明）
-- 每个槽位在「做什么/准备/注意」下方显示 why_short（≤16 字）作为轻量原因标签；点击打开来源短链（来源类型：AMap/官方/UGC 等）。
-- 引用呈现：在 why_short 右侧显示来源短链（例如 a.map/xxxx），点击以系统 WebView 打开；站点禁止内嵌时回退系统浏览器（参考设置页面的 WebView 规则）。
-- 缺少来源处理：当「做什么」无法关联事实来源时，保留文案并在行尾以浅色徽标显示「注意事实核查」。
-- 可访问性：why_short 与来源短链具备可聚焦与朗读描述（"原因：…，来源：…"）。
-- 埋点：ai_fill_citation_open(source), ai_fill_citation_missing(slot_id)。
+### Bottom Sheets
 
-### 3.7 行程单（ResultSheet）
-- Purpose: read-only summary with light edits; export hub.
-- Layout:
-  - 按天分组只读视图；每槽位显示「做什么/准备/注意」。
-  - 槽位轻编辑：≤3×30 字/段；按钮“恢复 AI 内容（单槽重置）”。
-  - 顶部轻条：导出前显示可行性修复建议摘要。
+- 顶部 drag handle、清晰标题、右上关闭。
+- 单一 primary action 固定底部；键盘出现时 CTA 保持可达。
+- Sheet 只嵌套列表/字段，不在卡片中再放卡片。
+- 临时层统一消费Nomad `AppSheet`/`AppDialog`，共享视觉变量与可访问行为以[front-end-spec的UX-DR37](../front-end-spec.md)为准。原页面级S10 `ResultSheet`仍是页面，不套入模态。
+- 主临时层之上只允许既有流程必要的一层确认；顶层独占焦点/Escape/返回，背景不可交互和读出。busy/未提交关闭规则由原业务提供，不增加嵌套流程。
 
-Header（导出与平台 AI 额度）
-- 导出区域右侧显示「平台额度：正常/偏低/排队/降级」；当额度偏低显示软提醒；当额度不足时显示可稍后继续或低成本生成说明。
-- 点击额度条跳转设置页 AI 用量区域；返回时刷新计数与降级状态。
-- 文案：
-  - 额度偏低：“平台额度不多，建议先导出关键行程。”
-  - 额度不足：“平台额度暂时不足，可稍后重试或使用低成本生成。”
-- 埋点：resultsheet_open, resultsheet_export_click, ai_quota_warning_show, ai_quota_retry_click。
+## 3. Screen Wireframes
 
-Wireframe — ResultSheet Header（Quota+Export）
-```
-[HeaderBar]
-┌───────────────────────────────────────────────────────────────┐
-│ ← {城市 · {出行日期}}             导出 PNG   免费导出：N ▢ │
-│                                                （≤3 显黄点）│
-└───────────────────────────────────────────────────────────────┘
+### 3.1 Login
 
-AI 额度提示条（当额度不足或降级时显示，位于 Header 下方）
-┌───────────────────────────────────────────────────────────────┐
-│ 平台额度暂时不足，可稍后重试或使用低成本生成。 [ 查看 ]   │
-└───────────────────────────────────────────────────────────────┘
-注：导出按钮仍可点击；若触发降级，先展示提示条；“查看”跳设置页 AI 用量段。
+```text
+Nomad
+
+[ 使用 Apple 登录 ]
+[ 手机号登录      ]
+[ 微信登录        ]
+
+登录即代表同意 用户协议 / 隐私政策
 ```
 
-Slot 状态（打卡）
-- 交互：右侧提供「打卡 <> 已打卡」二态切换（胶囊/按钮），点击立即切换；无网络时排队并提示“稍后同步”。
-- 接口：PATCH /plan/slots/{slot}/status；属性：status_checked: boolean。
-- 显示：已打卡状态在时间线与结果页均显示对勾标识；可在结果页切换。
-- 埋点：slot_check_toggle(slot_id, to=checked|unchecked, page=resultsheet|timeline)。
-- Export:
-  - 本页提供导出 PNG 入口；到达本页视为“已完成”。
+入口等权、同尺寸。风险命中或短信重试时才插入行为验证。
 
-Save/Restore Edge & Errors（轻编辑）
-- 保存成功：底部轻 Toast “已保存”。
-- 保存失败：提示“保存失败，稍后重试”；保留本地草稿并在网络恢复时自动重试一次。
-- 恢复 AI 内容：执行后提示“已恢复为 AI 生成内容”；失败时弹提示并允许重试。
-- 离线：编辑进入排队，显示“离线草稿 · 将在联网后同步”。
+### 3.2 S0 Home
 
-### 3.8 导出
-- 长图形式：固定宽度 1080 px（可选 1242 px），纵向不设上限；行程过长按天切片多张
-- 格式：优先 WebP；不兼容时降级 JPEG（75–80%）
-- 体积目标：尽量 ≤ 600 KB（清晰可读优先）
-- 导出接口：/export/png 支持 width_px、slice_by_day；预览提示“行程较长，已分为多张”
+```text
+☰        [计划 | 灵感]
 
-### 3.9 设置
-- 总体：分组为 账号与登录 / 规划偏好 / AI 用量 / 数据与隐私 / 诊断与缓存
+最近行程
+[厦门 · 7/14-7/16 · 继续编辑]
 
-A. 账号与登录（MVP）
-- 我的账号：头像、昵称、手机号
-- 退出登录：放本页底部，二次确认
-- 后端（占位接口）：GET /me、POST /auth/bind/*、POST /auth/unbind/*、GET /sessions、DELETE /sessions/:id
+灵感目的地
+鼓浪屿 12 个想去              ›
+曾厝垵 8 个想去               ›
 
-B. 规划偏好（MVP）
-- 默认节奏：慢速 / 正常（默认）/ 稍快
-- 默认起始时间：09:00（可改）
-- 时间微调步进：15 分钟（默认）
-
-C. AI 用量（MVP）
-- AI 调用来源：平台额度（默认，服务端统一管理 Provider secrets）
-- 平台额度状态：正常/偏低/排队/降级；展示今日生成、导出与并发状态
-- 降级说明：低成本生成、稍后继续、无 AI 兜底文案
-- Post-MVP：BYOK 可作为高级/内部能力保留，但不在 MVP 主路径展示
-
-D. 可访问性与减少动效（全局）
-- 系统“减少动态效果”开启时：
-  - 地图飞行动画降级为瞬时定位（无平移动画）。
-  - 抽屉吸附过渡时长减半且无弹性曲线；时间线插入/拖拽过渡弱化。
-  - 微动效统一使用淡入/淡出；避免复杂缩放/弹跳。
-  - 动画持续时间上限 180ms，首屏 LCP 相关动画延后执行。
-- TalkBack/VoiceOver：确保 TopSwitch、why_short 与来源短链、打卡切换、撤销按钮可聚焦与朗读。
-
-G. 数据与隐私（MVP）
-- 删除账号与全部数据：二次确认 + 3 秒延迟按钮
-- 第三方与权限说明：Authing / 高德 / 腾讯云 COS / 友盟（链接到文档或“关于”）
-
-H. 诊断与缓存（MVP）
-- 清理缓存：本地图片/临时文件
-- 问题报告：上报日志快照（Sentry event id）+ 追加说明文本
-
-## 4. Entry & Clipboard Flows
-- Deep link / clipboard carries XHS text/password → 登录后继续原动作
-- Disambiguation: 无法判定 → 底部半高 Sheet 提示二选一（不遮挡目的地卡/地图抓手）
-- Multi-link paste: 自动截取第一条入队并 Toast：“其余请逐条粘贴”（含“更换”入口可改选）
-- 灵感选择页（Planner Picker） 入口：
-  - 仅以下两条路径；其余路径一律不进入本页
-  - 底部输入解析 type=trip_params → /planner/pick
-  - 目的地卡“开始规划” → /planner/pick（传 city 与可选 place_hints；start/days 生成前补齐）
-- 粘贴识别：若检测到 XHS 分享口令/链接，显示轻提示“识别为小红书链接”
-- 提交禁用：提交过程按钮 Loading/禁用以防重复提交
-- Clipboard failure: fallback copy; teach "长按粘贴"
-- U-Link attribution: channel/click_id → first_open/register → bind user_id
-
-## 5. Microcopy (Key)
-- 统一输入占位："粘贴小红书分享链接，或输入：杭州 11/2 起 3天"
-- 粘贴识别："识别为小红书链接"
-- 灵感选择页说明："勾选想去的地方；也可直接跳过生成"
-- 时轴空槽："空闲 · 2h"
-- 添加成功："已添加 · 撤销"
-- 冲突提醒："与 14:00 的安排重叠 · 试试 15:00 或缩短 30 分钟"
-- CTA 说明："当所有天的骨架确定后，再进行智能填充"
-- AI 顶部："一次性编排剩余可控非自由活动块，并为每个块补齐做法/准备/注意"
-- 应用完成："已应用到行程，可在时间线查看详情"
- - 行程单："行程单 · 只读预览（可轻编辑）" / "导出前请检查可行性与修复建议"
- - 槽位轻编辑占位："在此补充你的做法/准备/注意（≤30字/行，最多3行）"
- - 槽位恢复 AI：按钮“恢复 AI 内容”；确认“确定将此槽位恢复为 AI 生成内容？”
- - FR44‑lite 搜索占位："搜索地点或类别（Top‑5）"；失败：“搜索暂不可用，请稍后重试”
-
-补充：
-- 结果页打卡："打卡" / "已打卡"
-- 最近行程入口："继续上次行程"
-- AI 额度不足："平台额度暂时不足，可稍后重试或使用低成本生成。"
-- AI 额度偏低："平台额度不多，建议先导出关键行程。"
-- 事实核查："注意事实核查"
-- 引用来源占位："来源：AMap/官方/UGC"
-
-## 6. Compliance & Risk Guards (UX-Scope)
-- First-screen links: Privacy/ToS accessible; plain language.
-- Permission prompts: purpose-first phrasing; lazy ask (on user action).
-- SMS safety: behavior verification on risk; rate limiting; IP throttle; number blacklist.
-- Map attribution: AMap logo/copyright placement.
-
-## 7. Telemetry Blueprint (UX-facing)
-- Funnel: login → ingest → select → skeleton → ai_fill_apply → resultsheet → export
-- Event naming (draft):
-  - app_open, login_success, ingest_start/success/fail, library_select, skeleton_generate, slot_add, fix_apply, ai_fill_apply_all, resultsheet_open, resultsheet_export_click, slot_edit_apply, slot_edit_reset_ai, search_open, search_submit, search_result_click, export_png
-- Properties (draft): city, day_idx, slot_idx, poi_id, source(xhs/nl), candidate_reason, conflict_type, fix_type
-
-补充事件（MVP）
-- slot_check_toggle(slot_id, to=checked|unchecked, page)
-- ai_fill_citation_open(source)
-- ai_fill_citation_missing(slot_id)
-- ai_quota_warning_show / ai_quota_retry_click / ai_quota_degrade_accept
-- recent_plan_open(plan_id, status=done|draft)
-
-## 8. Open Questions
-- Monorepo packages & shared UI lib naming?
-- Sheet snap thresholds per device class.
-- Hero slot rules per city/season; ops override UI.
-
-## 9. Simple Flow (Mermaid)
-```mermaid
-flowchart LR
-  A[App Open] --> B{Logged In?}
-  B -- No --> L[Login]
-  B -- Yes --> H[Home]
-  H -->|InputSubmit / parseQuery| P[PICKER]
-  H -->|XHS Link| I[Ingest Async + SSE]
-  P -->|Next / POST /plan/generate| T[Generate Skeleton]
-  T --> E[Edit Timeline]
-  E -->|Validate| V{Hard Conflicts?}
-  V -- Yes --> E
-  V -- No --> F[AI Fill Preview]
-  F -->|Apply All| X[Export PNG]
+                 optional import queue
+[长输入框........................][+]
 ```
 
-## 10. PRD ↔ UX Coverage Mapping (v0.1)
-- FR1 登录与合规 → 3.1 登录首屏 + 6. Compliance & Risk
-- FR2 首页分段/目的地卡/统一输入 → 1. Navigation Model + 3.2 首页 + 2. Global Components (TopSwitch/CityCard/UnifiedInput)
-- FR3 统一输入分流（链接优先/NL 备选/无法判定二选一） → 2. Global: UnifiedInput 分流 + 4. Entry & Clipboard Flows
-- FR4 XHS 入库异步 + COS 二次存储 + SSE 进度 → 10.1 入库进度 UI（新增）
-- FR5 灵感库城市聚合 + 待定位 Top-5 → 3.3 灵感库 + LocationModal
-- FR6 灵感选择页（可选） → 3.4 灵感选择页
-- FR7 生成天级骨架 + 空槽大弹窗（候选/AI/自由） → 3.5 天级骨架 + SlotSuggesterList + AITipsList
-- FR8 时间轴编辑（替换/移动D±1/调时/删除/撤销） → 3.5 天级骨架 Interactions
-- FR9 可行性校验 + 一键修复 → FixSheet + 3.5 Fix
-- FR10 AI 一次性填充（不改时间/顺序，补齐三要点） → 3.6 AI 填充
-- FR11 导出 PNG → 3.7 导出
-- FR12 设置（AI 用量/删除/导出） → 3.8 设置（A/B/C/G/H 分组）
-- FR13 观测与评测（Langfuse/promptfoo/Sentry） → 7. Telemetry Blueprint（UX 侧埋点草案）
-- FR14 第三方集成（登录/地图/COS 等） → 6. Compliance & Risk（可见性与文案）
-- NFR1 国内可用/降级策略 → 文案与状态兜底（见 10.3）
-- NFR2 前后端以 SSE 展示进度 → 10.1 入库进度 UI
-- NFR3 AI 安全与成本控制（服务端 secrets/脱敏/签名 URL/额度降级） → 3.8 设置（呈现与说明）
-- NFR4 性能目标（交互时延） → 0. Design Principles & Motion
-- NFR6 可观测性漏斗 → 7. Telemetry Blueprint
-- NFR8 动效/单列/分段吸顶 → 0/1/3 对应
+- 自然语言识别在 Dock 内显示 `识别 厦门 3天 7月14日出发`，发送后进入 S2。
+- 多链接在同一 Dock 中形成 `N/X` 队列，不跳导入详情页。
+- 无法判定时显示半高二选一 Sheet：导入链接 / 创建旅行计划。
 
-### Gaps/Notes
-- 地图-卡片联动的性能与分段吸附位阈值需按机型调参（见 Open Questions）。
-- 导出 PNG 卡片规格需与工程对齐尺寸与字重（后续补规格图）。
-- 登录首屏第三方与 Apple 等权：按平台差异出入口布局需评审。
+最近行程（Story 7.1）：
 
-### 10.1 入库进度 UI（SSE）
-States
-- created: 任务已创建
-- fetching: 拉取
-- parsing: 解析
-- geo: 定位
-- storing: 存储
-- done: 完成（可进入灵感库）
-
-UI
-- 标签显示：获取/解析/定位/完成（可将 created/fetching 合并为“获取”；storing 归入完成前态）
-- 展示规则：只显示阶段状态 + 个数，不显示百分比
-
-### 10.1b 骨架生成 SSE（v0.2）
-Phases（后端）：started → freeze → selected_anchor → quota → candidates → place → validate → persist → done
-
-呈现（两种其一，按开关实验）：
-1) Header 轻量面包屑（默认）：紧凑胶囊依次点亮（skeleton_sse_ui=breadcrumb）；
-2) 轻量 Toast（实验）：仅提示 started / place / done 三个关键节点（不叠加）（skeleton_sse_ui=toast）。
-
-文案：
-- 正在生成计划… / 已冻结指定时段 / 已选地点优先安排 / 已计算预排额度 / 候选已就绪 / 正在预排推荐点 / 正在校验可行性 / 保存中 / 计划生成完成
-
-Retry & Copy
-- 自动重试：指数退避，最多 3 次（次数/结果进埋点）
-- 文案：
-  - 重试中：“网络波动，正在为你自动重连…”
-  - 超阈失败：“解析失败 · 轻点重试”
-
-弱网表现
-- 面包屑模式：未收到事件 >10s 显示“网络波动 · 正在重连”，并保持已完成阶段点亮不回退。
-- Toast 模式：关键节点 Toast 合并不叠加；显示“正在重连…” 单条提示，成功后显示“已恢复”。
-
-Empty/Errors
-- 多行粘贴 → 顶部气泡提示：“一次仅处理一条链接”
-- 网络波动 → 暂停态 + 重连倒计时；保留已完成阶段
-- 内容安全触发 → 行内提示“已过滤敏感内容”，不阻塞后续
-
-Wireframe — Skeleton SSE 面包屑（默认）
-```
-[HeaderBar]
-┌──────────────────────────────────────────────┐
-│ ← {城市 · {出行日期}}            …          │
-└──────────────────────────────────────────────┘
-
-[SSE Breadcrumb]
-获取  ▸  解析  ▸  定位  ▸  完成
-■□□□  （点亮顺序：获取→解析→定位→完成；弱网：显示“正在重连…”）
-
-Toast 模式（实验开关）仅在关键节点显示：
-┌  正在预排推荐点  ┐（不叠加，下一条覆盖）
-└──────────────────┘
+```text
+首页最近一趟 ── 继续查看/继续编辑
+全部 / 菜单 → 最近行程列表
+  ├─ 草稿 → 继续填写 → 有效 S2-S5
+  ├─ 规划中 → 查看进度 → 原 S6 任务
+  ├─ 已生成 → 上次 S7 或 S10 的城市/日期/浏览位置
+  └─ 生成失败 → 查看原因 → 原失败恢复流程
 ```
 
-### 10.2 定位弹窗（待定位 Top-5）细化
-- 搜索框支持模糊/拼音/简称；结果列表仅“名称+地址”
-- 推荐区：Top-5 候选（按城市命中 > 名称相似 > 地址包含地标 > 连锁分店优先常去区域）
-- 交互：点选即确认入库；返回列表保持滚动位置
-- 展示限制：仅展示名称 + 地址（含商圈/地标）；不展示距离/时长/置信度/评分
-- 语义说明：灵感库条目为素材池，与规划无关；不引入“更近/更快”的规划语境
+- 每个独立 Plan 或 Trip 一项，子城市和一日游不重复；城市名不是身份。
+- 已生成只表示当前行程可读，不表示旅行结束或细节/冲突已核查。
+- 已发布行程只有存在真实保存的变更草稿/任务才显示附属行：
+  `有未完成的修改 · 继续填写` / `修改规划中 · 查看进度` /
+  `本次修改生成失败 · 查看原因`。主入口仍可用；半途离开、断线不是失败。
+- 当前服务端版本优先于缓存位置；过期日期/scope 回有效父位置，任务恢复不重新生成。
+- 空态不遮挡输入；失败不是空态；分页和返回保留位置，账号切换清除私有结果。
+- Story 7.2 打卡已移出 MVP，不增加打卡入口；照片自动标记/相册视频/九宫格/AI 美化
+  为 FR40.1 的后续设计，不更改当前 S10 查看与 Epic 5 行程长图导出。
 
-手动录入兜底（FR44‑lite 对齐）
-- 表单：名称（必填） + 地址/坐标（可选）→ 地理编码 → 入候选（低置信标记“待定位”）。
-- 失败提示：
-  - 地理编码失败：“未能解析地址 · 请检查后重试”
-  - 网络失败：“网络异常 · 稍后重试”
-- 直接落位：遵循硬约束/分段边界；失败给出原因并回退为候选。
+### 3.3 S1 Import and Library Record
 
-### 10.3 Edge & Error States（关键场景）
-- 剪贴板读取失败 → 文案 + “长按粘贴”教学
-- SSE 断开重连 → toast + 指示当前阶段，重连后续传
-- AI 填充失败/配额不足 → 保持骨架；引导分天或稍后
-- 骨架冲突剩余 1 处 → 顶部 fix 条提供 1-2 个可落地选项
-- 地图配额接近 → 降级：关闭热力圈/仅列表；提示“地图功能降级”
-- AI 额度不足/降级 → AI 页顶部灰条提示 + 一键查看额度/稍后继续
+运行展开态显示来源标题、四个离散阶段和当前事实动作；不显示百分比。
 
-## 10.4 实施补充（建议纳入）
-- 地图 × 卡片抽屉三段吸附：列表主视 / 分屏 / 全屏地图；地图懒加载、Marker 聚合
-- 可访问性与性能：触控目标 ≥ 44pt；遵循系统“减少动态效果”；LQIP + 渐进清晰；骨架屏统一；分屏时再加载地图
-- 内容安全与去重：XHS 图片二次存储至 COS（禁热链）；文本 + 主图指纹去重；基础敏感内容检测
-- 数据与回收：账号删除与数据导出（App 内可自助）；对象存储生命周期与孤儿文件清理；Postgres 备份与 PITR
-- 埋点与特性开关：友盟漏斗（Auth.View → Ingest.Start/Persisted → Plan.Generate → Plan.InsertBlock → Plan.Finalize → AI.Fill.Apply → Export.Success）；远程开关（候选数量、地图默认高度、软冲突放行、CTA 智能时段）
-- A/B 与排序策略：首屏版式（Hero+双列 vs 纯双列）、CTA 文案（加入行程 vs 加入 Dn·时段）；待定位 Top-5 后台排序按“城市 > 名称相似 > 类目 > 热度”，不外显得分与距离
+Library：
 
-### 决策落地（补充）
-1) 城市 Tabs 排序：按“与目标城市中心点直线距离”排序；过滤灵感量 ≤1 的城市（不显示）
-2) “用热门生成骨架”：删除此动作（不展示）
-3) 近邻聚类特征：不引入“用户画像/常去区域”，保持“地理邻近 + 开放时间 + 主题标签”
-4) 未落位清单：仅在“空槽 → 候选抽屉”中展示；骨架页不直接展示，提供“去定位”入口在相关卡片上
+```text
+☰        [计划 | 灵感]
+
+厦门灵感
+[L2 行 + 子 L3 摘要]
+
+导入记录
+[来源标题] 已保存 6 个地点          ›
+```
+
+记录详情列出解析 L3、待定位状态和来源；右上小 copy icon 复制原始链接。
+
+### 3.4 S2 Travel Time
+
+```text
+‹                厦门              已自动保存
+
+旅行日期
+[ 7月14日-16日 · 共3天             › ]
+
+每天几点出门
+[ clock wheel: 08:00 ]
+
+到达与离开
+[ 到达厦门   具体时间 / 大概时段 / AI安排 › ]
+[ 离开厦门   具体时间 / 大概时段 / AI安排 › ]
+
+1 / 2
+[ 下一步：住宿 ]
+```
+
+Boundary Sheet 先选 `具体时间 | 大概时段（2小时） | 交给 AI 安排`。
+具体时间再输入航班/车次并选择结果；没找到时进入手动交通方式、时间和地点。
+边界行必须被主动选择一种模式；`交给 AI 安排` 是有效确认，untouched 初始态不是。
+
+多城标题使用可滚动的有序城市链；`厦门-泉州-福州` 只是示例。边界行依次是到达
+首城、前往每个后续城市、离开末城；整体日期和天数由全部城市段计算。新增第四个及
+以后城市仍复用同一结构，不出现固定数量字段或另一套向导。
+
+### 3.5 S3 Accommodation
+
+```text
+‹              住宿安排            已自动保存
+厦门 · 7月14日-16日 · 2晚
+
+按住宿晚安排
+● 7月14日晚
+  [酒店/民宿/地址，可留空          ›]
+  [早餐：未知                      ›]
+  [行李：带到首晚住宿 / 需确认      ›]
+
+● 7月15日晚                  [同上]
+  [酒店/民宿/地址，可留空          ›]
+  [早餐：未知                      ›]
+  [行李：带到新酒店                ›]
+
+住宿晚数不对？修改旅行日期
+[ 去选择想去地点 ]
+```
+
+- `同上` 是按钮；点击后复制上一晚的住宿和早餐，行李按“连住”重新默认为
+  `留在原酒店`，而不是复制上一段 transition；用户仍可修改每个子项。
+- 酒店为空不阻塞，不由 AI 静默选酒店。
+- 车站/机场寄存需在详情中显示放下和取回约束；其他方式渐进展开。
+- 首晚没有“原酒店”；末日 checkout 到离开边界仍显示行李确认。单向离开不能把
+  行李留在旧酒店，除非计划存在返程取回。
+- 每晚酒店 `留空`、早餐 `未知`、行李 `未决定` 或后续晚 `同上` 都可主动确认；
+  未触碰的初始态不满足下一步门禁。
+
+### 3.6 S4 Full-City Overview
+
+```text
+‹              全城检查
+[地图：当前 L1 全城视角]
+
+[●] 鼓浪屿             必去 2 · 顺路 1   ›
+[L3 thumb✓] [L3 thumb route] [L3 thumb]
+
+[●] 中山路             必去 1 · 顺路 2   ›
+[...]
+
+已选必去 3   顺路去 3
+[ 下一步 ]
+```
+
+- 顶部标题无展开箭头。
+- required/along_route 都必须回映到缩略图、L2 分项汇总和全局 totals。
+- L2 只用于进入 L3，不可标记必去或顺路。
+- L2 左侧状态点不可点击，由子 L3 派生未选/required/along_route/混合态；精确语义
+  同时由图标和分项计数表达，不只靠颜色。
+
+### 3.7 S4 Select L3
+
+```text
+‹               鼓浪屿
+[附近 | 全城]                  default: 附近
+[地图：当前 L2 与附近 L3]
+
+日光岩                         [✓] [route]
+菽庄花园                       [✓] [route]
+龙头路                         [✓] [route]
+
+已选必去 2   顺路去 1
+[ 返回全览 ]
+```
+
+- 两个 action 位于行右侧且互斥，纯 icon；active 再点清除。
+- 点击行或地图 marker 打开通用 POI Sheet；Sheet 标题直接使用 POI 名称，不出现
+  “详情栏”等泛化标题；预约 evidence 仅作为 badge/来源行。
+- 点击或选中 L3 时地图自动聚焦该 POI 与附近地点；向下拉至 split 显示当前 L2
+  与附近 L2，完全地图视角展示 L1 全城。
+
+### 3.8 Cross-City Confirmation
+
+```text
+西街在泉州
+当前是厦门行程，选择一种加入方式
+
+厦门  →  泉州  →  厦门
+
+[● 安排泉州一日游]
+   当天往返，住宿仍在厦门
+[○ 增加泉州行程]
+   在泉州停留，并单独设置住宿
+
+[ 安排泉州一日游 ]
+[ 暂不加入       ]
+```
+
+选择 `增加泉州行程` 才进入 S2/S3，不把地点立即提交给当前城市 Plan。接受后保留原
+required/along_route 意图并绑定新 segment；取消保持原 Trip。城市数量不设产品上限，
+每次新增都复用同一确认与 S2/S3 流程。两城主链可反转；更长城市链在 S2 明确本次新增
+城市的插入位置，主链不允许重复城市。
+
+选择 `安排泉州一日游` 进入同日往返设置：绑定宿主日期，分别确认去程与返程；住宿与
+行李继续显示宿主城市状态。返程未确认时按钮禁用但草稿可恢复。发布后日期栏仍只有一个
+D2，时间轴依次显示宿主城市前段、去程、目的地一日游、返程、`已回到宿主城市`、
+宿主城市后段和宿主酒店。目的地一日游用 child Plan identity，不创建第二个同名宿主 Tab。
+同日往返之外的跨夜 A-B-A、跨时区、夜间跨日、嵌套/多目的地一日游或既有整条链任意
+复杂重排仍不开放。
+
+### 3.9 S5 Planning Review
+
+```text
+‹              规划前确认
+
+厦门 · 3天
+7月14日-16日
+
+已选地点  必去 4 · 顺路 3             调整
+[L3 thumbnails]
+
+这次想怎么玩？
+[悠闲] 每天1-3个，较晚出发，留更多自由时间
+[从容] 每天2-4个，兼顾游览和休息          selected
+[充实] 覆盖更多地点，接受早出晚归和更多换乘
+
+[ 还有其他需要注意的吗？             › ]  default collapsed
+  同行人、行动能力、饮食、步行或其他不能接受的条件（可选）
+
+[ 开始规划 ]
+```
+
+不重复 S2/S3 全量字段，不显示智能规划开关。玩法从自然语言、导入证据和选择行为
+推断为软偏好，不在这里增加第二套玩法问卷。
+
+### 3.10 S6 Planning in Timeline Shell
+
+```text
+‹              厦门 · 3天             [◷]
+D1 7/14       [D2 7/15]       D3 7/16   [清单]
+
+09:00 [stable skeleton row]
+      正在安排必去地点
+11:30 [stable skeleton row]
+      正在核对营业时间和交通
+...
+[酒店 footer skeleton]
+```
+
+accepted/context/constraints/arranging/validating/persisting 是事实阶段。重连、
+排队、内部降级或失败在同一 shell 给出动作，不显示 Quick/HQ 或第二份计划。
+
+### 3.11 S7 Plan Timeline
+
+```text
+计划已完成，可直接调整
+
+D2 较满 · 3个主要安排 · 约1.2-1.5万步 · 通勤1小时20分  ›
+
+● 09:00 [image] 日光岩             …
+          30分钟 · 公交
+● 11:30 [image] 菽庄花园           …
+          25分钟 · 步行
+● 14:00 [image] 中山路             …
+● 18:00 [image] 晚餐               swap …
+
+[hotel] 厦门海景酒店 · 含早餐        ›
+
+                                      [AI调整 icon]
+```
+
+- 完成提示在首次 mutation 后消失。
+- MealSlot 与 POI 同视觉；hotel 置底。
+- 未解决 required 和其他候选在候选入口，不用空白“待安排”要求用户先摆满。
+- 负荷详情展示项目数、步数范围、通勤、留白、原因和自然语言估算边界；步数不显示假精度，内部置信分或质量枚举不直接展示。
+- 候选入口一级按 `未安排的必去 / 顺路候选 / 其他候选` 分组；每个地点行再标注
+  `来自灵感 / 城市热门 / 附近推荐 / 我添加的`。intent 与来源正交，不重复展示同一地点，
+  也不使用泛化 `AI` 来源标签。当前 MVP 补全仍依次使用已有灵感、AnchorPool/城市
+  Top-50 和 AMap 附近；不确定项进入候选区而不暂停 PlanningJob。XHS 关键词搜索延期，
+  用户仍可从 Home 主动导入具体链接。
+- `添加地点` 先展示 AMap Top-5 列表。没有准确结果时进入 `手动添加地点`，填写目标名称
+  并选择同城、经验证的附近地标。确认状态显示 `附近估算`、地标名称/地址和偏差提示；
+  路线与距离按地标计算，但目标不继承地标事实。未选地标时只保存 `待定位` 且路线未知。
+- 本阶段的 CTA 是 `保存到候选`；结果进入 `其他候选` 并在行内标注 `我添加的`，不改变时间轴。候选到时间轴的
+  落位、替换或自由时段填充属于 S8 的版本化编辑流程。
+
+### 3.12 Timeline Edit Sheet
+
+```text
+日光岩 · D2
+
+上一站：30分钟 · 公交
+下一站：25分钟 · 步行
+
+[ 替换                         › ]
+[ 移至 D1 ][ 移至其他 ][ 移至 D3 ]
+[ 调整时间                     › ]
+[ 删除                           ]
+```
+
+第一/最后一天禁用越界；三天 D2 禁用“移至其他”。通勤 unknown 时显示
+`路程时间暂缺`。`移至其他` 只列当前单城市 segment 内的非相邻日期。调时 Sheet
+使用时钟/闹钟式滚轮，1 分钟精度，开始/结束
+分别标 D2/D3；快滑改变灵敏度，不显示吸附文案。
+
+### 3.13 S8 Conflict and AI Adjustment
+
+冲突只在出现时显示；仅soft时为低强调“有 N 项建议核对 · 查看”，hard/mixed保持当前问题与原门禁。用户点开才进入FixSheet，不自动弹出。以下为存在hard问题时的详情示意：
+
+```text
+这次调整产生 1 个冲突
+日光岩结束后无法按时到达已预约晚餐
+
+方案 A  提前 20 分钟离开
+方案 B  更换附近景点
+
+[ 查看并应用方案 A ]
+```
+
+自然语言调整先识别 slot、segment、day、later-days 或 whole-trip 范围并优先最小范围。
+范围不唯一或请求触碰关键风险时，AI 先返回一个受控 `AdjustmentAsk`：一次只显示一个
+范围选择或风险问题，范围可修改，未回答前禁用继续；不显示“我理解为”或推理过程。
+澄清后才显示 `选择一个调整方向`，再进入 diff；完成 Sheet 标题为 `做了以下调整`。
+右下角 AI 图标使用当前 slot/day 作为默认上下文，快捷项只提交意图，不能直接重排。
+失败、stale revision、天气陈旧或无安全方案都保留当前计划。
+
+### 3.14 Meal States
+
+实际采用计划基准的定位降级主显“已按行程位置推荐”并保留前/后计划地点，过期/未授权/失败原因在原推荐依据查看；餐厅选择主流程继续，恢复定位保持次要动作。
+
+- fixed anchor：普通 POI 行 + 紧凑 `需预约` badge。
+- choice pool：一主两备；swap icon 打开候选。
+- shortage：第一个缺口 `+ 添加更多`。
+- undecided：绿色 `暂不决定`，无固定时长；召回显示位置依据/降级来源。
+- 6.2在App打开/回到前台且存在当前旅中餐饮用途时，允许凭仍有效的历史授权或本次授权
+  单次刷新；餐饮入口/主动刷新继续可用，同轮事件去重。未授权不在App打开时弹窗，先用
+  计划基准，用户选择附近候选时再说明用途并请求权限；旧许可不能越过系统撤权。
+  刷新不抢占页面、不改变餐厅/行程或覆盖Sheet草稿；结果绑定owner/前台会话及当前餐次
+  scope，关闭Sheet仅取消该Sheet请求，后台/登出/撤权或scope失效取消关联请求并清除上下文。
+  原始fix处理后清除，不持续监听或定时刷新。
+  无可用位置时展示同 scope 的上一计划地点与饭后地点，不声称已完成；MVP 不提供打卡
+  或照片到访记录。无基准时保留静态池/手动添加，恢复定位不是继续选择的前置条件。
+- area food：`附近吃什么` 放在商场/小吃街条目的信息行后，不生成时间点。
+- area food 只列该 owner 的验证导入，并要求宿主与餐厅共享可靠 BusinessArea；无归属或
+  无有效结果隐藏入口。行与来源分别打开通用 POI Sheet、导入记录；失效结果清空，网络
+  失败保留重试。使用 `story-6-3-area-food-context-r2.png`，不显示技术质量标签。
+
+### 3.15 Trip Checklist
+
+```text
+行程清单
+必买目标
+[ ] 指定型号相机电池
+顺路门店
+[ ] 中山路伴手礼
+返程事项
+[ ] 机场退税
+其他记录
+[ ] 记得带充电宝
+
+[ + 添加记录 ]
+```
+
+Add Sheet 有输入框与 `AI 提示 | 直接添加`。空输入强调直接添加；输入后 AI 提示
+可用并强调，但 AI 结果必须确认。
+
+`其他记录` 仅有普通备注时显示。直接添加进入文字、分类与整趟/具体日期填写页，不能
+保存空白。AI 仅点击后调用，结果支持逐条编辑/选择、重复提示和确认，失败保留原文。
+点击记录编辑或删除，右侧勾选完成/取消完成；更新清单自己的版本与数量，既不代表
+实际到访/购买，也不触发时间轴撤销。相关 AI 上下文变更需重新核对；返回保留原行程
+日期和滚动位置。补充视觉使用 `story-6-4-checklist-record-workflow-r1.png`。
+
+购物记录使用 Story 6.5 的轻量路径：直接在单个文本框描述购买想法，灰色示例标签
+`款式： / 数量： / 预算：` 只作占位。框底快捷行提供款式/数量/预算/品牌/尺码，点击
+换行插入对应标签并继续输入，已有标签则定位而不覆盖；属性都可留空，不要求购物日期
+或门店。只保存原文，复用清单 CRUD。用 `story-6-5-shopping-text-shortcuts-r2.png`
+说明该交互，旧属性/日期/门店表单不作为本路径依据。
+
+找店、多门店、购物自动排期及顺路提示留待后续版本；库存证据、实际经过与位置触发、
+自动应用授权/撤销方式届时定义。清单返程事项转换为时间安排已明确延期，本期仅保存
+记录和完成状态，不显示 `预留时间`；已有交通、酒店与行李所需缓冲继续由原规划与校验
+流程处理，不要求用户在清单里再次安排。
+
+### 3.16 S9-S11 Detail, Result, Export
+
+提示层级按front-end-spec的18组已批准合同：细节汇总简短、soft按需查看；图片变化显示“行程已有更新，可重新生成”，分图主显“将下载 N 张长图”。正式失败/未知/硬冲突与必要确认不隐藏，离开App的导出文件保留必要说明。
+
+5.1先交付同一路由的最小S10基础宿主页、S7计划级入口→S10→S9→原S10链，以及S9真实来源
+按需展开；S7/S8不增加细节卡/底部完善按钮。只读基础行程不依赖细节已生成，深链/恢复可建立
+合法父上下文，返回保留当前有效日期/scope/锚点，不自动生成或重复校验。5.2在此基础上增强
+完整双行核查、槽位阅读与CitationSheet，复用身份、版本和来源读取；下文描述最终整合形态。
+
+S10 先展示完整基础行程。在日期 Tabs 下的 `整体核查` 中，`时间安排` 绑定 current
+revision 的 ValidationRun，`行程细节` 绑定该 revision 的 FillRun/SlotDetail 完整度。
+hard conflict 不阻止阅读，但显示修复入口并禁用完善；无 hard conflict 时从细节行进入
+S9。S9 预览每个槽位的做什么/准备/注意和 citation 状态，不提供重排操作，完成、部分
+完成、失败或恢复后返回原 S10 上下文。
+
+无来源但可安全表达的通用建议，在S9对应内容旁/S10槽位详情内使用次要行内文字
+`建议核对`，不弹窗、不反复Toast、不要求逐条确认。总览仍先给基础行程，细分依据从
+详情/来源按需查看；无安全内容仍为 `暂未生成`，不以弱提示代替事实引用或时间安排门禁。
+
+S10 槽位页逐条显示用户新增或改写内容的 `我的修改` 标记；重新完善保留用户原文、删除
+与可选栏显式留空，只补充不重复 AI 内容，不提供恢复 AI。S11 从 S10 导出入口进入，
+基础行程必选，行程细节可选；细节未完善仍可导出基础行程。用户只选择 1080/1242，
+系统从精确 current revision 推导有序城市图片：单城一张，linked Trip 每个主城市段与
+一日游子计划各一张，每个单元合并全部日期且不按日拆分。最终文件默认 WebP、尺寸或兼容
+失败时降级 JPEG；背景使用版本化抽象路线底纹和可用的自有/授权城市页头页尾素材。
+
+hard conflict 或不完整联程原子引用禁用预览并返回现有修复路径；soft warning 可继续但需
+展示。ExportJob 按已处理城市行程单元展示真实进度，断线恢复同一任务，失败保留设置可重试；
+计划更新后旧预览必须刷新。Story 5.4 提供鉴权城市文件下载；Story 5.5 在 Web/PWA
+客户端把同一导出快照确定性合成为整趟长图。正常长度为一个文件；超过版本化实测上限时
+只按完整城市边界生成带 `N/总数` 角标的有序 part，并由一次操作启动下载批次。始终不使用
+ZIP 或城市内拆分；系统分享在能力检测后使用有序城市图片组，Web/PWA不承诺直接写入系统相册，App按第7节新增合同执行。
+
+普通下载已发起且没有可观察拒绝时，显示 `已开始下载，请确认`，内部保存结果保持未知；
+只有可验证的目录写入/关闭成功才显示已保存。明确失败照实处理，未知文件重试由用户
+触发并说明可能重复，复用原批次/文件而不重新生成或扣次数，不增加逐文件确认步骤。
+
+### 3.17 Settings Account and Actions
+
+设置只显示只读账号与实际可用操作：数据导出、删除账号、隐私政策、反馈和当前会话
+退出。未部署功能不伪装可执行，已部署但暂不可用的操作保留恢复路径；完整流程由
+各自 Story 负责。没有账号展示资料时显示 `已登录 / 当前账号`，不加资料编辑箭头。
+
+没有 AI 与用量、使用情况或全局任务状态页，不暴露额度/次数/余额/上限/重置信息。
+后台保护保留，受限时只提供真实的稍后重试、查看原任务或手动编辑等动作；不展示
+BYOK、模型或 Provider。真实任务进度仍在工作页，浏览和手动编辑不被设置额外阻断。
+
+退出登录：打开当前会话确认 Sheet；取消保持会话，确认后调用服务端撤销并清理本账号
+私有缓存/迟到响应，返回登录。仅承诺已保存行程保留，不删除账号或取消已受理任务；
+失败不能假报撤销成功，未保存输入按既有保护处理。Story 7.3 / Account Actions R2 已批准。
+
+### 3.18 Account Data Copy (Story 7.4)
+
+设置 -> 导出账号数据 -> 确认范围后生成 -> 真实任务阶段 -> 可下载副本。
+范围为安全账号资料、当前自有行程/草稿、灵感索引/批注、清单和行程文字；一个 ZIP
+包含 JSON 与说明，不含历史版本、原图/视频、凭据或内部调用信息。不增加类别勾选表单。
+这不是行程长图导出，也不提供恢复导入。Core/Recovery R1 已获批，文本合同优先。
+
+任务离开可恢复，重复提交不重复生成；退出当前会话不取消已受理任务。完成页以真实
+数据截至时间、有效期和文件大小标识副本。生成失败重试固定快照；过期后主动重新生成；
+下载失败重试同一有效文件。不把断网读取失败当作任务失败，不宣称浏览器已保存完成。
+已失效账号不能通过旧链接下载，当前账号切换会丢弃迟到响应。原型期限不是固定策略。
+
+### 3.19 Account Deletion (Story 7.5)
+
+设置 -> 删除范围/可选先导出 -> 最终确认 -> 删除进度 -> 返回登录。
+Core/Recovery R1 已获批：仅最终受理后停用所有普通会话并不可撤销；清理异步继续。
+先导出不强制，需要副本应先下载。普通退出与删除不同，删除后不能继续读取行程或导出。
+回执只查本次安全进度，重试另行核验限定权限；丢失/过期核验身份不能恢复普通账号。
+
+已知清理失败保留停用与续做路径；状态读失败只重读，不重发删除。在线数据清理核验
+完成后，保留备份/记录的范围与期限另列，不声称所有副本立刻消失。返回登录不取消清理，
+重新注册不能复活旧 owner；离线设备与外部下载副本不承诺远程即时擦除。
+
+### 3.20 Feedback (Story 7.6)
+
+设置/侧边栏/结果异常 -> 反馈入口 -> 真实外部打开或直接填写 -> 提交/核实 -> 回执 -> 原页面。
+Entry R1/Recovery R2 已获批；不传 Nomad 登录信息，不保证第三方页面匿名，也不把
+Web/PWA 冒充原生 WebView。缺失外部配置仍可内置填写，不使用占位链接。
+
+内置表单：文字必填、最多一张截图可选，诊断默认关闭；不需额外分类/联系方式。
+上传不可用只有 disabled 控件，预览 X 可移除后正常提交文字；没有失败提示/重试行/
+专用文字提交按钮。进行中没有底部按钮，真实失败或有界核实超时后才显示恢复。
+同一申请幂等查询，原文与有效附件真实保存后才显示回执，不宣称问题已处理。
+恢复仅限原账号有效临时内容；离开不自动重发，已删除账号无普通反馈写入权限。
+
+## 4. State Preservation
+
+- Back from S3 to S2 retains every nightly draft after date reconciliation.
+- Picker view changes never mutate intent; overview/L3/map derive from one store.
+- Cross-city confirm stores a pending intent until S2/S3 succeeds; cancel restores prior chain.
+- S6 reconnect uses job id and current revision; no duplicate planning run on app resume.
+- Day scroll positions are per day; opening checklist or Sheet restores the previous position.
+- Global undo operates on the Trip/Plan current revision, not only the active day.
+- Shared controls preserve the same confirmed drafts, operation identity and display/ACK timing. Opening or closing a Sheet never creates an operation, silently saves a draft or resets Home FIFO evidence.
+- Private page content, read caches, Sheets and Toasts hide together while identity is unconfirmed; late callbacks and focus restoration cannot expose a previous owner. A successful current-identity check restores only still-valid context.
+
+## 5. Deep Links and Recovery
+
+- Auth completion resumes pending Home input/import/plan route.
+- Historical `/planner/pick` deep links first reconcile missing S2/S3 data.
+- Opening a plan during S6 reconnects the existing job; during S7 loads current revision.
+- Deleted/unauthorized/expired records show a neutral unavailable state and return Home.
+- Story9.7 implements these paths through typed navigation for existing Home/Settings/Planner/DayPlan; S0–S11 types do not create unimplemented screens. Web refresh/direct entry/back/forward preserve the valid parent/date/scope; invalid context yields a clear unavailable state.
+- Native external links and auth callbacks remain inputs to the existing validation chain. Only its verified typed intent may navigate; raw URLs do not grant identity or directly select a private route.
+- URLs carry only allowed public references and bounded stage/date/scope, never credentials, private raw input, protected links or full drafts. Identity guards cover route loaders and Portal; navigation/readonly loaders do not start planning or replay writes.
+- Leaving and returning preserves permitted scroll/focus and original unsaved-input rules. Do not restore stale transient Sheets/undo or present a dirty form as durably saved. Query and Router are separately accepted implementation units, not new stages.
+
+## 6. UX Guardrails
+
+- No visible `骨架`, Quick, HQ, seed, smart-planning toggle or version-adoption screen.
+- No extra completion page between S6 and S7.
+- No bottom recent-operation row, permanent validation card or automatic 48-hour reminder.
+- No L2 must-go checkbox; no silent cross-city mixing; no unverified real-time queue claim.
+- No background location tracking, fake percent, fake commute, fake booking or fake business area.
+
+## 7. Capacitor 宿主交互（2026-09-19 已批准；2026-09-20 下限修订）
+
+适用Web/PWA（Chromium/Edge111+、Firefox128+、Safari16.4+）、Android10+/WebView111+及iOS16.4+手机；复用原S0–S11、18组提示与页面。Android返回先处理键盘/临时层/页面历史，根层按平台行为退出到后台；iOS返回手势遵守同一草稿边界，不自动保存或提交。共同布局处理safe-area，键盘/系统栏/大字号不遮挡主要动作，焦点/读屏与44pt要求保持。旧下限、旧包及browser WebKit结果不能替代新下限真机证据。
+
+后台恢复先遮蔽未核实私有内容，核验身份/资格后恢复精确 job/revision/scope；进程终止不取消后台任务，不承诺未持久化草稿已保存。权限说明按用途出现，拒绝/撤回保留计划位置/手动路径；无授权时不因启动反复弹窗。外链、认证、权限或分享返回不等于业务完成。
+
+App 的5.5使用`保存整趟图片`/`保存 N 张图片`，真实系统写入全部完成才显示`已保存到相册`；部分、取消、失败、未知分别处理，未知重试说明可能重复。网页继续`已开始下载，请确认`。系统分享只交有序城市文件，接收者是否收到不代报。7.4账号副本使用系统文件保存，不写相册/自动公开分享；7.6外部页面不持有Nomad桥接，单图由用户明确选择且实际提交后上传。
+
+仅补登录回调/恢复、返回键盘安全区、权限拒绝/设置返回、保存分享文件结果四组高风险宿主状态。旧 native-save-share-r1 是已废弃探索，不自动恢复为原型权威。真实 App 截图和设备/构建记录由责任 Story 补证。
+
+## 8. 共享组件、读取和导航公共行为 / UX-DR37（2026-09-20 已批准）
+
+视觉以现有深绿/近白、44pt、卡片≤8px及18组提示为基础，具体tokens、控件和状态表只在[front-end-spec](../front-end-spec.md)维护。本次不新增品牌、布局、暗色主题、页面或工作流。Button、Field、Tabs、Toast、Skeleton通过Nomad共享层消费；原领域组件继续决定状态事实与何时可以提交。
+
+| 公共场景 | 界面责任 |
+| --- | --- |
+| 打开临时层 | 私有Portal位于provider与身份遮蔽边界内；焦点进入任务所需标题/字段，Tab不逃逸，背景锁滚动且不可读。 |
+| 正常关闭或离页 | 同一关闭入口处理按钮/外侧点击/Escape/手势；恢复同身份有效触发器或安全标题；释放焦点管理、listener与scroll lock，不改原草稿/幂等合同。 |
+| 身份核验、撤权或切owner/session | 页面、Sheet、Toast与私有读取内容同时遮蔽；不等待busy关闭回调，不让迟到请求重开；公开协议保持其独立公开边界。 |
+| Android返回 | 唯一协调入口依次处理键盘→顶层Sheet→页面历史→根层平台行为，一次只消耗一层；移除重复旧handler后才切换共享层。 |
+| 键盘、安全区、大字号 | shell/临时层/底部动作明确每条边和visual viewport补偿的单一owner；不重复叠加插件与CSS，中文IME不误提交，200%字号/窄屏下主动作可达。 |
+| 加载、空、错误与重连 | Skeleton仅代表真实初次读取；成功空集合才显示empty；读取失败保留合法旧结果并就近重试，partial/stale/unverified分清，18组低打扰规则保持。 |
+| 普通列表读取（9.6） | Home/Planner城市及owner灵感共用受限读取层；身份未知不显私有cache/placeholder，核验后按显式策略刷新；去重/取消/分页不接管journal、durable cursor或mutation。 |
+| 导航恢复（9.7） | 保留本文件导航树及原返回路径，只为已实现页面提供入口；私有预取关闭或显式受控，读取经过身份核验，原校验后的typed intent才进入路由，导航本身不提交。 |
+| 不受支持平台 | 轻量兼容页面给出升级说明及真实可用替代入口，不能误报账号/网络失败；替代Web入口也须符合当前Web矩阵。 |
+
+首批9.3适配现有登录/退出确认/Home临时层，领域验收仍属1.0/1.6；9.4先建立现有组件工作台，9.5先记录迁移前流程/截图基线，9.6/9.7随后分开验证。后续各业务Story消费共享组件并补自身证据，历史done不改写，暂停3.1和延期7.2不恢复。完整迁移与待补状态清单见[prototype-coverage](prototype-coverage.md)；这里没有新增通过的浏览器/真机结论。

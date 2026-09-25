@@ -1,6 +1,7 @@
+import { registerHostBackHandler } from '../platform/host';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Analytics } from '../auth/analytics';
-import { sanitizeAnalyticsProps } from '../auth/analytics';
+import { trackAnalytics } from '../auth/analytics';
 import { AuthApiError } from '../auth/api';
 import type {
   DayPlanResponse,
@@ -80,13 +81,20 @@ export function DayPlanScreen({ start, apiClient, analytics, onBack }: DayPlanSc
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [seedUndoVisible, setSeedUndoVisible] = useState(false);
+  useEffect(() => registerHostBackHandler(() => {
+    if (busy) return true;
+    if (openEditSlotId) { setOpenEditSlotId(null); return true; }
+    if (openSlotId) { setOpenSlotId(null); return true; }
+    return false;
+  }, 30), [busy, openSlotId, openEditSlotId]);
+
   const trackedHqState = useRef<string | null>(null);
   const terminalJob = useRef(false);
   const longPressTimer = useRef<number | null>(null);
 
   const track = useCallback(
     (event: Parameters<Analytics['track']>[0], props?: Parameters<Analytics['track']>[1]) => {
-      analytics.track(event, sanitizeAnalyticsProps(props));
+      trackAnalytics(analytics, event, props);
     },
     [analytics],
   );

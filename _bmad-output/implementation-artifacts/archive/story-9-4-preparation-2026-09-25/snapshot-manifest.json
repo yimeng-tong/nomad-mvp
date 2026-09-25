@@ -1,0 +1,37 @@
+{
+  "kind": "story-preparation-input-snapshot",
+  "recorded_at": "2026-09-24T18:43:45.608752+00:00",
+  "story_id": "9.4",
+  "implementation_started": false,
+  "story_file_previously_absent": true,
+  "files": {
+    "CURRENT.md": {
+      "sha256": "cf54beae1a8cb9afce7c4990f231e0f5f17576c84e19f7ab156c4da098f1b80d",
+      "bytes": 22618
+    },
+    "_bmad-output/project-context.md": {
+      "sha256": "70c125b933649be6a13badbc4408965aacc37b1292d41823680ce0caa5c993bf",
+      "bytes": 45947
+    },
+    "_bmad-output/implementation-artifacts/sprint-status.yaml": {
+      "sha256": "af642b7448a92c26e64928ae76509d7fe1990405618b4fe448cc054524e6c6b0",
+      "bytes": 32504
+    },
+    "_bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml": {
+      "sha256": "99515a093c68dbb948436b6106e26ee8b48f429e38b66d10ea306cdf82731c04",
+      "bytes": 104396
+    },
+    "_bmad-output/implementation-artifacts/sprint-delivery-contract-ui-foundation-2026-09-20.yaml": {
+      "sha256": "65c57d0ac60d80ef0885546e2b7d68a9676f12bae2b6c55ac30beb2f8e8cb4ec",
+      "bytes": 64160
+    },
+    "_bmad-output/planning-artifacts/epics.md": {
+      "sha256": "6440ed71f6aac8e5788ebc96dbbe305f911913f38bdb62cab34db7a4aa8ee3f4",
+      "bytes": 698741
+    },
+    "_bmad-output/planning-artifacts/ui-foundation-scope-decision-2026-09-20.md": {
+      "sha256": "d6368fd03b443fc2308a0517f679c2da075eac66939d33243e9ae9fc0bbfba0b",
+      "bytes": 3426
+    }
+  }
+}

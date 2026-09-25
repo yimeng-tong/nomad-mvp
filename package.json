@@ -17,10 +17,15 @@
     "ci:start-server": "node apps/server/dist/apps/server/src/index.js",
     "ci:auth": "pnpm -F nomad-server run test:auth",
     "ci:probe": "tsx scripts/synthetic-probe.ts",
-    "ci:sse": "tsx scripts/sse-assert.ts"
+    "ci:sse": "tsx scripts/sse-assert.ts",
+    "ci:import-measurements": "node --import tsx --test scripts/measurements/import-report.test.mts && tsc -p scripts/measurements/tsconfig.json --noEmit",
+    "measure:import-dock": "node --import tsx scripts/measurements/run-import-dock.mts",
+    "measure:import-report": "node --import tsx scripts/measurements/import-report.mts",
+    "dev:homelab": "VITE_API_BASE_URL=http://localhost:43104 pnpm -F nomad-mobile dev --host localhost --port 5173 --strictPort"
   },
   "devDependencies": {
     "eventsource": "^2.0.2",
+    "js-yaml": "4.1.0",
     "node-fetch": "^3.3.2",
     "tsx": "^4.16.2",
     "typescript": "^5.9.3"
@@ -29,5 +34,6 @@
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^10.1.0",
     "@fastify/helmet": "^13.0.2"
-  }
+  },
+  "packageManager": "pnpm@11.7.0"
 }

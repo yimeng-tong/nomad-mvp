@@ -8,14 +8,26 @@
     "build": "tsc -p tsconfig.json --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "TMPDIR=/tmp vitest run"
+    "test": "TMPDIR=/tmp vitest run && node --import tsx --test scripts/native-config-proof.test.mjs",
+    "native:sync": "node scripts/sync-native-project.mjs",
+    "native:preflight": "node --import tsx scripts/native-preflight.mjs",
+    "native:verify": "node --import tsx scripts/verify-native-project.mjs"
   },
   "dependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/app": "8.1.1",
+    "@capacitor/browser": "8.0.4",
+    "@capacitor/clipboard": "8.0.1",
+    "@capacitor/core": "8.5.2",
+    "@capacitor/ios": "8.5.2",
+    "@capacitor/keyboard": "8.0.5",
+    "@nomad/native-auth": "workspace:*",
     "nomad-types": "workspace:*",
     "react": "19.2.7",
     "react-dom": "19.2.7"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.5.2",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
     "@types/react": "19.2.17",

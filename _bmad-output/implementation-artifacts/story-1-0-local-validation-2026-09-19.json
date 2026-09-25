@@ -1,0 +1,111 @@
+{
+  "recordedAt": "2026-09-18T22:17:05.859386+00:00",
+  "story": "1.0",
+  "status": "in-progress",
+  "realAuthenticationVerified": false,
+  "realProviderCalls": 0,
+  "localChecks": {
+    "workspaceBuild": true,
+    "mobileVitest": 144,
+    "nativeConfigNodeTests": 3,
+    "authAndOpenapiTests": 59,
+    "domainTests": 71,
+    "legacyContractProbes": [
+      "auth",
+      "ingest",
+      "home-library",
+      "planner",
+      "settings"
+    ],
+    "handoffRegressionTests": 60,
+    "diffCheck": true
+  },
+  "postgresql": {
+    "environment": "VM104 isolated synthetic databases",
+    "database": "nomad_auth_test_7a607d1be2dc",
+    "restoreDatabase": "nomad_auth_test_7a607d1be2dc_restore",
+    "migration": "20260919000100_story_1_0_auth_authority",
+    "migrationSha256": "9cae7fe124c386fab8d79a8ad7a5c84e8f3e248a2f1438d62ecae5b51f7caa60",
+    "backupSha256": "6d24b23de448fc64180616f81bb24435c1872dbe5405efdce412e9cb9e6d4b89",
+    "existingBusinessDatabaseTouched": false,
+    "httpChecks": [
+      "real-sql-http-routes",
+      "header-bypass-denied",
+      "origin",
+      "opaque-cookie",
+      "cross-instance",
+      "actor-context",
+      "stale-read-write",
+      "logout-receipt",
+      "new-account-survives-old-logout-retry",
+      "unknown-send-no-retry",
+      "late-login-fenced",
+      "late-committed-login-cookie",
+      "late-logout-cookie",
+      "binding-renewed",
+      "native-no-cookie",
+      "native-api-owner",
+      "native-channel-audience-tls",
+      "native-web-credential-separation",
+      "native-logout",
+      "full-real-app-bootstrap",
+      "placeholder-capabilities-disabled",
+      "live-socket-sse-revoked",
+      "operator-default-deny",
+      "operator-scope-and-version",
+      "operator-revocation",
+      "operator-durable-check-receipt",
+      "read-revoked-before-response"
+    ],
+    "simulatedSends": 8,
+    "simulatedChecks": 7
+  },
+  "browser": {
+    "report": "_bmad-output/implementation-artifacts/evidence/story-1-0-browser-2026-09-19/report.json",
+    "actualChromium": true,
+    "httpAndCaptchaSubstitutes": true
+  },
+  "android": {
+    "build": "assembleDebug",
+    "gradleTasks": 213,
+    "buildSeconds": 13,
+    "developmentOnly": true,
+    "apk": "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+    "sha256": "4445bd94860a55f11acb860c9730e15567f26541f6968294706a4a49ad5fd426",
+    "v2DebugSignatureVerified": true,
+    "packagedAssetsVerified": true,
+    "webAssets": {
+      "assets/index-Ctj7FZpK.css": "48d1d33e23f66f9bba31290d47af50b03c3aa19025b999e3bb0613e6274da93b",
+      "assets/index-DYHou2fC.js": "e875e8932f2a4bf0a910f2c58d2bfc0c082c4234efeaa1bc25bd7ce2cd0e030c",
+      "assets/web-DHbTdFKs.js": "496e5979fadaf96bba16e8937e92121bbcfce84ce677fc2cc18357105b8edd54",
+      "assets/web-VdbtpiUP.js": "63fa643ddbcfb1e1ff4e6b244e2e0fe6aa50f0d34ae6c293cca344ddefdd63ed",
+      "index.html": "d588dd3c05739ecc24e8a3ef249c16ecd5beca6051945396e120143e8e8ccf15",
+      "vendor/pnvs/ct4.js": "f2e9d00c14e079590367bff6dbeb09b142f6d4b1353c56afb3caa4d7d0164861",
+      "vendor/pnvs/provenance.json": "81e6406699d10940107819eb4f06e72197c1f101c1766f67848941023156cfca",
+      "webview-unavailable.html": "046534ab2c64021dcb3c48e76de9ca48a953a09f387e0502bc9e5578841c374e"
+    },
+    "realDeviceVerified": false,
+    "realApiOriginConfigured": false
+  },
+  "ios": {
+    "sourceImplemented": true,
+    "pluginsRegistered": true,
+    "compiledOnMac": false,
+    "realDeviceVerified": false
+  },
+  "unclosed": [
+    "formal-privacy-and-terms",
+    "real-PNVS-and-HTTPS",
+    "U-App-U-Link-integration-and-query",
+    "iOS-Mac-signing-device",
+    "Android-real-device",
+    "real-retained-owner-migration",
+    "performance-target-and-production-restore-evidence"
+  ],
+  "sharedTelemetryValidation": {
+    "evidence": "_bmad-output/implementation-artifacts/evidence/story-1-6-telemetry-2026-09-19/validation.json",
+    "scope": "later-shared-client-privacy-boundary-and-current-browser-regression",
+    "earlierBackendAndPostgresqlProofNotRerun": true,
+    "runtimeAndSdkNotWiredToApp": true
+  }
+}

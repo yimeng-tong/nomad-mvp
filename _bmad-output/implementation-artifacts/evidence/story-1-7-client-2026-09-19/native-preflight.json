@@ -1,0 +1,30 @@
+{
+  "scope": "read-only-configuration-and-tool-inventory",
+  "configuration": {
+    "valid": true,
+    "mode": "development",
+    "developmentIdentity": true,
+    "apiConfigured": false,
+    "error": null
+  },
+  "tools": {
+    "node": "v22.22.1",
+    "platform": "linux",
+    "java": "21.0.12.1",
+    "linuxOrMacJava": true,
+    "androidPlatform36": true,
+    "androidBuildTools36": true,
+    "xcode": null
+  },
+  "projects": {
+    "android": true,
+    "ios": true
+  },
+  "readyForNativeBuild": {
+    "android": true,
+    "ios": false
+  },
+  "signingVerified": false,
+  "deviceInstallVerified": false,
+  "testFlightVerified": false
+}

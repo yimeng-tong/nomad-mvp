@@ -1,0 +1,187 @@
+# generated: 2026-09-15
+# last_updated: 2026-09-18
+# project: nomad-mvp
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+#
+# STATUS DEFINITIONS:
+# Epic: backlog | in-progress | done
+# Story: backlog | ready-for-dev | in-progress | review | done
+# Retrospective: optional | done
+# A story becomes ready-for-dev only after its current implementation contract is prepared.
+# Planning approval, prototypes and legacy same-number files do not establish readiness.
+# Preserve historical done; epic done requires every story in its CURRENT scope to be done.
+# 3.1 inherits in-progress work but remains paused; see execution_pauses before dispatch.
+# Retrospective 1 is done for the historical 1.1-1.5 scope only; expanded review is still owed.
+# Default flow: create-story -> dev-story -> review -> done; no implementation authorized by SP.
+
+generated: '2026-09-15'
+last_updated: '2026-09-18'
+project: nomad-mvp
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+planning_status: sprint-planning-complete
+execution_phase: execution
+epics_source: _bmad-output/planning-artifacts/epics.md
+migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-2026-09-15.yaml
+migration_report: _bmad-output/implementation-artifacts/sprint-migration-2026-09-15.md
+next_story_to_prepare: 1-6-home-multi-link-import-queue-and-honest-status
+development_status:
+  epic-1: in-progress
+  1-0-production-login-and-multi-device-sessions: in-progress
+  1-1-login-session-and-compliance-contract: done
+  1-2-mobile-login-first-screen: done
+  1-3-single-xhs-ingest-with-sse-progress: done
+  1-4-home-unified-input-and-inspiration-library: done
+  1-5-settings-feedback-and-account-entry-points: done
+  1-6-home-multi-link-import-queue-and-honest-status: backlog
+  1-7-durable-import-progress-and-restart-recovery: backlog
+  1-8-owner-import-records-and-versioned-deduplication: backlog
+  1-9-production-image-text-understanding-and-evidence: backlog
+  1-10-adaptive-video-understanding-and-local-frame-resampling: backlog
+  1-11-amap-poi-verification-branch-disambiguation-and-manual-correction: backlog
+  epic-1-retrospective: done
+  epic-2: in-progress
+  2-0-confirm-and-planner-picker: done
+  2-1-generate-day-skeleton-with-quick-and-hq-planning: done
+  2-3-single-city-travel-time-and-boundary-confirmation: backlog
+  2-4-unified-flight-and-rail-service-lookup: backlog
+  2-5-preplanning-nightly-stays-breakfast-and-luggage: backlog
+  2-6-preplanning-pace-and-additional-constraints: backlog
+  2-7-full-city-picker-and-l3-place-intent: backlog
+  2-8-shared-poi-information-sheet: backlog
+  2-9-single-planning-job-and-stable-timeline-transition: backlog
+  2-10-authoritative-route-facts-and-timeline-transport: backlog
+  2-11-constraint-first-complete-single-city-planning: backlog
+  2-12-amap-candidate-expansion-and-nonblocking-candidate-list: backlog
+  2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots: backlog
+  2-14-daily-load-estimation-and-explainable-summary: backlog
+  2-15-post-plan-place-search-and-manual-candidates: backlog
+  epic-2-retrospective: optional
+  epic-3: in-progress
+  3-1-minute-timeline-editing-and-plan-wide-undo: in-progress
+  3-2-controlled-candidate-placement-and-free-time-filling: backlog
+  3-3-post-plan-nightly-stay-breakfast-and-luggage-editing: backlog
+  3-4-incremental-validation-and-typed-conflict-fixes: backlog
+  3-5-controlled-conversational-local-adjustment: backlog
+  epic-3-retrospective: optional
+  epic-4: backlog
+  4-1-cross-city-intent-and-linked-trip-input-draft: backlog
+  4-2-adjacent-city-transfers-and-handoff-day-boundaries: backlog
+  4-3-independent-city-planning-and-atomic-linked-trip-publication: backlog
+  4-4-active-city-editing-and-linked-trip-revision-rebinding: backlog
+  4-5-day-excursion-intent-and-round-trip-transfer-draft: backlog
+  4-6-day-excursion-planning-and-atomic-timeline-publication: backlog
+  4-7-day-excursion-editing-and-scope-guards: backlog
+  epic-4-retrospective: optional
+  epic-5: backlog
+  5-1-revision-bound-ai-detail-enrichment: backlog
+  5-2-verifiable-result-sheet-and-citation-reading: backlog
+  5-3-line-level-detail-editing-and-ai-preservation: backlog
+  5-4-revision-bound-export-generation-and-preview: backlog
+  5-5-whole-trip-image-download-and-system-sharing: backlog
+  epic-5-retrospective: optional
+  epic-6: backlog
+  6-1-planned-meal-slots-and-primary-alternative-pool: backlog
+  6-2-foreground-location-meal-recall-and-plan-context-fallback: backlog
+  6-3-normalized-business-areas-and-owner-food-hints: backlog
+  6-4-trip-checklist-and-direct-or-ai-record-entry: backlog
+  6-5-lightweight-shopping-notes-and-label-shortcuts: backlog
+  epic-6-retrospective: optional
+  epic-7: backlog
+  7-1-recent-trips-and-context-resume: backlog
+  7-3-settings-account-and-available-actions: backlog
+  7-4-account-data-copy-export: backlog
+  7-5-account-deletion-and-cleanup-results: backlog
+  7-6-feedback-entry-and-reliable-submission: backlog
+  epic-7-retrospective: optional
+  epic-8: backlog
+  8-1-cross-flow-observability-and-fault-localization: backlog
+  8-2-reproducible-quality-regression-and-version-comparison: backlog
+  8-3-task-level-provider-routing-and-safe-release: backlog
+  8-4-platform-budget-and-usage-policy-management: backlog
+  8-5-terminal-ai-amap-incidents-and-telegram-alerts: backlog
+  8-6-operations-overview-and-read-only-diagnostics: backlog
+  epic-8-retrospective: optional
+execution_pauses:
+  3-1-minute-timeline-editing-and-plan-wide-undo:
+    paused: true
+    reason: inherited-work-awaiting-current-contract-and-upstream-prerequisites
+    legacy_story_id: 2-2-timeline-editing-undo-and-history
+    baseline_commit: 10f940c49e2d61ddcb1233cffddd071ed1c9284c
+    working_branch: codex/story-2-2-timeline-editing
+    contract_ready: false
+    start_after:
+    - 1-0-production-login-and-multi-device-sessions
+    - 2-7-full-city-picker-and-l3-place-intent
+    - 2-9-single-planning-job-and-stable-timeline-transition
+    - 2-10-authoritative-route-facts-and-timeline-transport
+    - 2-11-constraint-first-complete-single-city-planning
+retrospective_scope:
+  epic-1-retrospective:
+    completed_scope: historical-1.1-through-1.5
+    evidence: _bmad-output/implementation-artifacts/epic-1-retro-2026-06-19.md
+    evidence_sha256: f4ad86411c2a021049466009992cfb3d73a26f9182c8f3b9aebc5acec06a91ee
+    completed_story_keys:
+    - 1-1-login-session-and-compliance-contract
+    - 1-2-mobile-login-first-screen
+    - 1-3-single-xhs-ingest-with-sse-progress
+    - 1-4-home-unified-input-and-inspiration-library
+    - 1-5-settings-feedback-and-account-entry-points
+    additional_scope_story_keys:
+    - 1-0-production-login-and-multi-device-sessions
+    - 1-6-home-multi-link-import-queue-and-honest-status
+    - 1-7-durable-import-progress-and-restart-recovery
+    - 1-8-owner-import-records-and-versioned-deduplication
+    - 1-9-production-image-text-understanding-and-evidence
+    - 1-10-adaptive-video-understanding-and-local-frame-resampling
+    - 1-11-amap-poi-verification-branch-disambiguation-and-manual-correction
+    expanded_scope_review_required: true
+authorization:
+  sprint_planning: true
+  create_story: true
+  implementation: true
+  real_services: false
+  deployment: false
+  data_operations: false
+delivery_contract: _bmad-output/implementation-artifacts/sprint-delivery-contract-2026-09-17.yaml
+revalidation_report: _bmad-output/implementation-artifacts/sp-revalidation-2026-09-17.md
+condition_progress:
+  1-0-production-login-and-multi-device-sessions:
+    OPS-01:
+      state: not-started
+      summary: 已纳入1.0实施合同；本轮只完成准备，未运行该工程条件。
+    DB-CHANGE-01:
+      state: not-started
+      summary: 已纳入1.0实施合同；本轮只完成准备，未运行该工程条件。
+    METRICS-01:
+      state: not-started
+      summary: 已纳入1.0实施合同；本轮只完成准备，未运行该工程条件。
+    METRICS-02:
+      state: not-started
+      summary: 已纳入1.0实施合同；本轮只完成准备，未运行该工程条件。
+    METRICS-03:
+      state: not-started
+      summary: 已纳入1.0实施合同；本轮只完成准备，未运行该工程条件。
+authorization_scope:
+  create_story:
+  - 1-0-production-login-and-multi-device-sessions
+  implementation:
+  - 1-0-production-login-and-multi-device-sessions
+  record: _bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions.md
+  user_direction: 2026-09-17 继续下一条：进入当前1.0 dev-story，本地代码和隔离合成验证。
+implementation_blockers:
+  1-0-production-login-and-multi-device-sessions:
+  - id: AUTH-RESOURCES-T0
+    task: T0
+    state: awaiting-specific-pnvs-configuration
+    evidence: _bmad-output/implementation-artifacts/research/story-1-0-resource-alignment-2026-09-18.md
+    required: ALIYUN_PNVS_SIGN_NAME、ALIYUN_PNVS_CAPTCHA_APP_ID、ALIYUN_PNVS_CAPTCHA_APP_KEY；密钥留在本地env，仅提供配置路径。
+  - id: AUTH-HOST-ATTRIBUTION-T0
+    task: T0
+    state: awaiting-resource-location
+    evidence: _bmad-output/implementation-artifacts/research/story-1-0-resource-alignment-2026-09-18.md
+    required: U-App平台注册类型与homelab VM/LXC名称、地址或运维配置路径；已有U-App标识与云AK不重复索取。
+resource_alignment: _bmad-output/implementation-artifacts/research/story-1-0-resource-alignment-2026-09-18.md

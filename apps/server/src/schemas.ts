@@ -2,14 +2,16 @@ import { z } from 'zod';
 
 export const IngestStartBody = z.object({
   source: z.literal('xhs'),
+  operation_id: z.string().uuid().optional(),
   url: z.string().url().optional(),
-  share_text: z.string().optional(),
+  share_text: z.string().max(2000).optional(),
   force: z.boolean().optional()
 });
 
 export const IngestXhsBody = z.object({
+  operation_id: z.string().uuid().optional(),
   url: z.string().url().optional(),
-  share_text: z.string().optional()
+  share_text: z.string().max(2000).optional()
 });
 
 export const HomeInputParseBody = z.object({

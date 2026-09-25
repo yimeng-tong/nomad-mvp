@@ -1,0 +1,20 @@
+{
+  "result": "passed",
+  "checks": [
+    "recovery-isolation-zero-claim",
+    "two-process-single-claim",
+    "managed-writes-require-lease",
+    "expired-worker-phase-output-renew-release-fenced",
+    "expiry-rechecked-after-row-lock-wait",
+    "expiry-at-renew-release-event-write-rejected",
+    "valid-release-backoff-and-same-attempt-reclaim",
+    "revoked-owner-phase-result-renew-release-rejected",
+    "terminal-atomically-releases-lease",
+    "stale-owner-qualification-not-claimed",
+    "managed-result-rejects-missing-lease-and-commits-valid-result-with-event",
+    "busy-owner-and-full-locked-page-do-not-starve-next-job"
+  ],
+  "providerCalls": 0,
+  "schedulerWired": false,
+  "pipelineCheckpointRecoveryVerified": false
+}

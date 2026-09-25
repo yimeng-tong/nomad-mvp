@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { sanitizeAnalyticsProps } from './analytics';
+import { sanitizeAnalyticsEvent } from '../telemetry/dictionary';
 
-describe('sanitizeAnalyticsProps', () => {
+describe('sanitizeAnalyticsEvent', () => {
   it('drops sensitive key aliases without dropping reason_code', () => {
     expect(
-      sanitizeAnalyticsProps({
+      sanitizeAnalyticsEvent('auth_otp_verify_fail', {
         phone_number: '+8613800138000',
         captchaToken: 'captcha-ok',
         Cookie: 'sid=abc',
@@ -16,7 +16,7 @@ describe('sanitizeAnalyticsProps', () => {
         duration_sec: 45,
         internal_rank: 1,
         user_rating: 4.8,
-      }),
+      })?.props,
     ).toEqual({
       reason_code: 'AUTH_REQUIRED',
       method: 'phone',

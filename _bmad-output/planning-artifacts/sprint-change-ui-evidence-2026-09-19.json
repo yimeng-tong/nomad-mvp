@@ -1,0 +1,3853 @@
+{
+  "proposal_only": true,
+  "recorded_at": "2026-09-19T06:17:24.388319+00:00",
+  "source_of_truth": "Existing approved source and effective 2026-09-19 catalog; proposed UI changes are not applied",
+  "branch": "codex/story-1-0-production-auth",
+  "head": "7250a8a131a370698bff53538a4405c2ddb94c1c",
+  "scope_counts": {
+    "epics": 9,
+    "stories": 62,
+    "historical_stories": 7,
+    "current_target_stories": 55,
+    "gwt_scenarios": 1052,
+    "functional_requirements": 66,
+    "mvp_functional_requirements": 62,
+    "deferred_functional_requirements": 4,
+    "nonfunctional_requirements": 25
+  },
+  "source_story_count": 62,
+  "source_gwt_count": 1052,
+  "prd_mirror_equal": true,
+  "files": [
+    {
+      "path": "_bmad-output/project-context.md",
+      "sha256": "ffe0fb58fd2c1a5a2db516d26e1ba8642e81eecc523a88ebcefb7f79dd58bae5",
+      "bytes": 44900,
+      "lines": 554,
+      "headings": [
+        {
+          "line": 16,
+          "text": "# nomad-mvp Project Context"
+        },
+        {
+          "line": 18,
+          "text": "## Current Approved App Scope (2026-09-19; takes precedence over earlier dated scope notes)"
+        },
+        {
+          "line": 26,
+          "text": "## Mission"
+        },
+        {
+          "line": 32,
+          "text": "## Current Baseline"
+        },
+        {
+          "line": 85,
+          "text": "## Implementation Rules for AI Agents"
+        },
+        {
+          "line": 104,
+          "text": "## Planning Sources"
+        },
+        {
+          "line": 247,
+          "text": "## Current Product Semantics"
+        },
+        {
+          "line": 364,
+          "text": "## Known Code Shape and Gaps"
+        },
+        {
+          "line": 377,
+          "text": "## Development Guardrails"
+        },
+        {
+          "line": 386,
+          "text": "## Validation Baseline"
+        },
+        {
+          "line": 403,
+          "text": "## Sprint Planning Completed (2026-09-15)"
+        },
+        {
+          "line": 438,
+          "text": "## SP Delivery Revalidation (2026-09-17)"
+        },
+        {
+          "line": 464,
+          "text": "## Story 1.0 Prepared (latest user direction, 2026-09-17)"
+        },
+        {
+          "line": 490,
+          "text": "## Story 1.0 Development Started (2026-09-17)"
+        },
+        {
+          "line": 508,
+          "text": "## Story 1.0 Resource Selection Updated (2026-09-18)"
+        },
+        {
+          "line": 530,
+          "text": "## Story 1.0 Resource Confirmation and Homelab Authorization (2026-09-19)"
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/planning-artifacts/prd.md",
+      "sha256": "ad359f1ede43918fe1eac8e0729bdd1dcde4da6a449464c4c806bb3ad69f739a",
+      "bytes": 123438,
+      "lines": 889,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# nomad-mvp Product Requirements Document (PRD)"
+        },
+        {
+          "line": 3,
+          "text": "## Goals and Background Context"
+        },
+        {
+          "line": 5,
+          "text": "### Goals"
+        },
+        {
+          "line": 12,
+          "text": "### Background Context"
+        },
+        {
+          "line": 15,
+          "text": "### Change Log"
+        },
+        {
+          "line": 37,
+          "text": "## 术语 & 输入（v0.2 新增）"
+        },
+        {
+          "line": 50,
+          "text": "## 术语扩展（v0.4 补充）"
+        },
+        {
+          "line": 63,
+          "text": "## 术语扩展（v0.3 新增）"
+        },
+        {
+          "line": 73,
+          "text": "## Approved Correct Course（2026-08-12）"
+        },
+        {
+          "line": 109,
+          "text": "## MVP Correct Course（2026-06-19）"
+        },
+        {
+          "line": 117,
+          "text": "## Capacitor 首期交付（2026-09-19 已批准）"
+        },
+        {
+          "line": 125,
+          "text": "## Requirements"
+        },
+        {
+          "line": 127,
+          "text": "### Functional Requirements (FR)"
+        },
+        {
+          "line": 249,
+          "text": "### Non-Functional Requirements (NFR)"
+        },
+        {
+          "line": 282,
+          "text": "## User Interface Design Goals"
+        },
+        {
+          "line": 284,
+          "text": "### 提示呈现合同（18组方案已批准，2026-09-15）"
+        },
+        {
+          "line": 298,
+          "text": "### Overall UX Vision"
+        },
+        {
+          "line": 301,
+          "text": "### Key Interaction Paradigms"
+        },
+        {
+          "line": 311,
+          "text": "### Core Screens and Views"
+        },
+        {
+          "line": 324,
+          "text": "### Accessibility"
+        },
+        {
+          "line": 329,
+          "text": "### Branding"
+        },
+        {
+          "line": 332,
+          "text": "### Target Device and Platforms"
+        },
+        {
+          "line": 335,
+          "text": "## Technical Assumptions"
+        },
+        {
+          "line": 346,
+          "text": "## Epic List"
+        },
+        {
+          "line": 358,
+          "text": "## Epic 1 Foundation & Ingest & Home"
+        },
+        {
+          "line": 372,
+          "text": "## Epic 2 Initial Single-City Planning"
+        },
+        {
+          "line": 379,
+          "text": "### Story 2.0 灵感选择页（历史已完成基线）"
+        },
+        {
+          "line": 389,
+          "text": "### Story 2.1 生成天级骨架（历史已完成基线）"
+        },
+        {
+          "line": 400,
+          "text": "### Legacy Story 2.2 时间轴编辑、撤销与历史修正（迁移来源）"
+        },
+        {
+          "line": 414,
+          "text": "### Epic 2 已批准 Story 队列"
+        },
+        {
+          "line": 421,
+          "text": "## Epic 3 Safe Itinerary Editing"
+        },
+        {
+          "line": 432,
+          "text": "## Epic 4-8 Allocation"
+        },
+        {
+          "line": 441,
+          "text": "## Checklist Results Report"
+        },
+        {
+          "line": 444,
+          "text": "## Next Steps"
+        },
+        {
+          "line": 446,
+          "text": "### UX Expert Prompt"
+        },
+        {
+          "line": 449,
+          "text": "### Architect Prompt"
+        },
+        {
+          "line": 452,
+          "text": "## MVP Pitfalls & Decisions（必须项）"
+        },
+        {
+          "line": 454,
+          "text": "### 1) 账号与合规（首屏登录影响）"
+        },
+        {
+          "line": 496,
+          "text": "### 2) 统一输入与深链"
+        },
+        {
+          "line": 503,
+          "text": "### 2.1) 最近行程与侧边栏（v0.3 新增）"
+        },
+        {
+          "line": 514,
+          "text": "### 3) 灵感入库（XHS）流水线"
+        },
+        {
+          "line": 521,
+          "text": "### 4) 地理消歧与地图配额"
+        },
+        {
+          "line": 529,
+          "text": "### 5) 规划器（v0.6 current）"
+        },
+        {
+          "line": 537,
+          "text": "### 5.1) Linked trip 与交通/酒店（v0.6 current）"
+        },
+        {
+          "line": 548,
+          "text": "### 6) 计划编辑期的候选与快速搜索"
+        },
+        {
+          "line": 557,
+          "text": "### 6.1) 住宿选择 Sheet"
+        },
+        {
+          "line": 561,
+          "text": "### 7) 行程细节完善（v0.6 current）"
+        },
+        {
+          "line": 571,
+          "text": "### 8) 数据层（Postgres + PostGIS + pgvector）"
+        },
+        {
+          "line": 577,
+          "text": "### 9) 对象存储与成本"
+        },
+        {
+          "line": 582,
+          "text": "### 10) 观测与质量"
+        },
+        {
+          "line": 588,
+          "text": "### 11) 法务与上架"
+        },
+        {
+          "line": 593,
+          "text": "### 12) 运营与 Backoffice"
+        },
+        {
+          "line": 599,
+          "text": "### 13) VLM 启用与定位降级策略"
+        },
+        {
+          "line": 603,
+          "text": "## MVP 范围（v0.6 approved Correct Course）"
+        },
+        {
+          "line": 622,
+          "text": "## IR决议后的实施责任（2026-09-15）"
+        },
+        {
+          "line": 631,
+          "text": "## Risks & Trade‑offs（MVP）"
+        },
+        {
+          "line": 637,
+          "text": "## Historical implementation appendix: AnchorPool and Autoplace v1"
+        },
+        {
+          "line": 664,
+          "text": "## Historical: 天级骨架 AI 预排（在线）v1（v0.2 compatibility baseline）"
+        },
+        {
+          "line": 670,
+          "text": "### 3.1 阶段流程（逐日执行）"
+        },
+        {
+          "line": 703,
+          "text": "### 3.2 打分与过滤（示例）"
+        },
+        {
+          "line": 731,
+          "text": "### 3.3 远程配置（Unleash/Env）"
+        },
+        {
+          "line": 745,
+          "text": "## 关键边界与降级（v0.2 新增）"
+        },
+        {
+          "line": 750,
+          "text": "## 后端职责（按用户旅程拆分）"
+        },
+        {
+          "line": 766,
+          "text": "## 设计风格（情感与原则）"
+        },
+        {
+          "line": 773,
+          "text": "## 全局框架与交互（摘要）"
+        },
+        {
+          "line": 784,
+          "text": "## 地图-卡片联动（Map-to-Action Bridge，MVP 摘要）"
+        },
+        {
+          "line": 791,
+          "text": "## 微文案（关键处）"
+        },
+        {
+          "line": 801,
+          "text": "## AI Workflow 编排（概述）"
+        },
+        {
+          "line": 808,
+          "text": "## Note Card/Hero 规格（摘要）"
+        },
+        {
+          "line": 813,
+          "text": "## 历史变更摘要（PRD v0.4，非现行要求）"
+        },
+        {
+          "line": 839,
+          "text": "## 历史变更摘要（PRD v0.3，非现行要求）"
+        },
+        {
+          "line": 870,
+          "text": "### 历史变更摘要（PRD v0.2，非现行要求）"
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/planning-artifacts/epics.md",
+      "sha256": "5668dcb7071132337196e5f6e761b182a22f84c49cdde0d926ae5ad43f2e474f",
+      "bytes": 645905,
+      "lines": 6897,
+      "headings": [
+        {
+          "line": 35,
+          "text": "# nomad-mvp - Epic Breakdown"
+        },
+        {
+          "line": 37,
+          "text": "## Overview"
+        },
+        {
+          "line": 55,
+          "text": "## Capacitor scope amendment (approved 2026-09-19)"
+        },
+        {
+          "line": 63,
+          "text": "## Requirements Inventory"
+        },
+        {
+          "line": 65,
+          "text": "### Functional Requirements"
+        },
+        {
+          "line": 187,
+          "text": "### NonFunctional Requirements"
+        },
+        {
+          "line": 220,
+          "text": "### Additional Requirements"
+        },
+        {
+          "line": 248,
+          "text": "### UX Design Requirements"
+        },
+        {
+          "line": 288,
+          "text": "### FR Coverage Map"
+        },
+        {
+          "line": 360,
+          "text": "## Epic List"
+        },
+        {
+          "line": 362,
+          "text": "### Epic 1: 安全开始并建立可信灵感库"
+        },
+        {
+          "line": 373,
+          "text": "### Epic 2: 从约束与灵感生成完整单城计划"
+        },
+        {
+          "line": 384,
+          "text": "### Epic 3: 安全编辑并调整已有行程"
+        },
+        {
+          "line": 395,
+          "text": "### Epic 4: 把多个城市连接成可执行联程"
+        },
+        {
+          "line": 409,
+          "text": "### Epic 5: 把计划完善为可核查、可分享的行程单"
+        },
+        {
+          "line": 422,
+          "text": "### Epic 6: 在旅途中灵活处理吃饭与购物"
+        },
+        {
+          "line": 438,
+          "text": "### Epic 7: 持续使用行程并管理账户"
+        },
+        {
+          "line": 480,
+          "text": "### Epic 8: 度量并运营可靠的 AI 旅行服务"
+        },
+        {
+          "line": 506,
+          "text": "### Epic 9: 在手机安装并持续使用 Nomad"
+        },
+        {
+          "line": 510,
+          "text": "## Epic 1: 安全开始并建立可信灵感库"
+        },
+        {
+          "line": 515,
+          "text": "### Story 1.0: 生产登录与多设备会话补齐"
+        },
+        {
+          "line": 630,
+          "text": "### Story 1.1: 登录会话与账号边界（历史已交付）"
+        },
+        {
+          "line": 650,
+          "text": "### Story 1.2: 移动登录首屏（历史已交付）"
+        },
+        {
+          "line": 670,
+          "text": "### Story 1.3: 单链接异步导入基线（历史已交付）"
+        },
+        {
+          "line": 689,
+          "text": "### Story 1.4: 首页统一输入与灵感库基线（历史已交付）"
+        },
+        {
+          "line": 709,
+          "text": "### Story 1.5: 设置、反馈与账号入口基线（历史已交付）"
+        },
+        {
+          "line": 729,
+          "text": "### Story 1.6: 首页多链接导入队列与诚实状态展示"
+        },
+        {
+          "line": 802,
+          "text": "### Story 1.7: 可跨重启恢复的导入进度"
+        },
+        {
+          "line": 873,
+          "text": "### Story 1.8: Owner 导入记录与版本化去重"
+        },
+        {
+          "line": 942,
+          "text": "### Story 1.9: 生产级图文多模态理解与证据"
+        },
+        {
+          "line": 1009,
+          "text": "### Story 1.10: 自适应与局部二次抽帧的视频理解"
+        },
+        {
+          "line": 1080,
+          "text": "### Story 1.11: 高德 POI 验证、分店消歧与运营手工纠错"
+        },
+        {
+          "line": 1204,
+          "text": "## Epic 2: 从约束与灵感生成完整单城计划"
+        },
+        {
+          "line": 1213,
+          "text": "### Story 2.0: Confirm 与 Planner Picker 基线（历史已交付）"
+        },
+        {
+          "line": 1233,
+          "text": "### Story 2.1: Quick/HQ 日计划基线（历史已交付）"
+        },
+        {
+          "line": 1253,
+          "text": "### Story 2.3: 单城旅行时间与边界确认"
+        },
+        {
+          "line": 1323,
+          "text": "### Story 2.4: 统一班次识别与航班/铁路查询"
+        },
+        {
+          "line": 1408,
+          "text": "### Story 2.5: 规划前逐晚住宿与行李确认"
+        },
+        {
+          "line": 1498,
+          "text": "### Story 2.6: 规划前节奏与附加约束确认"
+        },
+        {
+          "line": 1578,
+          "text": "### Story 2.7: 全城 Picker 与 L3 意图选择"
+        },
+        {
+          "line": 1678,
+          "text": "### Story 2.8: 通用 POI 信息 Sheet"
+        },
+        {
+          "line": 1753,
+          "text": "### Story 2.9: 单一 PlanningJob 与稳定时间轴转场"
+        },
+        {
+          "line": 1855,
+          "text": "### Story 2.10: 可信通勤事实与时间轴交通摘要"
+        },
+        {
+          "line": 1950,
+          "text": "### Story 2.11: 约束优先的完整单城初始编排"
+        },
+        {
+          "line": 2069,
+          "text": "### Story 2.12: 高德候选补全与非阻塞候选区"
+        },
+        {
+          "line": 2179,
+          "text": "### Story 2.13: 平台 AnchorPool 分桶、共享准入与版本快照"
+        },
+        {
+          "line": 2275,
+          "text": "### Story 2.14: 每日负荷估算与可解释摘要"
+        },
+        {
+          "line": 2355,
+          "text": "### Story 2.15: 行程后地点搜索与手动候选补点"
+        },
+        {
+          "line": 2440,
+          "text": "## Epic 3: 安全编辑并调整已有行程"
+        },
+        {
+          "line": 2442,
+          "text": "### Story 3.1: 分钟级时间轴编辑与全计划撤销"
+        },
+        {
+          "line": 2548,
+          "text": "### Story 3.2: 候选地点受控落位与自由时间填充"
+        },
+        {
+          "line": 2664,
+          "text": "### Story 3.3: 规划后单晚住宿、早餐与行李修改"
+        },
+        {
+          "line": 2790,
+          "text": "### Story 3.4: 增量校验与类型化冲突修复"
+        },
+        {
+          "line": 2921,
+          "text": "### Story 3.5: 受控对话式局部调整"
+        },
+        {
+          "line": 3061,
+          "text": "## Epic 4: 把多个城市连接成可执行联程"
+        },
+        {
+          "line": 3063,
+          "text": "### Story 4.1: 多城跨城意图确认与联程输入草稿"
+        },
+        {
+          "line": 3180,
+          "text": "### Story 4.2: 相邻城市交通确认与交接日切分"
+        },
+        {
+          "line": 3306,
+          "text": "### Story 4.3: 多城独立编排与原子联程发布"
+        },
+        {
+          "line": 3443,
+          "text": "### Story 4.4: 已发布联程的当前城市安全编辑与版本重绑定"
+        },
+        {
+          "line": 3569,
+          "text": "### Story 4.5: 跨城一日游意图与往返交通草稿"
+        },
+        {
+          "line": 3680,
+          "text": "### Story 4.6: 跨城一日游独立编排与原子时间轴发布"
+        },
+        {
+          "line": 3818,
+          "text": "### Story 4.7: 已发布跨城一日游的安全编辑与范围约束"
+        },
+        {
+          "line": 3974,
+          "text": "## Epic 5: 把计划完善为可核查、可分享的行程单"
+        },
+        {
+          "line": 3979,
+          "text": "### Story 5.1: 版本绑定的 AI 行程细节完善"
+        },
+        {
+          "line": 4122,
+          "text": "### Story 5.2: 可核查的行程单与引用查看"
+        },
+        {
+          "line": 4255,
+          "text": "### Story 5.3: 逐条行程细节修改与 AI 保留"
+        },
+        {
+          "line": 4366,
+          "text": "### Story 5.4: 版本绑定的导出生成与预览"
+        },
+        {
+          "line": 4524,
+          "text": "### Story 5.5: 整趟长图下载与系统分享"
+        },
+        {
+          "line": 4667,
+          "text": "## Epic 6: 在旅途中灵活处理吃饭与购物"
+        },
+        {
+          "line": 4672,
+          "text": "### Story 6.1: 计划餐饮槽与一主两备选择池"
+        },
+        {
+          "line": 4793,
+          "text": "### Story 6.2: 前台定位餐饮召回与计划上下文降级"
+        },
+        {
+          "line": 4921,
+          "text": "### Story 6.3: 规范化商圈与“附近吃什么”"
+        },
+        {
+          "line": 5042,
+          "text": "### Story 6.4: 行程清单与直接／AI 添加记录"
+        },
+        {
+          "line": 5173,
+          "text": "### Story 6.5: 轻量购物记录与标签快捷输入"
+        },
+        {
+          "line": 5263,
+          "text": "## Epic 7: 持续使用行程并管理账户"
+        },
+        {
+          "line": 5272,
+          "text": "### Story 7.1: 最近行程与继续使用"
+        },
+        {
+          "line": 5423,
+          "text": "### Story 7.3: 设置页账号与可用操作"
+        },
+        {
+          "line": 5521,
+          "text": "### Story 7.4: 账号数据副本导出"
+        },
+        {
+          "line": 5648,
+          "text": "### Story 7.5: 账号删除与清理结果"
+        },
+        {
+          "line": 5785,
+          "text": "### Story 7.6: 反馈入口与可靠提交"
+        },
+        {
+          "line": 5914,
+          "text": "## Epic 8: 度量并运营可靠的 AI 旅行服务"
+        },
+        {
+          "line": 5919,
+          "text": "### Story 8.1: 跨流程观测与故障定位"
+        },
+        {
+          "line": 6053,
+          "text": "### Story 8.2: 可复现的质量回归与版本对比"
+        },
+        {
+          "line": 6213,
+          "text": "### Story 8.3: 任务级 Provider 路由与安全切换"
+        },
+        {
+          "line": 6356,
+          "text": "### Story 8.4: 平台预算与用量策略管理"
+        },
+        {
+          "line": 6516,
+          "text": "### Story 8.5: AI/高德终态异常与 Telegram 告警"
+        },
+        {
+          "line": 6653,
+          "text": "### Story 8.6: 运营总览与只读排障入口"
+        },
+        {
+          "line": 6769,
+          "text": "## Epic 9: 在手机安装并持续使用 Nomad"
+        },
+        {
+          "line": 6773,
+          "text": "### Story 9.1: 安装 Nomad App 并使用现有入口"
+        },
+        {
+          "line": 6843,
+          "text": "### Story 9.2: Android APK 与 iOS TestFlight 内测交付"
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/planning-artifacts/architecture.md",
+      "sha256": "eb1fe4cbb081c630029c07bfb573e3b03581382c8dfc6d6500ae633d02cf2a07",
+      "bytes": 163970,
+      "lines": 2233,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Nomad MVP Architecture Input Package"
+        },
+        {
+          "line": 12,
+          "text": "## Source: `docs/architecture/index.md`"
+        },
+        {
+          "line": 14,
+          "text": "# Nomad MVP Architecture (v0.6)"
+        },
+        {
+          "line": 22,
+          "text": "## Current Decisions"
+        },
+        {
+          "line": 52,
+          "text": "## Approved Epic 8 Budget Target"
+        },
+        {
+          "line": 66,
+          "text": "## Document Index"
+        },
+        {
+          "line": 81,
+          "text": "## Authority and History"
+        },
+        {
+          "line": 89,
+          "text": "## Delivery Rule"
+        },
+        {
+          "line": 95,
+          "text": "## App Scope Amendment (Approved 2026-09-19)"
+        },
+        {
+          "line": 107,
+          "text": "## Source: `docs/architecture/tech-stack.md`"
+        },
+        {
+          "line": 109,
+          "text": "# Tech Stack"
+        },
+        {
+          "line": 111,
+          "text": "## Runtime and Workspaces"
+        },
+        {
+          "line": 119,
+          "text": "## Jobs, Storage and Integrations"
+        },
+        {
+          "line": 144,
+          "text": "## Architectural Constraints"
+        },
+        {
+          "line": 153,
+          "text": "## Performance Targets"
+        },
+        {
+          "line": 165,
+          "text": "## Capacitor Delivery (Approved 2026-09-19)"
+        },
+        {
+          "line": 171,
+          "text": "## Source: `docs/architecture/app-host.md`"
+        },
+        {
+          "line": 173,
+          "text": "# Capacitor App 宿主与交付合同"
+        },
+        {
+          "line": 178,
+          "text": "## 平台、目录与版本"
+        },
+        {
+          "line": 184,
+          "text": "## 能力边界与首次交付"
+        },
+        {
+          "line": 196,
+          "text": "## 会话、恢复和外部导航"
+        },
+        {
+          "line": 204,
+          "text": "## 文件、权限和隐私"
+        },
+        {
+          "line": 212,
+          "text": "## 构建与证据"
+        },
+        {
+          "line": 220,
+          "text": "## Source: `docs/architecture/source-tree.md`"
+        },
+        {
+          "line": 222,
+          "text": "# Source Tree and Workspaces"
+        },
+        {
+          "line": 242,
+          "text": "## Ownership Boundaries"
+        },
+        {
+          "line": 253,
+          "text": "## App Target Directories (Approved 2026-09-19)"
+        },
+        {
+          "line": 259,
+          "text": "## Source: `docs/architecture/coding-standards.md`"
+        },
+        {
+          "line": 261,
+          "text": "# Coding Standards (TypeScript/Node)"
+        },
+        {
+          "line": 263,
+          "text": "## Language & Types"
+        },
+        {
+          "line": 268,
+          "text": "## Modules & Imports"
+        },
+        {
+          "line": 273,
+          "text": "## Errors & Logging"
+        },
+        {
+          "line": 278,
+          "text": "## Async Boundaries"
+        },
+        {
+          "line": 282,
+          "text": "## Testing"
+        },
+        {
+          "line": 286,
+          "text": "## API Contracts"
+        },
+        {
+          "line": 290,
+          "text": "## Security & Privacy"
+        },
+        {
+          "line": 294,
+          "text": "## Style & Formatting"
+        },
+        {
+          "line": 301,
+          "text": "## Source: `docs/architecture/frontend-architecture.md`"
+        },
+        {
+          "line": 303,
+          "text": "# Frontend Architecture (Mobile-first)"
+        },
+        {
+          "line": 305,
+          "text": "## Operator Surface Boundary (Approved 2026-09-13)"
+        },
+        {
+          "line": 321,
+          "text": "## Route and Stage Model"
+        },
+        {
+          "line": 341,
+          "text": "## State Ownership"
+        },
+        {
+          "line": 361,
+          "text": "## Component Boundaries"
+        },
+        {
+          "line": 396,
+          "text": "## API and Reconnect Rules"
+        },
+        {
+          "line": 415,
+          "text": "## Timeline Commands"
+        },
+        {
+          "line": 422,
+          "text": "## Performance and Accessibility"
+        },
+        {
+          "line": 456,
+          "text": "## Native Host Boundary (Approved 2026-09-19)"
+        },
+        {
+          "line": 462,
+          "text": "## Source: `docs/architecture/backend-architecture.md`"
+        },
+        {
+          "line": 464,
+          "text": "# Backend Architecture"
+        },
+        {
+          "line": 466,
+          "text": "## Module Ownership"
+        },
+        {
+          "line": 520,
+          "text": "## Boundary Rules"
+        },
+        {
+          "line": 540,
+          "text": "## Brand Rule Governance (Approved CE-01, Story 1.11)"
+        },
+        {
+          "line": 550,
+          "text": "## Provider Route Publication"
+        },
+        {
+          "line": 583,
+          "text": "## Budget Publication and Accounting (Approved Story 8.4)"
+        },
+        {
+          "line": 608,
+          "text": "## Terminal Alerts and Notification Delivery (Approved Story 8.5)"
+        },
+        {
+          "line": 630,
+          "text": "## Read-only Operations Summary (Approved Story 8.6)"
+        },
+        {
+          "line": 649,
+          "text": "## Jobs and Attempts"
+        },
+        {
+          "line": 688,
+          "text": "## SSE Contracts"
+        },
+        {
+          "line": 703,
+          "text": "## Security, Privacy and Cost"
+        },
+        {
+          "line": 711,
+          "text": "## App Authentication Boundary (Approved 2026-09-19)"
+        },
+        {
+          "line": 717,
+          "text": "## Source: `docs/architecture/data-models.md`"
+        },
+        {
+          "line": 719,
+          "text": "# Data Models (v0.6 Target)"
+        },
+        {
+          "line": 724,
+          "text": "## Production Identity (Story 1.0)"
+        },
+        {
+          "line": 734,
+          "text": "## Inspiration and Geography"
+        },
+        {
+          "line": 759,
+          "text": "## Brand Rule Versions (Approved CE-01, Story 1.11 Target)"
+        },
+        {
+          "line": 767,
+          "text": "## Manual POI Corrections (FR4.2, Story 1.11)"
+        },
+        {
+          "line": 792,
+          "text": "## Planning Inputs and Intent"
+        },
+        {
+          "line": 818,
+          "text": "## Trip and Plan Aggregates"
+        },
+        {
+          "line": 867,
+          "text": "## Recent Trips and Resume (Story 7.1)"
+        },
+        {
+          "line": 897,
+          "text": "## Platform Budget Accounting (Approved Story 8.4 Target)"
+        },
+        {
+          "line": 918,
+          "text": "## Terminal Incident Records (Approved Story 8.5 Target)"
+        },
+        {
+          "line": 936,
+          "text": "## Operations Summary Read Models (Approved Story 8.6 Target)"
+        },
+        {
+          "line": 948,
+          "text": "## Jobs, Editing and Undo"
+        },
+        {
+          "line": 998,
+          "text": "## Client Download Evidence (Approved CE-03)"
+        },
+        {
+          "line": 1007,
+          "text": "## Account Data Copy (Approved Story 7.4 Target)"
+        },
+        {
+          "line": 1029,
+          "text": "## Account Deletion (Approved Story 7.5 Target)"
+        },
+        {
+          "line": 1052,
+          "text": "## Feedback (Approved Story 7.6 Target)"
+        },
+        {
+          "line": 1070,
+          "text": "## Meals, Checklist and Detail"
+        },
+        {
+          "line": 1101,
+          "text": "## Index and Integrity Requirements"
+        },
+        {
+          "line": 1111,
+          "text": "## Native Host State (Approved 2026-09-19)"
+        },
+        {
+          "line": 1117,
+          "text": "## Source: `docs/architecture/planner-orchestration-v2.md`"
+        },
+        {
+          "line": 1119,
+          "text": "# Planner Orchestration v2"
+        },
+        {
+          "line": 1123,
+          "text": "## Single Visible Planning Run"
+        },
+        {
+          "line": 1133,
+          "text": "## Pipeline"
+        },
+        {
+          "line": 1160,
+          "text": "## Post-plan Search and Manual Candidate Location"
+        },
+        {
+          "line": 1181,
+          "text": "## Priority and Constraints"
+        },
+        {
+          "line": 1204,
+          "text": "## Attempt Fencing and Fallback"
+        },
+        {
+          "line": 1212,
+          "text": "## S8 Day-Excursion Addition Scope (Approved CE-02)"
+        },
+        {
+          "line": 1222,
+          "text": "## Validation and Editing"
+        },
+        {
+          "line": 1236,
+          "text": "## Filler Boundary"
+        },
+        {
+          "line": 1250,
+          "text": "## Metrics"
+        },
+        {
+          "line": 1259,
+          "text": "## Source: `docs/architecture/rest-api-spec.md`"
+        },
+        {
+          "line": 1261,
+          "text": "# REST API Spec (v0.6 Target Overview)"
+        },
+        {
+          "line": 1266,
+          "text": "## Home, Ingest and Imports"
+        },
+        {
+          "line": 1281,
+          "text": "## Manual Place Correction (Story 1.11)"
+        },
+        {
+          "line": 1298,
+          "text": "## Recent Trips and Resume (Story 7.1)"
+        },
+        {
+          "line": 1317,
+          "text": "## Planning Inputs"
+        },
+        {
+          "line": 1329,
+          "text": "## Planning Jobs and Plans"
+        },
+        {
+          "line": 1346,
+          "text": "## Editing, Validation and Undo"
+        },
+        {
+          "line": 1359,
+          "text": "## Minimum Result Host and Detail Return (IR-09)"
+        },
+        {
+          "line": 1368,
+          "text": "## Linked Trip"
+        },
+        {
+          "line": 1385,
+          "text": "## Meals, Location and Checklist"
+        },
+        {
+          "line": 1423,
+          "text": "## Detail and Export"
+        },
+        {
+          "line": 1462,
+          "text": "## Compatibility and Security"
+        },
+        {
+          "line": 1511,
+          "text": "## App Transport and File Delivery (Approved 2026-09-19)"
+        },
+        {
+          "line": 1517,
+          "text": "## Source: `docs/architecture/observability.md`"
+        },
+        {
+          "line": 1519,
+          "text": "# Observability and Analytics"
+        },
+        {
+          "line": 1525,
+          "text": "## Instrumentation Ownership"
+        },
+        {
+          "line": 1538,
+          "text": "## Correlation Model"
+        },
+        {
+          "line": 1554,
+          "text": "## Event Envelope"
+        },
+        {
+          "line": 1571,
+          "text": "## Product Funnels"
+        },
+        {
+          "line": 1579,
+          "text": "## Metrics"
+        },
+        {
+          "line": 1608,
+          "text": "## Logs and Traces"
+        },
+        {
+          "line": 1621,
+          "text": "## Access, Retention and Availability"
+        },
+        {
+          "line": 1638,
+          "text": "## Alerts"
+        },
+        {
+          "line": 1654,
+          "text": "## Terminal Incident Notifications (Approved Story 8.5)"
+        },
+        {
+          "line": 1673,
+          "text": "## Read-only Operations Overview (Approved Story 8.6)"
+        },
+        {
+          "line": 1692,
+          "text": "## Evaluation Workspace"
+        },
+        {
+          "line": 1730,
+          "text": "## App Sources (Approved 2026-09-19)"
+        },
+        {
+          "line": 1736,
+          "text": "## Source: `docs/architecture/testing-strategy.md`"
+        },
+        {
+          "line": 1738,
+          "text": "# Testing Strategy"
+        },
+        {
+          "line": 1740,
+          "text": "## Test Levels"
+        },
+        {
+          "line": 1755,
+          "text": "## Story Gates"
+        },
+        {
+          "line": 1770,
+          "text": "## Priority Scenarios"
+        },
+        {
+          "line": 1863,
+          "text": "## Test Data and Privacy"
+        },
+        {
+          "line": 1902,
+          "text": "## App Test Matrix (Approved 2026-09-19)"
+        },
+        {
+          "line": 1908,
+          "text": "## Source: `docs/architecture/mvp-implementation-checklist.md`"
+        },
+        {
+          "line": 1910,
+          "text": "# MVP Correct Course Implementation Checklist"
+        },
+        {
+          "line": 1915,
+          "text": "## Contracts and Data"
+        },
+        {
+          "line": 1932,
+          "text": "## Backend"
+        },
+        {
+          "line": 1946,
+          "text": "## Frontend"
+        },
+        {
+          "line": 1960,
+          "text": "## Quality and Operations"
+        },
+        {
+          "line": 1983,
+          "text": "## Explicitly Disabled for MVP"
+        },
+        {
+          "line": 1990,
+          "text": "## App Delivery Gates (Approved 2026-09-19)"
+        },
+        {
+          "line": 2001,
+          "text": "## Source: `docs/architecture/compatibility.md`"
+        },
+        {
+          "line": 2003,
+          "text": "# Compatibility (v0.4 to v0.6)"
+        },
+        {
+          "line": 2033,
+          "text": "## Capacitor Increment (Approved 2026-09-19)"
+        },
+        {
+          "line": 2039,
+          "text": "## Source: `docs/ops/rate-limits.md`"
+        },
+        {
+          "line": 2041,
+          "text": "# Rate Limits, Platform Quotas, and Degrade Switches (v1.1)"
+        },
+        {
+          "line": 2045,
+          "text": "## Principles"
+        },
+        {
+          "line": 2055,
+          "text": "## Default Policy Bands"
+        },
+        {
+          "line": 2073,
+          "text": "## Cost Controls"
+        },
+        {
+          "line": 2084,
+          "text": "## Idempotency and Concurrency"
+        },
+        {
+          "line": 2092,
+          "text": "## SSE and Queue Behavior"
+        },
+        {
+          "line": 2099,
+          "text": "## Degrade Switches"
+        },
+        {
+          "line": 2122,
+          "text": "## Central Budget Governance (Approved Story 8.4)"
+        },
+        {
+          "line": 2163,
+          "text": "## Operator Quota and Provider Alerts"
+        },
+        {
+          "line": 2185,
+          "text": "## Terminal Delivery Operations (Approved Story 8.5)"
+        },
+        {
+          "line": 2216,
+          "text": "## Overview Query Limits (Approved Story 8.6)"
+        },
+        {
+          "line": 2228,
+          "text": "## Privacy and Abuse"
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/planning-artifacts/ux.md",
+      "sha256": "dbba178b54a95189612d117dce7972a07499faec2be164eab63bd70829c2b054",
+      "bytes": 146066,
+      "lines": 1956,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Nomad MVP UX Input Package"
+        },
+        {
+          "line": 14,
+          "text": "## Source: `docs/front-end-spec.md`"
+        },
+        {
+          "line": 16,
+          "text": "# Nomad MVP UI/UX Specification"
+        },
+        {
+          "line": 18,
+          "text": "## Document Status"
+        },
+        {
+          "line": 31,
+          "text": "## Product Experience"
+        },
+        {
+          "line": 33,
+          "text": "### Experience Goal"
+        },
+        {
+          "line": 39,
+          "text": "### Design Principles"
+        },
+        {
+          "line": 48,
+          "text": "### Prompt Presentation (18 groups approved 2026-09-15)"
+        },
+        {
+          "line": 82,
+          "text": "### Visual System"
+        },
+        {
+          "line": 92,
+          "text": "## Canonical Stages"
+        },
+        {
+          "line": 112,
+          "text": "## Information Architecture"
+        },
+        {
+          "line": 134,
+          "text": "### Global Navigation"
+        },
+        {
+          "line": 143,
+          "text": "## Core Flows"
+        },
+        {
+          "line": 145,
+          "text": "### Home Input and Import Queue"
+        },
+        {
+          "line": 159,
+          "text": "### Recent Trips and Resume (Story 7.1)"
+        },
+        {
+          "line": 179,
+          "text": "### Time and Accommodation"
+        },
+        {
+          "line": 197,
+          "text": "### Picker and Pace Review"
+        },
+        {
+          "line": 218,
+          "text": "### Planning, Timeline, and Validation"
+        },
+        {
+          "line": 255,
+          "text": "### Linked Trip"
+        },
+        {
+          "line": 285,
+          "text": "### Meals and Checklist"
+        },
+        {
+          "line": 328,
+          "text": "### Account and Available Actions"
+        },
+        {
+          "line": 364,
+          "text": "### Feedback (Approved Story 7.6)"
+        },
+        {
+          "line": 383,
+          "text": "### Detail, Result Sheet, and Export"
+        },
+        {
+          "line": 424,
+          "text": "### Browser Download Result Semantics (Approved CE-03, 2026-09-14)"
+        },
+        {
+          "line": 433,
+          "text": "### Added Day Excursion Scope (Approved CE-02, 2026-09-14)"
+        },
+        {
+          "line": 439,
+          "text": "## Component Contracts"
+        },
+        {
+          "line": 464,
+          "text": "## States and Error Handling"
+        },
+        {
+          "line": 477,
+          "text": "## Accessibility and Interaction Safety"
+        },
+        {
+          "line": 486,
+          "text": "## Analytics"
+        },
+        {
+          "line": 509,
+          "text": "## Brand Rule Maintenance (Approved CE-01, Story 1.11)"
+        },
+        {
+          "line": 529,
+          "text": "## Operator Evaluation Workspace"
+        },
+        {
+          "line": 545,
+          "text": "## Operator Route Configuration"
+        },
+        {
+          "line": 563,
+          "text": "## Operator Budget Management"
+        },
+        {
+          "line": 582,
+          "text": "## Operator Alert Management"
+        },
+        {
+          "line": 596,
+          "text": "## Read-only Operator Overview"
+        },
+        {
+          "line": 615,
+          "text": "## Accepted Visual References"
+        },
+        {
+          "line": 644,
+          "text": "## Out of Scope"
+        },
+        {
+          "line": 652,
+          "text": "## Capacitor Host UX / UX-DR36 (Approved 2026-09-19)"
+        },
+        {
+          "line": 664,
+          "text": "## Source: `docs/ux/mobile-ia.md`"
+        },
+        {
+          "line": 666,
+          "text": "# nomad-mvp Mobile IA and Text Wireframes"
+        },
+        {
+          "line": 671,
+          "text": "## 1. Navigation Model"
+        },
+        {
+          "line": 697,
+          "text": "### Header Rules"
+        },
+        {
+          "line": 707,
+          "text": "## 2. Global Components"
+        },
+        {
+          "line": 709,
+          "text": "### HomeImportDock"
+        },
+        {
+          "line": 724,
+          "text": "### Plan Header and Day Tabs"
+        },
+        {
+          "line": 735,
+          "text": "### Bottom Sheets"
+        },
+        {
+          "line": 741,
+          "text": "## 3. Screen Wireframes"
+        },
+        {
+          "line": 743,
+          "text": "### 3.1 Login"
+        },
+        {
+          "line": 757,
+          "text": "### 3.2 S0 Home"
+        },
+        {
+          "line": 798,
+          "text": "### 3.3 S1 Import and Library Record"
+        },
+        {
+          "line": 816,
+          "text": "### 3.4 S2 Travel Time"
+        },
+        {
+          "line": 843,
+          "text": "### 3.5 S3 Accommodation"
+        },
+        {
+          "line": 873,
+          "text": "### 3.6 S4 Full-City Overview"
+        },
+        {
+          "line": 895,
+          "text": "### 3.7 S4 Select L3"
+        },
+        {
+          "line": 916,
+          "text": "### 3.8 Cross-City Confirmation"
+        },
+        {
+          "line": 945,
+          "text": "### 3.9 S5 Planning Review"
+        },
+        {
+          "line": 970,
+          "text": "### 3.10 S6 Planning in Timeline Shell"
+        },
+        {
+          "line": 987,
+          "text": "### 3.11 S7 Plan Timeline"
+        },
+        {
+          "line": 1021,
+          "text": "### 3.12 Timeline Edit Sheet"
+        },
+        {
+          "line": 1040,
+          "text": "### 3.13 S8 Conflict and AI Adjustment"
+        },
+        {
+          "line": 1061,
+          "text": "### 3.14 Meal States"
+        },
+        {
+          "line": 1082,
+          "text": "### 3.15 Trip Checklist"
+        },
+        {
+          "line": 1118,
+          "text": "### 3.16 S9-S11 Detail, Result, Export"
+        },
+        {
+          "line": 1155,
+          "text": "### 3.17 Settings Account and Actions"
+        },
+        {
+          "line": 1169,
+          "text": "### 3.18 Account Data Copy (Story 7.4)"
+        },
+        {
+          "line": 1181,
+          "text": "### 3.19 Account Deletion (Story 7.5)"
+        },
+        {
+          "line": 1192,
+          "text": "### 3.20 Feedback (Story 7.6)"
+        },
+        {
+          "line": 1204,
+          "text": "## 4. State Preservation"
+        },
+        {
+          "line": 1213,
+          "text": "## 5. Deep Links and Recovery"
+        },
+        {
+          "line": 1220,
+          "text": "## 6. UX Guardrails"
+        },
+        {
+          "line": 1228,
+          "text": "## 7. Capacitor 宿主交互（2026-09-19 已批准）"
+        },
+        {
+          "line": 1240,
+          "text": "## Source: `docs/ux/home-import-dock.md`"
+        },
+        {
+          "line": 1242,
+          "text": "# Home Import Dock UX Contract"
+        },
+        {
+          "line": 1253,
+          "text": "## Component Model"
+        },
+        {
+          "line": 1267,
+          "text": "## Queue Semantics"
+        },
+        {
+          "line": 1280,
+          "text": "## Server-State Mapping"
+        },
+        {
+          "line": 1296,
+          "text": "## Required States"
+        },
+        {
+          "line": 1311,
+          "text": "## Accessibility and Motion"
+        },
+        {
+          "line": 1319,
+          "text": "## Visual Coverage"
+        },
+        {
+          "line": 1327,
+          "text": "## Source: `docs/ux/prototype-coverage.md`"
+        },
+        {
+          "line": 1329,
+          "text": "# Prototype Coverage"
+        },
+        {
+          "line": 1338,
+          "text": "## Canonical Planning Stages"
+        },
+        {
+          "line": 1362,
+          "text": "## Cross-city Day Excursion Current Contract"
+        },
+        {
+          "line": 1381,
+          "text": "## Food and Shopping Current Candidates"
+        },
+        {
+          "line": 1407,
+          "text": "## Approved Story 6.2 Recall"
+        },
+        {
+          "line": 1421,
+          "text": "## Approved Story 6.3 Area Food"
+        },
+        {
+          "line": 1436,
+          "text": "## Approved Story 6.4 Checklist Records"
+        },
+        {
+          "line": 1453,
+          "text": "## Approved Story 6.5 Lightweight Shopping Input"
+        },
+        {
+          "line": 1476,
+          "text": "## Post-plan Search and Manual Fallback"
+        },
+        {
+          "line": 1492,
+          "text": "## Export Current Contract"
+        },
+        {
+          "line": 1515,
+          "text": "## Epic 7 Visual Review"
+        },
+        {
+          "line": 1542,
+          "text": "### Story 7.2 Deferred Manual Exploration"
+        },
+        {
+          "line": 1556,
+          "text": "### Story 7.3 Approved Account and Actions"
+        },
+        {
+          "line": 1572,
+          "text": "### Story 7.4 Approved Account Data Export"
+        },
+        {
+          "line": 1589,
+          "text": "### Story 7.5 Approved Account Deletion"
+        },
+        {
+          "line": 1606,
+          "text": "### Story 7.6 Approved Feedback Delivery"
+        },
+        {
+          "line": 1629,
+          "text": "## Story 8.1 Approved Operator Walkthrough"
+        },
+        {
+          "line": 1644,
+          "text": "## Story 8.2 Approved Human Evaluation Workspace"
+        },
+        {
+          "line": 1665,
+          "text": "## Story 8.3 Approved Route Configuration"
+        },
+        {
+          "line": 1684,
+          "text": "## Story 8.4 Approved Budget Controls"
+        },
+        {
+          "line": 1711,
+          "text": "## Story 8.5 Approved Telegram and Delivery Controls"
+        },
+        {
+          "line": 1732,
+          "text": "## Story 8.6 Approved Read-only Overview"
+        },
+        {
+          "line": 1753,
+          "text": "## Approved IR Scope and Delivery Amendments (2026-09-15)"
+        },
+        {
+          "line": 1788,
+          "text": "## Approved CE Contract Amendments (2026-09-14)"
+        },
+        {
+          "line": 1816,
+          "text": "## Highest-Ambiguity Missing Prototypes"
+        },
+        {
+          "line": 1836,
+          "text": "## Existing Prototype Conflicts"
+        },
+        {
+          "line": 1927,
+          "text": "## Recommended Next Mockup Set"
+        },
+        {
+          "line": 1942,
+          "text": "## Visual Asset Registry Rule"
+        },
+        {
+          "line": 1952,
+          "text": "## Capacitor App Increment (Approved 2026-09-19)"
+        }
+      ]
+    },
+    {
+      "path": "docs/prd.md",
+      "sha256": "ad359f1ede43918fe1eac8e0729bdd1dcde4da6a449464c4c806bb3ad69f739a",
+      "bytes": 123438,
+      "lines": 889,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# nomad-mvp Product Requirements Document (PRD)"
+        },
+        {
+          "line": 3,
+          "text": "## Goals and Background Context"
+        },
+        {
+          "line": 5,
+          "text": "### Goals"
+        },
+        {
+          "line": 12,
+          "text": "### Background Context"
+        },
+        {
+          "line": 15,
+          "text": "### Change Log"
+        },
+        {
+          "line": 37,
+          "text": "## 术语 & 输入（v0.2 新增）"
+        },
+        {
+          "line": 50,
+          "text": "## 术语扩展（v0.4 补充）"
+        },
+        {
+          "line": 63,
+          "text": "## 术语扩展（v0.3 新增）"
+        },
+        {
+          "line": 73,
+          "text": "## Approved Correct Course（2026-08-12）"
+        },
+        {
+          "line": 109,
+          "text": "## MVP Correct Course（2026-06-19）"
+        },
+        {
+          "line": 117,
+          "text": "## Capacitor 首期交付（2026-09-19 已批准）"
+        },
+        {
+          "line": 125,
+          "text": "## Requirements"
+        },
+        {
+          "line": 127,
+          "text": "### Functional Requirements (FR)"
+        },
+        {
+          "line": 249,
+          "text": "### Non-Functional Requirements (NFR)"
+        },
+        {
+          "line": 282,
+          "text": "## User Interface Design Goals"
+        },
+        {
+          "line": 284,
+          "text": "### 提示呈现合同（18组方案已批准，2026-09-15）"
+        },
+        {
+          "line": 298,
+          "text": "### Overall UX Vision"
+        },
+        {
+          "line": 301,
+          "text": "### Key Interaction Paradigms"
+        },
+        {
+          "line": 311,
+          "text": "### Core Screens and Views"
+        },
+        {
+          "line": 324,
+          "text": "### Accessibility"
+        },
+        {
+          "line": 329,
+          "text": "### Branding"
+        },
+        {
+          "line": 332,
+          "text": "### Target Device and Platforms"
+        },
+        {
+          "line": 335,
+          "text": "## Technical Assumptions"
+        },
+        {
+          "line": 346,
+          "text": "## Epic List"
+        },
+        {
+          "line": 358,
+          "text": "## Epic 1 Foundation & Ingest & Home"
+        },
+        {
+          "line": 372,
+          "text": "## Epic 2 Initial Single-City Planning"
+        },
+        {
+          "line": 379,
+          "text": "### Story 2.0 灵感选择页（历史已完成基线）"
+        },
+        {
+          "line": 389,
+          "text": "### Story 2.1 生成天级骨架（历史已完成基线）"
+        },
+        {
+          "line": 400,
+          "text": "### Legacy Story 2.2 时间轴编辑、撤销与历史修正（迁移来源）"
+        },
+        {
+          "line": 414,
+          "text": "### Epic 2 已批准 Story 队列"
+        },
+        {
+          "line": 421,
+          "text": "## Epic 3 Safe Itinerary Editing"
+        },
+        {
+          "line": 432,
+          "text": "## Epic 4-8 Allocation"
+        },
+        {
+          "line": 441,
+          "text": "## Checklist Results Report"
+        },
+        {
+          "line": 444,
+          "text": "## Next Steps"
+        },
+        {
+          "line": 446,
+          "text": "### UX Expert Prompt"
+        },
+        {
+          "line": 449,
+          "text": "### Architect Prompt"
+        },
+        {
+          "line": 452,
+          "text": "## MVP Pitfalls & Decisions（必须项）"
+        },
+        {
+          "line": 454,
+          "text": "### 1) 账号与合规（首屏登录影响）"
+        },
+        {
+          "line": 496,
+          "text": "### 2) 统一输入与深链"
+        },
+        {
+          "line": 503,
+          "text": "### 2.1) 最近行程与侧边栏（v0.3 新增）"
+        },
+        {
+          "line": 514,
+          "text": "### 3) 灵感入库（XHS）流水线"
+        },
+        {
+          "line": 521,
+          "text": "### 4) 地理消歧与地图配额"
+        },
+        {
+          "line": 529,
+          "text": "### 5) 规划器（v0.6 current）"
+        },
+        {
+          "line": 537,
+          "text": "### 5.1) Linked trip 与交通/酒店（v0.6 current）"
+        },
+        {
+          "line": 548,
+          "text": "### 6) 计划编辑期的候选与快速搜索"
+        },
+        {
+          "line": 557,
+          "text": "### 6.1) 住宿选择 Sheet"
+        },
+        {
+          "line": 561,
+          "text": "### 7) 行程细节完善（v0.6 current）"
+        },
+        {
+          "line": 571,
+          "text": "### 8) 数据层（Postgres + PostGIS + pgvector）"
+        },
+        {
+          "line": 577,
+          "text": "### 9) 对象存储与成本"
+        },
+        {
+          "line": 582,
+          "text": "### 10) 观测与质量"
+        },
+        {
+          "line": 588,
+          "text": "### 11) 法务与上架"
+        },
+        {
+          "line": 593,
+          "text": "### 12) 运营与 Backoffice"
+        },
+        {
+          "line": 599,
+          "text": "### 13) VLM 启用与定位降级策略"
+        },
+        {
+          "line": 603,
+          "text": "## MVP 范围（v0.6 approved Correct Course）"
+        },
+        {
+          "line": 622,
+          "text": "## IR决议后的实施责任（2026-09-15）"
+        },
+        {
+          "line": 631,
+          "text": "## Risks & Trade‑offs（MVP）"
+        },
+        {
+          "line": 637,
+          "text": "## Historical implementation appendix: AnchorPool and Autoplace v1"
+        },
+        {
+          "line": 664,
+          "text": "## Historical: 天级骨架 AI 预排（在线）v1（v0.2 compatibility baseline）"
+        },
+        {
+          "line": 670,
+          "text": "### 3.1 阶段流程（逐日执行）"
+        },
+        {
+          "line": 703,
+          "text": "### 3.2 打分与过滤（示例）"
+        },
+        {
+          "line": 731,
+          "text": "### 3.3 远程配置（Unleash/Env）"
+        },
+        {
+          "line": 745,
+          "text": "## 关键边界与降级（v0.2 新增）"
+        },
+        {
+          "line": 750,
+          "text": "## 后端职责（按用户旅程拆分）"
+        },
+        {
+          "line": 766,
+          "text": "## 设计风格（情感与原则）"
+        },
+        {
+          "line": 773,
+          "text": "## 全局框架与交互（摘要）"
+        },
+        {
+          "line": 784,
+          "text": "## 地图-卡片联动（Map-to-Action Bridge，MVP 摘要）"
+        },
+        {
+          "line": 791,
+          "text": "## 微文案（关键处）"
+        },
+        {
+          "line": 801,
+          "text": "## AI Workflow 编排（概述）"
+        },
+        {
+          "line": 808,
+          "text": "## Note Card/Hero 规格（摘要）"
+        },
+        {
+          "line": 813,
+          "text": "## 历史变更摘要（PRD v0.4，非现行要求）"
+        },
+        {
+          "line": 839,
+          "text": "## 历史变更摘要（PRD v0.3，非现行要求）"
+        },
+        {
+          "line": 870,
+          "text": "### 历史变更摘要（PRD v0.2，非现行要求）"
+        }
+      ]
+    },
+    {
+      "path": "docs/front-end-spec.md",
+      "sha256": "82588b69fe79e619fad092c83ef26b0f84317823a466707c569eb477014d9490",
+      "bytes": 54037,
+      "lines": 645,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Nomad MVP UI/UX Specification"
+        },
+        {
+          "line": 3,
+          "text": "## Document Status"
+        },
+        {
+          "line": 16,
+          "text": "## Product Experience"
+        },
+        {
+          "line": 18,
+          "text": "### Experience Goal"
+        },
+        {
+          "line": 24,
+          "text": "### Design Principles"
+        },
+        {
+          "line": 33,
+          "text": "### Prompt Presentation (18 groups approved 2026-09-15)"
+        },
+        {
+          "line": 67,
+          "text": "### Visual System"
+        },
+        {
+          "line": 77,
+          "text": "## Canonical Stages"
+        },
+        {
+          "line": 97,
+          "text": "## Information Architecture"
+        },
+        {
+          "line": 119,
+          "text": "### Global Navigation"
+        },
+        {
+          "line": 128,
+          "text": "## Core Flows"
+        },
+        {
+          "line": 130,
+          "text": "### Home Input and Import Queue"
+        },
+        {
+          "line": 144,
+          "text": "### Recent Trips and Resume (Story 7.1)"
+        },
+        {
+          "line": 164,
+          "text": "### Time and Accommodation"
+        },
+        {
+          "line": 182,
+          "text": "### Picker and Pace Review"
+        },
+        {
+          "line": 203,
+          "text": "### Planning, Timeline, and Validation"
+        },
+        {
+          "line": 240,
+          "text": "### Linked Trip"
+        },
+        {
+          "line": 270,
+          "text": "### Meals and Checklist"
+        },
+        {
+          "line": 313,
+          "text": "### Account and Available Actions"
+        },
+        {
+          "line": 349,
+          "text": "### Feedback (Approved Story 7.6)"
+        },
+        {
+          "line": 368,
+          "text": "### Detail, Result Sheet, and Export"
+        },
+        {
+          "line": 409,
+          "text": "### Browser Download Result Semantics (Approved CE-03, 2026-09-14)"
+        },
+        {
+          "line": 418,
+          "text": "### Added Day Excursion Scope (Approved CE-02, 2026-09-14)"
+        },
+        {
+          "line": 424,
+          "text": "## Component Contracts"
+        },
+        {
+          "line": 449,
+          "text": "## States and Error Handling"
+        },
+        {
+          "line": 462,
+          "text": "## Accessibility and Interaction Safety"
+        },
+        {
+          "line": 471,
+          "text": "## Analytics"
+        },
+        {
+          "line": 494,
+          "text": "## Brand Rule Maintenance (Approved CE-01, Story 1.11)"
+        },
+        {
+          "line": 514,
+          "text": "## Operator Evaluation Workspace"
+        },
+        {
+          "line": 530,
+          "text": "## Operator Route Configuration"
+        },
+        {
+          "line": 548,
+          "text": "## Operator Budget Management"
+        },
+        {
+          "line": 567,
+          "text": "## Operator Alert Management"
+        },
+        {
+          "line": 581,
+          "text": "## Read-only Operator Overview"
+        },
+        {
+          "line": 600,
+          "text": "## Accepted Visual References"
+        },
+        {
+          "line": 629,
+          "text": "## Out of Scope"
+        },
+        {
+          "line": 637,
+          "text": "## Capacitor Host UX / UX-DR36 (Approved 2026-09-19)"
+        }
+      ]
+    },
+    {
+      "path": "docs/architecture/tech-stack.md",
+      "sha256": "691d6a60a927bdcd57fef6b373ec4bcca84897884af783e3dd8aea8409f7ac64",
+      "bytes": 4258,
+      "lines": 59,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Tech Stack"
+        },
+        {
+          "line": 3,
+          "text": "## Runtime and Workspaces"
+        },
+        {
+          "line": 11,
+          "text": "## Jobs, Storage and Integrations"
+        },
+        {
+          "line": 36,
+          "text": "## Architectural Constraints"
+        },
+        {
+          "line": 45,
+          "text": "## Performance Targets"
+        },
+        {
+          "line": 57,
+          "text": "## Capacitor Delivery (Approved 2026-09-19)"
+        }
+      ]
+    },
+    {
+      "path": "docs/architecture/app-host.md",
+      "sha256": "4cd240cffa09d881ad47493e5f0565b7a4a7f714914fbf32c2ceb7128f8b6346",
+      "bytes": 4610,
+      "lines": 44,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Capacitor App 宿主与交付合同"
+        },
+        {
+          "line": 6,
+          "text": "## 平台、目录与版本"
+        },
+        {
+          "line": 12,
+          "text": "## 能力边界与首次交付"
+        },
+        {
+          "line": 24,
+          "text": "## 会话、恢复和外部导航"
+        },
+        {
+          "line": 32,
+          "text": "## 文件、权限和隐私"
+        },
+        {
+          "line": 40,
+          "text": "## 构建与证据"
+        }
+      ]
+    },
+    {
+      "path": "docs/architecture/frontend-architecture.md",
+      "sha256": "cd7f34e1d928bb51e9b82b87d5c90825ea161f2c23b0d2157b38770419f279a6",
+      "bytes": 11176,
+      "lines": 156,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Frontend Architecture (Mobile-first)"
+        },
+        {
+          "line": 3,
+          "text": "## Operator Surface Boundary (Approved 2026-09-13)"
+        },
+        {
+          "line": 19,
+          "text": "## Route and Stage Model"
+        },
+        {
+          "line": 39,
+          "text": "## State Ownership"
+        },
+        {
+          "line": 59,
+          "text": "## Component Boundaries"
+        },
+        {
+          "line": 94,
+          "text": "## API and Reconnect Rules"
+        },
+        {
+          "line": 113,
+          "text": "## Timeline Commands"
+        },
+        {
+          "line": 120,
+          "text": "## Performance and Accessibility"
+        },
+        {
+          "line": 154,
+          "text": "## Native Host Boundary (Approved 2026-09-19)"
+        }
+      ]
+    },
+    {
+      "path": "docs/architecture/testing-strategy.md",
+      "sha256": "cd0856542c9c2e38a7aecf6c1eb423f74645416412bf7c7bd0258ea264660598",
+      "bytes": 13986,
+      "lines": 167,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Testing Strategy"
+        },
+        {
+          "line": 3,
+          "text": "## Test Levels"
+        },
+        {
+          "line": 18,
+          "text": "## Story Gates"
+        },
+        {
+          "line": 33,
+          "text": "## Priority Scenarios"
+        },
+        {
+          "line": 126,
+          "text": "## Test Data and Privacy"
+        },
+        {
+          "line": 165,
+          "text": "## App Test Matrix (Approved 2026-09-19)"
+        }
+      ]
+    },
+    {
+      "path": "docs/architecture/compatibility.md",
+      "sha256": "5aba326c2b458ce14167222302d6dc924f8191f62f03b436e85aad7449103361",
+      "bytes": 3794,
+      "lines": 33,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Compatibility (v0.4 to v0.6)"
+        },
+        {
+          "line": 31,
+          "text": "## Capacitor Increment (Approved 2026-09-19)"
+        }
+      ]
+    },
+    {
+      "path": "docs/ux/mobile-ia.md",
+      "sha256": "66877c05b20f21e7ae07a5d06b41197e39b075c028898593b28a25a8d1ca760b",
+      "bytes": 29276,
+      "lines": 571,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# nomad-mvp Mobile IA and Text Wireframes"
+        },
+        {
+          "line": 6,
+          "text": "## 1. Navigation Model"
+        },
+        {
+          "line": 32,
+          "text": "### Header Rules"
+        },
+        {
+          "line": 42,
+          "text": "## 2. Global Components"
+        },
+        {
+          "line": 44,
+          "text": "### HomeImportDock"
+        },
+        {
+          "line": 59,
+          "text": "### Plan Header and Day Tabs"
+        },
+        {
+          "line": 70,
+          "text": "### Bottom Sheets"
+        },
+        {
+          "line": 76,
+          "text": "## 3. Screen Wireframes"
+        },
+        {
+          "line": 78,
+          "text": "### 3.1 Login"
+        },
+        {
+          "line": 92,
+          "text": "### 3.2 S0 Home"
+        },
+        {
+          "line": 133,
+          "text": "### 3.3 S1 Import and Library Record"
+        },
+        {
+          "line": 151,
+          "text": "### 3.4 S2 Travel Time"
+        },
+        {
+          "line": 178,
+          "text": "### 3.5 S3 Accommodation"
+        },
+        {
+          "line": 208,
+          "text": "### 3.6 S4 Full-City Overview"
+        },
+        {
+          "line": 230,
+          "text": "### 3.7 S4 Select L3"
+        },
+        {
+          "line": 251,
+          "text": "### 3.8 Cross-City Confirmation"
+        },
+        {
+          "line": 280,
+          "text": "### 3.9 S5 Planning Review"
+        },
+        {
+          "line": 305,
+          "text": "### 3.10 S6 Planning in Timeline Shell"
+        },
+        {
+          "line": 322,
+          "text": "### 3.11 S7 Plan Timeline"
+        },
+        {
+          "line": 356,
+          "text": "### 3.12 Timeline Edit Sheet"
+        },
+        {
+          "line": 375,
+          "text": "### 3.13 S8 Conflict and AI Adjustment"
+        },
+        {
+          "line": 396,
+          "text": "### 3.14 Meal States"
+        },
+        {
+          "line": 417,
+          "text": "### 3.15 Trip Checklist"
+        },
+        {
+          "line": 453,
+          "text": "### 3.16 S9-S11 Detail, Result, Export"
+        },
+        {
+          "line": 490,
+          "text": "### 3.17 Settings Account and Actions"
+        },
+        {
+          "line": 504,
+          "text": "### 3.18 Account Data Copy (Story 7.4)"
+        },
+        {
+          "line": 516,
+          "text": "### 3.19 Account Deletion (Story 7.5)"
+        },
+        {
+          "line": 527,
+          "text": "### 3.20 Feedback (Story 7.6)"
+        },
+        {
+          "line": 539,
+          "text": "## 4. State Preservation"
+        },
+        {
+          "line": 548,
+          "text": "## 5. Deep Links and Recovery"
+        },
+        {
+          "line": 555,
+          "text": "## 6. UX Guardrails"
+        },
+        {
+          "line": 563,
+          "text": "## 7. Capacitor 宿主交互（2026-09-19 已批准）"
+        }
+      ]
+    },
+    {
+      "path": "docs/ux/prototype-coverage.md",
+      "sha256": "3cb2e1e1918927c4d4eeedc55a3eceffaf69acbc265ff42a07d0828a7ec34ee4",
+      "bytes": 58177,
+      "lines": 628,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Prototype Coverage"
+        },
+        {
+          "line": 10,
+          "text": "## Canonical Planning Stages"
+        },
+        {
+          "line": 34,
+          "text": "## Cross-city Day Excursion Current Contract"
+        },
+        {
+          "line": 53,
+          "text": "## Food and Shopping Current Candidates"
+        },
+        {
+          "line": 79,
+          "text": "## Approved Story 6.2 Recall"
+        },
+        {
+          "line": 93,
+          "text": "## Approved Story 6.3 Area Food"
+        },
+        {
+          "line": 108,
+          "text": "## Approved Story 6.4 Checklist Records"
+        },
+        {
+          "line": 125,
+          "text": "## Approved Story 6.5 Lightweight Shopping Input"
+        },
+        {
+          "line": 148,
+          "text": "## Post-plan Search and Manual Fallback"
+        },
+        {
+          "line": 164,
+          "text": "## Export Current Contract"
+        },
+        {
+          "line": 187,
+          "text": "## Epic 7 Visual Review"
+        },
+        {
+          "line": 214,
+          "text": "### Story 7.2 Deferred Manual Exploration"
+        },
+        {
+          "line": 228,
+          "text": "### Story 7.3 Approved Account and Actions"
+        },
+        {
+          "line": 244,
+          "text": "### Story 7.4 Approved Account Data Export"
+        },
+        {
+          "line": 261,
+          "text": "### Story 7.5 Approved Account Deletion"
+        },
+        {
+          "line": 278,
+          "text": "### Story 7.6 Approved Feedback Delivery"
+        },
+        {
+          "line": 301,
+          "text": "## Story 8.1 Approved Operator Walkthrough"
+        },
+        {
+          "line": 316,
+          "text": "## Story 8.2 Approved Human Evaluation Workspace"
+        },
+        {
+          "line": 337,
+          "text": "## Story 8.3 Approved Route Configuration"
+        },
+        {
+          "line": 356,
+          "text": "## Story 8.4 Approved Budget Controls"
+        },
+        {
+          "line": 383,
+          "text": "## Story 8.5 Approved Telegram and Delivery Controls"
+        },
+        {
+          "line": 404,
+          "text": "## Story 8.6 Approved Read-only Overview"
+        },
+        {
+          "line": 425,
+          "text": "## Approved IR Scope and Delivery Amendments (2026-09-15)"
+        },
+        {
+          "line": 460,
+          "text": "## Approved CE Contract Amendments (2026-09-14)"
+        },
+        {
+          "line": 488,
+          "text": "## Highest-Ambiguity Missing Prototypes"
+        },
+        {
+          "line": 508,
+          "text": "## Existing Prototype Conflicts"
+        },
+        {
+          "line": 599,
+          "text": "## Recommended Next Mockup Set"
+        },
+        {
+          "line": 614,
+          "text": "## Visual Asset Registry Rule"
+        },
+        {
+          "line": 624,
+          "text": "## Capacitor App Increment (Approved 2026-09-19)"
+        }
+      ]
+    },
+    {
+      "path": "docs/tech-spec-epic-2.md",
+      "sha256": "cfad5fa328bbc25957de2d12686e1be3178d68d2b2fb7f5f731e37e86e818ca1",
+      "bytes": 14998,
+      "lines": 243,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Epic 2 Technical Specification: Initial Single-City Planning v0.6"
+        },
+        {
+          "line": 9,
+          "text": "## 1. Overview"
+        },
+        {
+          "line": 25,
+          "text": "## 2. Approved Story Boundaries"
+        },
+        {
+          "line": 46,
+          "text": "## 3. Aggregate and Module Boundaries"
+        },
+        {
+          "line": 62,
+          "text": "## 4. Detailed Design"
+        },
+        {
+          "line": 64,
+          "text": "### 4.1 Travel time and boundary facts (Stories 2.3-2.4)"
+        },
+        {
+          "line": 92,
+          "text": "### 4.2 Per-night stay, luggage and pace (Stories 2.5-2.6)"
+        },
+        {
+          "line": 108,
+          "text": "### 4.3 Full-city Picker and POI information (Stories 2.7-2.8)"
+        },
+        {
+          "line": 127,
+          "text": "### 4.4 One PlanningJob and trustworthy routes (Stories 2.9-2.10)"
+        },
+        {
+          "line": 141,
+          "text": "### 4.5 Complete planning, candidates, anchors and load (Stories 2.11-2.14)"
+        },
+        {
+          "line": 180,
+          "text": "### 4.6 Post-plan search and manual candidate fallback (Story 2.15)"
+        },
+        {
+          "line": 195,
+          "text": "## 5. API Capability Map"
+        },
+        {
+          "line": 212,
+          "text": "## 6. Non-Functional and Test Gates"
+        },
+        {
+          "line": 233,
+          "text": "## 7. Completion and Handoff"
+        },
+        {
+          "line": 241,
+          "text": "## Capacitor Host Acceptance (Approved 2026-09-19)"
+        }
+      ]
+    },
+    {
+      "path": "docs/tech-spec-epic-3.md",
+      "sha256": "12c447b96b41f8412c44de11ffb3e492677a7d0ce25a2945db47d900d592881c",
+      "bytes": 12098,
+      "lines": 189,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# Epic 3 Technical Specification: Safe Itinerary Editing and Adjustment v0.6"
+        },
+        {
+          "line": 8,
+          "text": "## 1. Overview"
+        },
+        {
+          "line": 26,
+          "text": "## 2. Brownfield Migration Boundary"
+        },
+        {
+          "line": 32,
+          "text": "### Keep"
+        },
+        {
+          "line": 40,
+          "text": "### Change"
+        },
+        {
+          "line": 50,
+          "text": "### Remove or defer"
+        },
+        {
+          "line": 58,
+          "text": "## 3. Capability Slices"
+        },
+        {
+          "line": 63,
+          "text": "### 3.1 Timeline commands and plan-global undo"
+        },
+        {
+          "line": 76,
+          "text": "### 3.2 Explicit candidate placement"
+        },
+        {
+          "line": 88,
+          "text": "### 3.3 Post-plan accommodation and luggage editing"
+        },
+        {
+          "line": 102,
+          "text": "### 3.4 Incremental validation and typed repair"
+        },
+        {
+          "line": 116,
+          "text": "### 3.5 Controlled conversational adjustment"
+        },
+        {
+          "line": 133,
+          "text": "## 4. Data and API Contracts"
+        },
+        {
+          "line": 152,
+          "text": "## 5. Invariants and Failure Handling"
+        },
+        {
+          "line": 166,
+          "text": "## 6. Tests and Acceptance Gates"
+        },
+        {
+          "line": 187,
+          "text": "## Capacitor Host Acceptance (Approved 2026-09-19)"
+        }
+      ]
+    },
+    {
+      "path": "CURRENT.md",
+      "sha256": "0aac50051a18878af6e731108a2d4cb244ceef672003c4bbfc9a266bd4953c6e",
+      "bytes": 18347,
+      "lines": 167,
+      "headings": [
+        {
+          "line": 42,
+          "text": "# Nomad Current Handoff"
+        },
+        {
+          "line": 51,
+          "text": "## Read in This Order"
+        },
+        {
+          "line": 62,
+          "text": "## Current Story 1.0"
+        },
+        {
+          "line": 72,
+          "text": "## Sprint Facts"
+        },
+        {
+          "line": 80,
+          "text": "## Paused Editing Migration"
+        },
+        {
+          "line": 88,
+          "text": "## Working Rules and Verification"
+        },
+        {
+          "line": 104,
+          "text": "## 当前T0进展与缺项"
+        },
+        {
+          "line": 123,
+          "text": "## Capacitor范围已批准与双任务交接（2026-09-19，当前优先）"
+        },
+        {
+          "line": 132,
+          "text": "## 持续目标与下一独立开发入口（2026-09-19）"
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/sprint-status.yaml",
+      "sha256": "5e00a6eea1f71b30899d7aa2b9258b37d35be0a69996b92f534604cc62bc40b8",
+      "bytes": 26818,
+      "lines": 481,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# generated: 2026-09-15"
+        },
+        {
+          "line": 2,
+          "text": "# last_updated: 2026-09-19"
+        },
+        {
+          "line": 3,
+          "text": "# project: nomad-mvp"
+        },
+        {
+          "line": 4,
+          "text": "# project_key: NOKEY"
+        },
+        {
+          "line": 5,
+          "text": "# tracking_system: file-system"
+        },
+        {
+          "line": 6,
+          "text": "# story_location: _bmad-output/implementation-artifacts"
+        },
+        {
+          "line": 8,
+          "text": "# STATUS DEFINITIONS:"
+        },
+        {
+          "line": 9,
+          "text": "# Epic: backlog | in-progress | done"
+        },
+        {
+          "line": 10,
+          "text": "# Story: backlog | ready-for-dev | in-progress | review | done"
+        },
+        {
+          "line": 11,
+          "text": "# Retrospective: optional | done"
+        },
+        {
+          "line": 12,
+          "text": "# A story becomes ready-for-dev only after its current implementation contract is prepared."
+        },
+        {
+          "line": 13,
+          "text": "# Planning approval, prototypes and legacy same-number files do not establish readiness."
+        },
+        {
+          "line": 14,
+          "text": "# Preserve historical done; epic done requires every story in its CURRENT scope to be done."
+        },
+        {
+          "line": 15,
+          "text": "# 3.1 inherits in-progress work but remains paused; see execution_pauses before dispatch."
+        },
+        {
+          "line": 16,
+          "text": "# Retrospective 1 is done for the historical 1.1-1.5 scope only; expanded review is still owed."
+        },
+        {
+          "line": 17,
+          "text": "# Default flow: create-story -> dev-story -> review -> done; no implementation authorized by SP."
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/sprint-migration-2026-09-19.yaml",
+      "sha256": "82f2c28ca87b172f571c379269317d7a543dbe238eea08ca7b2975bcf3fbda92",
+      "bytes": 83841,
+      "lines": 1744,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# 当前获批范围目录；原9月15日迁移/授权快照保留。"
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/sprint-delivery-contract-2026-09-19.yaml",
+      "sha256": "0d92dffbd5ed5b655ff2d84d18141f4d304982dc9c2c91afccf707b1e4bbc651",
+      "bytes": 56050,
+      "lines": 1534,
+      "headings": [
+        {
+          "line": 1,
+          "text": "# 当前PRD到Story/工程条件的交付责任；不代表实现已完成。"
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions.md",
+      "sha256": "12f3c6523026d5a9fa57cf458e4c0f5f1e3281332987302f0c6266b8e26f835d",
+      "bytes": 54567,
+      "lines": 524,
+      "headings": [
+        {
+          "line": 44,
+          "text": "# Story 1.0: 生产登录与多设备会话补齐"
+        },
+        {
+          "line": 54,
+          "text": "## Story and Requirements"
+        },
+        {
+          "line": 69,
+          "text": "## Acceptance Criteria"
+        },
+        {
+          "line": 71,
+          "text": "### AC1 — 真实登录与现有入口"
+        },
+        {
+          "line": 78,
+          "text": "### AC2 — 生产测试通道隔离"
+        },
+        {
+          "line": 85,
+          "text": "### AC3 — 真实证明与回调验证"
+        },
+        {
+          "line": 92,
+          "text": "### AC4 — 稳定内部owner"
+        },
+        {
+          "line": 99,
+          "text": "### AC5 — 历史owner受控迁移"
+        },
+        {
+          "line": 106,
+          "text": "### AC6 — 共享持久会话"
+        },
+        {
+          "line": 113,
+          "text": "### AC7 — 多设备共存"
+        },
+        {
+          "line": 120,
+          "text": "### AC8 — 普通退出仅当前会话"
+        },
+        {
+          "line": 127,
+          "text": "### AC9 — 账号资格与全会话撤权"
+        },
+        {
+          "line": 134,
+          "text": "### AC10 — 私有资源与跨owner隔离"
+        },
+        {
+          "line": 141,
+          "text": "### AC11 — Cookie、来源与CSRF"
+        },
+        {
+          "line": 148,
+          "text": "### AC12 — 真实失败与隐私"
+        },
+        {
+          "line": 155,
+          "text": "### AC13 — 最小桌面运营授权"
+        },
+        {
+          "line": 162,
+          "text": "### AC14 — 完整关闭证据"
+        },
+        {
+          "line": 169,
+          "text": "### AC15 — C01 App：App 凭据与会话恢复"
+        },
+        {
+          "line": 176,
+          "text": "### AC16 — C02 App：登录回调与跨宿主返回"
+        },
+        {
+          "line": 183,
+          "text": "### AC17 — C03 App：PNVS 平台边界"
+        },
+        {
+          "line": 190,
+          "text": "### AC18 — C04 App：U-App 首次真实消费"
+        },
+        {
+          "line": 197,
+          "text": "## Tasks / Subtasks"
+        },
+        {
+          "line": 289,
+          "text": "### Review Follow-ups (AI, 2026-09-19 认证核心限定审阅)"
+        },
+        {
+          "line": 300,
+          "text": "## Dev Notes"
+        },
+        {
+          "line": 302,
+          "text": "### 实施顺序与范围"
+        },
+        {
+          "line": 308,
+          "text": "### 现状 / 改变 / 保留"
+        },
+        {
+          "line": 331,
+          "text": "### 推荐复用结构"
+        },
+        {
+          "line": 339,
+          "text": "### 供应商与版本研究的实施约束"
+        },
+        {
+          "line": 352,
+          "text": "### 工程条件：Story关闭与生产开放分开"
+        },
+        {
+          "line": 364,
+          "text": "### 测试与验收矩阵"
+        },
+        {
+          "line": 395,
+          "text": "### UX与原型引用"
+        },
+        {
+          "line": 402,
+          "text": "### 历史经验与Git"
+        },
+        {
+          "line": 408,
+          "text": "### References"
+        },
+        {
+          "line": 417,
+          "text": "## Dev Agent Record"
+        },
+        {
+          "line": 419,
+          "text": "### Agent Model Used"
+        },
+        {
+          "line": 423,
+          "text": "### Implementation Plan"
+        },
+        {
+          "line": 428,
+          "text": "### Debug Log References"
+        },
+        {
+          "line": 437,
+          "text": "### T0 Current Progress"
+        },
+        {
+          "line": 444,
+          "text": "### Completion Notes List"
+        },
+        {
+          "line": 449,
+          "text": "### 共享首用遥测限定Review Findings（2026-09-19）"
+        },
+        {
+          "line": 461,
+          "text": "### File List"
+        },
+        {
+          "line": 484,
+          "text": "## Change Log"
+        },
+        {
+          "line": 496,
+          "text": "## Capacitor Scope Amendment（2026-09-19）"
+        },
+        {
+          "line": 501,
+          "text": "### 2026-09-19 后续准备交接"
+        },
+        {
+          "line": 506,
+          "text": "### T8共享实现追加文件"
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/1-6-home-multi-link-import-queue-and-honest-status.md",
+      "sha256": "e92281571b3f782a24e4195693f31192dc81f5ae53ad199230807291348557ce",
+      "bytes": 44816,
+      "lines": 521,
+      "headings": [
+        {
+          "line": 24,
+          "text": "# Story 1.6: 首页多链接导入队列与诚实状态展示"
+        },
+        {
+          "line": 30,
+          "text": "## Story"
+        },
+        {
+          "line": 40,
+          "text": "## Acceptance Criteria"
+        },
+        {
+          "line": 42,
+          "text": "### AC1"
+        },
+        {
+          "line": 49,
+          "text": "### AC2"
+        },
+        {
+          "line": 56,
+          "text": "### AC3"
+        },
+        {
+          "line": 63,
+          "text": "### AC4"
+        },
+        {
+          "line": 70,
+          "text": "### AC5"
+        },
+        {
+          "line": 77,
+          "text": "### AC6"
+        },
+        {
+          "line": 84,
+          "text": "### AC7"
+        },
+        {
+          "line": 91,
+          "text": "### AC8"
+        },
+        {
+          "line": 98,
+          "text": "### AC9"
+        },
+        {
+          "line": 121,
+          "text": "## Tasks / Subtasks"
+        },
+        {
+          "line": 181,
+          "text": "### T1 后端限定Review Findings（2026-09-19）"
+        },
+        {
+          "line": 190,
+          "text": "### T2–T5 客户端限定Review Findings（2026-09-19）"
+        },
+        {
+          "line": 204,
+          "text": "### T6 主动粘贴/未确认inbox限定Review Findings（2026-09-19）"
+        },
+        {
+          "line": 214,
+          "text": "### T6 持久日志核心限定Review Findings（2026-09-19）"
+        },
+        {
+          "line": 230,
+          "text": "### T6 日志调用方限定Review Findings（2026-09-19）"
+        },
+        {
+          "line": 242,
+          "text": "### T7 本地测量限定Review Findings（2026-09-19）"
+        },
+        {
+          "line": 256,
+          "text": "### 共享首用遥测限定Review Findings（2026-09-19）"
+        },
+        {
+          "line": 268,
+          "text": "## Dev Notes"
+        },
+        {
+          "line": 270,
+          "text": "### 当前事实、改变与保留"
+        },
+        {
+          "line": 288,
+          "text": "### 权威与边界"
+        },
+        {
+          "line": 295,
+          "text": "### 依赖与技术核对（2026-09-19）"
+        },
+        {
+          "line": 303,
+          "text": "### 验证矩阵"
+        },
+        {
+          "line": 314,
+          "text": "### 工程条件责任与证据"
+        },
+        {
+          "line": 318,
+          "text": "### References"
+        },
+        {
+          "line": 333,
+          "text": "## Dev Agent Record"
+        },
+        {
+          "line": 335,
+          "text": "### Agent Model Used"
+        },
+        {
+          "line": 339,
+          "text": "### Debug Log References"
+        },
+        {
+          "line": 343,
+          "text": "### Completion Notes List"
+        },
+        {
+          "line": 347,
+          "text": "### File List"
+        },
+        {
+          "line": 472,
+          "text": "### 实施开始"
+        },
+        {
+          "line": 477,
+          "text": "### T2–T5 当前实现与限定审阅"
+        },
+        {
+          "line": 484,
+          "text": "### T6 第一段：主动粘贴与未确认inbox"
+        },
+        {
+          "line": 491,
+          "text": "### T6 第二段：持久日志存储核心（尚未接入控制器）"
+        },
+        {
+          "line": 498,
+          "text": "### T6 第三段：控制器/输入接线与浏览器重启"
+        },
+        {
+          "line": 507,
+          "text": "### T7 本地测量与受理后即时状态"
+        },
+        {
+          "line": 514,
+          "text": "### T6 第四段：共享隐私字典与许可核心"
+        },
+        {
+          "line": 519,
+          "text": "### T6 原生SDK真实制品/离线探针"
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/1-7-durable-import-progress-and-restart-recovery.md",
+      "sha256": "0ce1ccab411ba325107bc5a557c7e75ece6d0eba574ac189b90aeb3f65b6be0e",
+      "bytes": 35627,
+      "lines": 350,
+      "headings": [
+        {
+          "line": 20,
+          "text": "# Story 1.7: 可跨重启恢复的导入进度"
+        },
+        {
+          "line": 27,
+          "text": "## Story 与源验收合同"
+        },
+        {
+          "line": 98,
+          "text": "## Tasks / Subtasks"
+        },
+        {
+          "line": 175,
+          "text": "## Dev Notes"
+        },
+        {
+          "line": 177,
+          "text": "### 具体技术方向及必须先决定的边界"
+        },
+        {
+          "line": 187,
+          "text": "### UPDATE文件的当前行为 → 改变 → 保留"
+        },
+        {
+          "line": 211,
+          "text": "### 技术版本与官方资料（2026-09-19核对）"
+        },
+        {
+          "line": 220,
+          "text": "### UI、跨Story与已有证据"
+        },
+        {
+          "line": 228,
+          "text": "### 工程执行人与关闭证据归属"
+        },
+        {
+          "line": 233,
+          "text": "### References"
+        },
+        {
+          "line": 243,
+          "text": "## Dev Agent Record"
+        },
+        {
+          "line": 245,
+          "text": "### Agent Model Used"
+        },
+        {
+          "line": 249,
+          "text": "### 准备复核修补"
+        },
+        {
+          "line": 255,
+          "text": "### Debug Log References"
+        },
+        {
+          "line": 260,
+          "text": "### Completion Notes List"
+        },
+        {
+          "line": 265,
+          "text": "### File List"
+        },
+        {
+          "line": 316,
+          "text": "### T0–T2事件事务限定审阅与验证"
+        },
+        {
+          "line": 323,
+          "text": "### T3租约核心限定审阅与验证"
+        },
+        {
+          "line": 328,
+          "text": "### 恢复读取限定审阅与验证"
+        },
+        {
+          "line": 332,
+          "text": "### Review Findings（已处理的限定切片）"
+        },
+        {
+          "line": 340,
+          "text": "### T3持久worker与阶段恢复（2026-09-19）"
+        }
+      ]
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/9-1-capacitor-app-installation-and-host-foundation.md",
+      "sha256": "d2d01bc5b2409fd08c5ea8d03a356dc3b8acaeb102014e48449a419916d96a11",
+      "bytes": 17251,
+      "lines": 238,
+      "headings": [
+        {
+          "line": 34,
+          "text": "# Story 9.1: 安装 Nomad App 并使用现有入口"
+        },
+        {
+          "line": 40,
+          "text": "## Story and Acceptance Criteria"
+        },
+        {
+          "line": 111,
+          "text": "## Tasks / Subtasks"
+        },
+        {
+          "line": 154,
+          "text": "### Review Findings（2026-09-19 限定宿主/guard审阅）"
+        },
+        {
+          "line": 166,
+          "text": "## Dev Notes"
+        },
+        {
+          "line": 168,
+          "text": "### 架构与职责"
+        },
+        {
+          "line": 176,
+          "text": "### 版本与研究"
+        },
+        {
+          "line": 182,
+          "text": "### 状态与证据格式"
+        },
+        {
+          "line": 186,
+          "text": "### 参考"
+        },
+        {
+          "line": 194,
+          "text": "## Dev Agent Record"
+        },
+        {
+          "line": 196,
+          "text": "### Preparation"
+        },
+        {
+          "line": 200,
+          "text": "### Implementation"
+        },
+        {
+          "line": 204,
+          "text": "## File List"
+        },
+        {
+          "line": 230,
+          "text": "## Change Log"
+        },
+        {
+          "line": 234,
+          "text": "### 当前实施证据入口"
+        }
+      ]
+    },
+    {
+      "path": "package.json",
+      "sha256": "e7d06633e525e1843412fb012c39672356bfd1b867e75e32fa636c63a788a503",
+      "bytes": 1392,
+      "lines": 37,
+      "headings": []
+    },
+    {
+      "path": "apps/mobile/package.json",
+      "sha256": "c00b08fb2fddd973aa29f49608eaacca390372f70b1710004ed5486723838574",
+      "bytes": 1249,
+      "lines": 40,
+      "headings": []
+    },
+    {
+      "path": "apps/mobile/vite.config.ts",
+      "sha256": "ffc9730127eab76bfc70fe2fed25e6bfaba4e9606336ce589a2520debb040c30",
+      "bytes": 479,
+      "lines": 14,
+      "headings": []
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "4868842dd4ed53744212fa2dac62fa76b0235bf398296638fcc6500dd9f02f2e",
+      "bytes": 3729,
+      "lines": 122,
+      "headings": []
+    },
+    {
+      "path": "apps/mobile/src/platform/native-build-config.ts",
+      "sha256": "3ac0295ce9aeb3472bd172ea5fcba27ae08ddf73f73062de1de2b57b13874b3c",
+      "bytes": 2966,
+      "lines": 48,
+      "headings": []
+    },
+    {
+      "path": "apps/mobile/scripts/verify-native-project.mjs",
+      "sha256": "b9f212e765696a9e629436ddedd0edfe1277f5356fe5f942d6480ed5c57d6871",
+      "bytes": 4918,
+      "lines": 50,
+      "headings": []
+    },
+    {
+      "path": "apps/mobile/ios/App/App.xcodeproj/project.pbxproj",
+      "sha256": "7f04af5d720e3b132f8d5dae492f5b57250ffbf3cc1bb96c763593ab331465cd",
+      "bytes": 14921,
+      "lines": 380,
+      "headings": []
+    },
+    {
+      "path": "apps/mobile/ios/App/CapApp-SPM/Package.swift",
+      "sha256": "fa666685378024c8f2c8142fbdbb18da355a31fba3863a9c143e3f21b9a506ab",
+      "bytes": 1853,
+      "lines": 35,
+      "headings": []
+    },
+    {
+      "path": "apps/mobile/src/home/HomeSheet.tsx",
+      "sha256": "cc78a0182cec06bee409ebb94fdf9d95f689a6f278fb60932baffa938ba34e17",
+      "bytes": 1641,
+      "lines": 25,
+      "headings": []
+    },
+    {
+      "path": "apps/mobile/src/styles.css",
+      "sha256": "b36c4add6cc5a5ea0a2cdcedbcd32e21d7b3520bf588a2e01f08b22ae1b7c938",
+      "bytes": 28417,
+      "lines": 1546,
+      "headings": []
+    },
+    {
+      "path": "apps/mobile/src/App.tsx",
+      "sha256": "fee3387d9972f5c31972a6780cb894b328e6b821ef672121a879eb2cd497141e",
+      "bytes": 9926,
+      "lines": 155,
+      "headings": []
+    }
+  ],
+  "registry_candidates": [
+    {
+      "name": "shadcn",
+      "version": "4.21.0",
+      "engines": {
+        "node": ">=20.18.1"
+      },
+      "peerDependencies": null,
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/shadcn/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "@base-ui/react",
+      "version": "1.8.0",
+      "engines": {
+        "node": ">=14.0.0"
+      },
+      "peerDependencies": {
+        "react": "^17 || ^18 || ^19",
+        "date-fns": "^4.0.0",
+        "react-dom": "^17 || ^18 || ^19",
+        "@date-fns/tz": "^1.2.0",
+        "@types/react": "^17 || ^18 || ^19"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/%40base-ui%2Freact/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "tailwindcss",
+      "version": "4.3.3",
+      "engines": null,
+      "peerDependencies": null,
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/tailwindcss/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "@tailwindcss/vite",
+      "version": "4.3.3",
+      "engines": null,
+      "peerDependencies": {
+        "vite": "^5.2.0 || ^6 || ^7 || ^8"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/%40tailwindcss%2Fvite/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "storybook",
+      "version": "10.6.0",
+      "engines": null,
+      "peerDependencies": {
+        "prettier": "^2 || ^3",
+        "vite-plus": "^0.1.15 || ^0.2.0",
+        "@types/react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/storybook/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "@storybook/react-vite",
+      "version": "10.6.0",
+      "engines": null,
+      "peerDependencies": {
+        "vite": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0",
+        "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+        "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+        "storybook": "^10.6.0",
+        "typescript": ">= 4.9.x"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/%40storybook%2Freact-vite/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "@storybook/addon-a11y",
+      "version": "10.6.0",
+      "engines": null,
+      "peerDependencies": {
+        "storybook": "^10.6.0"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/%40storybook%2Faddon-a11y/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "msw",
+      "version": "2.15.0",
+      "engines": {
+        "node": ">=18"
+      },
+      "peerDependencies": {
+        "typescript": ">= 4.8.x"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/msw/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "msw-storybook-addon",
+      "version": "3.0.3",
+      "engines": null,
+      "peerDependencies": {
+        "msw": ">=2",
+        "storybook": "^9.0.0 || ^10.0.0 || ^11.0.0-0"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/msw-storybook-addon/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "@playwright/test",
+      "version": "1.63.0",
+      "engines": {
+        "node": ">=20"
+      },
+      "peerDependencies": null,
+      "license": "Apache-2.0",
+      "registry": "https://registry.npmjs.org/%40playwright%2Ftest/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "eslint",
+      "version": "10.11.0",
+      "engines": {
+        "node": "^20.19.0 || ^22.13.0 || >=24"
+      },
+      "peerDependencies": {
+        "jiti": "*"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/eslint/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "typescript-eslint",
+      "version": "8.70.0",
+      "engines": {
+        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+      },
+      "peerDependencies": {
+        "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+        "typescript": ">=4.8.4 <6.1.0"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/typescript-eslint/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "eslint-plugin-react-hooks",
+      "version": "7.1.1",
+      "engines": {
+        "node": ">=18"
+      },
+      "peerDependencies": {
+        "eslint": "^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0 || ^10.0.0"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/eslint-plugin-react-hooks/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "eslint-plugin-jsx-a11y",
+      "version": "6.10.2",
+      "engines": {
+        "node": ">=4.0"
+      },
+      "peerDependencies": {
+        "eslint": "^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "@tanstack/react-query",
+      "version": "5.103.1",
+      "engines": null,
+      "peerDependencies": {
+        "react": "^18 || ^19"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/%40tanstack%2Freact-query/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "@tanstack/react-router",
+      "version": "1.170.38",
+      "engines": {
+        "node": ">=20.19"
+      },
+      "peerDependencies": {
+        "react": ">=18.0.0 || >=19.0.0",
+        "react-dom": ">=18.0.0 || >=19.0.0"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/%40tanstack%2Freact-router/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "react-hook-form",
+      "version": "7.88.0",
+      "engines": {
+        "node": ">=18.0.0"
+      },
+      "peerDependencies": {
+        "react": "^16.8.0 || ^17 || ^18 || ^19"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/react-hook-form/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "@hookform/resolvers",
+      "version": "5.9.1",
+      "engines": null,
+      "peerDependencies": {
+        "ajv": "^8.12.0",
+        "joi": "^17.0.0 || ^18.0.0",
+        "yup": "^1.0.0",
+        "zod": "^3.25.0 || ^4.0.0",
+        "vest": ">=6.0.0",
+        "fp-ts": "^2.7.0",
+        "io-ts": "^2.0.0",
+        "effect": "^3.10.3",
+        "arktype": "^2.0.0",
+        "valibot": ">=0.31.0 || ^1.0.0-beta.4 || ^1.0.0-rc",
+        "typanion": "^3.3.2",
+        "ajv-errors": "^3.0.0",
+        "ajv-formats": "^2.1.1",
+        "superstruct": ">=0.12.0",
+        "@vinejs/vine": "^2.0.0 || ^3.0.0 || ^4.0.0",
+        "ata-validator": "^1.2.0",
+        "computed-types": "^1.0.0",
+        "nope-validator": ">=0.12.0",
+        "class-validator": ">=0.12.0",
+        "react-hook-form": "^7.55.0",
+        "@typeschema/main": ">=0.13.7",
+        "@sinclair/typebox": ">=0.25.24",
+        "class-transformer": ">=0.4.0",
+        "fluentvalidation-ts": "^3.0.0",
+        "@standard-schema/spec": "^1.0.0"
+      },
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/%40hookform%2Fresolvers/latest",
+      "candidate_only": true
+    },
+    {
+      "name": "zod",
+      "version": "4.6.5",
+      "engines": null,
+      "peerDependencies": null,
+      "license": "MIT",
+      "registry": "https://registry.npmjs.org/zod/latest",
+      "candidate_only": true
+    }
+  ],
+  "compatibility_decisions": [
+    {
+      "package": "eslint",
+      "candidate": "9.39.5",
+      "latest_not_selected": "10.11.0",
+      "reason": "eslint-plugin-jsx-a11y 6.10.2 peer range excludes ESLint 10; no force or legacy peer override",
+      "registry": "https://registry.npmjs.org/eslint/9.39.5"
+    }
+  ],
+  "proposal_validation": {
+    "checked_at": "2026-09-19T06:33:26.964723+00:00",
+    "gwt_counts": {
+      "9.3": 8,
+      "9.4": 6,
+      "9.5": 6,
+      "existing_additions": 4,
+      "optional_9.6": 6,
+      "optional_9.7": 7
+    },
+    "core_projection": {
+      "stories": 65,
+      "gwt": 1076
+    },
+    "all_candidates_projection": {
+      "stories": 67,
+      "gwt": 1089
+    },
+    "local_links_and_structure": "passed",
+    "ci_handoff": "passed-existing-effective-scope",
+    "ci_handoff_counts": {
+      "epics": 9,
+      "stories": 62,
+      "gwt": 1052,
+      "done": 7,
+      "in_progress": 5,
+      "backlog": 50
+    },
+    "guard_changes": false,
+    "implementation_or_device_validation_performed": false,
+    "source_drift_at_validation": [],
+    "artifact_sha256": {
+      "_bmad-output/planning-artifacts/sprint-change-proposal-ui-foundation-2026-09-19.md": "5750eef944b6f47dc910088576df724cc3bfb88c4e7ab040abf6fd3ad59f17a6",
+      "_bmad-output/planning-artifacts/sprint-change-ui-contracts-2026-09-19.md": "87ac0bbf7920cd41c8accdf4e0894082f5816079e60428756a32a2f13e059276"
+    }
+  }
+}

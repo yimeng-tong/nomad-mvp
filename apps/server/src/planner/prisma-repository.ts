@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto';
 import { Prisma, type PrismaClient } from '@prisma/client';
 import { getPrisma } from '../db/prisma.js';
 import { dbUserIdFor } from '../ingest/store.js';
+import { fixtureAuth, lockJobOwner, lockQualifiedOwner } from '../auth/owner.js';
+import { AuthFault } from '../auth/errors.js';
 import {
   PlannerExecutionLeaseLost,
   PlannerRepositoryConflict,
@@ -31,6 +33,8 @@ type JobRow = {
   id: string;
   plan_id: string;
   actor_id: string;
+  owner_id: string;
+  owner_auth_version: number | null;
   request_hash: string;
   request_snapshot_json: Prisma.JsonValue;
   trace_id: string | null;
@@ -57,6 +61,8 @@ type HqJobRow = {
   id: string;
   plan_id: string;
   actor_id: string;
+  owner_id: string;
+  owner_auth_version: number | null;
   base_version_id: string;
   request_hash: string;
   attempt: number;
@@ -91,7 +97,8 @@ function jobRecord(row: JobRow, userId: string): PlannerJobRecord {
   return {
     id: row.id,
     planId: row.plan_id,
-    userId,
+    userId: fixtureAuth() ? userId : row.owner_id,
+    ownerAuthVersion: row.owner_auth_version ?? undefined,
     requestHash: row.request_hash,
     request: row.request_snapshot_json as unknown as CreatePlannerJobInput['request'],
     traceId: row.trace_id ?? '',
@@ -141,7 +148,8 @@ function hqJobRecord(row: HqJobRow, userId: string): PlannerHqJobRecord {
   return {
     id: row.id,
     planId: row.plan_id,
-    userId,
+    userId: fixtureAuth() ? userId : row.owner_id,
+    ownerAuthVersion: row.owner_auth_version ?? undefined,
     requestHash: row.request_hash,
     baseVersionId: row.base_version_id,
     traceId: row.trace_id ?? '',
@@ -157,7 +165,7 @@ function hqJobRecord(row: HqJobRow, userId: string): PlannerHqJobRecord {
 
 async function findJobByRequest(client: SqlClient, userId: string, requestHash: string) {
   const rows = await client.$queryRaw<JobRow[]>(Prisma.sql`
-    SELECT id, "planId" AS plan_id, external_user_id AS actor_id,
+    SELECT id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version,
            request_hash, request_snapshot_json, trace_id, attempt, state,
            quick_version_id, hq_job_id, error_code, retriable, created_at, updated_at
     FROM "PlanJob"
@@ -204,9 +212,10 @@ export class PrismaPlannerRepository implements PlannerRepository {
           existing.updated_at.getTime() <= staleBefore);
       if (recoverable) {
         const recovered = await this.prisma.$transaction(async (tx) => {
+          const authVersion = fixtureAuth() ? null : await lockQualifiedOwner(tx, dbUserIdFor(input.userId));
           const rows = await tx.$queryRaw<JobRow[]>(Prisma.sql`
             UPDATE "PlanJob"
-            SET state = 'queued'::"PlanJobState", phase = 'started'::"PlanJobPhase",
+            SET state = 'queued'::"PlanJobState", phase = 'started'::"PlanJobPhase", auth_version=${authVersion},
                 trace_id = ${input.traceId}, error_code = NULL, error_message = NULL,
                 retriable = NULL, terminal_at = NULL, attempt = attempt + 1, updated_at = NOW()
             WHERE id = ${existing.id}::uuid
@@ -215,7 +224,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
                 OR (state IN ('queued'::"PlanJobState", 'running'::"PlanJobState")
                     AND updated_at <= ${new Date(staleBefore)})
               )
-            RETURNING id, "planId" AS plan_id, external_user_id AS actor_id,
+            RETURNING id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version,
                       request_hash, request_snapshot_json, trace_id, attempt, state,
                       quick_version_id, hq_job_id, error_code, retriable, created_at, updated_at
           `);
@@ -234,10 +243,10 @@ export class PrismaPlannerRepository implements PlannerRepository {
     try {
       const created = await this.prisma.$transaction(async (tx) => {
         const userId = dbUserIdFor(input.userId);
-        await tx.$executeRaw(Prisma.sql`
+        const authVersion = fixtureAuth() ? null : await lockQualifiedOwner(tx, userId);
+        if (fixtureAuth()) await tx.$executeRaw(Prisma.sql`
           INSERT INTO "User" (id, created_at)
-          VALUES (${userId}::uuid, NOW())
-          ON CONFLICT (id) DO NOTHING
+          VALUES (${userId}::uuid, NOW()) ON CONFLICT (id) DO NOTHING
         `);
         let cities = await tx.$queryRaw<Array<{ id: string; tz: string }>>(Prisma.sql`
           SELECT id, tz FROM "City" WHERE name = ${input.request.city} ORDER BY id LIMIT 1
@@ -292,15 +301,15 @@ export class PrismaPlannerRepository implements PlannerRepository {
         }
         const rows = await tx.$queryRaw<JobRow[]>(Prisma.sql`
           INSERT INTO "PlanJob" (
-            id, "userId", external_user_id, "planId", request_hash, request_snapshot_json, state, phase,
+            id, "userId", auth_version, external_user_id, "planId", request_hash, request_snapshot_json, state, phase,
             trace_id, placed_count, remaining_count, created_at, updated_at
           )
           VALUES (
-            ${jobId}::uuid, ${userId}::uuid, ${input.userId}, ${planId}::uuid, ${input.requestHash},
+            ${jobId}::uuid, ${userId}::uuid, ${authVersion}, ${input.userId}, ${planId}::uuid, ${input.requestHash},
             ${JSON.stringify(input.request)}::jsonb, 'queued'::"PlanJobState",
             'started'::"PlanJobPhase", ${input.traceId}, 0, 0, NOW(), NOW()
           )
-          RETURNING id, "planId" AS plan_id, external_user_id AS actor_id,
+          RETURNING id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version,
                     request_hash, request_snapshot_json, trace_id, attempt, state,
                     quick_version_id, hq_job_id, error_code, retriable, created_at, updated_at
         `);
@@ -317,7 +326,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
 
   async getJob(jobId: string, userId: string) {
     const rows = await this.prisma.$queryRaw<JobRow[]>(Prisma.sql`
-      SELECT id, "planId" AS plan_id, external_user_id AS actor_id,
+      SELECT id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version,
              request_hash, request_snapshot_json, trace_id, attempt, state,
              quick_version_id, hq_job_id, error_code, retriable, created_at, updated_at
       FROM "PlanJob"
@@ -340,6 +349,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
 
   async appendJobEvent(jobId: string, attempt: number, event: PlanJobEvent) {
     await this.prisma.$transaction(async (tx) => {
+      if (event.phase !== 'failed') await lockJobOwner(tx, 'PlanJob', jobId);
       const jobs = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
         SELECT id
         FROM "PlanJob"
@@ -396,6 +406,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
 
   async saveQuickVersion(jobId: string, attempt: number, payload: PlannerVersionPayload) {
     return this.prisma.$transaction(async (tx) => {
+      await lockJobOwner(tx, 'PlanJob', jobId);
       const jobs = await tx.$queryRaw<Array<{ plan_id: string; quick_version_id: string | null }>>(Prisma.sql`
         SELECT "planId" AS plan_id, quick_version_id
         FROM "PlanJob"
@@ -429,6 +440,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
 
   async saveHqVersion(planId: string, userId: string, payload: PlannerVersionPayload) {
     return this.prisma.$transaction(async (tx) => {
+      await lockQualifiedOwner(tx, dbUserIdFor(userId));
       const plans = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
         SELECT id FROM "Plan"
         WHERE id = ${planId}::uuid AND "userId" = ${dbUserIdFor(userId)}::uuid
@@ -446,6 +458,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
     payload: PlannerVersionPayload,
   ) {
     return this.prisma.$transaction(async (tx) => {
+      await lockJobOwner(tx, 'HqJob', hqJobId);
       const jobs = await tx.$queryRaw<Array<{ plan_id: string }>>(Prisma.sql`
         SELECT "planId" AS plan_id
         FROM "HqJob"
@@ -477,7 +490,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
   }) {
     const userId = dbUserIdFor(input.userId);
     const existing = await this.prisma.$queryRaw<HqJobRow[]>(Prisma.sql`
-      SELECT id, "planId" AS plan_id, external_user_id AS actor_id, base_version_id,
+      SELECT id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version, base_version_id,
              request_hash, attempt, state, version_id, error_code, retriable, trace_id, created_at, updated_at
       FROM "HqJob"
       WHERE "userId" = ${userId}::uuid AND request_hash = ${input.requestHash}
@@ -485,9 +498,11 @@ export class PrismaPlannerRepository implements PlannerRepository {
     `);
     if (existing[0]) {
       if (existing[0].state === 'failed' && existing[0].retriable) {
-        const retried = await this.prisma.$queryRaw<HqJobRow[]>(Prisma.sql`
+        const retried = await this.prisma.$transaction(async (tx) => {
+          const authVersion = fixtureAuth() ? null : await lockQualifiedOwner(tx, userId);
+          return tx.$queryRaw<HqJobRow[]>(Prisma.sql`
           UPDATE "HqJob"
-          SET state = 'running'::"HqJobState", attempt = attempt + 1,
+          SET state = 'running'::"HqJobState", attempt = attempt + 1, auth_version=${authVersion},
               version_id = NULL, error_code = NULL, error_message = NULL,
               retriable = NULL, trace_id = ${input.traceId},
               started_at = NOW(), finished_at = NULL, updated_at = NOW()
@@ -495,12 +510,13 @@ export class PrismaPlannerRepository implements PlannerRepository {
             AND "userId" = ${userId}::uuid
             AND state = 'failed'::"HqJobState"
             AND retriable = TRUE
-          RETURNING id, "planId" AS plan_id, external_user_id AS actor_id, base_version_id,
+          RETURNING id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version, base_version_id,
                     request_hash, attempt, state, version_id, error_code, retriable, trace_id, created_at, updated_at
         `);
+        });
         if (retried[0]) return { job: hqJobRecord(retried[0], input.userId), created: true };
         const raced = await this.prisma.$queryRaw<HqJobRow[]>(Prisma.sql`
-          SELECT id, "planId" AS plan_id, external_user_id AS actor_id, base_version_id,
+          SELECT id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version, base_version_id,
                  request_hash, attempt, state, version_id, error_code, retriable, trace_id, created_at, updated_at
           FROM "HqJob"
           WHERE id = ${existing[0].id}::uuid AND "userId" = ${userId}::uuid
@@ -512,6 +528,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
     }
     try {
       const created = await this.prisma.$transaction(async (tx) => {
+        const authVersion = fixtureAuth() ? null : await lockQualifiedOwner(tx, userId);
         const plans = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
           SELECT id FROM "Plan"
           WHERE id = ${input.planId}::uuid AND "userId" = ${userId}::uuid
@@ -520,15 +537,15 @@ export class PrismaPlannerRepository implements PlannerRepository {
         if (!plans[0]) throw new Error('plan not found');
         const rows = await tx.$queryRaw<HqJobRow[]>(Prisma.sql`
           INSERT INTO "HqJob" (
-            id, "userId", external_user_id, "planId", base_version_id, request_hash,
+            id, "userId", auth_version, external_user_id, "planId", base_version_id, request_hash,
             state, attempt, trace_id, started_at, created_at, updated_at
           )
           VALUES (
-            ${randomUUID()}::uuid, ${userId}::uuid, ${input.userId}, ${input.planId}::uuid,
+            ${randomUUID()}::uuid, ${userId}::uuid, ${authVersion}, ${input.userId}, ${input.planId}::uuid,
             ${input.baseVersionId}::uuid, ${input.requestHash},
             'running'::"HqJobState", 1, ${input.traceId}, NOW(), NOW(), NOW()
           )
-          RETURNING id, "planId" AS plan_id, external_user_id AS actor_id, base_version_id,
+          RETURNING id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version, base_version_id,
                     request_hash, attempt, state, version_id, error_code, retriable, trace_id, created_at, updated_at
         `);
         await tx.$executeRaw(Prisma.sql`
@@ -541,7 +558,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
     } catch (error) {
       if (!isUniqueViolation(error)) throw error;
       const raced = await this.prisma.$queryRaw<HqJobRow[]>(Prisma.sql`
-        SELECT id, "planId" AS plan_id, external_user_id AS actor_id, base_version_id,
+        SELECT id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version, base_version_id,
                request_hash, attempt, state, version_id, error_code, retriable, trace_id, created_at, updated_at
         FROM "HqJob"
         WHERE "userId" = ${userId}::uuid AND request_hash = ${input.requestHash}
@@ -554,7 +571,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
 
   async getHqJob(hqJobId: string, userId: string) {
     const rows = await this.prisma.$queryRaw<HqJobRow[]>(Prisma.sql`
-      SELECT id, "planId" AS plan_id, external_user_id AS actor_id, base_version_id,
+      SELECT id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version, base_version_id,
              request_hash, attempt, state, version_id, error_code, retriable, trace_id, created_at, updated_at
       FROM "HqJob"
       WHERE id = ${hqJobId}::uuid AND "userId" = ${dbUserIdFor(userId)}::uuid
@@ -587,7 +604,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
         AND "userId" = ${dbUserIdFor(userId)}::uuid
         AND attempt = ${attempt}
         AND state = 'running'::"HqJobState"
-      RETURNING id, "planId" AS plan_id, external_user_id AS actor_id, base_version_id,
+      RETURNING id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version, base_version_id,
                 request_hash, attempt, state, version_id, error_code, retriable, trace_id, created_at, updated_at
     `);
     if (!rows[0]) throw new PlannerExecutionLeaseLost('HQ execution lease is no longer current');
@@ -610,7 +627,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
         AND "userId" = ${dbUserIdFor(userId)}::uuid
         AND attempt = ${attempt}
         AND state = 'running'::"HqJobState"
-      RETURNING id, "planId" AS plan_id, external_user_id AS actor_id, base_version_id,
+      RETURNING id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version, base_version_id,
                 request_hash, attempt, state, version_id, error_code, retriable, trace_id, created_at, updated_at
     `);
     if (!rows[0]) throw new PlannerExecutionLeaseLost('HQ execution lease is no longer current');
@@ -623,7 +640,9 @@ export class PrismaPlannerRepository implements PlannerRepository {
         WITH candidates AS (
           SELECT id
           FROM "PlanJob"
-          WHERE updated_at <= ${new Date(staleBefore)}
+          WHERE (${fixtureAuth()} OR EXISTS (SELECT 1 FROM "User" owner
+            WHERE owner.id="PlanJob"."userId" AND owner.auth_state='active' AND owner.auth_version="PlanJob".auth_version))
+            AND updated_at <= ${new Date(staleBefore)}
             AND (
               state IN ('queued'::"PlanJobState", 'running'::"PlanJobState")
               OR (state = 'failed'::"PlanJobState" AND retriable = TRUE)
@@ -638,7 +657,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
             terminal_at = NULL, attempt = attempt + 1, updated_at = NOW()
         FROM candidates
         WHERE job.id = candidates.id
-        RETURNING job.id, job."planId" AS plan_id, job.external_user_id AS actor_id,
+        RETURNING job.id, job."planId" AS plan_id, job.external_user_id AS actor_id, job."userId" AS owner_id, job.auth_version AS owner_auth_version,
                   job.request_hash, job.request_snapshot_json, job.trace_id, job.attempt, job.state,
                   job.quick_version_id, job.hq_job_id, job.error_code, job.retriable,
                   job.created_at, job.updated_at
@@ -657,7 +676,9 @@ export class PrismaPlannerRepository implements PlannerRepository {
       WITH candidates AS (
         SELECT id
         FROM "HqJob"
-        WHERE updated_at <= ${new Date(staleBefore)}
+        WHERE (${fixtureAuth()} OR EXISTS (SELECT 1 FROM "User" owner
+            WHERE owner.id="HqJob"."userId" AND owner.auth_state='active' AND owner.auth_version="HqJob".auth_version))
+            AND updated_at <= ${new Date(staleBefore)}
           AND (
             state = 'running'::"HqJobState"
             OR (state = 'failed'::"HqJobState" AND retriable = TRUE)
@@ -672,7 +693,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
           retriable = NULL, started_at = NOW(), finished_at = NULL, updated_at = NOW()
       FROM candidates
       WHERE job.id = candidates.id
-      RETURNING job.id, job."planId" AS plan_id, job.external_user_id AS actor_id,
+      RETURNING job.id, job."planId" AS plan_id, job.external_user_id AS actor_id, job."userId" AS owner_id, job.auth_version AS owner_auth_version,
                 job.base_version_id, job.request_hash, job.attempt, job.state, job.version_id,
                 job.error_code, job.retriable, job.trace_id, job.created_at, job.updated_at
     `);
@@ -702,7 +723,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
       ORDER BY version_number ASC
     `);
     const hqJobs = await this.prisma.$queryRaw<HqJobRow[]>(Prisma.sql`
-      SELECT id, "planId" AS plan_id, external_user_id AS actor_id, base_version_id,
+      SELECT id, "planId" AS plan_id, external_user_id AS actor_id, "userId" AS owner_id, auth_version AS owner_auth_version, base_version_id,
              request_hash, attempt, state, version_id, error_code, retriable, trace_id, created_at, updated_at
       FROM "HqJob"
       WHERE "planId" = ${planId}::uuid AND "userId" = ${dbUserIdFor(userId)}::uuid
@@ -742,6 +763,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
     mutate: (payload: PlannerVersionPayload) => PlannerVersionPayload;
   }) {
     return this.prisma.$transaction(async (tx) => {
+      await lockQualifiedOwner(tx, dbUserIdFor(input.userId));
       const plans = await tx.$queryRaw<Array<{ rev: number; current_version_id: string | null }>>(Prisma.sql`
         SELECT rev, current_version_id
         FROM "Plan"
@@ -771,6 +793,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
 
   async applyEdit(input: ApplyPlannerEditInput) {
     return this.prisma.$transaction(async (tx) => {
+      await lockQualifiedOwner(tx, dbUserIdFor(input.userId));
       const plans = await tx.$queryRaw<Array<{ rev: number; current_version_id: string | null }>>(Prisma.sql`
         SELECT rev, current_version_id
         FROM "Plan"
@@ -872,6 +895,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
 
   async getRecentEdit(planId: string, userId: string, dayIndex?: number) {
     return this.prisma.$transaction(async (tx) => {
+      await lockQualifiedOwner(tx, dbUserIdFor(userId));
       const plans = await tx.$queryRaw<Array<{ rev: number; current_version_id: string | null }>>(Prisma.sql`
         SELECT rev, current_version_id
         FROM "Plan"
@@ -931,6 +955,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
     editEventId?: string;
   }) {
     return this.prisma.$transaction(async (tx) => {
+      await lockQualifiedOwner(tx, dbUserIdFor(input.userId));
       const plans = await tx.$queryRaw<Array<{ rev: number; current_version_id: string | null }>>(Prisma.sql`
         SELECT rev, current_version_id
         FROM "Plan"
@@ -1086,6 +1111,7 @@ export class PrismaPlannerRepository implements PlannerRepository {
     expectedPlanRev: number;
   }) {
     return this.prisma.$transaction(async (tx) => {
+      await lockQualifiedOwner(tx, dbUserIdFor(input.userId));
       const plans = await tx.$queryRaw<Array<{ rev: number; current_version_id: string | null }>>(Prisma.sql`
         SELECT rev, current_version_id FROM "Plan"
         WHERE id = ${input.planId}::uuid AND "userId" = ${dbUserIdFor(input.userId)}::uuid

@@ -1,0 +1,172 @@
+{
+  "kind": "all-pending-story-preparation-input-snapshot",
+  "recorded_at": "2026-09-25T06:00:30.437240+00:00",
+  "implementation_authorized_by_this_batch": false,
+  "pending_story_keys": [
+    "9-5-browser-flow-and-visual-regression-gates",
+    "9-3-shared-ui-components-and-safe-app-sheet",
+    "1-8-owner-import-records-and-versioned-deduplication",
+    "1-9-production-image-text-understanding-and-evidence",
+    "1-10-adaptive-video-understanding-and-local-frame-resampling",
+    "1-11-amap-poi-verification-branch-disambiguation-and-manual-correction",
+    "9-6-identity-scoped-server-read-queries",
+    "9-7-typed-navigation-and-host-history",
+    "2-3-single-city-travel-time-and-boundary-confirmation",
+    "2-4-unified-flight-and-rail-service-lookup",
+    "2-5-preplanning-nightly-stays-breakfast-and-luggage",
+    "2-6-preplanning-pace-and-additional-constraints",
+    "2-7-full-city-picker-and-l3-place-intent",
+    "2-8-shared-poi-information-sheet",
+    "2-9-single-planning-job-and-stable-timeline-transition",
+    "2-10-authoritative-route-facts-and-timeline-transport",
+    "2-11-constraint-first-complete-single-city-planning",
+    "2-12-amap-candidate-expansion-and-nonblocking-candidate-list",
+    "2-13-anchor-pool-buckets-shared-admission-and-versioned-snapshots",
+    "2-14-daily-load-estimation-and-explainable-summary",
+    "2-15-post-plan-place-search-and-manual-candidates",
+    "3-1-minute-timeline-editing-and-plan-wide-undo",
+    "3-2-controlled-candidate-placement-and-free-time-filling",
+    "3-3-post-plan-nightly-stay-breakfast-and-luggage-editing",
+    "3-4-incremental-validation-and-typed-conflict-fixes",
+    "3-5-controlled-conversational-local-adjustment",
+    "4-1-cross-city-intent-and-linked-trip-input-draft",
+    "4-2-adjacent-city-transfers-and-handoff-day-boundaries",
+    "4-3-independent-city-planning-and-atomic-linked-trip-publication",
+    "4-4-active-city-editing-and-linked-trip-revision-rebinding",
+    "4-5-day-excursion-intent-and-round-trip-transfer-draft",
+    "4-6-day-excursion-planning-and-atomic-timeline-publication",
+    "4-7-day-excursion-editing-and-scope-guards",
+    "5-1-revision-bound-ai-detail-enrichment",
+    "5-2-verifiable-result-sheet-and-citation-reading",
+    "5-3-line-level-detail-editing-and-ai-preservation",
+    "5-4-revision-bound-export-generation-and-preview",
+    "5-5-whole-trip-image-download-and-system-sharing",
+    "6-1-planned-meal-slots-and-primary-alternative-pool",
+    "6-2-foreground-location-meal-recall-and-plan-context-fallback",
+    "6-3-normalized-business-areas-and-owner-food-hints",
+    "6-4-trip-checklist-and-direct-or-ai-record-entry",
+    "6-5-lightweight-shopping-notes-and-label-shortcuts",
+    "7-1-recent-trips-and-context-resume",
+    "7-3-settings-account-and-available-actions",
+    "7-4-account-data-copy-export",
+    "7-5-account-deletion-and-cleanup-results",
+    "7-6-feedback-entry-and-reliable-submission",
+    "8-1-cross-flow-observability-and-fault-localization",
+    "8-2-reproducible-quality-regression-and-version-comparison",
+    "8-3-task-level-provider-routing-and-safe-release",
+    "8-4-platform-budget-and-usage-policy-management",
+    "8-5-terminal-ai-amap-incidents-and-telegram-alerts",
+    "8-6-operations-overview-and-read-only-diagnostics",
+    "9-2-android-apk-and-ios-testflight-delivery"
+  ],
+  "files": {
+    "CURRENT.md": {
+      "sha256": "cb7e665bb3704b71ec1c44e73699a428e618f1f37a9367dfb784d05addee5084",
+      "bytes": 23440
+    },
+    "AGENTS.md": {
+      "sha256": "d4a4dfeb4213e848dd4232a98f207d665adbfab4599aee9f6e99f6c5256dea0b",
+      "bytes": 6746
+    },
+    "_bmad-output/project-context.md": {
+      "sha256": "ff7bd5b3ee92b804ca599ae06f4da9ef96cb5df64f8683f681b42f13de6ba78c",
+      "bytes": 46089
+    },
+    "_bmad-output/implementation-artifacts/sprint-status.yaml": {
+      "sha256": "f296507a07c78279ae86f1b550d95a88c31d9d878a7ffe715d3397488ec82d09",
+      "bytes": 33097
+    },
+    "_bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml": {
+      "sha256": "99515a093c68dbb948436b6106e26ee8b48f429e38b66d10ea306cdf82731c04",
+      "bytes": 104396
+    },
+    "_bmad-output/implementation-artifacts/sprint-delivery-contract-ui-foundation-2026-09-20.yaml": {
+      "sha256": "65c57d0ac60d80ef0885546e2b7d68a9676f12bae2b6c55ac30beb2f8e8cb4ec",
+      "bytes": 64160
+    },
+    "_bmad-output/planning-artifacts/epics.md": {
+      "sha256": "6440ed71f6aac8e5788ebc96dbbe305f911913f38bdb62cab34db7a4aa8ee3f4",
+      "bytes": 698741
+    },
+    "_bmad-output/planning-artifacts/ui-foundation-scope-decision-2026-09-20.md": {
+      "sha256": "d6368fd03b443fc2308a0517f679c2da075eac66939d33243e9ae9fc0bbfba0b",
+      "bytes": 3426
+    },
+    "scripts/check-handoff.mjs": {
+      "sha256": "290e1374be99cc8c0c0ced805045b0605b865c6bd4173af13fd0b2202aa60032",
+      "bytes": 32900
+    },
+    "scripts/check-sprint-delivery.mjs": {
+      "sha256": "3441c8a38fe54a6ff9be578b5da388fbad5312ebd5e787afba09b05644f43003",
+      "bytes": 5856
+    },
+    "scripts/check-capacitor-scope.mjs": {
+      "sha256": "c1822cae8139378c617c528eed8dd80b810aae6693ac06a0111c99aeaed2a580",
+      "bytes": 12927
+    },
+    "scripts/check-ui-scope.mjs": {
+      "sha256": "aa640fd5f0597b58495757f083e3c154986bf65d00abe757939994890e524b09",
+      "bytes": 16553
+    },
+    "scripts/ui-scope-policy.mjs": {
+      "sha256": "6d29ff4378a619b028f55f0487a09ffd811e63644f31b4ce6cafb1bd147e605e",
+      "bytes": 4305
+    },
+    "scripts/check-handoff.test.mjs": {
+      "sha256": "a6bc3613fb65dcb428d44706b3c9b57ee944db27eda725605c19118c3523b9e8",
+      "bytes": 42514
+    },
+    "_bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions.md": {
+      "sha256": "544aa6ecf64756a30b5aa93802fc787a9a4c2a2379bfc66df26f41c6f1de4358",
+      "bytes": 56721
+    },
+    "_bmad-output/implementation-artifacts/1-1-login-session-and-compliance-contract.md": {
+      "sha256": "abc0cdf6c0eae964b64ca37b160bfbd53b29e6f7dff5a669f256b2afa32d0d24",
+      "bytes": 8679
+    },
+    "_bmad-output/implementation-artifacts/1-2-mobile-login-first-screen.md": {
+      "sha256": "dccb86eb75e4f6613f4709ddfb82c4d0b21893bae896b7ebae7d56f99370b9db",
+      "bytes": 16303
+    },
+    "_bmad-output/implementation-artifacts/1-3-single-xhs-ingest-with-sse-progress.md": {
+      "sha256": "76d190ade099ffae559e30b1f1a85da4aff2f7bd7d81b56ea1f9ea7e6ef61b11",
+      "bytes": 19477
+    },
+    "_bmad-output/implementation-artifacts/1-4-home-unified-input-and-inspiration-library.md": {
+      "sha256": "2f2011e3002c9fa71a1712ca7a48d727d1b384fe6233ce00ec9603d427523508",
+      "bytes": 20051
+    },
+    "_bmad-output/implementation-artifacts/1-5-settings-feedback-and-account-entry-points.md": {
+      "sha256": "8a9e5db26169984ee19cde172181bc70b268d7636d2c257966dd6c1d308e00b0",
+      "bytes": 16945
+    },
+    "_bmad-output/implementation-artifacts/1-6-home-multi-link-import-queue-and-honest-status.md": {
+      "sha256": "8ea9aabc3e3fb1ce8a59e9d2b3d555e75c91d15eef33eecd78b7c83d6753e6e6",
+      "bytes": 46971
+    },
+    "_bmad-output/implementation-artifacts/1-7-durable-import-progress-and-restart-recovery.md": {
+      "sha256": "37007498d01664ffcae939f452b995c2305d43200b7bbdd601c464feaba10494",
+      "bytes": 43012
+    },
+    "_bmad-output/implementation-artifacts/2-0-confirm-and-planner-picker.md": {
+      "sha256": "6a8aadcd1028370fc2f70a9c859b6ca7547aa64b84701489736e466f5c4fa427",
+      "bytes": 25929
+    },
+    "_bmad-output/implementation-artifacts/2-1-generate-day-skeleton-with-quick-and-hq-planning.md": {
+      "sha256": "dbe1028a9002be6e71868cac2758de4fb066a745bba149fb9b494fa08f7ca0ac",
+      "bytes": 28951
+    },
+    "_bmad-output/implementation-artifacts/9-1-capacitor-app-installation-and-host-foundation.md": {
+      "sha256": "1b6b34ecda1b589498b1530837ba65231960c0dd3f7fab3377cae670b381d305",
+      "bytes": 20778
+    },
+    "_bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md": {
+      "sha256": "c6197a64e507b1c9587f895f637633d8abce374034aa4ef6edacecc434357fd0",
+      "bytes": 29283
+    },
+    "_bmad-output/implementation-artifacts/2-2-timeline-editing-undo-and-history.md": {
+      "sha256": "a3da98420a91f491eaad26bcb4065cb7969247b7db0dacc76176c6eef84e008a",
+      "bytes": 21637
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import { createBoundJsonRequest } from '../auth/transport';
 import type { components } from 'nomad-types/src/api-types';
 import { AuthApiError, getApiBaseUrl } from '../auth/api';
 
@@ -52,21 +53,6 @@ async function parseError(response: Response) {
   }
 }
 
-async function requestJson<T>(baseUrl: string, path: string, init: RequestInit = {}) {
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...init,
-    credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
-      ...init.headers,
-    },
-  });
-
-  if (!response.ok) throw await parseError(response);
-  if (response.status === 204) return undefined as T;
-  return (await response.json()) as T;
-}
 
 function feedbackQuery(filters?: { source?: string }) {
   const search = new URLSearchParams();
@@ -76,6 +62,8 @@ function feedbackQuery(filters?: { source?: string }) {
 }
 
 export function createSettingsApiClient(baseUrl = getApiBaseUrl()): SettingsApiClient {
+  const bound = createBoundJsonRequest(baseUrl, parseError);
+  const requestJson = <T>(_baseUrl: string, path: string, init?: RequestInit) => bound<T>(path, init);
   return {
     getByokStatus: () => requestJson<UserKeyStatusResponse>(baseUrl, '/user-key'),
     validateByok: (body) => requestJson<ByokValidateResponse>(baseUrl, '/byok/validate', { method: 'POST', body: JSON.stringify(body) }),

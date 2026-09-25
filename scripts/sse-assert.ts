@@ -117,7 +117,7 @@ function assertIngestStages(url: string, timeoutMs = 5000) {
         const required = ['created', 'fetching', 'parsing', 'geo', 'storing', 'done'];
         const missing = required.filter((state) => !states.includes(state));
         if (missing.length > 0) reject(new Error(`ingest missing stages: ${missing.join(',')}`));
-        else if (subStages.join(',') !== 'text,ocr,vision') reject(new Error(`ingest parsing sub-stages mismatch: ${subStages.join(',')}`));
+        else if (subStages.join(',') !== 'multimodal') reject(new Error(`ingest parsing sub-stages mismatch: ${subStages.join(',')}`));
         else resolve();
       }
     });

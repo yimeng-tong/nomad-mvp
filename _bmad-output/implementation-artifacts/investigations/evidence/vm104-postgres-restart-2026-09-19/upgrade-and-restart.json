@@ -1,0 +1,165 @@
+{
+  "host": "nomad-staging",
+  "mainLog": [
+    {
+      "line": 10,
+      "text": "2026-09-19 06:28:18,474 INFO Starting unattended upgrades script"
+    },
+    {
+      "line": 14,
+      "text": "2026-09-19 06:33:19,297 INFO Starting unattended upgrades script"
+    },
+    {
+      "line": 18,
+      "text": "2026-09-19 06:34:05,893 INFO Packages that will be upgraded: bind9-dnsutils bind9-host bind9-libs bsdextrautils bsdutils bzip2 coreutils cpio curl diffutils dirmngr distro-info-data eject fdisk gnupg gnupg-l10n gnupg-utils gpg gpg-agent gpg-wks-client gpgconf gpgsm gpgv keyboxd libaom3 libattr1 libblkid1 libbz2-1.0 libc-bin libc-dev-bin libc-devtools libc6 libc6-dev libcurl3t64-gnutls libcurl4t64 libevent-core-2.1-7t64 libfdisk1 libgcrypt20 libheif-plugin-aomdec libheif-plugin-aomenc libheif1 libmount1 libncurses6 libncursesw6 libnss-systemd libp11-kit0 libpam-modules libpam-modules-bin libpam-runtime libpam-systemd libpam0g libperl5.38t64 libpolkit-agent-1-0 libpolkit-gobject-1-0 libpq5 libpython3.12-minimal libpython3.12-stdlib libpython3.12t64 libsmartcols1 libsqlite3-0 libssh-4 libssl3t64 libsystemd-shared libsystemd0 libtinfo6 libudev1 libudisks2-0 libuuid1 linux-headers-generic linux-headers-virtual linux-image-virtual linux-libc-dev linux-tools-common linux-virtual locales mount ncurses-base ncurses-bin ncurses-term nginx nginx-common openssh-client openssh-server openssh-sftp-server openssl perl perl-base perl-modules-5.38 polkitd postgresql-16 postgresql-client-16 python3-pyasn1 python3.12 python3.12-minimal systemd systemd-dev systemd-resolved systemd-sysv systemd-timesyncd tzdata udev udisks2 util-linux uuid-runtime vim vim-common vim-runtime vim-tiny wget xxd zlib1g"
+    },
+    {
+      "line": 20,
+      "text": "2026-09-19 06:37:27,201 INFO All upgrades installed"
+    }
+  ],
+  "postgresRestartBlocks": [
+    {
+      "blockStart": {
+        "line": 1,
+        "text": "Log started: 2026-09-19  06:34:06"
+      },
+      "line": 11,
+      "command": "systemctl restart fwupd.service postgresql@16-main.service",
+      "blockEnd": {
+        "line": 18,
+        "text": "Log ended: 2026-09-19  06:34:11"
+      }
+    },
+    {
+      "blockStart": {
+        "line": 56,
+        "text": "Log started: 2026-09-19  06:34:17"
+      },
+      "line": 101,
+      "command": "systemctl restart fwupd.service multipathd.service nginx.service packagekit.service polkit.service postgresql@16-main.service qemu-guest-agent.service redis-server.service rsyslog.service udisks2.service",
+      "blockEnd": {
+        "line": 115,
+        "text": "Log ended: 2026-09-19  06:34:31"
+      }
+    },
+    {
+      "blockStart": {
+        "line": 265,
+        "text": "Log started: 2026-09-19  06:34:54"
+      },
+      "line": 276,
+      "command": "systemctl restart fwupd.service multipathd.service packagekit.service polkit.service postgresql@16-main.service redis-server.service rsyslog.service systemd-journald.service systemd-networkd.service systemd-resolved.service systemd-timesyncd.service udisks2.service",
+      "blockEnd": {
+        "line": 292,
+        "text": "Log ended: 2026-09-19  06:35:00"
+      }
+    },
+    {
+      "blockStart": {
+        "line": 511,
+        "text": "Log started: 2026-09-19  06:35:26"
+      },
+      "line": 527,
+      "command": "systemctl restart fwupd.service nginx.service nomad-server.service packagekit.service postgresql@16-main.service redis-server.service ssh.service systemd-journald.service systemd-networkd.service systemd-resolved.service systemd-timesyncd.service systemd-udevd.service udisks2.service",
+      "blockEnd": {
+        "line": 542,
+        "text": "Log ended: 2026-09-19  06:35:33"
+      }
+    },
+    {
+      "blockStart": {
+        "line": 575,
+        "text": "Log started: 2026-09-19  06:35:38"
+      },
+      "line": 585,
+      "command": "systemctl restart fwupd.service nginx.service packagekit.service polkit.service postgresql@16-main.service rsyslog.service ssh.service udisks2.service",
+      "blockEnd": {
+        "line": 602,
+        "text": "Log ended: 2026-09-19  06:35:43"
+      }
+    },
+    {
+      "blockStart": {
+        "line": 604,
+        "text": "Log started: 2026-09-19  06:35:44"
+      },
+      "line": 631,
+      "command": "systemctl restart cron.service postgresql@16-main.service ssh.service systemd-journald.service systemd-networkd.service systemd-resolved.service systemd-timesyncd.service",
+      "blockEnd": {
+        "line": 647,
+        "text": "Log ended: 2026-09-19  06:35:51"
+      }
+    },
+    {
+      "blockStart": {
+        "line": 867,
+        "text": "Log started: 2026-09-19  06:36:23"
+      },
+      "line": 899,
+      "command": "systemctl restart cron.service fwupd.service multipathd.service nginx.service nomad-server.service packagekit.service polkit.service postgresql@16-main.service qemu-guest-agent.service redis-server.service rsyslog.service systemd-journald.service systemd-networkd.service systemd-resolved.service systemd-timesyncd.service systemd-udevd.service udisks2.service",
+      "blockEnd": {
+        "line": 915,
+        "text": "Log ended: 2026-09-19  06:36:34"
+      }
+    }
+  ],
+  "postgresPackageChanges": [
+    {
+      "line": 196,
+      "text": "Preparing to unpack .../postgresql-16_16.15-0ubuntu0.24.04.1_amd64.deb ..."
+    },
+    {
+      "line": 197,
+      "text": "Unpacking postgresql-16 (16.15-0ubuntu0.24.04.1) over (16.14-0ubuntu0.24.04.1) ..."
+    },
+    {
+      "line": 200,
+      "text": "Setting up postgresql-16 (16.15-0ubuntu0.24.04.1) ..."
+    }
+  ],
+  "unitTimeline": [
+    "2026-09-19T06:34:07+00:00 nomad-staging systemd[1]: Stopping postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:34:07+00:00 nomad-staging systemd[1]: postgresql@16-main.service: Deactivated successfully.",
+    "2026-09-19T06:34:07+00:00 nomad-staging systemd[1]: Stopped postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:34:07+00:00 nomad-staging systemd[1]: postgresql@16-main.service: Consumed 1min 48.754s CPU time, 434.1M memory peak, 0B memory swap peak.",
+    "2026-09-19T06:34:08+00:00 nomad-staging systemd[1]: Starting postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:34:10+00:00 nomad-staging systemd[1]: Started postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:34:27+00:00 nomad-staging systemd[1]: Stopping postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:34:27+00:00 nomad-staging systemd[1]: postgresql@16-main.service: Deactivated successfully.",
+    "2026-09-19T06:34:27+00:00 nomad-staging systemd[1]: Stopped postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:34:27+00:00 nomad-staging systemd[1]: Starting postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:34:30+00:00 nomad-staging systemd[1]: Started postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:34:41+00:00 nomad-staging systemd[1]: Stopping postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:34:41+00:00 nomad-staging systemd[1]: postgresql@16-main.service: Deactivated successfully.",
+    "2026-09-19T06:34:41+00:00 nomad-staging systemd[1]: Stopped postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:34:43+00:00 nomad-staging systemd[1]: Starting postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:34:45+00:00 nomad-staging systemd[1]: Started postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:34:56+00:00 nomad-staging systemd[1]: Stopping postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:34:56+00:00 nomad-staging systemd[1]: postgresql@16-main.service: Deactivated successfully.",
+    "2026-09-19T06:34:56+00:00 nomad-staging systemd[1]: Stopped postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:34:56+00:00 nomad-staging systemd[1]: Starting postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:34:59+00:00 nomad-staging systemd[1]: Started postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:35:29+00:00 nomad-staging systemd[1]: Stopping postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:35:30+00:00 nomad-staging systemd[1]: postgresql@16-main.service: Deactivated successfully.",
+    "2026-09-19T06:35:30+00:00 nomad-staging systemd[1]: Stopped postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:35:30+00:00 nomad-staging systemd[1]: Starting postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:35:32+00:00 nomad-staging systemd[1]: Started postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:35:39+00:00 nomad-staging systemd[1]: Stopping postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:35:40+00:00 nomad-staging systemd[1]: postgresql@16-main.service: Deactivated successfully.",
+    "2026-09-19T06:35:40+00:00 nomad-staging systemd[1]: Stopped postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:35:40+00:00 nomad-staging systemd[1]: Starting postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:35:42+00:00 nomad-staging systemd[1]: Started postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:35:48+00:00 nomad-staging systemd[1]: Stopping postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:35:48+00:00 nomad-staging systemd[1]: postgresql@16-main.service: Deactivated successfully.",
+    "2026-09-19T06:35:48+00:00 nomad-staging systemd[1]: Stopped postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:35:48+00:00 nomad-staging systemd[1]: Starting postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:35:50+00:00 nomad-staging systemd[1]: Started postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:36:30+00:00 nomad-staging systemd[1]: Stopping postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:36:30+00:00 nomad-staging systemd[1]: postgresql@16-main.service: Deactivated successfully.",
+    "2026-09-19T06:36:30+00:00 nomad-staging systemd[1]: Stopped postgresql@16-main.service - PostgreSQL Cluster 16-main.",
+    "2026-09-19T06:36:30+00:00 nomad-staging systemd[1]: Starting postgresql@16-main.service - PostgreSQL Cluster 16-main...",
+    "2026-09-19T06:36:32+00:00 nomad-staging systemd[1]: Started postgresql@16-main.service - PostgreSQL Cluster 16-main."
+  ],
+  "serverVersion": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
+}

@@ -1,0 +1,379 @@
+{
+  "result": "passed",
+  "workload": "WL-RECOVERY-SERVER",
+  "version": "homelab-loopback-v1",
+  "profile": "controlled-staging-synthetic-data",
+  "sourceEncoding": "runner-normalized-UTF8-LF",
+  "clockId": "9b69d35c-05b9-4f12-8ab9-8e0275e7ea34",
+  "startedAt": "2026-09-19T09:44:20.718Z",
+  "endedAt": "2026-09-19T09:44:37.277Z",
+  "windowStartMs": 297.714625,
+  "windowEndMs": 16856.423896,
+  "plan": {
+    "variants": [
+      {
+        "id": "full-replay",
+        "cursor": 0
+      },
+      {
+        "id": "tail-replay",
+        "cursor": 142
+      },
+      {
+        "id": "terminal-head",
+        "cursor": 152
+      },
+      {
+        "id": "server-restart",
+        "cursor": 100
+      }
+    ],
+    "repeats": 3,
+    "n": 12,
+    "eventsPerJob": 152,
+    "concurrency": 1,
+    "caseDeadlineMs": 15000
+  },
+  "samples": [
+    {
+      "variant": "full-replay",
+      "repeat": 1,
+      "outcome": "passed",
+      "expectedEvents": 152,
+      "receivedEvents": 152,
+      "firstEventMs": 130.63407600000005,
+      "completeMs": 3203.7309760000007,
+      "serverStartMs": null
+    },
+    {
+      "variant": "tail-replay",
+      "repeat": 1,
+      "outcome": "passed",
+      "expectedEvents": 10,
+      "receivedEvents": 10,
+      "firstEventMs": 25.640298999999686,
+      "completeMs": 225.0225620000001,
+      "serverStartMs": null
+    },
+    {
+      "variant": "terminal-head",
+      "repeat": 1,
+      "outcome": "passed",
+      "expectedEvents": 0,
+      "receivedEvents": 0,
+      "firstEventMs": null,
+      "completeMs": 31.012636999999813,
+      "serverStartMs": null
+    },
+    {
+      "variant": "server-restart",
+      "repeat": 1,
+      "outcome": "passed",
+      "expectedEvents": 52,
+      "receivedEvents": 52,
+      "firstEventMs": 104.76284299999952,
+      "completeMs": 1171.4604359999994,
+      "serverStartMs": 620.5452580000001
+    },
+    {
+      "variant": "full-replay",
+      "repeat": 2,
+      "outcome": "passed",
+      "expectedEvents": 152,
+      "receivedEvents": 152,
+      "firstEventMs": 27.404833999999937,
+      "completeMs": 3112.0379900000007,
+      "serverStartMs": null
+    },
+    {
+      "variant": "tail-replay",
+      "repeat": 2,
+      "outcome": "passed",
+      "expectedEvents": 10,
+      "receivedEvents": 10,
+      "firstEventMs": 27.087045000000217,
+      "completeMs": 220.9298429999999,
+      "serverStartMs": null
+    },
+    {
+      "variant": "terminal-head",
+      "repeat": 2,
+      "outcome": "passed",
+      "expectedEvents": 0,
+      "receivedEvents": 0,
+      "firstEventMs": null,
+      "completeMs": 33.759086999998544,
+      "serverStartMs": null
+    },
+    {
+      "variant": "server-restart",
+      "repeat": 2,
+      "outcome": "passed",
+      "expectedEvents": 52,
+      "receivedEvents": 52,
+      "firstEventMs": 96.62348999999995,
+      "completeMs": 1166.6057499999988,
+      "serverStartMs": 618.2221950000003
+    },
+    {
+      "variant": "full-replay",
+      "repeat": 3,
+      "outcome": "passed",
+      "expectedEvents": 152,
+      "receivedEvents": 152,
+      "firstEventMs": 27.356112999999823,
+      "completeMs": 3106.5982459999996,
+      "serverStartMs": null
+    },
+    {
+      "variant": "tail-replay",
+      "repeat": 3,
+      "outcome": "passed",
+      "expectedEvents": 10,
+      "receivedEvents": 10,
+      "firstEventMs": 23.75112000000081,
+      "completeMs": 223.04958799999986,
+      "serverStartMs": null
+    },
+    {
+      "variant": "terminal-head",
+      "repeat": 3,
+      "outcome": "passed",
+      "expectedEvents": 0,
+      "receivedEvents": 0,
+      "firstEventMs": null,
+      "completeMs": 29.325920999999653,
+      "serverStartMs": null
+    },
+    {
+      "variant": "server-restart",
+      "repeat": 3,
+      "outcome": "passed",
+      "expectedEvents": 52,
+      "receivedEvents": 52,
+      "firstEventMs": 97.505482999999,
+      "completeMs": 1145.7534889999988,
+      "serverStartMs": 615.293463
+    }
+  ],
+  "summaries": {
+    "full-replay": {
+      "planned": 3,
+      "observed": 3,
+      "failed": 0,
+      "firstEventMs": {
+        "n": 3,
+        "p50": 27.404833999999937,
+        "p95": 130.63407600000005
+      },
+      "completeMs": {
+        "n": 3,
+        "p50": 3112.0379900000007,
+        "p95": 3203.7309760000007
+      },
+      "serverStartMs": {
+        "n": 0,
+        "p50": null,
+        "p95": null
+      }
+    },
+    "tail-replay": {
+      "planned": 3,
+      "observed": 3,
+      "failed": 0,
+      "firstEventMs": {
+        "n": 3,
+        "p50": 25.640298999999686,
+        "p95": 27.087045000000217
+      },
+      "completeMs": {
+        "n": 3,
+        "p50": 223.04958799999986,
+        "p95": 225.0225620000001
+      },
+      "serverStartMs": {
+        "n": 0,
+        "p50": null,
+        "p95": null
+      }
+    },
+    "terminal-head": {
+      "planned": 3,
+      "observed": 3,
+      "failed": 0,
+      "firstEventMs": {
+        "n": 0,
+        "p50": null,
+        "p95": null
+      },
+      "completeMs": {
+        "n": 3,
+        "p50": 31.012636999999813,
+        "p95": 33.759086999998544
+      },
+      "serverStartMs": {
+        "n": 0,
+        "p50": null,
+        "p95": null
+      }
+    },
+    "server-restart": {
+      "planned": 3,
+      "observed": 3,
+      "failed": 0,
+      "firstEventMs": {
+        "n": 3,
+        "p50": 97.505482999999,
+        "p95": 104.76284299999952
+      },
+      "completeMs": {
+        "n": 3,
+        "p50": 1166.6057499999988,
+        "p95": 1171.4604359999994
+      },
+      "serverStartMs": {
+        "n": 3,
+        "p50": 618.2221950000003,
+        "p95": 620.5452580000001
+      }
+    }
+  },
+  "quantileMethod": "nearest-rank-ceil-p-times-n",
+  "sourceSha256": {
+    "src/application.ts": "70bd3db6562e30e76c3eedb13538c3daa25906532ef35706d7becfaac8696919",
+    "src/auth/credentials.test.ts": "161c736def8929afe9c76dd4eda2f817ea6109ff3fcf2434e5180de835900d22",
+    "src/auth/credentials.ts": "33fd9d4cfa091e397c2ee7e80cca2ad60e4ab3de1282f2ba654e2305ab514832",
+    "src/auth/errors.ts": "51489442c4d1eddc235a14e9b67084341322eb39fb69bad1495b0922daa2c2a7",
+    "src/auth/http.ts": "915415852158cd76243defa02dd73183068707e90334e54c500e9ebe2c8057e8",
+    "src/auth/legacy-owner.ts": "23ef9eaea88793a9cff15e14fc498a9b4052e86406fbb5771667c7fae45786dd",
+    "src/auth/operator.ts": "be518a95f024a98f892355c85e0935cb720ee85b5ece1bb45c1e6461f909ee0f",
+    "src/auth/owner.test.ts": "2e1cb6eb36c02166e09d2f76c24218cc6a570637ff430a31752fe45fc0cd5a0b",
+    "src/auth/owner.ts": "bc678c5cbd8e66699c101f1ab5c6bb0c076a579f7b87c2e62f3dd7473aeb48fe",
+    "src/auth/pnvs-provider.test.ts": "0c4ed4abe1834290e5a13c5f8ab17f77e0174ab4f78f6907cf27b9a46610ba72",
+    "src/auth/pnvs-provider.ts": "6f02d770ac151e35c08892f14b6c4a1b50f4bf9094204dc11f8aa6b24dc830ad",
+    "src/auth/prisma-repository.ts": "437522d6db8fe69db037d305ffcdaa55b9d70e6fef9608ef4790b36f89f82674",
+    "src/auth/runtime-boundary.test.ts": "4383dcf3a3fe682b0b22bfffe4f6a5d061ab98e5126c9a0621e59aae4306ae14",
+    "src/auth/runtime-boundary.ts": "84bd9c3fd6f33e954d81fc7d6c37fcc0834f11776eec6e73eff1ed6b6b48cecf",
+    "src/auth/runtime-config.test.ts": "2c2f8d85d3ebc7e5dd519eadb71f1eae7b9a795d5bbeeafb2b67846e3973e4fc",
+    "src/auth/runtime-config.ts": "131d37484314c9c175db32e356a42987a333d28e1bd838addab24d16a77379f5",
+    "src/auth/runtime.ts": "e4880c1c98a0497c4b3eaaff9eae53286b85039182d052c13354b9dcc1ced5cf",
+    "src/auth/service.ts": "ff476ea7483ea5a8808d9fe85f7be8b3f3d959702c3c9253bfdee699bda04291",
+    "src/auth/session-store.ts": "497c446f0f28c319e747d753ca456cdbf586a01125ef922fdc98a03dcc4e76b7",
+    "src/auth/sse.test.ts": "57a788c9b196e9ea77cc0bcea8ec2c04e14621a7999b17209528b5a5678056a0",
+    "src/auth/sse.ts": "6e6f2ac2ee7655a23541d80134742538f8ffd06db5ed213be72ffbd00629b1e1",
+    "src/auth/telemetry-privacy.test.ts": "209e1ddd8e0a820086d9c1ad32ef4b7f821d6be842b0ba603a894baec9ae9c53",
+    "src/auth/telemetry-privacy.ts": "0f6c7f1dee9217f8301a39f06a5b4bec34699a9b21c7dca107a20fc9390f23d7",
+    "src/crypto/kms.ts": "ab097b44b20c33b2e9659ab68bb11fae03c1c0e4d5b413e55d539e27a5100979",
+    "src/db/prisma.ts": "cddcd5128a2feaa4c4b0c9cbcbc49e8798131e65855bd319706cf5b1db624964",
+    "src/export/renderer.ts": "e11913c62e907bc0616fb8265815551e961e6b2b8f874b66313f13c049171ab8",
+    "src/fill/service.ts": "a38d7e1203f5f951cc85fa8cee473b99de79c09aa12722f7ee87d540ec5e28a0",
+    "src/fill/validator.ts": "1c8d4798ea709814aa73a5fed449e1fa5259e98a765bcc744235d196604b5e87",
+    "src/index.ts": "e1a5c76812ebcd2fc3bf144a37a68dfa83ff31e16ba7781edce449b525ac3ff9",
+    "src/ingest/adapters.ts": "423519d8d47fc3888142109c58dda8957ef42f9e52fbccb09996c8a36391a704",
+    "src/ingest/branch-rules.ts": "cd08dd26a29a00b6c61552af3cd5c5e4a1e202a59f0f40d3091304e0db721f3d",
+    "src/ingest/command.test.ts": "0fc686b5b7d14ee086498c27d9a7c06c1afda357ea46ba6c9d80a225a56c9c3d",
+    "src/ingest/cursor.test.ts": "7653e3a896ff2460ee3132cd0a3a30fe0d668bea28ad07a1a947fd4412eb4a2c",
+    "src/ingest/cursor.ts": "a85437ccd81fd9655d3b3186a146bbbf045f11e13047efb1d622323de65b13ef",
+    "src/ingest/durable-pipeline.ts": "43a5c4379c89ee3ac3c09da73b3d292c22c4ec17dc8738c74d2e4d98a5bca584",
+    "src/ingest/event-log.test.ts": "5f6afa2c9c2ca2d1c0720effe37cdc6ccce0700ef5dcf424d826808337901fd6",
+    "src/ingest/event-log.ts": "7aa4719fb3fcab3fa40066a9170d68500b17a9ed8dbdc32f882431fa3875f084",
+    "src/ingest/event-replay.ts": "0fa7fe310ce82c4253070bdeb724b5ac28123e1502a2f797830895414c58f42d",
+    "src/ingest/event-stream.ts": "c07a3dcfa6459cee72684a17d64e9bd96048701a2b5e9c91544f25163beffa25",
+    "src/ingest/evidence.test.ts": "0878e3dfe77ba1bbc328528ab23455a986aec62f0aede793ab32b527e805ef3b",
+    "src/ingest/evidence.ts": "ed1fcccb2961b3024d02090dd8590f719b942bc5a17ccfb9becf50aecd15e1b0",
+    "src/ingest/execution-checkpoint.test.ts": "22a234cb8c24ff4df4c82b14851e832e7c3576f0790e7aae88d8a6386a5fe2be",
+    "src/ingest/execution-checkpoint.ts": "9ebb6ac3648a14882ddf167fd5a1e1f3f90624be4d00d674ad2e449d72de7019",
+    "src/ingest/execution-lease.ts": "294970a6ae7b5f21d7f88ace86feed32a5cd925d9be93a2863ea506cedb2c599",
+    "src/ingest/execution-policy.test.ts": "4193ad5c0e2f9cacb6e444ae2aab4dd2593131124a64b15d7e1c6ba6bca6ba74",
+    "src/ingest/execution-policy.ts": "79eb8b488bb5f18df52f8cd7701cec687e839c7ba3399aec5517d7a38f3b6969",
+    "src/ingest/job-state.test.ts": "765d781ffbf77bcb59dd1fc864cd3b83e0e831b88871a2eba68ff3b5396b862b",
+    "src/ingest/job-state.ts": "b04776f92153ff50b20e7e61e3541beab1a38f35a25e7d4edc4243a8f214cf48",
+    "src/ingest/link-parser.test.ts": "8402d433a6bc178919d237d48f9f13f57cacc29e29ec0f3039245afd752aef4c",
+    "src/ingest/link-parser.ts": "d49be0fc9c848eede073606ebbfbc6fd6b5155c23eb5e54dd32e7c8b5f30d3dd",
+    "src/ingest/pipeline.ts": "67f661fba62c82d8aaa2bf00d2b69b3ea6b112aeae10231f57d907d679471618",
+    "src/ingest/routes.test.ts": "a2888069241a47ea06bca10a329eebc134cbfb02826ad2cc48e5197ef8470eea",
+    "src/ingest/store.ts": "179b66b691e6b690c84b640997c052301c6f61cf9bc9c55be98f81c37838b5b1",
+    "src/ingest/types.ts": "c0994ec23313be4b3ad6937e285d4eac8c364ed3298fb02db423e72e9285f63c",
+    "src/ingest/worker.test.ts": "7927bdab5cc8e19f9821a8738c4da66cb95c8aba9c321467c624771537ea145d",
+    "src/ingest/worker.ts": "8fd8ef93a79522bb590213aabd95c8f781c8b16f9a81a3c1cf9dac70532e68e3",
+    "src/integrations/amap.test.ts": "dde18ed72076a664f4a3cd08bb566ab51e24e880827c281333f98619085caecd",
+    "src/integrations/amap.ts": "b437fc5c9d3e24502bb7d10984dbb1db7ef4576a3f759481ce3483b5b38d77de",
+    "src/integrations/flags.ts": "7b869e3afd85a8163631ed61c912a992a3a7560522754b809619c087fcf74c54",
+    "src/integrations/telemetry.ts": "98c9de86c3c4732bc338471d3ca4d2ba63adf125cc1d381fd8c9fabd9295ee31",
+    "src/planner/anchor-pool.ts": "8dbee954611ea8b813f8512b0e502c421282776c13bf6062e3cd90cc28b7bc56",
+    "src/planner/built-in-pois.test.ts": "45e894779bc51aa6e20a38148e94175842a6e7febcfb57abf5d07ee48cceac15",
+    "src/planner/built-in-pois.ts": "bbe210d2581d0d02a0b37079d9d1a8bad0996ea68321792c4869eda397e4f0d9",
+    "src/planner/city-timezones.test.ts": "6db3366371534783bd96a804fe74944c8a8afeb685eaea821b7e69e8d8cf15bf",
+    "src/planner/city-timezones.ts": "07273ef4d416247c0ef7a3bdb059e1f0f1b5146357b3ce15ae83e7f723101636",
+    "src/planner/edit.test.ts": "733db4b3c8c2fe43a0da286a8358e93c0c200de56c247ae854f3772fb6734f33",
+    "src/planner/edit.ts": "447a9d0e89c03d7b3a77a1e1945b692656ce173fb1b1b3604b3f7f95249dbb1e",
+    "src/planner/hq.test.ts": "d647e863ecbc700cecbea39dbc4ce48cf4f5da7d314a02dca141d3b327cd6d1c",
+    "src/planner/hq.ts": "350165956a5f963d78e47e65c3216c647bdbf15ee221b0fb7a52d43370209d8e",
+    "src/planner/prisma-repository.ts": "f3d1be6e65377d36626423c78e24b73479b44f463d85043e39bab274dad7d55c",
+    "src/planner/quick.test.ts": "f11681680c008d5f688c595459d20c1065c1f146840a82fb4ec334ec37fd549c",
+    "src/planner/quick.ts": "90dc94ee8892bf1d30a5a7e30177fbd9e14012d044b038431736537572080e51",
+    "src/planner/ranking.ts": "b65d9fdbd62fdf52b2a6e556826272609b4ef81c79948a2a16208f3f872d42bd",
+    "src/planner/repository.test.ts": "98f37d4b451651b651624de9771610645935363d695ce930dfb8ce4bc56bdd46",
+    "src/planner/repository.ts": "082772c6c254fbbcc40469acfddc41973b8f8313dd1596bfd2fe18bec2b06b4b",
+    "src/planner/resolver.test.ts": "843f98f6a06406cc7f80f7d6a0f84e7ba0d06bd91f5fa64a600806f0e77f8a07",
+    "src/planner/resolver.ts": "f862ba25b81ff17f99adcbb8a5d0e5a3a966ee3d43c8b731897ea109009feb83",
+    "src/planner/service.test.ts": "a6b41bbb2915dba120cb4b3c8e517a8c0d879a7f343bc4d633f61c331cec2399",
+    "src/planner/service.ts": "23f965bbbc6a1de66ca4d98487dc502cc9acbb3087cfcdc97b13378112f6edd9",
+    "src/planner/source.ts": "15528cb87a69d2a722f16e6a67ef761fbf93694faf620aa9f6991b301121df1a",
+    "src/planner/testing/memory-repository.ts": "83ccbc1dbfd529ad3d5e04359266189af15945af7945336e2fb577807cb45066",
+    "src/planner/time-windows.ts": "2e54523e72b69f8428a8057265af66ead52b680b4d458b3ebd9876b33bb62c82",
+    "src/planner/types.ts": "69fed81f14ed12d3035b2aa8b8a045b65d1ca6195b0ec084d0604bc4fce7c623",
+    "src/plugins/auth.ts": "e8f305488f472d0b167dcc8a1945fa6151035aef7bd823bfc9d52c84333bf010",
+    "src/plugins/error-envelope.ts": "beaccaf05e1c567c34d08a70371ffebdcc09ab987c55bf1054e117645eac2e08",
+    "src/plugins/idempotency-redis.ts": "9a0cfa79b517bd80fb9905e20ae65978a900f456c522cddea33545779c56b968",
+    "src/plugins/idempotency.ts": "96f7b52ee9861f14d49b8e470fa2404cb2cc2a21c81d82187ec32da76144bcab",
+    "src/plugins/queues.ts": "d2a26d68b6b1c3e16783c92d48c5fba98f8da01d80448aaf77211f38b8a7276b",
+    "src/plugins/trace-id.ts": "23d82d6438f5ee891da6a25020da1460aac74cfe0acda820e97b55caee8763dc",
+    "src/routes/account.ts": "b52f0a5ec39a1a2f0a6ab5dca2cb172012084986179f8f1450a8284fbe69d8e4",
+    "src/routes/auth.ts": "458654a063ee4b3f200b3342f552e5e8d02d14a312303e128999a6d5e8cc9741",
+    "src/routes/byok.ts": "7fbc23d6259f930e6aa06fb9f88013578f5e0daa1183751b80c358ef0ca65700",
+    "src/routes/feedback.ts": "cfe1ef9393b0231d30e6fec8b137d2a142dfcdb0c4254c784177f02d20b32aff",
+    "src/routes/home.ts": "4f2c7ba2304eb644721dce319d117f7e035592f673f4c6fb56972cc6571101cd",
+    "src/routes/ingest.ts": "170b83ed9d217dccb258369481dbd2d7acd3b39961e46aa611d381f0b0d4304c",
+    "src/routes/library.ts": "a31b5f4e355c9ad837a7bf9653053370466b032c6dd720abe59cf3a902ce9bc9",
+    "src/routes/plan.ts": "5f6496f6d49a3c2e4248167f8abda1047c03f16e3d5e2576e29fb9d7af798d3b",
+    "src/routes/search.ts": "720cf35f8adbde7dc52df6747e2c652f7b5e3415f9a8e229aeb2b43f8f7009a7",
+    "src/schemas.ts": "e8be90b27bdee1de596156d5404cb683be8646d1f0c312efb7bed405b430ef3f",
+    "scripts/auth-ingest-recovery-benchmark.ts": "ed1592c7aa44aa74848fba82f83499aad1e6583b5e5ecd6451fac1e81469be7b",
+    "scripts/auth-ingest-sse-probe.ts": "263eaa9e746c1f73cb3699198b12d99d956e797ae922dae3d0cf41dfe9522db7",
+    "scripts/benchmark-stream.ts": "3bf87dcbd63720982f3d2cb2e0d955f93d92b13c2790a936eb5783b0f16fb501"
+  },
+  "environment": {
+    "node": "v22.22.1",
+    "postgres": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "os": "6.8.0-136-generic",
+    "cpuCount": 4,
+    "memoryBytes": 8326914048,
+    "cpuPinned": false,
+    "network": "same-VM-loopback-HTTP-with-explicit-trusted-proxy-header",
+    "otherServicesQuiesced": false
+  },
+  "seededJobs": 3,
+  "newJobPosts": 0,
+  "measuredApi": "read-only-SSE-replay",
+  "realProviderCalls": 0,
+  "usage": null,
+  "cost": null,
+  "clientDurableAckMeasured": false,
+  "productionTargetApproved": false,
+  "publicTlsVerified": false,
+  "baselineScope": "real-PG-and-real-staging-mode-server-processes-on-VM104; isolated-database and synthetic session issuance; not deployed-production workload",
+  "cleanupComplete": true,
+  "baselineCommit": "7250a8a131a370698bff53538a4405c2ddb94c1c",
+  "workingTreeChangesIdentifiedBySourceHash": true,
+  "review": {
+    "layers": 3,
+    "remainingConfirmedFindings": 0,
+    "fixed": [
+      "record-all-stream-errors-and-require-natural-EOF",
+      "settle-reader-without-unhandled-rejection",
+      "bounded-child-stop-and-runner-process-group-cleanup",
+      "preserve-failed-cohort-provenance-and-partial-frame-counts"
+    ]
+  }
+}

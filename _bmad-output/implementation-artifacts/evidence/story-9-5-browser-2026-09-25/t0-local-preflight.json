@@ -1,0 +1,11 @@
+{
+  "kind": "environment-preflight-only",
+  "recorded_at": "2026-09-25T12:06:25.824326+00:00",
+  "canonical_wrong_os_rejected": true,
+  "local_os": "Ubuntu26.04",
+  "lint_failures": [],
+  "handoff_exit_code": 0,
+  "canonical_container_run": "pending",
+  "product_flows_tested": false,
+  "native_devices_tested": false
+}

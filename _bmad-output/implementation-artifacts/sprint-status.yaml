@@ -112,7 +112,7 @@ development_status:
   9-2-android-apk-and-ios-testflight-delivery: backlog
   9-3-shared-ui-components-and-safe-app-sheet: backlog
   9-4-component-workbench-and-enforced-code-quality: done
-  9-5-browser-flow-and-visual-regression-gates: ready-for-dev
+  9-5-browser-flow-and-visual-regression-gates: in-progress
   9-6-identity-scoped-server-read-queries: backlog
   9-7-typed-navigation-and-host-history: backlog
   epic-9-retrospective: optional
@@ -399,9 +399,9 @@ condition_progress:
       - _bmad-output/implementation-artifacts/story-9-4-acceptance-2026-09-25.md
   9-5-browser-flow-and-visual-regression-gates:
     CODE-QUALITY-01:
-      state: not-started
+      state: in-progress
     UI-BROWSER-01:
-      state: not-started
+      state: in-progress
   9-6-identity-scoped-server-read-queries:
     APP-HOST-01:
       state: not-started
@@ -653,7 +653,7 @@ current_preparation:
   status: complete
   evidence: _bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates-validation.md
   authorization: _bmad-output/implementation-artifacts/story-9-5-preparation-decisions-2026-09-25.md
-  implementation_started: false
+  implementation_started: true
   execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_boundary_override: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md

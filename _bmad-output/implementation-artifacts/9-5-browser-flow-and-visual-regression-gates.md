@@ -11,7 +11,7 @@ updated: '2026-09-25'
 workflow: bmad-create-story
 preparation_status: complete
 preparation_authorization: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
-implementation_started: false
+implementation_started: true
 execution_dispatch_authorized: true
 baseline_commit: a950ea00d8064c86fd26cbf092308291d124d2ce
 context_branch: codex/story-9-5-browser-gates
@@ -44,7 +44,7 @@ independent_reviews:
 
 # Story 9.5: 在固定浏览器环境保护关键入口与组件迁移
 
-Status: ready-for-dev
+Status: in-progress
 
 当前CS与两项fresh-context独立VS已通过，ready-for-dev；下一进入已授权开发。9.4已done，完整CI36129441895及下载产物可复用；9.3未开始，3.1保持暂停。
 
@@ -214,3 +214,15 @@ Codex当前会话；两项独立只读研究，随后fresh-context合同VS。
 
 ### File List
 本Story、两份research、preparation-decisions和后续validation；准备阶段只改规划状态/证据，不改产品或测试源码。
+
+### 2026-09-25 DS开始
+
+按已授权连续执行从准备提交fcffc1157837a39c7c563288fcb1cafa9d4f5383接手，唯一writer不变；frontmatter.baseline_commit保留a950ea0代码基线。先T0真实固定容器/三引擎环境预检，再产品场景与截图门禁。三引擎metadata/CLI帮助仍不计功能验收。
+
+### 当前实施File List（T0）
+
+- apps/mobile/scripts/browser-environment.mjs
+- .github/workflows/ci.yml
+- .gitignore
+- CURRENT.md、_bmad-output/project-context.md、sprint-status.yaml、capacitor-task-monitor-state.json（implementation-artifacts下的同名文件）
+- story-9-5-execution-decisions-2026-09-25.md、story-9-5-dev-progress-2026-09-25.md与evidence/story-9-5-browser-2026-09-25/development-baseline.json（implementation-artifacts下）

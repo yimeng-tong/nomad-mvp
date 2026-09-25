@@ -52,3 +52,4 @@ _bmad-output/implementation-artifacts/investigations/evidence/**/*.txt
 **/.workbench-results/
 **/test-results/
 **/playwright-report/
+**/.browser-results/

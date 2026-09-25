@@ -2,11 +2,41 @@ name: CI
 
 on:
   push:
-    branches: [ main, codex/story-9-4-workbench-quality ]
+    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates ]
   pull_request:
-    branches: [ main, codex/story-1-0-production-auth ]
+    branches: [ main, codex/story-1-0-production-auth, codex/story-9-4-workbench-quality ]
 
 jobs:
+  browser-environment:
+    name: Canonical browser environment preflight
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble@sha256:bc6ab0d6d44ff4826e4cb8c1e6d801e185bfc42bb0753f8e2a30efc70db054c7
+    env:
+      NOMAD_BROWSER_IMAGE: mcr.microsoft.com/playwright:v1.63.0-noble@sha256:bc6ab0d6d44ff4826e4cb8c1e6d801e185bfc42bb0753f8e2a30efc70db054c7
+      pnpm_config_verify_deps_before_run: error
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      PUPPETEER_SKIP_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 11.7.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.1'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --strict-peer-dependencies
+      - name: Verify actual engine runtimes and fonts
+        run: node apps/mobile/scripts/browser-environment.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: story-9-5-environment-${{ github.sha }}
+          path: apps/mobile/.browser-results/environment.json
+          include-hidden-files: true
+          if-no-files-found: error
+
   build-and-test:
     runs-on: ubuntu-24.04
     services:

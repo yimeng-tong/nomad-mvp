@@ -1,8 +1,8 @@
 {
   "kind": "scoped-source-fingerprints",
-  "recorded_at": "2026-09-25T10:24:47.660666+00:00",
+  "recorded_at": "2026-09-25T11:06:37.423784+00:00",
   "files": {
-    ".github/workflows/ci.yml": "6a43ba68db305ad0deb477b33fcb77148e0f0e355f84180456646faf71201fe6",
+    ".github/workflows/ci.yml": "0e6732d5ceb2b0b99817a918bf783095c478881352fc8969bf32fa7030293300",
     "apps/mobile/.storybook/main.ts": "724628dc6553a05cd41406b9f413bdf63a0503624066e5d8ef3993687d4e1929",
     "apps/mobile/.storybook/preview.tsx": "62b896b64729d6defd5f989bfa1ec9fda813e2f1a61085920290430e4f17356f",
     "apps/mobile/.storybook/public/mockServiceWorker.js": "26171599d94d5445297303f3a1f1cedec26835ea3d0057dcfa92ec520cb35cca",
@@ -35,8 +35,10 @@
     "apps/mobile/workbench/workbench.css": "7918b3d0303262babe8726ab7133ac9f7717a020129c4476b7566370ce1ead2f",
     "apps/server/scripts/auth-http-probe.ts": "19b6e0ee917100c17c80631f7b6a5dfbf2ccfe577e5a90a7ad454f118b846459",
     "apps/server/scripts/auth-persistence-probe.ts": "98a03593e390ca1a6aa4a226bb5df9930455f510750affdb1e0ae7c850e94bba",
+    "apps/server/scripts/redis-lifecycle-probe.ts": "a39480d43ee7b6c627cc162a3a0a02b7dc79a56bfaba38495c0a25fe2ec920a4",
     "apps/server/scripts/sse-probe-reader.test.ts": "9e95b8a38e592fea44c943ebacd5bc9e7f6916f83d645b2bfba2ea5baa56b6b7",
     "apps/server/scripts/sse-probe-reader.ts": "a6a00b4bf04f5059a527f2e2f218834879186aa7782cdce6e0e57af95a07ae32",
+    "apps/server/src/plugins/idempotency-redis.ts": "a9f0aeb2e7bc4c33f94c14b1bec3ae846990e65337f9fe8b6023ca27c051d97d",
     "eslint.config.mjs": "1c933d1b4f25b126909218bf8fc7f2202fd72768f29963d4f48534594e7bf1ab",
     "ops/pve-staging/test_bounded_process.py": "07e5d61522ecd5ce62a12a9413c11aea6865cf316776dfd11a3b851c259290ec",
     "package.json": "c75e6908c8c8f989186396ef87b8cbcca7a95be0c2cd1a0ef6c27d8459da6ec8",

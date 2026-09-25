@@ -1,0 +1,85 @@
+{
+  "kind": "isolated-redis-lifecycle-verification",
+  "recorded_at": "2026-09-25T11:04:13.670541+00:00",
+  "source_revision": "a630cfc+redis-lifecycle-fix",
+  "environment": {
+    "redis": "8.0.5 isolated temporary loopback instance",
+    "ci_redis_unchanged": "7",
+    "postgres": "18.6 isolated temporary UTC database",
+    "real_provider_calls": 0,
+    "production_data_touched": false,
+    "owned_processes_stopped": true
+  },
+  "before_fix": {
+    "exit_code": 1,
+    "child_stdout": "redis-lifecycle-complete",
+    "natural_exit": false,
+    "timeout_ms": 5000,
+    "killed": true
+  },
+  "after_fix": {
+    "exit_code": 0,
+    "result": "redis-client-lifecycle-passed",
+    "realRedis": true,
+    "temporaryKeyTtlSeconds": 1,
+    "naturalProcessExit": true,
+    "pausedCommandReplies": true,
+    "cases": [
+      "normal-replies",
+      "redis-client-pause-10000ms-with-open-tcp"
+    ],
+    "child_timeout_ms": 5000
+  },
+  "actual_auth_http_with_pg_and_redis": {
+    "exit_code": 0,
+    "natural_exit": true,
+    "outer_timeout_seconds": 35,
+    "result": "auth-http-probe-passed",
+    "realProviderCalls": 0,
+    "simulatedSends": 8,
+    "simulatedChecks": 7,
+    "verified": [
+      "real-sql-http-routes",
+      "header-bypass-denied",
+      "origin",
+      "opaque-cookie",
+      "cross-instance",
+      "actor-context",
+      "stale-read-write",
+      "logout-receipt",
+      "new-account-survives-old-logout-retry",
+      "unknown-send-no-retry",
+      "late-login-fenced",
+      "late-committed-login-cookie",
+      "late-logout-cookie",
+      "binding-renewed",
+      "native-no-cookie",
+      "native-api-owner",
+      "native-channel-audience-tls",
+      "native-web-credential-separation",
+      "native-logout",
+      "full-real-app-bootstrap",
+      "placeholder-capabilities-disabled",
+      "live-socket-sse-revoked",
+      "operator-default-deny",
+      "operator-scope-and-version",
+      "operator-revocation",
+      "operator-durable-check-receipt",
+      "read-revoked-before-response"
+    ],
+    "revision_note": "HTTP assertions validated with initial onClose quit implementation; final disconnect refinement separately verified against live Redis normal and stalled replies."
+  },
+  "lint": {
+    "exit_code": 0,
+    "failures": []
+  },
+  "server_build": {
+    "exit_code": 0
+  },
+  "log_hashes": {
+    "nomad-story-9-4-redis-red.log": "e4fd58c320c8a39a43dc5272c705767a7853338910dd9e6909d9492bc0e423e0",
+    "nomad-story-9-4-redis-green.log": "2b0b8a96d2805a588afa86bbaa79a2e0217facd531cf1347c3814d36e2d908c6",
+    "nomad-story-9-4-pg-redis-http.log": "f9b7e33847f92160e28f296781e92064d74ca42fb00318fd98aba514a6129ed5"
+  },
+  "review_refinement": "Direct disconnect after Fastify request drain; no unbounded QUIT reply wait."
+}

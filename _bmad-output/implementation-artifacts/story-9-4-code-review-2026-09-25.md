@@ -41,3 +41,9 @@
 为验证剩余旧链，使用/tmp内新建PG18.6/UTC数据库，schema迁移、auth-persistence、auth-http、ingest-authority均实际通过。HTTP旧探针假定一次read是一个完整SSE事件，本轮改为有界首个data帧读取，保留尾部与解码器、exact owner及撤权后禁止内容断言；3个分片/合并/关闭与上限测试通过。首次进入typed lint的HTTP probe仅把原any JSON边界替换为生成DTO、明确Fastify类型，全部原断言保留。验收层/Edge分别只读复核无剩余发现。独立PG与开发工作台进程已停止，数据/失败记录保留；现有homelab和CI PG15没有改动。
 
 新证据isolated-pg-ci-probes.json；下一取最终CI整链结论。新增实现文件清单包含两个auth probe、sse-probe-reader及其test、CI working-directory变更。
+
+## Redis关闭生命周期
+
+第六轮CI实际HTTP断言通过后挂起，隔离Redis复现客户端未退出。新增Fastify onClose后，Edge指出QUIT等待服务回复仍可无界挂起；已改为请求排空后直接disconnect。真实Redis分别正常响应、CLIENT PAUSE 10000 ALL保持TCP但暂停回复，两组子进程均在5秒上限内自然退出。该测试只可用于专用隔离Redis，ack与回环校验明确。完整HTTP/PG+Redis、typed lint及server build通过；无key/TTL/鉴权/日志语义变更。
+
+最终Edge复核返回[]；无新增未处理发现。

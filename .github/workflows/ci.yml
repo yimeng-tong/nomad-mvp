@@ -123,9 +123,12 @@ jobs:
 
       - name: Persistent authentication with explicit provider substitutes
         working-directory: apps/server
+        timeout-minutes: 3
         env:
           AUTH_TEST_DATABASE_ACK: isolated-synthetic-only
+          REDIS_TEST_ACK: isolated-synthetic-only
         run: |
+          node --import tsx scripts/redis-lifecycle-probe.ts
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f ../../packages/prisma/tests/auth-migration-seed.sql
           node --import tsx scripts/auth-persistence-probe.ts
           node --import tsx scripts/auth-http-probe.ts

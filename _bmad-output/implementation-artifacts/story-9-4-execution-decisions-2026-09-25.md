@@ -21,3 +21,7 @@
 ## D5 CI实证与同分支交接
 
 为取得9.4本身的实际CI，保留main push/PR并增加本开发分支push和指向已推送父分支codex/story-1-0-production-auth的PR。PR/push比较base显式传入、checkout完整历史；不从main的旧状态回收既有auth工作。旧PG/原合同探针保留。当前允许开发测试与Git增量推送，不部署业务或重启旧task/heartbeat。
+
+## D6 保留旧CI整链并修复实际阻断
+
+背景：新工作台门禁通过后，旧进程观察、PG合成数据和SSE reader、Prisma生成顺序、Redis生命周期依次暴露真实CI失败。决定：保留每轮失败记录，只修已定位的观察/fixture/构建顺序及Redis关闭连接，不跳过旧责任。Redis修补由5秒子进程自然退出反例及实际PG+Redis HTTP验证，CI原PG15/Redis7服务版本不变，持久认证步骤设3分钟失败上限。后果：新增服务器文件进入相同typed lint，原认证/日志/租约语义及其他Story真机/生产关闭门槛不变；最终完成仍等待整链CI。

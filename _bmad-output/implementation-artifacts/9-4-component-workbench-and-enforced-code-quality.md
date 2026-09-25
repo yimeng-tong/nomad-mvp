@@ -160,6 +160,8 @@ So that 我无需真实账号或外部请求就能审阅改动并及时发现回
 
 ### Review Findings
 
+- [x] [Review][Patch] R14 Redis关闭钩子在请求排空后直接disconnect，避免等待无响应QUIT；真实Redis正常/暂停回复与自然退出反例通过，Edge复核无残项 [idempotency-redis.ts / redis-lifecycle-probe.ts]
+
 - [x] [Review][Patch] R1 cleanup promise复用并串行化场景切换 [scenario.ts]
 - [x] [Review][Patch] R2 晚到raw fetch必须记录且不能采用下一场景scope [scenario.ts]
 - [x] [Review][Patch] R3 worker注册与当前client mocking激活分开校验 [scenario.ts]

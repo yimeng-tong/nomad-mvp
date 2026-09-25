@@ -1,8 +1,8 @@
 {
   "kind": "local-story-verification",
   "story_id": "9.4",
-  "recorded_at": "2026-09-25T09:29:01.406581+00:00",
-  "source_revision": "ca3bdd1+prisma-generation-order",
+  "recorded_at": "2026-09-25T11:04:13.670541+00:00",
+  "source_revision": "a630cfc+redis-lifecycle-fix",
   "checks": {
     "workbench_typecheck": {
       "exit_code": 0
@@ -102,6 +102,10 @@
         "planner",
         "settings"
       ]
+    },
+    "redis_lifecycle": {
+      "exit_code": 0,
+      "evidence": "_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/isolated-redis-lifecycle.json"
     }
   },
   "independent_review": {
@@ -160,6 +164,14 @@
       "conclusion": "failure",
       "failure": "Typed lint ran before Prisma client generation after server probes entered coverage. Generate client now precedes lint; no lint rule was weakened.",
       "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36123932104"
+    },
+    {
+      "run": 36125167023,
+      "commit": "a630cfc5866ef46314fe52af75d651f8d4c66d13",
+      "conclusion": "cancelled",
+      "ui_workbench_gates": "all-passed",
+      "failure": "Auth HTTP completed all assertions but process retained the existing Redis connection. Cancelled after confirming full logs; added Fastify close hook and actual Redis natural-exit regression.",
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36125167023"
     }
   ],
   "remote_ci": "next-commit-run-pending"

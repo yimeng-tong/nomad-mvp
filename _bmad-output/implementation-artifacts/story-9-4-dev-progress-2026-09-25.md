@@ -29,3 +29,7 @@
 新证据isolated-pg-ci-probes.json；下一取最终CI整链结论。新增实现文件清单包含两个auth probe、sse-probe-reader及其test、CI working-directory变更。
 
 第五轮CI36123932104在新覆盖服务器probe的typed lint阶段发现Prisma client尚未生成；原生成在后续build/prebuild。已把纯类型生成提前，不连DB也不放宽规则；干净副本移开生成物后门禁67项失败，生成后0问题通过。补跑旧home/library、planner、settings三个合同探针均通过，等待第六提交远端整链。
+
+第六轮CI36125167023已通过9.4和auth-persistence/auth-http断言，但auth-http成功后Redis连接未随Fastify关闭，进程持续等待；核对完整日志后明确取消，保留原结论。为既有Redis插件增加onClose，仅做关闭连接与类型收紧，不改key/TTL/业务权限。隔离Redis真实进程先复现“成功输出后超时”，修复后自然退出；同隔离PG加Redis的27项HTTP断言也通过且自然退出，typed lint与server build通过。临时实例已停止，数据和原失败日志保留。新增证据isolated-redis-lifecycle.json，CI加入5秒自然退出探针和整个持久认证阶段3分钟上限。
+
+Redis追加边界复核指出QUIT可能等待无响应服务器；最终改为Fastify请求排空后本地disconnect。真实Redis正常与暂停回复10秒两组均在子进程5秒边界内自然退出，代码质量与构建再次通过。

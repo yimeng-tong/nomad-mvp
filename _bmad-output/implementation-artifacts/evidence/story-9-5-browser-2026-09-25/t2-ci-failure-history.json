@@ -1,0 +1,20 @@
+{
+  "run": 36142149598,
+  "source_revision": "8120f7a2b8f789520cb5cbac82b6ce68935f269c",
+  "stats": {
+    "startTime": "2026-09-25T13:38:59.386Z",
+    "duration": 11891.476,
+    "expected": 14,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "failure": "WebKit fetch reports AbortError on timeout; original assertion required TimeoutError. Fix validates signal.aborted and signal.reason TimeoutError, plus the concrete cancellation exception.",
+  "trace_sha256": {
+    "runs/90decb63-2db7-4c18-a304-3f95b8192184/test-results/flows-fixture-guards-B04-c-ab47e-ly-cancelled-at-its-timeout-webkit/trace.zip": "3968d50fbcd73bfdf83bf3fd3197bf4f33285f10a17a3e9a5ba25e48a042be52"
+  },
+  "screenshot_sha256": {
+    "runs/90decb63-2db7-4c18-a304-3f95b8192184/test-results/flows-fixture-guards-B04-c-ab47e-ly-cancelled-at-its-timeout-webkit/test-failed-1.png": "c2e76ee3a4df49f33764939ce322e6e40035a71725242fda09a38fd431f98cdd"
+  },
+  "download_directory": "/tmp/nomad-story-9-5-t2-ci-8120"
+}

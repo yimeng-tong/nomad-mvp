@@ -27,9 +27,14 @@ test('B04 controlled delayed HTTP request is actually cancelled at its timeout',
   await expect(page.getByLabel('手机号', { exact: true })).toBeVisible();
   api.hold('/api/auth/config');
   const outcome = await page.evaluate(async () => {
-    try { await fetch('/api/auth/config', { signal: AbortSignal.timeout(50) }); return 'responded'; }
-    catch (error: unknown) { return error && typeof error === 'object' && 'name' in error ? String(error.name) : 'unknown'; }
+    const signal = AbortSignal.timeout(50);
+    const name = (error: unknown) => error && typeof error === 'object' && 'name' in error ? String(error.name) : 'unknown';
+    try { await fetch('/api/auth/config', { signal }); return { rejected: false, aborted: signal.aborted, reason: name(signal.reason as unknown), error: '' }; }
+    catch (error: unknown) { return { rejected: true, aborted: signal.aborted, reason: name(signal.reason as unknown), error: name(error) }; }
   });
   api.release('/api/auth/config');
-  expect(outcome).toBe('TimeoutError');
+  expect(outcome.rejected).toBe(true);
+  expect(outcome.aborted).toBe(true);
+  expect(outcome.reason).toBe('TimeoutError');
+  expect(['TimeoutError', 'AbortError']).toContain(outcome.error);
 });

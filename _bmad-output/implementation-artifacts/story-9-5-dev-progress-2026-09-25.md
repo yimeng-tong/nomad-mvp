@@ -19,3 +19,5 @@ T1 canonical三引擎B00实际3/3通过、0skip（13a2fee/run36137026276/job1080
 T2状态API fixture已实现：复用9.4DTO/合成配置，实际HTTP客户端匿名→登录、A/B、列表/候选/Settings、原operation receipt、partial/retry和持久cursor/SSE；JSON在受控延迟前固定原owner响应。未声明API/静态伪装/外网/retired请求由收尾ledger失败，四个实际Chromium反例和前后控制通过。B00–B04在本地Chrome/Firefox10项通过；新增真实SSE断开/后续完成断言又在Chrome单独通过。API fixture合同不等于App恢复全流程或真实后端。
 
 每次run独立目录，重用已有report的run ID会失败；suite-run指针与counterexample分开，避免最终控制覆盖完整矩阵。初次B01红灯只保留原日志，早期默认目录的trace被后续run覆盖的事实如实记录；新目录机制保护后续失败记录。下一canonical三引擎完整复验T2后进入T3/T4。
+
+T2 canonical run36142149598实际14/15通过，WebKit的fetch超时拒绝名为AbortError，原检查只接受TimeoutError而失败。新断言同时要求signal.aborted=true、signal.reason.name=TimeoutError，再限定fetch拒绝为TimeoutError/AbortError，未把一般网络失败当超时。真实失败trace/截图已从新独立run目录下载并记录hash；本地Chrome新断言/类型/lint通过后重取CI，T2保持未勾选。

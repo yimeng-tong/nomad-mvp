@@ -2,7 +2,7 @@
   "kind": "local-story-verification",
   "story_id": "9.4",
   "recorded_at": "2026-09-25T09:29:01.406581+00:00",
-  "source_revision": "e6c5933+legacy-probe-fixture-and-reader-fixes",
+  "source_revision": "ca3bdd1+prisma-generation-order",
   "checks": {
     "workbench_typecheck": {
       "exit_code": 0
@@ -87,6 +87,21 @@
     "sse_probe_reader": {
       "exit_code": 0,
       "passed": 3
+    },
+    "prisma_type_generation_order": {
+      "missing_client_exit_code": 1,
+      "missing_client_diagnostics": 67,
+      "after_generation_exit_code": 0,
+      "after_generation_diagnostics": 0,
+      "scope": "same actual lint gate in isolated clone; previous generated client preserved"
+    },
+    "legacy_contracts": {
+      "exit_code": 0,
+      "probes": [
+        "home/library",
+        "planner",
+        "settings"
+      ]
     }
   },
   "independent_review": {
@@ -138,6 +153,13 @@
       "ui_workbench_gates": "all-passed",
       "failure": "Legacy auth-persistence fixture declared done without saved result. Added invalid-fixture rejection then actual owned result; set probe working-directory to apps/server.",
       "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36120947834"
+    },
+    {
+      "run": 36123932104,
+      "commit": "ca3bdd1296f7222b1293b7171e2ffa9f222d9f6a",
+      "conclusion": "failure",
+      "failure": "Typed lint ran before Prisma client generation after server probes entered coverage. Generate client now precedes lint; no lint rule was weakened.",
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36123932104"
     }
   ],
   "remote_ci": "next-commit-run-pending"

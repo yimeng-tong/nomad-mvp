@@ -27,3 +27,5 @@
 为验证剩余旧链，使用/tmp内新建PG18.6/UTC数据库，schema迁移、auth-persistence、auth-http、ingest-authority均实际通过。HTTP旧探针假定一次read是一个完整SSE事件，本轮改为有界首个data帧读取，保留尾部与解码器、exact owner及撤权后禁止内容断言；3个分片/合并/关闭与上限测试通过。首次进入typed lint的HTTP probe仅把原any JSON边界替换为生成DTO、明确Fastify类型，全部原断言保留。验收层/Edge分别只读复核无剩余发现。独立PG与开发工作台进程已停止，数据/失败记录保留；现有homelab和CI PG15没有改动。
 
 新证据isolated-pg-ci-probes.json；下一取最终CI整链结论。新增实现文件清单包含两个auth probe、sse-probe-reader及其test、CI working-directory变更。
+
+第五轮CI36123932104在新覆盖服务器probe的typed lint阶段发现Prisma client尚未生成；原生成在后续build/prebuild。已把纯类型生成提前，不连DB也不放宽规则；干净副本移开生成物后门禁67项失败，生成后0问题通过。补跑旧home/library、planner、settings三个合同探针均通过，等待第六提交远端整链。

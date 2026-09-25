@@ -37,7 +37,7 @@ CI 清单逐一标注现有认证/ingest probes、home-dock/auth/journal/telemet
 | --- | --- |
 | `pnpm -F nomad-mobile storybook` | 127.0.0.1:6006开发工作台，不自动公开发布；遥测关闭 |
 | `pnpm -F nomad-mobile build:storybook` | 独立storybook-static，专属MSW worker |
-| `pnpm run ci:lint` | 实际ESLint/TSProgram，列出cohort与未改历史文件，零保留豁免 |
+| `pnpm run ci:lint` | 先生成OpenAPI/Prisma客户端类型；实际ESLint/TSProgram，列出cohort与未改历史文件，零保留豁免 |
 | `pnpm run ci:lint:negative` | 同门禁Promise/void/Hook/label及修正、新增/重命名、浅克隆/基准、ignore/parse/规则、基线/豁免反例 |
 | `pnpm run ci:workbench` | 专用typecheck、Node共享handlers、静态build、Chromium play/axe error |
 | `pnpm run ci:workbench:negative` | 只在Vite内存转换缺陷，不改源码；焦点/键盘/字段/文字/axe、未声明/迟到请求、worker丢失/404、真实provider配置反例及修正控制 |
@@ -72,3 +72,5 @@ CI 清单逐一标注现有认证/ingest probes、home-dock/auth/journal/telemet
 本次实际证据入口：`_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/`。真实CI与独立CR完成前9.4继续in-progress。
 
 审阅修补：API仅在工作台使用随机场景前缀，原/auth等生成合同路径保留；plain fetch不能借用下一场景，静态资源旁路不适用于programmatic fetch。finish Promise复用、切换串行化；worker.stop与异步lookup用epoch围栏。loading保持等待至取消，timeout通过受控abort模拟并核对取消计数，不宣称产品新增超时策略。Node使用同一finish强制校验ledger，预期违例为普通断言；MSW Accept旁路被记录/清除，Node无静态passthrough。产物绑定writeBundle实际bytes；390px运行与截图探针验证横向溢出和动作可达。
+
+CI的Prisma client生成位于typed lint之前：服务器脚本进入覆盖后不能靠本机旧生成物提供类型。该顺序有干净副本中缺生成物失败、生成后通过的实际反例。它不是数据库迁移；DB迁移与PG探针仍按原独立步骤执行。

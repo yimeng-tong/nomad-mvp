@@ -2,7 +2,7 @@
   "kind": "scoped-source-fingerprints",
   "recorded_at": "2026-09-25T10:24:47.660666+00:00",
   "files": {
-    ".github/workflows/ci.yml": "124066f1b647ff049062aa8a4dedc70d8c5148fd0c2c9f538a4c58a8f780685c",
+    ".github/workflows/ci.yml": "6a43ba68db305ad0deb477b33fcb77148e0f0e355f84180456646faf71201fe6",
     "apps/mobile/.storybook/main.ts": "724628dc6553a05cd41406b9f413bdf63a0503624066e5d8ef3993687d4e1929",
     "apps/mobile/.storybook/preview.tsx": "62b896b64729d6defd5f989bfa1ec9fda813e2f1a61085920290430e4f17356f",
     "apps/mobile/.storybook/public/mockServiceWorker.js": "26171599d94d5445297303f3a1f1cedec26835ea3d0057dcfa92ec520cb35cca",

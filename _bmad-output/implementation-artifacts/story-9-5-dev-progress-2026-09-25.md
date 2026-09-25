@@ -28,3 +28,6 @@ T2 canonical结果已实际下载：4feb294/run36142857181，三引擎15/15、0s
 T3/T4本机 Chromium/Firefox 各19/19通过；实际异步Sheet焦点与noopener误报修补有红/绿与独立窄审阅。242移动+5native配置、18工作台、typed lint、native sync/verify、7组隔离负例和handoff通过。原9.4反例在正常控制/焦点负例通过后 keyboard 子进程90秒超时，保留为未完成运行，正做定向复验；不计全部反例通过。T3/T4须等canonical三引擎证据，不先勾选。下一T5固定环境视觉候选与T6缺陷/完整性证明。
 
 T3/T4 canonical首轮run36148595131为56/57、0skip，只有WebKit公开协议替身出现错误中文解码；trace中的response为text/html，显式补meta charset后重验，不放宽文本断言。工作台keyboard定向重跑实际触发toBeInTheDocument失败并正常退出1；先前批量超时仍保留，完整反例由后续完整CI复核。
+
+
+T5新增8个固定环境视觉场景及B19/B20真实200%文字/长中文几何检查；后两项本机Chromium通过。24个三引擎候选用例已实际发现（仅list，不算执行）；候选使用明确codex/story-9-5-visual-candidate-*分支push，输出unapproved图片/源/环境摘要，不能覆盖正常基线。normal保持updateSnapshots:none、零像素/零threshold，并验证审批hash；当前没有已批准基线。新增setup绑定当前源码/lock/config/产品图谱，拒绝自动更新。下一推送明确候选ref，下载/逐张审阅实际图片后再接受。

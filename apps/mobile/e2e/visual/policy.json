@@ -1,0 +1,17 @@
+{
+  "environmentFingerprint": "7a174c57a759784e37a22d2c3cf4943c57b70bb22bcfd938b0ce11d6be8e9c0b",
+  "viewport": { "width": 390, "height": 844 },
+  "deviceScaleFactor": 1,
+  "locale": "zh-CN",
+  "timezoneId": "Asia/Shanghai",
+  "colorScheme": "light",
+  "reducedMotion": "reduce",
+  "headless": true,
+  "clock": "fixed Date for static scenes only; ordinary timers; no FIFO/timeout acceptance",
+  "fixedDate": "2026-09-25T00:00:00.000Z",
+  "animations": "disabled for screenshots only; normal motion separately tested by B06",
+  "threshold": 0,
+  "maxDiffPixels": 0,
+  "engines": ["chromium", "firefox", "webkit"],
+  "scenes": ["V01-login", "V02-home", "V03-long-home", "V04-large-login", "V05-large-home", "V06-keyboard-sheet", "V07-large-long-sheet", "V08-logout-confirmation"]
+}

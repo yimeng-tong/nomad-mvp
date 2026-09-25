@@ -1,0 +1,24 @@
+{
+  "runId": 36148595131,
+  "jobId": 108115857908,
+  "sourceRevision": "5b18ec2b1923dc5a0d8e616e03124214c11b3710",
+  "stats": {
+    "startTime": "2026-09-25T14:37:29.649Z",
+    "duration": 124528.67700000001,
+    "expected": 56,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "failure": "Only WebKit B09: fulfilled synthetic legal document was decoded with the wrong charset. Trace response Content-Type is text/html despite charset option. Explicit meta charset added; no skip or weakened assertion.",
+  "artifactHashes": {
+    "environment.json": "88ae04b8bef30a2ed072970dab63b334f2d695d86c8700fbb442b2e2980f3c77",
+    "runs/6284bcff-d42a-4aa0-b0f9-c36a2b6c4fed/report.json": "8071c95ceac9c7bb61d9e0cf0452693c133ecec40de05865a447923cbdb93cb2",
+    "runs/6284bcff-d42a-4aa0-b0f9-c36a2b6c4fed/html-report/data/f0ae42bba38fb72837ca4a88749e9ee0f150f3df.png": "6a85ff45f22f9cc79065bdf728dd5066dcd5f1b4663d6531a902dc9220047ccd",
+    "runs/6284bcff-d42a-4aa0-b0f9-c36a2b6c4fed/html-report/data/338cece0c54c556cebfd326c9e89963eca6e6c60.png": "f651968a8cf2c6de650f4b8f99e00a8ca62fca1319423cc3059b1defde227080",
+    "runs/6284bcff-d42a-4aa0-b0f9-c36a2b6c4fed/html-report/data/2f0f5f66234756649f5c3e2ee87475c104b37d10.zip": "f5b943ba47923cc1d9d873f9152c00083f874b33f57a68d670a337c01ba9bebb",
+    "runs/6284bcff-d42a-4aa0-b0f9-c36a2b6c4fed/test-results/flows-recovery-B09-login-e-3a1d1-al-content-remains-readable-webkit/trace.zip": "f5b943ba47923cc1d9d873f9152c00083f874b33f57a68d670a337c01ba9bebb",
+    "runs/6284bcff-d42a-4aa0-b0f9-c36a2b6c4fed/test-results/flows-recovery-B09-login-e-3a1d1-al-content-remains-readable-webkit/test-failed-2.png": "6a85ff45f22f9cc79065bdf728dd5066dcd5f1b4663d6531a902dc9220047ccd",
+    "runs/6284bcff-d42a-4aa0-b0f9-c36a2b6c4fed/test-results/flows-recovery-B09-login-e-3a1d1-al-content-remains-readable-webkit/test-failed-1.png": "f651968a8cf2c6de650f4b8f99e00a8ca62fca1319423cc3059b1defde227080"
+  }
+}

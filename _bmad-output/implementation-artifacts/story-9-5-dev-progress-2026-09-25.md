@@ -26,3 +26,5 @@ T2 canonical结果已实际下载：4feb294/run36142857181，三引擎15/15、0s
 
 
 T3/T4本机 Chromium/Firefox 各19/19通过；实际异步Sheet焦点与noopener误报修补有红/绿与独立窄审阅。242移动+5native配置、18工作台、typed lint、native sync/verify、7组隔离负例和handoff通过。原9.4反例在正常控制/焦点负例通过后 keyboard 子进程90秒超时，保留为未完成运行，正做定向复验；不计全部反例通过。T3/T4须等canonical三引擎证据，不先勾选。下一T5固定环境视觉候选与T6缺陷/完整性证明。
+
+T3/T4 canonical首轮run36148595131为56/57、0skip，只有WebKit公开协议替身出现错误中文解码；trace中的response为text/html，显式补meta charset后重验，不放宽文本断言。工作台keyboard定向重跑实际触发toBeInTheDocument失败并正常退出1；先前批量超时仍保留，完整反例由后续完整CI复核。

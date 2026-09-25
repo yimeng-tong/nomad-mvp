@@ -177,7 +177,7 @@ export class ApiScenario {
       const kind = req.resourceType();
       if (method === 'GET' && kind === 'document' && ['/__nomad_e2e/legal/privacy', '/__nomad_e2e/legal/terms'].includes(path)) {
         await route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', headers: { 'Content-Security-Policy': "default-src 'none'", 'Cache-Control': 'no-store' },
-          body: '<!doctype html><html lang="zh-CN"><title>合成公开说明</title><main><h1>合成公开说明</h1><p>仅用于浏览器测试，不是正式协议。</p></main></html>' }); return;
+          body: '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>合成公开说明</title><main><h1>合成公开说明</h1><p>仅用于浏览器测试，不是正式协议。</p></main></html>' }); return;
       }
       if (method === 'GET' && !['fetch', 'xhr', 'eventsource'].includes(kind)
         && (['/', '/ops', '/favicon.ico'].includes(path) || Object.hasOwn(this.outputs, path.slice(1)))) { await route.continue(); return; }

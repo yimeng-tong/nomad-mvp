@@ -5,10 +5,11 @@ import { HomeScreen as ActualHomeScreen, type HomeScreenProps } from './HomeScre
 import { ImportDockController } from './dock-controller';
 import { createJournalFixture } from './journal.test-support';
 import { operationJournal } from './operation-journal';
+import { PrivateUiBoundary } from '../ui';
 function HomeScreen(props: HomeScreenProps) {
   const controller = useMemo(() => new ImportDockController(props.apiClient!, createJournalFixture()), [props.apiClient]);
   useEffect(() => { controller.activate(); return () => controller.deactivate(); }, [controller]);
-  return <ActualHomeScreen {...props} dockController={controller} />;
+  return <PrivateUiBoundary><ActualHomeScreen {...props} dockController={controller} /></PrivateUiBoundary>;
 }
 import { commitIdentity } from '../auth/session-context';
 import { webcrypto } from 'node:crypto';
@@ -95,14 +96,14 @@ const candidates: LibraryCandidate[] = [
 function createApiClient(parseResult?: HomeInputParseResponse): HomeApiClient {
   return {
     getCities: vi.fn(async () => ({ cities, unlocated_count: 1 })),
-    getInspirations: vi.fn(async (filters) => ({
+    getInspirations: vi.fn<HomeApiClient['getInspirations']>(async (filters) => ({
       items: inspirations
         .filter((item) => !filters?.cityId || item.city_id === filters.cityId)
         .filter((item) => !filters?.locateStatus || item.locate_status === filters.locateStatus),
     })),
     getCandidates: vi.fn(async () => ({ candidates })),
     parseInput: vi.fn(async () => parseResult ?? ({ type: 'unknown', original_text: '随便看看' } satisfies HomeInputParseResponse)),
-    startIngest: vi.fn(async (request) => ({
+    startIngest: vi.fn<HomeApiClient['startIngest']>(async (request) => ({
       operation_id: request.operation_id!, ingest_id: request.operation_id!, state: 'created' as const,
       disposition: 'created' as const, sse_url: '/ingest/job/events',
       snapshot: { ingest_id: request.operation_id!, attempt: 1, state_version: 0, state: 'created' as const,
@@ -110,6 +111,10 @@ function createApiClient(parseResult?: HomeInputParseResponse): HomeApiClient {
     })),
   };
 }
+
+const contains = (value: Record<string, unknown>): unknown => expect.objectContaining(value);
+const substring = (value: string): unknown => expect.stringContaining(value);
+const anyString: unknown = expect.any(String);
 
 function createAnalytics(): Analytics {
   return { track: vi.fn() };
@@ -129,7 +134,7 @@ describe('HomeScreen', () => {
     expect(await screen.findByRole('button', { name: /杭州 2 个想去/ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /上海 1 个想去/ })).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: '灵感' }));
+    fireEvent.click(screen.getByRole('tab', { name: '灵感' }));
     expect(await screen.findByRole('heading', { name: '已入库' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '待定位' })).toBeInTheDocument();
     expect(await screen.findByText('西湖傍晚散步')).toBeInTheDocument();
@@ -140,7 +145,7 @@ describe('HomeScreen', () => {
     const apiClient = createApiClient();
     render(<HomeScreen apiClient={apiClient} analytics={createAnalytics()} />);
 
-    fireEvent.click(await screen.findByRole('button', { name: '灵感' }));
+    fireEvent.click(await screen.findByRole('tab', { name: '灵感' }));
     fireEvent.click(await screen.findByRole('button', { name: '杭州 2' }));
 
     await waitFor(() => expect(apiClient.getInspirations).toHaveBeenLastCalledWith({ cityId: 'city-hz' }));
@@ -170,7 +175,7 @@ describe('HomeScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: '发送' }));
 
     await waitFor(() => expect(apiClient.parseInput).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(apiClient.startIngest).toHaveBeenCalledWith(expect.objectContaining({ url: 'https://www.xiaohongshu.com/explore/a', operation_id: expect.any(String) })));
+    await waitFor(() => expect(apiClient.startIngest).toHaveBeenCalledWith(contains({ url: 'https://www.xiaohongshu.com/explore/a', operation_id: anyString })));
     expect(await screen.findByText('已添加2个链接，部分内容未识别')).toBeInTheDocument();
     expect(screen.getByLabelText('统一输入')).toBeEnabled();
     expect(screen.getByLabelText('统一输入')).toHaveAttribute('placeholder', '粘贴分享链接或输入想去的地点，如：厦门 3天');
@@ -190,7 +195,7 @@ describe('HomeScreen', () => {
     const onPlannerHandoff = vi.fn();
     render(<HomeScreen apiClient={apiClient} analytics={createAnalytics()} onPlannerHandoff={onPlannerHandoff} />);
 
-    fireEvent.click(await screen.findByRole('button', { name: '灵感' }));
+    fireEvent.click(await screen.findByRole('tab', { name: '灵感' }));
     fireEvent.click(await screen.findByRole('button', { name: /选择 西湖傍晚散步/ }));
     fireEvent.change(screen.getByLabelText('统一输入'), { target: { value: '杭州 2026-07-02 出发 3天 舒适' } });
     fireEvent.click(screen.getByRole('button', { name: '发送' }));
@@ -202,9 +207,9 @@ describe('HomeScreen', () => {
 
     await waitFor(() => expect(onPlannerHandoff).toHaveBeenCalledTimes(1));
     expect(onPlannerHandoff).toHaveBeenCalledWith(
-      expect.objectContaining({
-        route: expect.stringContaining('/planner/pick?'),
-        selected_items: [expect.objectContaining({ item_id: 'ins-resolved', poi_id: 'poi-west-lake', source: 'library', time_hint: 'evening' })],
+      contains({
+        route: substring('/planner/pick?'),
+        selected_items: [contains({ item_id: 'ins-resolved', poi_id: 'poi-west-lake', source: 'library', time_hint: 'evening' })],
       }),
     );
   });
@@ -214,16 +219,16 @@ describe('HomeScreen', () => {
     const onPlannerHandoff = vi.fn();
     render(<HomeScreen apiClient={apiClient} analytics={createAnalytics()} onPlannerHandoff={onPlannerHandoff} />);
 
-    fireEvent.click(await screen.findByRole('button', { name: '灵感' }));
+    fireEvent.click(await screen.findByRole('tab', { name: '灵感' }));
     fireEvent.click(await screen.findByRole('button', { name: /选择 西湖傍晚散步/ }));
-    fireEvent.click(screen.getByRole('button', { name: '计划' }));
+    fireEvent.click(screen.getByRole('tab', { name: '计划' }));
     fireEvent.click(screen.getByRole('button', { name: '开始规划' }));
 
     await waitFor(() => expect(onPlannerHandoff).toHaveBeenCalledTimes(1));
     expect(onPlannerHandoff).toHaveBeenCalledWith(
-      expect.objectContaining({
+      contains({
         source: 'home_input',
-        selected_items: [expect.objectContaining({ item_id: 'ins-resolved', source: 'library' })],
+        selected_items: [contains({ item_id: 'ins-resolved', source: 'library' })],
       }),
     );
   });
@@ -233,16 +238,16 @@ describe('HomeScreen', () => {
     const onPlannerHandoff = vi.fn();
     render(<HomeScreen apiClient={apiClient} analytics={createAnalytics()} onPlannerHandoff={onPlannerHandoff} />);
 
-    fireEvent.click(await screen.findByRole('button', { name: '灵感' }));
+    fireEvent.click(await screen.findByRole('tab', { name: '灵感' }));
     fireEvent.click(await screen.findByRole('button', { name: /选择 西湖傍晚散步/ }));
     fireEvent.click(await screen.findByRole('button', { name: /选择 武康路城市漫步/ }));
     fireEvent.click(screen.getByRole('button', { name: /杭州 2 个想去/ }));
 
     await waitFor(() => expect(onPlannerHandoff).toHaveBeenCalledTimes(1));
     expect(onPlannerHandoff).toHaveBeenCalledWith(
-      expect.objectContaining({
+      contains({
         source: 'home_card',
-        selected_items: [expect.objectContaining({ item_id: 'ins-resolved', source: 'library' })],
+        selected_items: [contains({ item_id: 'ins-resolved', source: 'library' })],
       }),
     );
   });
@@ -271,7 +276,7 @@ describe('HomeScreen', () => {
     const sheet = await screen.findByRole('dialog', { name: '选择输入类型' });
     fireEvent.click(within(sheet).getByRole('button', { name: '作为链接入库' }));
 
-    await waitFor(() => expect(apiClient.startIngest).toHaveBeenCalledWith(expect.objectContaining({ share_text: '随便看看', operation_id: expect.any(String) })));
+    await waitFor(() => expect(apiClient.startIngest).toHaveBeenCalledWith(contains({ share_text: '随便看看', operation_id: anyString })));
     expect(await screen.findByText('已添加1个链接')).toBeInTheDocument();
     expect(screen.queryByRole('dialog', { name: '选择输入类型' })).not.toBeInTheDocument();
   });
@@ -281,7 +286,7 @@ describe('HomeScreen', () => {
     const onPlannerHandoff = vi.fn();
     render(<HomeScreen apiClient={apiClient} analytics={createAnalytics()} onPlannerHandoff={onPlannerHandoff} />);
 
-    fireEvent.click(await screen.findByRole('button', { name: '灵感' }));
+    fireEvent.click(await screen.findByRole('tab', { name: '灵感' }));
     fireEvent.click(await screen.findByRole('button', { name: /选择 西湖傍晚散步/ }));
     fireEvent.change(screen.getByLabelText('统一输入'), { target: { value: '随便看看' } });
     fireEvent.click(screen.getByRole('button', { name: '发送' }));
@@ -291,10 +296,10 @@ describe('HomeScreen', () => {
 
     await waitFor(() => expect(onPlannerHandoff).toHaveBeenCalledTimes(1));
     expect(onPlannerHandoff).toHaveBeenCalledWith(
-      expect.objectContaining({
-        route: expect.stringContaining('/planner/pick?source=home_input&city='),
+      contains({
+        route: substring('/planner/pick?source=home_input&city='),
         source: 'home_input',
-        selected_items: [expect.objectContaining({ item_id: 'ins-resolved', source: 'library' })],
+        selected_items: [contains({ item_id: 'ins-resolved', source: 'library' })],
       }),
     );
   });
@@ -303,7 +308,7 @@ describe('HomeScreen', () => {
     const apiClient = createApiClient();
     render(<HomeScreen apiClient={apiClient} analytics={createAnalytics()} />);
 
-    fireEvent.click(await screen.findByRole('button', { name: '灵感' }));
+    fireEvent.click(await screen.findByRole('tab', { name: '灵感' }));
     fireEvent.click(await screen.findByRole('button', { name: /定位 湖滨咖啡/ }));
 
     expect(await screen.findByText('湖滨咖啡 A 店')).toBeInTheDocument();
@@ -328,8 +333,10 @@ describe('HomeScreen', () => {
 
     render(<HomeScreen apiClient={apiClient} analytics={createAnalytics()} />);
 
-    fireEvent.click(await screen.findByRole('button', { name: '灵感' }));
+    fireEvent.click(await screen.findByRole('tab', { name: '灵感' }));
     fireEvent.click(await screen.findByRole('button', { name: /定位 待定位 A/ }));
+    fireEvent.click(within(await screen.findByRole('dialog')).getByRole('button', { name: '关闭' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     fireEvent.click(await screen.findByRole('button', { name: /定位 待定位 B/ }));
 
     resolveB({ candidates: [{ candidate_id: 'cand-b', name: 'B 候选', address: 'B 地址' }] });
@@ -344,7 +351,7 @@ describe('HomeScreen', () => {
     const apiClient = createApiClient();
     render(<HomeScreen apiClient={apiClient} analytics={analytics} />);
 
-    fireEvent.click(await screen.findByRole('button', { name: '灵感' }));
+    fireEvent.click(await screen.findByRole('tab', { name: '灵感' }));
     fireEvent.click(await screen.findByRole('button', { name: /选择 西湖傍晚散步/ }));
 
     const payloads = vi.mocked(analytics.track).mock.calls.map(([, props]) => JSON.stringify(props ?? {}));
@@ -371,6 +378,7 @@ describe('HomeScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: '发送' }));
     fireEvent.click(await screen.findByRole('button', { name: '查看已保存内容' }));
     fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: '关闭' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     fireEvent.click(screen.getByRole('button', { name: '查看已保存内容' }));
     await act(async () => rejectOld(new Error('old response')));
     expect(screen.getByRole('dialog', { name: '已保存的灵感' })).toHaveTextContent('正在读取已保存内容');
@@ -379,6 +387,7 @@ describe('HomeScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: '查看已保存内容' }));
     expect(await screen.findByRole('button', { name: '已选此灵感' })).toBeDisabled();
     fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: '关闭' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     let resolveParse!: (value: HomeInputParseResponse) => void;
     vi.mocked(apiClient.parseInput).mockImplementationOnce(() => new Promise((resolve) => { resolveParse = resolve; }));
     fireEvent.change(screen.getByLabelText('统一输入'), { target: { value: '慢一点的旅行想法' } });

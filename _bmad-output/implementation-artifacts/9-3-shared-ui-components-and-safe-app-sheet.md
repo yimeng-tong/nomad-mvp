@@ -11,7 +11,7 @@ updated: '2026-09-26'
 workflow: bmad-create-story
 preparation_status: passed
 preparation_authorization: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
-implementation_started: false
+implementation_started: true
 execution_dispatch_authorized: true
 baseline_commit: 775b132f64bf0d6831150d95a6f9192e814f39ce
 context_branch: codex/story-9-3-shared-ui
@@ -45,9 +45,9 @@ research_records:
 
 # Story 9.3: 在现有入口使用统一且安全的 Nomad 组件
 
-Status: ready-for-dev
+Status: in-progress
 
-当前源合同和两份独立VS均已通过，允许按持续授权进入DS；准备结果不计实现或原生验收。旧数值顺序与归档草稿不作为合同。
+当前源合同和两份独立VS均已通过；823fd85准备基线已提交推送，现按持续授权进入DS。准备结果不计实现或原生验收。旧数值顺序与归档草稿不作为合同。
 
 ## Story
 
@@ -127,10 +127,10 @@ So that 我能保持上下文完成操作，并在身份变化时不会看到旧
 
 ## Tasks / Subtasks
 
-- [ ] T0 固定当前来源、执行基线与资源矩阵（AC1–8；FR1/FR18/FR52、NFR3/7/8/25；CODE-QUALITY-01、UI-COMPONENT-01、APP-HOST-01；shared-ui-adoption）
-  - [ ] 核对本合同source hash、CURRENT/Sprint、当前catalog/delivery、9.4/9.5交付证据和775b132干净Git基线；本任务唯一writer。保持3.1暂停/迁移审计、历史done与原1.0/1.6/1.7/9.1真实条件。
-  - [ ] 冻结Node22.22.1、pnpm11.7.0、React19.2.7、Vite8.0.16和现有Capacitor/验证工具；初选shadcn4.21.0、@base-ui/react1.8.0、tailwindcss与@tailwindcss/vite4.3.3，再确认实际peer/install/build。真实secret仍在VM104受限配置，不读入UI或Git。
-  - [ ] 核验Web与原生资源状态：真实最低iOS16.4/代表性iPhone、Android10+/WebView111+、Mac/Xcode/签名、合法HTTPS后端等；已问资源不重复索取。缺资源记录到APP-HOST-01切片，继续独立组件工作；不下调矩阵。
+- [x] T0 固定当前来源、执行基线与资源矩阵（AC1–8；FR1/FR18/FR52、NFR3/7/8/25；CODE-QUALITY-01、UI-COMPONENT-01、APP-HOST-01；shared-ui-adoption）
+  - [x] 核对本合同source hash、CURRENT/Sprint、当前catalog/delivery、9.4/9.5交付证据和775b132干净Git基线；本任务唯一writer。保持3.1暂停/迁移审计、历史done与原1.0/1.6/1.7/9.1真实条件。
+  - [x] 冻结Node22.22.1、pnpm11.7.0、React19.2.7、Vite8.0.16和现有Capacitor/验证工具；初选shadcn4.21.0、@base-ui/react1.8.0、tailwindcss与@tailwindcss/vite4.3.3，再确认实际peer/install/build。真实secret仍在VM104受限配置，不读入UI或Git。
+  - [x] 核验Web与原生资源状态：真实最低iOS16.4/代表性iPhone、Android10+/WebView111+、Mac/Xcode/签名、合法HTTPS后端等；已问资源不重复索取。缺资源记录到APP-HOST-01切片，继续独立组件工作；不下调矩阵。
 
 - [ ] T1 引入可追溯的Nomad组件与样式基础（AC1/8；NFR7/8/25；UI-COMPONENT-01、CODE-QUALITY-01；shared-ui-adoption）
   - [ ] 新增src/ui/{primitives,components,styles}；精确锁生成CLI及显式Base UI基础，逐个获取/审阅选中registry源码，记录URL/版本/响应hash/生成文件/人工调整。CLI锁版本不代表远端registry已冻结；不使用浮动latest或批量覆盖源码。
@@ -231,10 +231,94 @@ Tailwind的layer utilities可能被未分层旧规则覆盖；在实际组件边
 Codex当前任务，两个独立只读研究者和两个fresh-context VS；合同与修补由主任务唯一writer完成，独立复核已通过。
 
 ### Debug Log References
-9.5源码85eedb6完整CI36157432347，关闭提交775b132再次CI36160339430通过。9.3尚未安装依赖、实现组件或运行自身验收。
+当前开发与测试证据：story-9-3-dev-progress-2026-09-26.md，evidence/story-9-3-ui-2026-09-26/{dependency-and-foundation,token-contrast}.json。259移动/5配置及17新增UI测试通过，当前工作台首跑29/30；不得把T6/T7/T9或整Story记完成。
+9.5源码85eedb6完整CI36157432347，关闭提交775b132再次CI36160339430通过。此为准备阶段历史基线；9.3当前实现及验收进度见上方开发记录。
 
 ### Completion Notes List
-CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。状态ready-for-dev；五条件尚未开始，本地与真实设备验收分别执行。
+CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。准备时状态ready-for-dev；当前已in-progress，五条件进行中，本地与真实设备验收分别执行。
 
 ### File List
-本Story、tooling/integration research、preparation-decisions及preparation evidence；当前阶段不修改产品或安装依赖。
+- `.github/workflows/browser-visual-candidate.yml`
+- `.github/workflows/ci.yml`
+- `CURRENT.md`
+- `_bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet.md`
+- `_bmad-output/implementation-artifacts/capacitor-task-monitor-state.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/dependency-and-foundation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local-validation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/chromium-source-manifest.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/product-isolation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/runtime.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/workbench-counterexamples-before-page-mask.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/token-contrast.json`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `_bmad-output/implementation-artifacts/story-9-3-dev-progress-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/story-9-3-execution-decisions-2026-09-26.md`
+- `_bmad-output/project-context.md`
+- `apps/mobile/.storybook/vite.config.ts`
+- `apps/mobile/e2e/fixtures/browser-test.ts`
+- `apps/mobile/e2e/fixtures/faults.ts`
+- `apps/mobile/e2e/flows/home-sheet.spec.ts`
+- `apps/mobile/e2e/flows/identity.spec.ts`
+- `apps/mobile/e2e/flows/recovery.spec.ts`
+- `apps/mobile/e2e/flows/shared-ui.spec.ts`
+- `apps/mobile/e2e/run-contract.json`
+- `apps/mobile/e2e/visual/capture.ts`
+- `apps/mobile/e2e/visual/policy.json`
+- `apps/mobile/e2e/visual/screens.spec.ts`
+- `apps/mobile/index.html`
+- `apps/mobile/package.json`
+- `apps/mobile/scripts/check-browser-results.mjs`
+- `apps/mobile/scripts/check-browser-validation-guards.mjs`
+- `apps/mobile/scripts/check-workbench-counterexamples.mjs`
+- `apps/mobile/scripts/workbench-mutations.ts`
+- `apps/mobile/src/App.test.tsx`
+- `apps/mobile/src/App.tsx`
+- `apps/mobile/src/auth/LoginScreen.tsx`
+- `apps/mobile/src/home/HomeImportDock.tsx`
+- `apps/mobile/src/home/HomeScreen.test.tsx`
+- `apps/mobile/src/home/HomeScreen.tsx`
+- `apps/mobile/src/home/HomeSheet.tsx`
+- `apps/mobile/src/main.tsx`
+- `apps/mobile/src/settings/SettingsModalHost.test.tsx`
+- `apps/mobile/src/settings/SettingsScreen.tsx`
+- `apps/mobile/src/styles.css`
+- `apps/mobile/src/ui/components/AppDialog.test.tsx`
+- `apps/mobile/src/ui/components/AppDialog.tsx`
+- `apps/mobile/src/ui/components/AsyncState.tsx`
+- `apps/mobile/src/ui/components/FormField.tsx`
+- `apps/mobile/src/ui/components/PrivateUiBoundary.tsx`
+- `apps/mobile/src/ui/components/modal-policy.test.ts`
+- `apps/mobile/src/ui/components/modal-policy.ts`
+- `apps/mobile/src/ui/index.ts`
+- `apps/mobile/src/ui/primitives/Button.tsx`
+- `apps/mobile/src/ui/primitives/Input.tsx`
+- `apps/mobile/src/ui/primitives/Skeleton.tsx`
+- `apps/mobile/src/ui/primitives/Tabs.tsx`
+- `apps/mobile/src/ui/primitives/Textarea.tsx`
+- `apps/mobile/src/ui/primitives/controls.test.tsx`
+- `apps/mobile/src/ui/styles/controls.css`
+- `apps/mobile/src/ui/styles/index.css`
+- `apps/mobile/src/ui/styles/modal.css`
+- `apps/mobile/src/ui/styles/tokens.css`
+- `apps/mobile/vite.config.ts`
+- `apps/mobile/workbench/HomeSheet.stories.tsx`
+- `apps/mobile/workbench/PrivateUiFixture.tsx`
+- `apps/mobile/workbench/SharedControls.stories.tsx`
+- `apps/mobile/workbench/SharedModal.stories.tsx`
+- `apps/mobile/workbench/workbench.css`
+- `docs/ui/shared-components.md`
+- `docs/ui/upstream/story-9-3/BASE_UI_LICENSE`
+- `docs/ui/upstream/story-9-3/THIRD_PARTY_NOTICES.md`
+- `docs/ui/upstream/story-9-3/button.json`
+- `docs/ui/upstream/story-9-3/dialog.json`
+- `docs/ui/upstream/story-9-3/field.json`
+- `docs/ui/upstream/story-9-3/input.json`
+- `docs/ui/upstream/story-9-3/provenance.json`
+- `docs/ui/upstream/story-9-3/sheet.json`
+- `docs/ui/upstream/story-9-3/skeleton.json`
+- `docs/ui/upstream/story-9-3/tabs.json`
+- `docs/ui/upstream/story-9-3/textarea.json`
+- `pnpm-lock.yaml`
+
+### Change Log
+2026-09-26：准备基线823fd85后开始9.3；实现共享组件、私有模态边界与三个实际消费面，T6/T7/CR/真实原生验收继续。

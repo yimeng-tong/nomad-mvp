@@ -1,0 +1,62 @@
+{
+  "recorded_at": "2026-09-25T17:29:57.994050+00:00",
+  "baseline": "823fd85acc6bad047f7cd37648ab3f50bc3b6015",
+  "node": "v22.22.1",
+  "pnpm": "11.7.0",
+  "lockfile_sha256": "cb46e481d48e482e46cc08d8d0cee350c55b820c3136bcc923675a466fe90e13",
+  "new_packages": [
+    "@base-ui/react@1.8.0",
+    "@base-ui/utils@0.4.0",
+    "@floating-ui/core@1.8.0",
+    "@floating-ui/dom@1.8.0",
+    "@floating-ui/react-dom@2.1.9",
+    "@floating-ui/utils@0.2.12",
+    "@tailwindcss/node@4.3.3",
+    "@tailwindcss/oxide-android-arm64@4.3.3",
+    "@tailwindcss/oxide-darwin-arm64@4.3.3",
+    "@tailwindcss/oxide-darwin-x64@4.3.3",
+    "@tailwindcss/oxide-freebsd-x64@4.3.3",
+    "@tailwindcss/oxide-linux-arm-gnueabihf@4.3.3",
+    "@tailwindcss/oxide-linux-arm64-gnu@4.3.3",
+    "@tailwindcss/oxide-linux-arm64-musl@4.3.3",
+    "@tailwindcss/oxide-linux-x64-gnu@4.3.3",
+    "@tailwindcss/oxide-linux-x64-musl@4.3.3",
+    "@tailwindcss/oxide-wasm32-wasi@4.3.3",
+    "@tailwindcss/oxide-win32-arm64-msvc@4.3.3",
+    "@tailwindcss/oxide-win32-x64-msvc@4.3.3",
+    "@tailwindcss/oxide@4.3.3",
+    "@tailwindcss/vite@4.3.3",
+    "enhanced-resolve@5.25.1",
+    "jiti@2.7.0",
+    "reselect@5.3.0",
+    "tailwindcss@4.3.3",
+    "tapable@2.3.3"
+  ],
+  "removed_packages": [],
+  "security_audit": {
+    "command": "pnpm audit --json",
+    "exit_code": 1,
+    "repository_totals": {
+      "info": 0,
+      "low": 3,
+      "moderate": 24,
+      "high": 41,
+      "critical": 2
+    },
+    "new_package_advisories": [],
+    "inherited_peer_paths": [
+      "Tailwind plugin also peers with unchanged Vite8.0.16; existing PostCSS8.5.15/nanoid3.3.12 advisories remain inherited build-tool risks, not cleared by this Story."
+    ],
+    "scope": "No source-controlled untrusted remote CSS/source maps are compiled. This is not a clean whole-repository security audit."
+  },
+  "t1_checks": {
+    "product_build": "passed",
+    "existing_mobile_tests": 242,
+    "native_config_tests": 5,
+    "storybook_build": "passed",
+    "peer_override_or_force": false
+  },
+  "real_native_acceptance": false,
+  "pinned_existing_direct_versions_unchanged": true,
+  "existing_direct_version_changes": []
+}

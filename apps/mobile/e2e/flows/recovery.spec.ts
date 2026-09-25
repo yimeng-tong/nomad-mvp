@@ -34,7 +34,7 @@ test('B10 actual Home loading empty and error states never invent saved facts', 
   await expect(page.getByText('正在加载灵感', { exact: true })).toBeVisible();
   api.release('/api/library/cities'); api.release('/api/library/inspirations');
   await expect(page.getByText('还没有城市灵感，先粘贴一条小红书链接。', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: '灵感', exact: true }).click();
+  await page.getByRole('tab', { name: '灵感', exact: true }).click();
   await expect(page.getByText('这个筛选下暂时没有灵感。', { exact: true })).toBeVisible();
   api.library = 'error';
   await page.reload();

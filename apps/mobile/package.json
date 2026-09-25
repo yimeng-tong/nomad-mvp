@@ -21,6 +21,7 @@
     "test:browser": "playwright test --config playwright.config.ts"
   },
   "dependencies": {
+    "@base-ui/react": "1.8.0",
     "@capacitor/android": "8.5.2",
     "@capacitor/app": "8.1.1",
     "@capacitor/browser": "8.0.4",
@@ -38,6 +39,7 @@
     "@storybook/addon-a11y": "10.6.0",
     "@storybook/addon-vitest": "10.6.0",
     "@storybook/react-vite": "10.6.0",
+    "@tailwindcss/vite": "4.3.3",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
     "@types/node": "22.20.3",
@@ -50,6 +52,7 @@
     "msw-storybook-addon": "3.0.3",
     "playwright": "1.63.0",
     "storybook": "10.6.0",
+    "tailwindcss": "4.3.3",
     "vite": "8.0.16",
     "vitest": "4.1.11"
   }

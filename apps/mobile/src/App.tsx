@@ -11,12 +11,13 @@ import { OperatorAccess } from './ops/OperatorAccess';
 import { SettingsScreen } from './settings/SettingsScreen';
 import { getHostPlatform, openHostExternalUrl, registerHostBackHandler, subscribeHostResume } from './platform/host';
 import { nativeExpected, NomadNativeAuth, usesNativeAuth } from './auth/native';
+import { PrivateUiBoundary } from './ui';
 import './styles.css';
 
 export default function App({ authClient }: { authClient?: AuthApiClient } = {}) {
   const client = useMemo(() => authClient ?? createAuthApiClient(), [authClient]);
   const auth = useAuthSnapshot();
-  const dock = useMemo(() => new ImportDockController(createHomeApiClient()), [auth.epoch]);
+  const { controller: dock } = useMemo(() => ({ epoch: auth.epoch, controller: new ImportDockController(createHomeApiClient()) }), [auth.epoch]);
   useEffect(() => { dock.activate(); return () => dock.deactivate(); }, [dock]);
   const [currentUser, setCurrentUser] = useState<CurrentUserResponse | null>(null);
   const [booted, setBooted] = useState(false);
@@ -30,6 +31,8 @@ export default function App({ authClient }: { authClient?: AuthApiClient } = {})
   const sequence = useRef(0);
   const probe = useRef<AbortController | null>(null);
   const mounted = useRef(true);
+  const invalidateProbe = useCallback(() => { ++sequence.current; probe.current?.abort(); }, []);
+  const unexpectedAuthFailure = useCallback(() => { if (mounted.current) markUnavailable(); }, []);
 
   const accept = useCallback((user: CurrentUserResponse | null) => {
     const old = getAuthSnapshot().identity;
@@ -57,9 +60,9 @@ export default function App({ authClient }: { authClient?: AuthApiClient } = {})
 
   useEffect(() => {
     mounted.current = true;
-    const removeRefresh = onAuthorityRefresh(() => { if (!authenticationMutationPending()) void recheck(); });
+    const removeRefresh = onAuthorityRefresh(() => { if (!authenticationMutationPending()) recheck().catch(unexpectedAuthFailure); });
     const removeNotifications = installAuthNotifications();
-    const foreground = () => { if (!authenticationMutationPending()) void recheck(); };
+    const foreground = () => { if (!authenticationMutationPending()) recheck().catch(unexpectedAuthFailure); };
     const background = () => {
       ++sequence.current; probe.current?.abort(); markChecking(false);
     };
@@ -67,22 +70,22 @@ export default function App({ authClient }: { authClient?: AuthApiClient } = {})
     window.addEventListener('focus', foreground); window.addEventListener('pageshow', foreground);
     window.addEventListener('pagehide', background); document.addEventListener('visibilitychange', visibility);
     const removeResume = subscribeHostResume(foreground);
-    void recheck();
+    recheck().catch(unexpectedAuthFailure);
     return () => {
-      mounted.current = false; ++sequence.current; probe.current?.abort();
+      mounted.current = false; invalidateProbe();
       removeRefresh(); removeNotifications(); removeResume();
       window.removeEventListener('focus', foreground); window.removeEventListener('pageshow', foreground);
       window.removeEventListener('pagehide', background); document.removeEventListener('visibilitychange', visibility);
     };
-  }, [recheck]);
+  }, [recheck, invalidateProbe, unexpectedAuthFailure]);
 
   useEffect(() => {
     if (!usesNativeAuth()) return;
     let disposed = false; let remove: (() => Promise<void>) | undefined;
     void NomadNativeAuth.addListener('nativeAuthChanged', () => markChecking()).then((handle) => {
-      if (disposed) void handle.remove(); else remove = () => handle.remove();
+      if (disposed) handle.remove().catch(() => { /* The native bridge may already be gone. */ }); else remove = () => handle.remove();
     }).catch(() => { if (!disposed) markUnavailable(); });
-    return () => { disposed = true; void remove?.(); };
+    return () => { disposed = true; remove?.().catch(() => { /* A failed listener disposal cannot restore identity. */ }); };
   }, []);
   useEffect(() => {
     if (!usesNativeAuth() || !booted || !['anonymous','authenticated'].includes(auth.phase)) return;
@@ -141,13 +144,13 @@ export default function App({ authClient }: { authClient?: AuthApiClient } = {})
     {guarded ? <main className="login-shell auth-shield" aria-label="登录状态确认">
       <section className="login-stage" role="status">
         <p className="status-text">{auth.phase === 'unavailable' ? pendingLogout.current ? '退出结果尚未确认' : '暂时无法确认登录状态' : logoutPending ? '正在确认退出结果' : '正在恢复登录状态'}</p>
-        {auth.phase === 'unavailable' ? <button type="button" disabled={logoutPending} onClick={() => void (pendingLogout.current ? logout() : recheck())}>重试确认</button> : null}
+        {auth.phase === 'unavailable' ? <button type="button" disabled={logoutPending} onClick={() => { (pendingLogout.current ? logout() : recheck()).catch(unexpectedAuthFailure); }}>重试确认</button> : null}
       </section>
     </main> : null}
     {currentUser ? <div className="auth-private" hidden={guarded} key={auth.epoch}>
-      {getHostPlatform() === 'web' && window.location.pathname === '/ops' ? <OperatorAccess onLogout={() => { if (window.confirm('退出当前设备的登录？其他设备保持登录。')) void logout(); }} /> : view === 'settings' ? <SettingsScreen currentUser={currentUser} onBack={() => setView('home')} onLogout={() => void logout()} openExternal={openExternal} />
+      <PrivateUiBoundary>{getHostPlatform() === 'web' && window.location.pathname === '/ops' ? <OperatorAccess onLogout={() => { if (window.confirm('退出当前设备的登录？其他设备保持登录。')) logout().catch(unexpectedAuthFailure); }} /> : view === 'settings' ? <SettingsScreen currentUser={currentUser} onBack={() => setView('home')} onLogout={() => { logout().catch(unexpectedAuthFailure); }} openExternal={openExternal} />
         : plannerHandoff ? <PlannerScreen handoff={plannerHandoff} onBack={() => setPlannerHandoff(null)} />
-          : <HomeScreen dockController={dock} onPlannerHandoff={setPlannerHandoff} onOpenSettings={() => setView('settings')} />}
+          : <HomeScreen dockController={dock} onPlannerHandoff={setPlannerHandoff} onOpenSettings={() => setView('settings')} />}</PrivateUiBoundary>
     </div> : booted ? <div className="auth-private" hidden={guarded} key={auth.epoch}>
       <LoginScreen onAuthenticated={(user) => { accept(user); announceAuthChange(); }} />
     </div> : null}

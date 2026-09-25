@@ -1,0 +1,352 @@
+{
+  "recorded_at": "2026-09-25T17:09:56.957465+00:00",
+  "source_method": "controlled-source-copy",
+  "base": "base",
+  "items": [
+    {
+      "name": "shadcn",
+      "url": "https://registry.npmjs.org/shadcn/4.21.0",
+      "sha256": "f0dabfd036745f70ff3b2465918f11e14833f0e3a8b202e1d7f7b15c77648299",
+      "bytes": 4777,
+      "kind": "package",
+      "version": "4.21.0",
+      "engines": {
+        "node": ">=20.18.1"
+      },
+      "peerDependencies": null,
+      "peerDependenciesMeta": null,
+      "dist": {
+        "shasum": "7610399358644b8398b9f50b51c40d72dd592f21",
+        "tarball": "https://registry.npmjs.org/shadcn/-/shadcn-4.21.0.tgz",
+        "fileCount": 27,
+        "integrity": "sha512-UU2mFNusW8C5rvadKdH69vERYZqUlOOlXBcf0MYhYLdTGP6DPti7X4qovCu+RTfCqsAgq/T+YfE0Vnttxh9aiw==",
+        "signatures": [
+          {
+            "sig": "MEYCIQC4OBOyeGsoZ8ragKZr4zP8zjgHwZKnbYbEg2JRoSpfzwIhAK/uYQbneiQ5qxiOuxRcVd8HXH+J1Li+my6dVpwUSM+X",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "sig": "MEYCIQDTmy4xX4XsUoVCKqqraULSpe5B+OJT68nl7RuKt1TPBwIhAI4thxId8JLqGb4maXHq9J7FPA55Kx3zAPU8f7ax5M8r",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/shadcn@4.21.0",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 839506
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "@base-ui/react",
+      "url": "https://registry.npmjs.org/@base-ui%2freact/1.8.0",
+      "sha256": "e2f754be25e1c147efb8b47d431d83eb5587387494ed1a4563f34f7835f314fc",
+      "bytes": 27474,
+      "kind": "package",
+      "version": "1.8.0",
+      "engines": {
+        "node": ">=14.0.0"
+      },
+      "peerDependencies": {
+        "react": "^17 || ^18 || ^19",
+        "date-fns": "^4.0.0",
+        "react-dom": "^17 || ^18 || ^19",
+        "@date-fns/tz": "^1.2.0",
+        "@types/react": "^17 || ^18 || ^19"
+      },
+      "peerDependenciesMeta": {
+        "date-fns": {
+          "optional": true
+        },
+        "@date-fns/tz": {
+          "optional": true
+        },
+        "@types/react": {
+          "optional": true
+        }
+      },
+      "dist": {
+        "shasum": "b13699aec1e7891dc8859dbddbba0016e894dcf3",
+        "tarball": "https://registry.npmjs.org/@base-ui/react/-/react-1.8.0.tgz",
+        "fileCount": 3269,
+        "integrity": "sha512-P0/1sxo6SBVZOklKMIedvTWqw2s2IQzi9x5bIVsXu980cuSOD4NeuRSs+/L7LZQfDkZP/uRZyGPyfFl/B1oH+Q==",
+        "signatures": [
+          {
+            "sig": "MEUCIGb1SQ3AiBicQERVseJMbCUo0eHlh9yDEnnZ7bcHJ0EfAiEAtiJGcJMFjNUCOA1Wkj1KQtHcJ/IAtzBu5lyUR+qXh08=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "sig": "MEYCIQCtsWKihHa/cjP7yaBhLe/EEXIAkOGAcfVUomLb1YM9TQIhAM40Pm/MmYbdfdFhC0ofIoRl0ierpuebY7i3GaSUTsnN",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/@base-ui%2freact@1.8.0",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 9628362
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "tailwindcss",
+      "url": "https://registry.npmjs.org/tailwindcss/4.3.3",
+      "sha256": "e15224dd87d06dc360946ad675dd59d36c1409206c0d34289625bc4d648c1ebb",
+      "bytes": 3114,
+      "kind": "package",
+      "version": "4.3.3",
+      "engines": null,
+      "peerDependencies": null,
+      "peerDependenciesMeta": null,
+      "dist": {
+        "shasum": "c006861611c213c1877893ab5b23daa16be2bb55",
+        "tarball": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.3.3.tgz",
+        "fileCount": 34,
+        "integrity": "sha512-gOhV3P7ufE62QDGg1zVaTgCR+EtPv92k2nIhVcVKcLmxT1sUBsQGhnZj175j+MqRt4zLF7ic+sCYjfhxMxj7YQ==",
+        "signatures": [
+          {
+            "sig": "MEQCIBhVHX/RChjUWt77CdssLibpRhMHsS3XWOKLRtP/ibJvAiBt9/qLAVxC6nR+eobWqzs5j/1ztHVMWGH0p/sMFj08bw==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/tailwindcss@4.3.3",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 772893
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "@tailwindcss/vite",
+      "url": "https://registry.npmjs.org/@tailwindcss%2fvite/4.3.3",
+      "sha256": "e62a537db95e220ceab347609a618dc3bad6c717c35cce95f36f3e660630a33d",
+      "bytes": 1986,
+      "kind": "package",
+      "version": "4.3.3",
+      "engines": null,
+      "peerDependencies": {
+        "vite": "^5.2.0 || ^6 || ^7 || ^8"
+      },
+      "peerDependenciesMeta": null,
+      "dist": {
+        "shasum": "1f4037badcb5e6c6bb574d3d8a0172c83f26b97f",
+        "tarball": "https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.3.3.tgz",
+        "fileCount": 5,
+        "integrity": "sha512-yYU8cogLeSh/ms2jh8Fj7jaba/EWa7Ja6GoUqYZaraEuCI5YS6ms6ObZgjjedm+jm6XZjdNRWBpPP6Z86oOxcw==",
+        "signatures": [
+          {
+            "sig": "MEQCIAiPWBXY0DZ2rAkCNr7Cjo7KhJ1O8aq5SFWPTZ/NPJhPAiA0/SteZVX1HoTmrKS0BoaUzk4kzLmst7+D0cvaf8a39g==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/@tailwindcss%2fvite@4.3.3",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 13509
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "button",
+      "url": "https://ui.shadcn.com/r/styles/base-nova/button.json",
+      "sha256": "9ba7e870178813f0552b818a913a2792fb500c779e36395740b4973e3025d427",
+      "bytes": 3821,
+      "kind": "registry",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": null,
+      "files": [
+        {
+          "path": "registry/base-nova/ui/button.tsx",
+          "sha256": "313353436d0fcc8e44ab470adb614b9fd013d28626f624328ea0d66d41a6c81b"
+        }
+      ],
+      "snapshot": "docs/ui/upstream/story-9-3/button.json",
+      "adapted_file": "apps/mobile/src/ui/primitives/Button.tsx",
+      "adapted_sha256": "55008d829a53fb389648ad9a619f4bca36a1bea17c189855b58c74bd108af9e7"
+    },
+    {
+      "name": "input",
+      "url": "https://ui.shadcn.com/r/styles/base-nova/input.json",
+      "sha256": "bbad1bba130ac9750a61844eeb8f043e8a710846e07689fa85398b80a46c2741",
+      "bytes": 1539,
+      "kind": "registry",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": null,
+      "files": [
+        {
+          "path": "registry/base-nova/ui/input.tsx",
+          "sha256": "dab990dfefa0ba78854ab6602ad074270dba9d7d1262184d9bfbb62bd990903b"
+        }
+      ],
+      "snapshot": "docs/ui/upstream/story-9-3/input.json",
+      "adapted_file": "apps/mobile/src/ui/primitives/Input.tsx",
+      "adapted_sha256": "143a361c54aa393ee97336c39419b7197dbb291f7490f96d5658f4fa4c4eec39"
+    },
+    {
+      "name": "textarea",
+      "url": "https://ui.shadcn.com/r/styles/base-nova/textarea.json",
+      "sha256": "8f01f6bc4ee556263bae7644e8b527022fa77ff203f33a258bb47142ef7d9c81",
+      "bytes": 1349,
+      "kind": "registry",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": null,
+      "files": [
+        {
+          "path": "registry/base-nova/ui/textarea.tsx",
+          "sha256": "82601c91ffc6c727d924162c78d7cb853114bcced4e2eb922a68ca12d4239c0f"
+        }
+      ],
+      "snapshot": "docs/ui/upstream/story-9-3/textarea.json",
+      "adapted_file": "apps/mobile/src/ui/primitives/Textarea.tsx",
+      "adapted_sha256": "868eaa200987a2f036e8040853d09fb6fe3c614a8fd575582b62155e93d3d89f"
+    },
+    {
+      "name": "field",
+      "url": "https://ui.shadcn.com/r/styles/base-nova/field.json",
+      "sha256": "586110f5563cbb5dc0929207ee34361f1349cf2f816465799c60b98821e4cedc",
+      "bytes": 7155,
+      "kind": "registry",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "label",
+        "separator"
+      ],
+      "files": [
+        {
+          "path": "registry/base-nova/ui/field.tsx",
+          "sha256": "d8a8444942021d020de9b5358a0a3d4f3a5ea572ceabaa38c318a9916903a5f8"
+        }
+      ],
+      "snapshot": "docs/ui/upstream/story-9-3/field.json",
+      "adapted_file": "apps/mobile/src/ui/components/FormField.tsx",
+      "adapted_sha256": "8cf82c7b31a526f525d89a299e0c45cfd2175e9223bf14312c53fb7ed6d5abf2"
+    },
+    {
+      "name": "tabs",
+      "url": "https://ui.shadcn.com/r/styles/base-nova/tabs.json",
+      "sha256": "b4552a0329dd9a6e2bfaf03405c133874df5a4930c7bb3dd84c9ab5c45b89402",
+      "bytes": 4143,
+      "kind": "registry",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": null,
+      "files": [
+        {
+          "path": "registry/base-nova/ui/tabs.tsx",
+          "sha256": "958b817b256cffae986d046168b70dd0153d542b4c521ee8bbdda349010011ef"
+        }
+      ],
+      "snapshot": "docs/ui/upstream/story-9-3/tabs.json",
+      "adapted_file": "apps/mobile/src/ui/primitives/Tabs.tsx",
+      "adapted_sha256": "018222a44d38fa634a8532d1532807409f46c3c90789fd2cdad4987edde9ad61"
+    },
+    {
+      "name": "skeleton",
+      "url": "https://ui.shadcn.com/r/styles/base-nova/skeleton.json",
+      "sha256": "85692a09912f518ffd64c540dfcf098fe748a807baf288c107cf8126496cf886",
+      "bytes": 777,
+      "kind": "registry",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": null,
+      "files": [
+        {
+          "path": "registry/base-nova/ui/skeleton.tsx",
+          "sha256": "4c2af7fa9c645358a0fb188779deab6f0b981733b62befc25e18aaebea1350dc"
+        }
+      ],
+      "snapshot": "docs/ui/upstream/story-9-3/skeleton.json",
+      "adapted_file": "apps/mobile/src/ui/primitives/Skeleton.tsx",
+      "adapted_sha256": "b04bd2347003fada796d3d82fa30160c2e45b78e954b7c6e626fc257fd464677"
+    },
+    {
+      "name": "dialog",
+      "url": "https://ui.shadcn.com/r/styles/base-nova/dialog.json",
+      "sha256": "40fc321d25eb9590d07db54b00d9bc1a74274a549aa06d5915a34ba302ed8b94",
+      "bytes": 5119,
+      "kind": "registry",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "registry/base-nova/ui/dialog.tsx",
+          "sha256": "5be79d2cf2d2152a29d9f14c8e209ad57b696e9dfbf0b9cdf4523a7c710c8d02"
+        }
+      ],
+      "snapshot": "docs/ui/upstream/story-9-3/dialog.json",
+      "adapted_file": "apps/mobile/src/ui/components/AppDialog.tsx",
+      "adapted_sha256": "0b6cbca6a4a75ee9c904521605c7c61feed31e4e1b70073d5aaff69718333482"
+    },
+    {
+      "name": "sheet",
+      "url": "https://ui.shadcn.com/r/styles/base-nova/sheet.json",
+      "sha256": "72b36d92af7fcbc9bd2d1d4ef0cbc65f4fc8178f7bb2bedaf657460f15011cf4",
+      "bytes": 5459,
+      "kind": "registry",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "registry/base-nova/ui/sheet.tsx",
+          "sha256": "7db65922fb40d9a1204527620b7469040259758595ae871bd7274305398c03de"
+        }
+      ],
+      "snapshot": "docs/ui/upstream/story-9-3/sheet.json",
+      "adapted_file": "apps/mobile/src/ui/components/AppDialog.tsx",
+      "adapted_sha256": "0b6cbca6a4a75ee9c904521605c7c61feed31e4e1b70073d5aaff69718333482"
+    }
+  ],
+  "cli": {
+    "version": "4.21.0",
+    "execution": "isolated version/help inspection; source is controlled copy, no init/add overwrite",
+    "base": "base",
+    "installed_in_product": false,
+    "verified_version": "4.21.0",
+    "package_tarball_integrity": "sha512-UU2mFNusW8C5rvadKdH69vERYZqUlOOlXBcf0MYhYLdTGP6DPti7X4qovCu+RTfCqsAgq/T+YfE0Vnttxh9aiw==",
+    "isolated_lock_sha256": "a3980d1d7775d50d594c601b4693de9aeaba7d742d39d749c1c5dc0214a60156",
+    "base_option_verified": true
+  },
+  "review": {
+    "theme": "Nomad UX-DR37 retained; Base Nova only the source family",
+    "adjustments": [
+      "Replace example theme and small fixed heights with Nomad tokens and 44px minimum",
+      "Remove class-variance-authority, cn aliases, icon-placeholder, dark styles and unused label/separator dependencies",
+      "Keep Base UI render/ref/DOM props composition; controlled modal host, identity, close policy and focus supplied by Nomad",
+      "Use 260ms Sheet motion with reduced-motion; no animation library or drag/snap framework"
+    ],
+    "license": "MIT; upstream notices in THIRD_PARTY_NOTICES.md"
+  },
+  "additional_notices": [
+    "docs/ui/upstream/story-9-3/BASE_UI_LICENSE"
+  ],
+  "scope_note": "Implementation snapshots for review; final acceptance binds the final CI source revision."
+}

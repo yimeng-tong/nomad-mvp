@@ -63,7 +63,7 @@ export function HomeImportDock({ controller, selectedCount, onPlan, onView, noti
     ?? state.entries.find((entry) => entry.acceptance !== 'accepted' || entry.snapshot?.state !== 'done') ?? state.entries.at(-1);
   const completion = state.presenting;
   const live = dockAnnouncement(current, completion, state.batches.findIndex((batch) => batch.id === current?.batchId) + 1);
-  return <footer ref={ref} className={`home-import-dock ${state.expanded ? 'is-expanded' : 'is-compact'}`} aria-label="导入与旅行输入">
+  return <footer ref={ref} className={`home-import-dock ${state.expanded ? 'is-expanded' : 'is-compact'}`} aria-label="导入与旅行输入" data-presentation-visible={state.visible}>
     {state.expanded ? <div className="dock-drag-target" aria-hidden="true"
       onPointerDown={(event) => { if (event.button !== 0) return; drag.current = { x: event.clientX, y: event.clientY }; event.currentTarget.setPointerCapture(event.pointerId); }}
       onPointerCancel={() => { drag.current = null; }}

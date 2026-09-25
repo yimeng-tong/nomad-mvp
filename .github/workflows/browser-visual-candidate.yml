@@ -2,7 +2,7 @@ name: Browser visual candidates
 
 on:
   push:
-    branches: [ 'codex/story-9-5-visual-candidate-*' ]
+    branches: [ 'codex/story-9-5-visual-candidate-*', 'codex/story-9-3-visual-candidate-*' ]
 
 permissions:
   contents: read
@@ -46,7 +46,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: story-9-5-visual-candidates-${{ github.sha }}
+          name: nomad-visual-candidates-${{ github.sha }}
           path: apps/mobile/.browser-results/
           include-hidden-files: true
           if-no-files-found: error

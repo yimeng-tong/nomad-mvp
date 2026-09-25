@@ -8,7 +8,7 @@ test('B13 checking and unavailable hide the whole private document and same owne
   await page.goto('/');
   const input = page.getByRole('textbox', { name: '统一输入', exact: true });
   await input.fill(privateA[1]);
-  await page.getByRole('button', { name: '灵感', exact: true }).click();
+  await page.getByRole('tab', { name: '灵感', exact: true }).click();
   await page.getByRole('button', { name: '定位 A的合成灵感', exact: true }).click();
   await expect(page.getByRole('button', { name: 'A的合成候选 合成地址，仅用于界面测试', exact: true })).toBeVisible();
   api.hold('/api/me');
@@ -17,7 +17,8 @@ test('B13 checking and unavailable hide the whole private document and same owne
   await expectPrivateHidden(page, privateA);
   api.release('/api/me');
   await expect(page.getByRole('dialog', { name: '定位候选', exact: true })).toBeVisible();
-  await expect(input).toHaveValue(privateA[1]);
+  await expect(input).toHaveCount(0); // The open modal masks background controls from the accessibility tree.
+  await expect(page.locator('textarea[aria-label="统一输入"]')).toHaveValue(privateA[1]);
   api.authorityUnavailable = true;
   await recheckIdentity(page);
   await expect(page.getByText('暂时无法确认登录状态', { exact: true })).toBeVisible();
@@ -38,7 +39,7 @@ test('B14 owner change fences delayed candidates and removes the old private inp
   api.hold(path);
   await page.goto('/');
   await page.getByRole('textbox', { name: '统一输入', exact: true }).fill(privateA[1]);
-  await page.getByRole('button', { name: '灵感', exact: true }).click();
+  await page.getByRole('tab', { name: '灵感', exact: true }).click();
   await page.getByRole('button', { name: '定位 A的合成灵感', exact: true }).click();
   await expect.poll(() => api.count('GET', path)).toBe(1);
   await expect(page.getByRole('dialog', { name: '定位候选', exact: true })).toBeVisible();

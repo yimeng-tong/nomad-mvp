@@ -1,0 +1,79 @@
+{
+  "kind": "local-development-checkpoint",
+  "story_id": "9.3",
+  "recorded_at": "2026-09-25T18:14:13.386169+00:00",
+  "base_revision": "823fd85acc6bad047f7cd37648ab3f50bc3b6015",
+  "working_tree_dirty": true,
+  "checks": {
+    "mobile_tests": 263,
+    "native_config_tests": 5,
+    "shared_ui_unit_included": 17,
+    "settings_actual_host_coordinator_with_synthetic_driver_included": 4,
+    "workbench_browser_scenarios": 30,
+    "chromium_product_flow_scenarios": 29,
+    "native_sync_and_config_verify": "passed, no real runtime acceptance",
+    "isolation_static_and_counterexamples": 7,
+    "isolated_built_product_and_workbench_runtime": "passed",
+    "typed_lint": "passed before last test-only viewport-counterexample addition; final CI required"
+  },
+  "chromium_run": "72373e60-9894-45fe-97c9-f9b220e3d7f6",
+  "chromium_stats": {
+    "startTime": "2026-09-25T18:03:40.266Z",
+    "duration": 40926.340000000004,
+    "expected": 29,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "counterexamples": {
+    "result": "16 deliberate defects plus2 controls passed before final whole-page mask addition",
+    "current_source_rerun_required": true
+  },
+  "failures_preserved": [
+    {
+      "stage": "T1 contrast",
+      "finding": "accent on accentSurface4.479:1",
+      "resolution": "use original dark selected text"
+    },
+    {
+      "stage": "T6 first workbench",
+      "passed": 29,
+      "failed": 1,
+      "finding": "Toast.Close default aria-hidden",
+      "resolution": "single-toast close remains accessible"
+    },
+    {
+      "stage": "T6 first control",
+      "finding": "immediate focus assertion observed a transient Base UI focus guard",
+      "resolution": "wait for required focused target; assertion still enforced"
+    },
+    {
+      "stage": "T6 second counterexample run",
+      "finding": "browser-session startup timeout, zero tests; not accepted",
+      "resolution": "bound counterexample entry to its two actual source-story files; third full run passed"
+    },
+    {
+      "stage": "T7 first Chromium",
+      "passed": 26,
+      "failed": 3,
+      "run_id": "42c7c442-0080-4f8b-aab4-5a3e3d32987d",
+      "resolution": "read retained background values by DOM while asserting roles hidden; found and fixed outside live-region page mask"
+    },
+    {
+      "stage": "T7 focused second run",
+      "passed": 2,
+      "failed": 1,
+      "run_id": "1ea81b9c-897a-42ec-b765-d07c89d888be",
+      "finding": "whole Home background not masked because Base UI preserves aria-live",
+      "resolution": "sibling page inert/aria-hidden; subsequent29 passed"
+    },
+    {
+      "stage": "isolated runtime first run",
+      "finding": "default browser cache path absent",
+      "resolution": "use the installed locked browser path; rebuilt current workbench then actual runtime passed"
+    }
+  ],
+  "canonical_visual_approval": false,
+  "native_device_acceptance": false,
+  "story_done": false
+}

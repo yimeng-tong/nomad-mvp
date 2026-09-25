@@ -7,6 +7,7 @@ import { getDeviceFingerprint } from './device';
 import { requestPnvsCaptcha } from './pnvs-captcha';
 import { getAuthSnapshot, markChecking, subscribeAuth } from './session-context';
 import { getHostPlatform, openHostExternalUrl } from '../platform/host';
+import { AsyncState, Button, FormField, Input } from '../ui';
 import type { components } from 'nomad-types/src/api-types';
 type GraphicProof = components['schemas']['PnvsCaptchaProof'];
 
@@ -323,21 +324,21 @@ export function LoginScreen({
           </div>
         </div>
 
-        {loadingConfig ? <p className="status-text">正在加载登录方式</p> : null}
+        {loadingConfig ? <AsyncState state="loading" message="正在加载登录方式" className="status-text" /> : null}
 
         {configError ? (
           <div className="inline-state" role="status">
             <p>{configError}</p>
-            <button type="button" onClick={() => runAction(loadConfig)}>
+            <Button variant="primary" type="button" onClick={() => runAction(loadConfig)}>
               重试
-            </button>
+            </Button>
           </div>
         ) : null}
 
         {methods.length > 0 ? (
           <div className="method-row" aria-label="登录方式">
             {methods.map((method) => (
-              <button
+              <Button
                 className="login-method equal-weight"
                 data-method={method.id}
                 data-testid="login-method"
@@ -347,7 +348,7 @@ export function LoginScreen({
                 onClick={() => chooseMethod(method)}
               >
                 {getMethodLabel(method)}
-              </button>
+              </Button>
             ))}
           </div>
         ) : null}
@@ -357,12 +358,12 @@ export function LoginScreen({
             className="phone-form"
             onSubmit={(event) => {
               event.preventDefault();
+              if (verifying || submittingOtp) return;
               runAction(verifyOtp);
             }}
           >
-            <label className="field">
-              <span>手机号</span>
-              <input
+            <FormField id="login-phone" label="手机号">
+              {(field) => <Input {...field}
                 aria-label="手机号"
                 aria-describedby={notice ? 'login-notice' : undefined}
                 autoComplete="tel"
@@ -371,12 +372,11 @@ export function LoginScreen({
                 onChange={(event) => handlePhoneChange(event.target.value)}
                 placeholder="+86 138 0013 8000"
                 value={phone}
-              />
-            </label>
+              />}
+            </FormField>
 
-            <label className="field">
-              <span>验证码</span>
-              <input
+            <FormField id="login-otp" label="验证码">
+              {(field) => <Input {...field}
                 aria-label="验证码"
                 aria-describedby={notice ? 'login-notice' : undefined}
                 autoComplete="one-time-code"
@@ -386,17 +386,18 @@ export function LoginScreen({
                 onChange={(event) => setOtp(event.target.value)}
                 placeholder="000000"
                 value={otp}
-              />
-            </label>
+              />}
+            </FormField>
 
             <div className="action-grid">
-              <button type="button" aria-describedby={captchaRequired ? 'login-captcha-status' : undefined} disabled={cooldown > 0 || submittingOtp || captchaRequired || verifying} onClick={() => runAction(() => startOtp())}>
+              <Button type="button" loading={submittingOtp} aria-describedby={[captchaRequired ? 'login-captcha-status' : null, verifying || submittingOtp ? 'login-busy-reason' : null].filter(Boolean).join(' ') || undefined} disabled={cooldown > 0 || submittingOtp || captchaRequired || verifying} onClick={() => runAction(() => startOtp())}>
                 {submittingOtp ? '正在发送验证码' : cooldown > 0 ? `${cooldown}秒后重发` : sendUnconfirmed ? '重试确认发送结果' : '获取验证码'}
-              </button>
-              <button type="submit" disabled={verifying || submittingOtp}>
+              </Button>
+              <Button type="submit" variant="primary" loading={verifying} aria-describedby={verifying || submittingOtp ? 'login-busy-reason' : undefined} disabled={verifying || submittingOtp}>
                 {verifying ? '登录中' : '登录'}
-              </button>
+              </Button>
             </div>
+            {verifying || submittingOtp ? <p id="login-busy-reason" className="nomad-control-note">{verifying ? '正在确认登录，请稍候' : '正在确认验证码发送结果，请稍候'}</p> : null}
           </form>
         ) : (
           !loadingConfig && <p className="status-text">手机号登录暂不可用</p>
@@ -405,9 +406,9 @@ export function LoginScreen({
         {captchaRequired ? (
           <div className="inline-state" role="status">
             <p id="login-captcha-status">需要完成行为验证后再发送验证码</p>
-            <button type="button" disabled={submittingOtp || cooldown > 0} onClick={() => runAction(completeCaptchaAndRetry)}>
+            <Button variant="primary" type="button" disabled={submittingOtp || cooldown > 0} onClick={() => runAction(completeCaptchaAndRetry)}>
               {config?.captcha.provider === 'aliyun-pnvs' ? '开始行为验证' : '已完成验证，重新发送'}
-            </button>
+            </Button>
           </div>
         ) : null}
 
@@ -418,12 +419,12 @@ export function LoginScreen({
         ) : null}
 
         <nav className="legal-links" aria-label="合规链接">
-          <button type="button" onClick={() => runAction(() => openLegalLink('privacy'))}>
+          <Button variant="quiet" type="button" onClick={() => runAction(() => openLegalLink('privacy'))}>
             隐私政策
-          </button>
-          <button type="button" onClick={() => runAction(() => openLegalLink('terms'))}>
+          </Button>
+          <Button variant="quiet" type="button" onClick={() => runAction(() => openLegalLink('terms'))}>
             用户协议
-          </button>
+          </Button>
         </nav>
         {legalFallback ? <a className="legal-fallback" href={legalFallback.url}>{legalFallback.label}</a> : null}
       </section>

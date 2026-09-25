@@ -1,0 +1,50 @@
+/* Nomad UX-DR37; aliases add no reset or replacement theme to legacy pages. */
+:root {
+  --nomad-background: #f8faf7;
+  --nomad-surface: #ffffff;
+  --nomad-text: #17211b;
+  --nomad-text-muted: #52605a;
+  --nomad-border: #c8d2cc;
+  --nomad-control-border: #52605a;
+  --nomad-accent: #247e6f;
+  --nomad-on-accent: #ffffff;
+  --nomad-accent-surface: #edf7f4;
+  --nomad-pending: #ee6f56;
+  --nomad-pending-surface: #fff7f3;
+  --nomad-pending-text: #7a2d1f;
+  --nomad-destructive: #a8402e;
+  --nomad-focus: #247e6f;
+  --nomad-backdrop: #17211b33;
+  --nomad-font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --nomad-font-body: 1rem;
+  --nomad-font-secondary: 0.875rem;
+  --nomad-heading-sm: 1.125rem;
+  --nomad-heading-md: 1.25rem;
+  --nomad-heading-lg: 1.75rem;
+  --nomad-space-1: 4px;
+  --nomad-space-2: 8px;
+  --nomad-space-3: 12px;
+  --nomad-space-4: 16px;
+  --nomad-space-5: 20px;
+  --nomad-space-6: 24px;
+  --nomad-space-8: 32px;
+  --nomad-radius-card: 8px;
+  --nomad-radius-control: 8px;
+  --nomad-radius-small: 6px;
+  --nomad-layer-dock: 3;
+  --nomad-layer-backdrop: 100;
+  --nomad-layer-modal: 101;
+  --nomad-layer-confirmation: 111;
+  --nomad-motion-standard: 160ms;
+  --nomad-motion-sheet: 260ms;
+  --nomad-touch-minimum: 44px;
+}
+
+@theme inline {
+  --color-nomad-surface: var(--nomad-surface);
+  --color-nomad-text: var(--nomad-text);
+  --color-nomad-muted: var(--nomad-text-muted);
+  --color-nomad-accent: var(--nomad-accent);
+  --color-nomad-on-accent: var(--nomad-on-accent);
+  --radius-nomad-control: var(--nomad-radius-control);
+}

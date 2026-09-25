@@ -93,6 +93,11 @@ export function verifyBrowserResults({ artifacts = resolve(mobile, '.browser-res
       assert.equal(record.file, file); assert.equal(record.sourceRevision, revision);
       assert.equal(record.environmentFingerprint, environment.fingerprint);
       assert.equal(record.policyHash, hash(JSON.stringify(policy)));
+      if (contract.visualViewports) {
+        assert.deepEqual(policy.sceneViewports, contract.visualViewports, 'NOMAD_E2E_VIEWPORT_CONTRACT');
+        assert.deepEqual(record.viewport, contract.visualViewports[scene] ?? policy.viewport, 'NOMAD_E2E_CANDIDATE_VIEWPORT');
+        assert.equal(record.deviceScaleFactor, policy.deviceScaleFactor, 'NOMAD_E2E_CANDIDATE_DPR');
+      }
       assert.equal(record.sha256, hash(readFileSync(path)), 'NOMAD_E2E_CANDIDATE_HASH');
       visualFiles[file] = record.sha256;
     }

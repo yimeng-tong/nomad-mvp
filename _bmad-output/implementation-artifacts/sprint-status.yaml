@@ -110,7 +110,7 @@ development_status:
   epic-9: in-progress
   9-1-capacitor-app-installation-and-host-foundation: in-progress
   9-2-android-apk-and-ios-testflight-delivery: backlog
-  9-3-shared-ui-components-and-safe-app-sheet: ready-for-dev
+  9-3-shared-ui-components-and-safe-app-sheet: in-progress
   9-4-component-workbench-and-enforced-code-quality: done
   9-5-browser-flow-and-visual-regression-gates: done
   9-6-identity-scoped-server-read-queries: backlog
@@ -368,15 +368,30 @@ condition_progress:
       summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
   9-3-shared-ui-components-and-safe-app-sheet:
     APP-HOST-01:
-      state: not-started
+      state: in-progress
+      summary: 本Story本地共享组件与实际消费已开始；259移动测试通过，工作台/三引擎/独立CR与真实原生验收尚未全部完成。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-9-3-dev-progress-2026-09-26.md
     CODE-QUALITY-01:
-      state: not-started
+      state: in-progress
+      summary: 本Story本地共享组件与实际消费已开始；259移动测试通过，工作台/三引擎/独立CR与真实原生验收尚未全部完成。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-9-3-dev-progress-2026-09-26.md
     UI-COMPONENT-01:
-      state: not-started
+      state: in-progress
+      summary: 本Story本地共享组件与实际消费已开始；259移动测试通过，工作台/三引擎/独立CR与真实原生验收尚未全部完成。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-9-3-dev-progress-2026-09-26.md
     UI-WORKBENCH-01:
-      state: not-started
+      state: in-progress
+      summary: 本Story本地共享组件与实际消费已开始；259移动测试通过，工作台/三引擎/独立CR与真实原生验收尚未全部完成。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-9-3-dev-progress-2026-09-26.md
     UI-BROWSER-01:
-      state: not-started
+      state: in-progress
+      summary: 本Story本地共享组件与实际消费已开始；259移动测试通过，工作台/三引擎/独立CR与真实原生验收尚未全部完成。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-9-3-dev-progress-2026-09-26.md
   9-4-component-workbench-and-enforced-code-quality:
     CODE-QUALITY-01:
       state: verified
@@ -656,7 +671,7 @@ active_workstreams:
     working_branch: codex/story-9-3-shared-ui
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.4/9.5已done；9.3准备及独立VS通过，按当前合同进入DS/CR；同任务唯一writer，真实门槛和3.1暂停保持
+    scope: 9.4/9.5已done；9.3准备基线823fd85已提交推送，当前按合同执行DS/CR；同任务唯一writer，真实门槛和3.1暂停保持
 previous_preparation:
   story: 9-5-browser-flow-and-visual-regression-gates
   status: complete
@@ -669,7 +684,7 @@ current_preparation:
   status: complete
   evidence: _bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet-validation.md
   authorization: _bmad-output/implementation-artifacts/story-9-3-preparation-decisions-2026-09-26.md
-  implementation_started: false
+  implementation_started: true
   execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_boundary_override: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md

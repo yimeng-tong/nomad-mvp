@@ -3,3 +3,4 @@
 .workbench-stage h2 { font-size: 20px; }
 .workbench-stage p { font-size: 16px; }
 .workbench-stage button { min-height: 44px; }
+.shared-workbench-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-block: 16px; }

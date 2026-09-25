@@ -1,10 +1,12 @@
 import { registerHostBackHandler } from '../platform/host';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Analytics } from '../auth/analytics';
 import { createNoopAnalytics, trackAnalytics } from '../auth/analytics';
 import { AuthApiError, type CurrentUserResponse } from '../auth/api';
 import type { AccountTaskResponse, SettingsApiClient, UserKeyStatusResponse } from './api';
 import { createSettingsApiClient } from './api';
+import { AppDialog, Button, ModalClose } from '../ui';
+import { getAuthSnapshot } from '../auth/session-context';
 
 export type SettingsScreenProps = {
   currentUser: CurrentUserResponse;
@@ -38,19 +40,23 @@ export function SettingsScreen({ currentUser, apiClient, analytics, onBack, onLo
   const [exportTask, setExportTask] = useState<AccountTaskResponse | null>(null);
   const [deleteTask, setDeleteTask] = useState<AccountTaskResponse | null>(null);
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const logoutTrigger = useRef<HTMLElement | null>(null);
   const [confirmExport, setConfirmExport] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [accountActionPending, setAccountActionPending] = useState(false);
   const [fallbackForm, setFallbackForm] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
+  const runAction = (operation: () => Promise<void>) => {
+    const scope = getAuthSnapshot();
+    operation().catch(() => { if (getAuthSnapshot() === scope) setNotice('操作暂未完成，请重试'); });
+  };
   useEffect(() => registerHostBackHandler(() => {
     if (saving || accountActionPending) return true;
-    if (confirmLogout) { setConfirmLogout(false); return true; }
     if (confirmDelete) { setConfirmDelete(false); return true; }
     if (confirmExport) { setConfirmExport(false); return true; }
     if (fallbackForm) { setFallbackForm(false); return true; }
     return false;
-  }, 20), [saving, accountActionPending, confirmLogout, confirmDelete, confirmExport, fallbackForm]);
+  }, 20), [saving, accountActionPending, confirmDelete, confirmExport, fallbackForm]);
 
 
   const track = useCallback(
@@ -205,7 +211,7 @@ export function SettingsScreen({ currentUser, apiClient, analytics, onBack, onLo
         <button className="icon-button" type="button" aria-label="返回首页" onClick={onBack}>
           ←
         </button>
-        <h1 id="settings-title">设置</h1>
+        <h1 id="settings-title" tabIndex={-1} data-ui-safe-focus>设置</h1>
       </header>
 
       <section className="settings-content">
@@ -227,12 +233,14 @@ export function SettingsScreen({ currentUser, apiClient, analytics, onBack, onLo
               <dd>{currentUser.session.device_id}</dd>
             </div>
           </dl>
-          {onLogout ? <button type="button" onClick={() => setConfirmLogout(true)}>退出当前登录</button> : null}
-          {confirmLogout ? <div role="dialog" aria-label="退出当前登录" className="inline-state">
-            <p>退出当前设备，其他设备保持登录。</p>
-            <button type="button" onClick={() => setConfirmLogout(false)}>取消</button>
-            <button type="button" onClick={onLogout}>确认退出</button>
-          </div> : null}
+          {onLogout ? <Button onClick={(event) => { logoutTrigger.current = event.currentTarget; setConfirmLogout(true); }}>退出当前登录</Button> : null}
+          <AppDialog open={confirmLogout} title="退出当前登录" description="退出当前设备，其他设备保持登录。"
+            onOpenChange={() => setConfirmLogout(false)} restoreFocusTo={logoutTrigger.current}>
+            <div className="sheet-actions">
+              <ModalClose>取消</ModalClose>
+              <Button variant="primary" onClick={onLogout}>确认退出</Button>
+            </div>
+          </AppDialog>
         </section>
 
         <section className="settings-section" aria-labelledby="settings-byok-title">
@@ -251,10 +259,10 @@ export function SettingsScreen({ currentUser, apiClient, analytics, onBack, onLo
             />
           </label>
           <div className="settings-actions">
-            <button type="button" disabled={saving} onClick={() => void saveByok()}>
+            <button type="button" disabled={saving} onClick={() => runAction(saveByok)}>
               保存密钥
             </button>
-            <button type="button" disabled={saving} onClick={() => void deleteByok()}>
+            <button type="button" disabled={saving} onClick={() => runAction(deleteByok)}>
               删除密钥
             </button>
           </div>
@@ -276,7 +284,7 @@ export function SettingsScreen({ currentUser, apiClient, analytics, onBack, onLo
           {confirmExport ? (
             <div className="inline-state">
               <p>导出数据会排队生成账号数据副本。</p>
-              <button type="button" disabled={accountActionPending} onClick={() => void requestExport()}>
+              <button type="button" disabled={accountActionPending} onClick={() => runAction(requestExport)}>
                 确认导出数据
               </button>
             </div>
@@ -284,7 +292,7 @@ export function SettingsScreen({ currentUser, apiClient, analytics, onBack, onLo
           {confirmDelete ? (
             <div className="inline-state">
               <p>删除账号会排队处理账号与数据清理。</p>
-              <button type="button" disabled={accountActionPending} onClick={() => void requestDeletion()}>
+              <button type="button" disabled={accountActionPending} onClick={() => runAction(requestDeletion)}>
                 确认删除账号
               </button>
             </div>
@@ -293,7 +301,7 @@ export function SettingsScreen({ currentUser, apiClient, analytics, onBack, onLo
 
         <section className="settings-section" aria-labelledby="settings-feedback-title">
           <h2 id="settings-feedback-title">反馈与建议</h2>
-          <button type="button" onClick={() => void openFeedback()}>
+          <button type="button" onClick={() => runAction(openFeedback)}>
             反馈与建议
           </button>
           {fallbackForm ? (
@@ -303,7 +311,7 @@ export function SettingsScreen({ currentUser, apiClient, analytics, onBack, onLo
                 <span>反馈内容</span>
                 <textarea aria-label="反馈内容" rows={4} value={feedbackText} onChange={(event) => setFeedbackText(event.target.value)} />
               </label>
-              <button type="button" onClick={() => void submitFallbackFeedback()}>
+              <button type="button" onClick={() => runAction(submitFallbackFeedback)}>
                 提交反馈
               </button>
             </div>

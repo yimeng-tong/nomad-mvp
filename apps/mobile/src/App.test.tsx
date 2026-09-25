@@ -67,7 +67,7 @@ describe('App', () => {
       ),
     );
 
-    fireEvent.click(screen.getByRole('button', { name: '灵感' }));
+    fireEvent.click(screen.getByRole('tab', { name: '灵感' }));
     fireEvent.click(await screen.findByRole('button', { name: /选择 西湖傍晚散步/ }));
     fireEvent.click(screen.getByRole('button', { name: '开始规划' }));
 

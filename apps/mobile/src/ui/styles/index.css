@@ -1,0 +1,10 @@
+/* Legacy CSS is intentionally unlayered. Shared controls use scoped selectors
+   for their visual contract, and utilities for non-conflicting structure. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@import "./tokens.css";
+@import "./controls.css";
+@import "./modal.css";
+@source "../primitives";
+@source "../components";

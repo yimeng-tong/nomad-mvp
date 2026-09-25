@@ -5,11 +5,11 @@ const sentinel = 'nomad-private-sentinel-94';
 const playAnchor = "const trigger = canvas.getByRole('button', { name: '打开灵感说明' });";
 const caught = (code: string) => `try { ${code} } catch { /* deliberate component catch */ }\n${playAnchor}`;
 const mutations: Record<string, Mutation[]> = {
-  focus: [{ file: 'src/home/HomeSheet.tsx', before: 'if (previous?.isConnected) previous.focus();', after: 'if (previous?.isConnected) node?.focus();' }],
-  keyboard: [{ file: 'src/home/HomeSheet.tsx', before: "if (event.key === 'Escape')", after: "if (event.key === 'NeverEscape')" }],
+  focus: [{ file: 'src/ui/components/AppDialog.tsx', before: 'if (target && eligible(target)) target.focus({ preventScroll: true });', after: 'if (target && eligible(target)) popup.current?.focus();' }],
+  keyboard: [{ file: 'src/ui/components/AppDialog.tsx', before: 'details.cancel();', after: "details.cancel(); if (details.reason === 'escape-key') return;" }],
   association: [{ file: 'src/auth/LoginScreen.tsx', before: "aria-describedby={notice ? 'login-notice' : undefined}", after: 'aria-describedby={undefined}' }],
   text: [{ file: 'src/auth/LoginScreen.tsx', before: "if (status === 403) return '当前登录方式暂不可用';", after: "if (status === 403) return '';" }],
-  axe: [{ file: 'src/home/HomeSheet.tsx', before: '{children}', after: '<button type="button" />{children}' }],
+  axe: [{ file: 'src/ui/components/AppDialog.tsx', before: '{props.children}', after: '<button type="button" />{props.children}' }],
   undeclared: [{ file: 'workbench/HomeSheet.stories.tsx', before: playAnchor, after: caught(`await fetch('/undeclared?q=${sentinel}', {method:'POST', body:'${sentinel}'});`) }],
   late: [
     { file: 'workbench/HomeSheet.stories.tsx', before: "import { activeScenario, sceneFetch } from './scenario';", after: "import { activeScenario, sceneFetch, beginScenario, scenarioClient } from './scenario';" },

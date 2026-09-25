@@ -5,7 +5,7 @@ test('B05 actual Home Sheet contains keyboard focus and returns input and scroll
   await page.goto('/');
   const input = page.getByRole('textbox', { name: '统一输入', exact: true });
   await expect(input).toBeVisible();
-  await page.getByRole('button', { name: '灵感', exact: true }).click();
+  await page.getByRole('tab', { name: '灵感', exact: true }).click();
   await expect(page.locator('.inspiration-row')).toHaveCount(17);
   await input.fill('需要明确分类的合成旅行文字');
   await page.evaluate(() => window.scrollTo(0, 220));
@@ -16,10 +16,13 @@ test('B05 actual Home Sheet contains keyboard focus and returns input and scroll
   await page.keyboard.press('Enter');
   const sheet = page.getByRole('dialog', { name: '选择输入类型', exact: true });
   await expect(sheet).toBeVisible();
-  await expect(page.locator('.home-body')).toHaveJSProperty('inert', true);
+  await expect.poll(() => page.locator('.home-body').evaluate((node) => !!node.closest('[inert], [aria-hidden="true"]'))).toBe(true);
+  expect(await sheet.evaluate((node) => !!node.closest('[data-private-portal-host]'))).toBe(true);
   const first = sheet.getByRole('button', { name: '作为链接入库', exact: true });
   const second = sheet.getByRole('button', { name: '作为旅行规划', exact: true });
   const last = sheet.getByRole('button', { name: '关闭', exact: true });
+  await expect(sheet.getByRole('heading', { name: '选择输入类型', exact: true })).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(first).toBeFocused();
   for (const [key, target] of [['Tab', second], ['Tab', last], ['Tab', first], ['Shift+Tab', last], ['Shift+Tab', second], ['Shift+Tab', first]] as const) {
     await page.keyboard.press(key);
@@ -27,7 +30,7 @@ test('B05 actual Home Sheet contains keyboard focus and returns input and scroll
   }
   await page.keyboard.press('Escape');
   await expect(sheet).toHaveCount(0);
-  await expect(page.locator('.home-body')).toHaveJSProperty('inert', false);
+  await expect.poll(() => page.locator('.home-body').evaluate((node) => !!node.closest('[inert], [aria-hidden="true"]'))).toBe(false);
   await expect(trigger).toBeFocused();
   await expect(input).toHaveValue('需要明确分类的合成旅行文字');
   await expect.poll(() => page.evaluate(() => Math.round(window.scrollY))).toBe(before);
@@ -37,7 +40,7 @@ test('B05 actual Home Sheet contains keyboard focus and returns input and scroll
   await trigger.evaluate((node) => node.addEventListener('mousedown', (event) => event.preventDefault(), { once: true }));
   await trigger.click();
   await expect(trigger).toBeDisabled();
-  await page.getByRole('button', { name: '灵感', exact: true }).focus();
+  await page.getByRole('tab', { name: '灵感', exact: true }).focus();
   api.release('/api/home/input/parse');
   await expect(sheet).toBeVisible();
   await sheet.getByRole('button', { name: '关闭', exact: true }).click();
@@ -65,6 +68,7 @@ test('B06 normal and reduced motion preserve editable input without submitting',
 test('B07 an open saved-result Sheet pauses the actual durable completion window', async ({ page, api }) => {
   test.setTimeout(45_000);
   api.identity = 'A'; api.nextImport = 'done';
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/');
   const input = page.getByRole('textbox', { name: '统一输入', exact: true });
   await input.fill('https://xhslink.com/completion');
@@ -78,6 +82,10 @@ test('B07 an open saved-result Sheet pauses the actual durable completion window
   // Deliberately longer than the actual ten-second acknowledgement window.
   await page.waitForTimeout(11_000);
   await sheet.getByRole('button', { name: '关闭', exact: true }).click();
+  const closing = page.locator('.nomad-modal[data-closing="true"]');
+  await expect(closing).toHaveCount(1);
+  await expect(page.locator('.home-import-dock')).toHaveAttribute('data-presentation-visible', 'false');
+  await expect(closing).toHaveCount(0);
   await expect(sheet).toHaveCount(0);
   await expect(page.locator('.dock-completion')).toBeVisible();
   await expect(page.locator('.dock-completion')).toHaveCount(0, { timeout: 12_000 });

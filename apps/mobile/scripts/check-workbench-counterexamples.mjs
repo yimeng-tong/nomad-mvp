@@ -9,7 +9,7 @@ const mobile = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const results = [];
 const sentinel = 'nomad-private-sentinel-94';
 const run = (label, mutation, pattern, expected, success = false) => {
-  const result = spawnSync(process.execPath, [join(mobile, 'node_modules/vitest/vitest.mjs'), 'run', '--config', 'vitest.storybook.config.ts', '-t', pattern], {
+  const result = spawnSync(process.execPath, [join(mobile, 'node_modules/vitest/vitest.mjs'), 'run', 'workbench/HomeSheet.stories.tsx', 'workbench/LoginScreen.stories.tsx', '--config', 'vitest.storybook.config.ts', '-t', pattern], {
     cwd: mobile, encoding: 'utf8', timeout: 90000, maxBuffer: 4 * 1024 * 1024,
     env: { ...process.env, STORYBOOK_DISABLE_TELEMETRY: '1', NOMAD_WORKBENCH_MUTATION: mutation },
   });
@@ -21,6 +21,10 @@ const run = (label, mutation, pattern, expected, success = false) => {
   assert.equal(result.status === 0, success, `${label}: wrong exit status ${result.status}`);
   assert.match(output, expected, `${label}: expected outcome was not observed`);
   if (success) assert.match(output, /Tests\s+[1-9]\d* passed/, 'No tests cannot count as a passing control');
+  else {
+    assert.match(output, /Tests\s+[1-9]\d* failed/, `${label}: a nonzero executed failure is required`);
+    assert.doesNotMatch(output, /WORKBENCH_MUTATION_ANCHOR_MISSING|Failed to resolve import|Transform failed|No test files found/, `${label}: a tool failure is not a detected defect`);
+  }
   results.push({ label, mutation, exitCode: result.status, expectedOutcome: success ? 'passed' : 'failed', sentinelLeaked: false });
   console.log(JSON.stringify(results.at(-1)));
 };

@@ -1,0 +1,44 @@
+{
+  "kind": "product-resource-isolation",
+  "moduleCount": 220,
+  "web": {
+    "assets/index-Bp92EsEn.js": "6f49cce605a202b031771fbd9e4cb9231217214539836f19c68d29f7380c2e38",
+    "assets/index-DnYwcjgj.css": "4997beb3bbe555f5b8cbb17fe87be533819fca86ee82886dfa2e9b99689bcfc3",
+    "assets/web-sKxmwgVG.js": "bc6f2d8d2c1363b0577a81051ea06daddc010ee1d037e08f1afe33dc2ec1a608",
+    "assets/web-tBhwvp1b.js": "e032ac5a37bd53c0a0560e1cab4aea2e93f537f8df0617eb4034c63d0e5adcaf",
+    "index.html": "a22e62917401d5ae1772bbfd2e88dc509689a60dc6121768412eba4a26d24dd0",
+    "vendor/pnvs/ct4.js": "f2e9d00c14e079590367bff6dbeb09b142f6d4b1353c56afb3caa4d7d0164861",
+    "vendor/pnvs/provenance.json": "81e6406699d10940107819eb4f06e72197c1f101c1766f67848941023156cfca",
+    "webview-unavailable.html": "046534ab2c64021dcb3c48e76de9ca48a953a09f387e0502bc9e5578841c374e"
+  },
+  "nativeAssets": {
+    "android": {
+      "assets/index-Bp92EsEn.js": "6f49cce605a202b031771fbd9e4cb9231217214539836f19c68d29f7380c2e38",
+      "assets/index-DnYwcjgj.css": "4997beb3bbe555f5b8cbb17fe87be533819fca86ee82886dfa2e9b99689bcfc3",
+      "assets/web-sKxmwgVG.js": "bc6f2d8d2c1363b0577a81051ea06daddc010ee1d037e08f1afe33dc2ec1a608",
+      "assets/web-tBhwvp1b.js": "e032ac5a37bd53c0a0560e1cab4aea2e93f537f8df0617eb4034c63d0e5adcaf",
+      "cordova_plugins.js": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cordova.js": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index.html": "a22e62917401d5ae1772bbfd2e88dc509689a60dc6121768412eba4a26d24dd0",
+      "vendor/pnvs/ct4.js": "f2e9d00c14e079590367bff6dbeb09b142f6d4b1353c56afb3caa4d7d0164861",
+      "vendor/pnvs/provenance.json": "81e6406699d10940107819eb4f06e72197c1f101c1766f67848941023156cfca",
+      "webview-unavailable.html": "046534ab2c64021dcb3c48e76de9ca48a953a09f387e0502bc9e5578841c374e"
+    },
+    "ios": {
+      "assets/index-Bp92EsEn.js": "6f49cce605a202b031771fbd9e4cb9231217214539836f19c68d29f7380c2e38",
+      "assets/index-DnYwcjgj.css": "4997beb3bbe555f5b8cbb17fe87be533819fca86ee82886dfa2e9b99689bcfc3",
+      "assets/web-sKxmwgVG.js": "bc6f2d8d2c1363b0577a81051ea06daddc010ee1d037e08f1afe33dc2ec1a608",
+      "assets/web-tBhwvp1b.js": "e032ac5a37bd53c0a0560e1cab4aea2e93f537f8df0617eb4034c63d0e5adcaf",
+      "cordova_plugins.js": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cordova.js": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index.html": "a22e62917401d5ae1772bbfd2e88dc509689a60dc6121768412eba4a26d24dd0",
+      "vendor/pnvs/ct4.js": "f2e9d00c14e079590367bff6dbeb09b142f6d4b1353c56afb3caa4d7d0164861",
+      "vendor/pnvs/provenance.json": "81e6406699d10940107819eb4f06e72197c1f101c1766f67848941023156cfca",
+      "webview-unavailable.html": "046534ab2c64021dcb3c48e76de9ca48a953a09f387e0502bc9e5578841c374e"
+    }
+  },
+  "sourceEntry": "5fc9608237889fc7a087c815f4d060549a5f229fa3889067080276a1c527a492",
+  "workerSha256": "26171599d94d5445297303f3a1f1cedec26835ea3d0057dcfa92ec520cb35cca",
+  "productGraphSha256": "8c554c1711c0448fa26d18522285d8efc45815ed0ae3afc2a7ca35026d06a90c",
+  "realDeviceAssessed": false
+}

@@ -6,6 +6,7 @@ export async function installBrowserFault(context: BrowserContext) {
   const fault = process.env.NOMAD_BROWSER_FAULT ?? '';
   if (!fault) return;
   assert.equal(process.env.NOMAD_BROWSER_RUN_KIND, 'counterexample', 'Faults cannot create or approve baselines');
+  if (fault === 'viewport-drift') return; // The fixture changes the actual page viewport, not the declared project configuration.
   assert.ok(['cta-shift', 'private-portal', 'private-input', 'late-result', 'duplicate-start'].includes(fault));
   await context.addInitScript((activeFault) => {
     if (activeFault === 'cta-shift') {

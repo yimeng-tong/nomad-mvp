@@ -1,0 +1,90 @@
+{
+  "method": "WCAG relative luminance, opaque sRGB pairs",
+  "scope": "tokens only; rendered/composited states need browser proof",
+  "rejected_pair": {
+    "foreground": "accent",
+    "background": "accent-surface",
+    "ratio": 4.479,
+    "minimum": 4.5,
+    "resolution": "Use text #17211b on selected light green; accent remains border or solid CTA"
+  },
+  "checks": [
+    {
+      "foreground": "text",
+      "background": "background",
+      "ratio": 15.757,
+      "minimum": 4.5,
+      "result": "passed"
+    },
+    {
+      "foreground": "text",
+      "background": "surface",
+      "ratio": 16.538,
+      "minimum": 4.5,
+      "result": "passed"
+    },
+    {
+      "foreground": "text-muted",
+      "background": "background",
+      "ratio": 6.293,
+      "minimum": 4.5,
+      "result": "passed"
+    },
+    {
+      "foreground": "text-muted",
+      "background": "surface",
+      "ratio": 6.605,
+      "minimum": 4.5,
+      "result": "passed"
+    },
+    {
+      "foreground": "on-accent",
+      "background": "accent",
+      "ratio": 4.896,
+      "minimum": 4.5,
+      "result": "passed"
+    },
+    {
+      "foreground": "text",
+      "background": "accent-surface",
+      "ratio": 15.13,
+      "minimum": 4.5,
+      "result": "passed"
+    },
+    {
+      "foreground": "pending-text",
+      "background": "pending-surface",
+      "ratio": 8.931,
+      "minimum": 4.5,
+      "result": "passed"
+    },
+    {
+      "foreground": "destructive",
+      "background": "surface",
+      "ratio": 6.109,
+      "minimum": 4.5,
+      "result": "passed"
+    },
+    {
+      "foreground": "focus",
+      "background": "background",
+      "ratio": 4.665,
+      "minimum": 3,
+      "result": "passed"
+    },
+    {
+      "foreground": "focus",
+      "background": "surface",
+      "ratio": 4.896,
+      "minimum": 3,
+      "result": "passed"
+    },
+    {
+      "foreground": "control-border",
+      "background": "surface",
+      "ratio": 6.605,
+      "minimum": 3,
+      "result": "passed"
+    }
+  ]
+}

@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates ]
+    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates, codex/story-9-3-shared-ui ]
   pull_request:
-    branches: [ main, codex/story-1-0-production-auth, codex/story-9-4-workbench-quality ]
+    branches: [ main, codex/story-1-0-production-auth, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates ]
 
 jobs:
   browser-environment:
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: story-9-5-environment-${{ github.sha }}
+          name: nomad-browser-environment-${{ github.sha }}
           path: apps/mobile/.browser-results/
           include-hidden-files: true
           if-no-files-found: error
@@ -147,7 +147,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: story-9-4-workbench-${{ github.sha }}
+          name: nomad-workbench-${{ github.sha }}
           path: |
             apps/mobile/.workbench-results/
             apps/mobile/storybook-static/index.json

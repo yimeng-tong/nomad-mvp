@@ -81,7 +81,7 @@ for (const [probe, file, target] of [
 const baseline = resolve(mobile, 'e2e/visual/baselines/chromium/V02-home.png');
 const environmentPath = resolve(artifacts, 'environment.json'), environmentBytes = readFileSync(environmentPath);
 for (const [probe, target] of [['visual-control-before', null], ['missing-baseline', 'NOMAD_E2E_MISSING_BASELINE'],
-  ['wrong-environment', 'NOMAD_E2E_ENVIRONMENT_MISMATCH'], ['automatic-update', 'NOMAD_E2E_AUTO_UPDATE_FORBIDDEN'], ['visual-control-after', null]]) {
+  ['wrong-environment', 'NOMAD_E2E_ENVIRONMENT_MISMATCH'], ['actual-viewport-drift', 'NOMAD_E2E_ACTUAL_VIEWPORT'], ['automatic-update', 'NOMAD_E2E_AUTO_UPDATE_FORBIDDEN'], ['visual-control-after', null]]) {
   const runId = `validation-${probe}-${randomUUID()}`, directory = resolve(artifacts, 'runs', runId);
   mkdirSync(directory, { recursive: true });
   const backup = resolve(directory, 'baseline-backup.png');
@@ -94,7 +94,7 @@ for (const [probe, target] of [['visual-control-before', null], ['missing-baseli
     }
     child = spawnSync(process.execPath, [cli, 'test', '--config', 'playwright.config.ts', '--project', 'chromium', '--grep', 'V02',
       ...(probe === 'automatic-update' ? ['--update-snapshots', 'all'] : [])], {
-      cwd: mobile, env: { ...process.env, NOMAD_BROWSER_RUN_ID: runId, NOMAD_BROWSER_RUN_KIND: 'counterexample', NOMAD_BROWSER_FAULT: '' },
+      cwd: mobile, env: { ...process.env, NOMAD_BROWSER_RUN_ID: runId, NOMAD_BROWSER_RUN_KIND: 'counterexample', NOMAD_BROWSER_FAULT: probe === 'actual-viewport-drift' ? 'viewport-drift' : '' },
       encoding: 'utf8', timeout: 60_000, maxBuffer: 3 * 1024 * 1024,
     });
     writeFileSync(resolve(directory, 'console.log'), child.stdout + child.stderr);
@@ -122,4 +122,4 @@ for (const [probe, target] of [['visual-control-before', null], ['missing-baseli
 }
 const repaired = verifyBrowserResults(); assert.equal(repaired.reportHash, original.reportHash, 'Counterexamples must preserve the full suite');
 writeFileSync(resolve(artifacts, 'validation-counterexamples.json'), JSON.stringify({ kind: 'browser-validation-guard-counterexamples', original, repaired, results }, null, 2) + '\n');
-console.log(JSON.stringify({ result: 'browser-validation-guard-counterexamples-passed', integrityNegatives: 4, buildBindingNegatives: 5, validationNegatives: 3, visualControls: 2 }));
+console.log(JSON.stringify({ result: 'browser-validation-guard-counterexamples-passed', integrityNegatives: 4, buildBindingNegatives: 5, validationNegatives: 4, visualControls: 2 }));

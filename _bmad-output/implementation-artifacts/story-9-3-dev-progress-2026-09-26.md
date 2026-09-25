@@ -47,3 +47,9 @@ a60674b候选CI36172229448生成32/33，Chromium320px V11关闭按钮0.40625px�
 CI36176188637（6e0b973）33/33候选及显式下载来源/图谱/viewport检查通过；主任务看完全部原尺寸图，因V06继承旧focus环而拒绝批准，记录candidate2-visual-review.json。真实B05测得1.49476，CSS限定共享Modal后代改深绿后B05/B20通过；weak-focus持续反例新增。将提交候选r3，尚无9.3新基线被接受。
 
 原auth-browser-probe6项、durable-dock-pg-browser-probe6项以6e0b973代码实际重跑，复制脚本仅修改固定输出/绝对导入，原断言不变。PG18.6、SSE、IDB、3浏览器进程和1真实SIGKILL通过、0新导入POST；新隔离DB为nomad_auth_test_story93_ui_20260926_r1且UTC，所有临时服务已停止，28历史文件hash保持。证据legacy/verification.json。这里只验证该源版本的原业务职责，不含TLS/供应商/真机。
+
+## 基线接纳，整套CI待执行
+
+第三候选0061cf9/run36178891862的33图/源/构建/环境/实际viewport校验通过。29张与已经逐图原尺寸看过的C2完全字节相同；4张变化再次原尺寸查看（3个V06焦点修补、ChromiumV09边缘25个RGB像素差异），记录理由与hash后接纳33张9.3基线。截图threshold0/maxDiffPixels0/masks空/普通CI禁止更新均保持。前24张9.5基线的原提交与approval留存，C1/C2失败和拒绝原因不删除。
+
+接纳只是视觉候选审阅，不代表完整CI或T9通过；下一在提交这些PNG/approval后的当前源码跑129项、全部counterexamples、原PG/工作台/类型/native资源链。细节baseline-review.json。

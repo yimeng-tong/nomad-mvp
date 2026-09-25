@@ -1,5 +1,5 @@
 # generated: 2026-09-15
-# last_updated: 2026-09-25
+# last_updated: 2026-09-26
 # project: nomad-mvp
 # project_key: NOKEY
 # tracking_system: file-system
@@ -17,7 +17,7 @@
 # Default flow: create-story -> dev-story -> review -> done; no implementation authorized by SP.
 
 generated: '2026-09-15'
-last_updated: '2026-09-25'
+last_updated: '2026-09-26'
 project: nomad-mvp
 project_key: NOKEY
 tracking_system: file-system
@@ -112,7 +112,7 @@ development_status:
   9-2-android-apk-and-ios-testflight-delivery: backlog
   9-3-shared-ui-components-and-safe-app-sheet: backlog
   9-4-component-workbench-and-enforced-code-quality: done
-  9-5-browser-flow-and-visual-regression-gates: in-progress
+  9-5-browser-flow-and-visual-regression-gates: done
   9-6-identity-scoped-server-read-queries: backlog
   9-7-typed-navigation-and-host-history: backlog
   epic-9-retrospective: optional
@@ -399,9 +399,25 @@ condition_progress:
       - _bmad-output/implementation-artifacts/story-9-4-acceptance-2026-09-25.md
   9-5-browser-flow-and-visual-regression-gates:
     CODE-QUALITY-01:
-      state: in-progress
+      state: verified
+      summary: 63文件真实typed lint、零豁免，保留6组lint/18组件及原完整CI；8项三层审阅修补已复核。仅关闭9.5自身CODE-QUALITY-01。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/lint-result.json
+      - _bmad-output/implementation-artifacts/story-9-5-code-review-2026-09-25.md
     UI-BROWSER-01:
-      state: in-progress
+      state: verified
+      summary: 93/93三引擎场景、24审阅基线与零阈值比较；v2绑定270输入/63模块及实际输出/PNG，777下载文件和12条trace核验。5网络/5产品/4报告/5构建/3配置负例及正控通过；原auth6与PG/SSE/IDB6含SIGKILL分别保留。不代替真机、最低版、真实供应商或生产恢复。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/downloaded-artifacts.json
+      - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/suite-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/flow-counterexamples.json
+      - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/validation-counterexamples.json
+      - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t5-baseline-review.json
+      - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy/verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy-final-auth/verification.json
+      - _bmad-output/implementation-artifacts/story-9-5-acceptance-2026-09-26.md
   9-6-identity-scoped-server-read-queries:
     APP-HOST-01:
       state: not-started
@@ -640,7 +656,7 @@ active_workstreams:
     working_branch: codex/story-9-5-browser-gates
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.4已done；9.5 CS/独立VS已完成，下一DS/CR；9.3临近实施再准备，真实门槛和3.1暂停保持
+    scope: 9.4/9.5已done；下一仅准备9.3 CS/VS，同任务唯一writer，真实门槛和3.1暂停保持
 previous_preparation:
   story: 9-4-component-workbench-and-enforced-code-quality
   status: complete

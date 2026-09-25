@@ -1,0 +1,29 @@
+kind: ui-verification
+story_id: '9.5'
+source_contract_sha256: 54dc15b7f578eeb46e8b93566b2fb6a26deffc99aa8a88ed9c8cfd5692f44ad6
+source_revision: 85eedb68d576b5378e320a16273318845ebf6fe5
+recorded_at: '2026-09-25T16:15:13.596722+00:00'
+checks:
+  CODE-QUALITY-01:
+    result: passed
+    environment: GitHub ubuntu-24.04; Node22.22.1/pnpm11.7.0; local WSL Ubuntu26.04
+    summary: 63文件真实typed lint、零豁免，保留6组lint/18组件及原完整CI；8项三层审阅修补已复核。仅关闭9.5自身CODE-QUALITY-01。
+    evidence:
+    - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci-verification.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/lint-result.json
+    - _bmad-output/implementation-artifacts/story-9-5-code-review-2026-09-25.md
+  UI-BROWSER-01:
+    result: passed
+    environment: Pinned noble/amd64 Playwright1.63.0 image; Chromium153.0.8010.12/Firefox155/WebKit26.6; 48 font files and
+      fontconfig hashes; synthetic HTTP only
+    summary: 93/93三引擎场景、24审阅基线与零阈值比较；v2绑定270输入/63模块及实际输出/PNG，777下载文件和12条trace核验。5网络/5产品/4报告/5构建/3配置负例及正控通过；原auth6与PG/SSE/IDB6含SIGKILL分别保留。不代替真机、最低版、真实供应商或生产恢复。
+    evidence:
+    - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci-verification.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/downloaded-artifacts.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/suite-verification.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/flow-counterexamples.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/validation-counterexamples.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t5-baseline-review.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy/verification.json
+    - _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy-final-auth/verification.json
+    - _bmad-output/implementation-artifacts/story-9-5-acceptance-2026-09-26.md

@@ -1,0 +1,226 @@
+{
+  "kind": "final-login-original-probe-replay",
+  "sourceRevision": "85eedb68d576b5378e320a16273318845ebf6fe5",
+  "recordedAt": "2026-09-25T15:59:39.754909+00:00",
+  "source": "apps/mobile/scripts/auth-browser-probe.mjs",
+  "sourceSha256": "41ca019e43bcc310e8f6f325b3b5401ba60cfb3505ae8504289d95e2f750ba88",
+  "adapterSha256": "7531b3aa948cb9068bd0f2266acde5aca194ab8feaaf5658d22baf1d3d0c8fbf",
+  "onlyChanges": [
+    "output relocation to a new directory",
+    "original import.meta and relative module paths made explicit for /tmp execution"
+  ],
+  "productSources": {
+    "apps/mobile/src/auth/LoginScreen.tsx": "4b4198d861bf448f2b46fdc1242c1e6fc1a2aaa6a4053fdc23ffff7d99e9e9eb",
+    "apps/mobile/src/App.tsx": "fee3387d9972f5c31972a6780cb894b328e6b821ef672121a879eb2cd497141e",
+    "apps/mobile/src/home/HomeScreen.tsx": "2f614915ea360c5112cc69f2ecf4e5a98de1c060fa98eeb748b77da2aa78a326",
+    "apps/mobile/src/home/HomeSheet.tsx": "42a7c8fadf1b017a85bc7c420e7fba2b2610d4b9895b3710611bb1cb821ab0d1",
+    "apps/mobile/src/home/HomeImportDock.tsx": "03d197200f059146f1e1d159fa33b4db423373c7b66eca6088656183b0112c7d",
+    "apps/mobile/src/styles.css": "3de4baa807a68a0fc2c9d7b7d8eb5e80ca549f1aea7ddd1f3d7146153c10065d",
+    "pnpm-lock.yaml": "003ccce865b0adf03ed8451185d19ca3613d904023ff792f4d84bc633f18676d"
+  },
+  "report": {
+    "result": "passed",
+    "browser": "Chrome/153.0.8010.12",
+    "actualBrowser": true,
+    "realProviderCalls": 0,
+    "explicitHttpAndCaptchaSubstitutes": true,
+    "realAuthenticationVerified": false,
+    "checks": [
+      "unknown-send-copy",
+      "same-owner-draft-retained",
+      "authority-unavailable-private-hidden",
+      "cross-tab-owner-change-clears-draft",
+      "unknown-logout-foreground-same-operation",
+      "desktop-operator-denial-and-audit"
+    ],
+    "calls": [
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/otp/start"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/otp/start"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/otp/verify"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/library/cities"
+      },
+      {
+        "method": "GET",
+        "path": "/library/inspirations"
+      },
+      {
+        "method": "GET",
+        "path": "/user-key"
+      },
+      {
+        "method": "GET",
+        "path": "/user-key"
+      },
+      {
+        "method": "POST",
+        "path": "/logout"
+      },
+      {
+        "method": "POST",
+        "path": "/logout"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/config"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/me"
+      },
+      {
+        "method": "GET",
+        "path": "/ops/me"
+      },
+      {
+        "method": "GET",
+        "path": "/ops/me"
+      },
+      {
+        "method": "GET",
+        "path": "/ops/me"
+      },
+      {
+        "method": "POST",
+        "path": "/ops/access-check"
+      }
+    ]
+  },
+  "rawLog": {
+    "path": "/tmp/nomad-story-9-5-legacy-auth-final.log",
+    "sha256": "a490d92f7fe100d405563a05ae5b0e6ed2a797318f096ebf011cde84cac246f9",
+    "storedInGit": false
+  },
+  "files": {
+    "report.json": "8d29937dd4e5a53398e3a54c20aea7cf8ecc084878364ab35cd25f69d9327f56",
+    "mobile-unknown-send.png": "e4cfe7d823cb0f2d065494d23bf8fb75d1d0d7d964e9d2662d05393104794f25",
+    "desktop-operator-authority.png": "014f612246231adca552503ca2fcf05679ffbe0bd3ba8c6fc51e008b5e7149f8",
+    "mobile-authority-unavailable.png": "247e7ea2353f182306ada2fd8891c6fe1446c6707e49f299eb95c8acd473a7cb"
+  }
+}

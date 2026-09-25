@@ -18,3 +18,6 @@
 定向复核：blind明确5项均闭合；edge确认R2/R3/R4/R8及walker闭合，返回空发现；acceptance复核source图谱41项无遗漏、文档镜像一致，并实际只读验证旧SHA审计标明contractVersion1/compiledProductVerified=false，不将其当v2证明。
 
 本地23项Chromium和23项Firefox、242移动+5native配置、18组件、typed lint、native sync/verify、7项污染检查及handoff通过。local report源清单在native sync后再逐hash核对一致。详见evidence/story-9-5-browser-2026-09-25/review-local-validation.json；真实服务、最低平台、AppSheet Portal、TestFlight和生产恢复门槛保持。
+
+
+2026-09-26最终实证：85eedb6/run36157432347两job全通过；93项v2、5网络/5产品/4报告/5构建/3配置负例及正控全部实际通过，777下载文件、12trace和24actual PNG复核。8项修补完成验证，无未解决审阅项；旧版本离线审计不用于替代本次v2。

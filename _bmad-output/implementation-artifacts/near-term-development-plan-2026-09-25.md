@@ -1,12 +1,12 @@
 ---
 project: nomad-mvp
 date: '2026-09-25'
-status: execution-handoff
+status: execution-active
 scope_revision: ui-foundation-2026-09-20
 authorization_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 preparation_policy: just-in-time
 first_story: 9-4-component-workbench-and-enforced-code-quality
-next_story_to_prepare: 9-5-browser-flow-and-visual-regression-gates
+next_story_to_prepare: 9-3-shared-ui-components-and-safe-app-sheet
 single_writer: true
 new_task_id: 01a0d78a-3692-78b1-aee5-76268a743925
 git_checkpoint_before_story_9_4: true
@@ -15,6 +15,12 @@ backend_environment: homelab-vm104
 ---
 
 # 近期开发顺序与在制工作交接
+
+## 2026-09-26 当前进展
+
+9.4/9.5均done；9.5源码85eedb6完整CI36157432347通过，93项三引擎/24视觉、v2来源及全部反例、777实际下载文件核验。当前9done/5in-progress/53backlog，下一仅准备9.3 CS/VS，不批量准备。其他Story真实条件和3.1暂停保持。
+
+下方9月25日交接时的数量、ready与Git状态属于历史快照；当前CURRENT/Sprint及本段决定现时派发。执行顺序和资源边界继续有效。
 
 ## 当前决定
 

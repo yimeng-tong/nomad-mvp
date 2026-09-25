@@ -1,7 +1,7 @@
 # UI组件、浏览器与CI验证合同
 
-Updated: 2026-09-20
-Status: 9.4 complete; 9.5 browser flows verified and visual gates under final validation
+Updated: 2026-09-26
+Status: 9.4 and 9.5 complete with scoped CI and downloaded evidence
 
 交付一个可运行的组件状态工作台，先覆盖已有 HomeSheet/字段，再由 9.3 补共享组件示例。每个核心组件至少有正常、加载、禁用/原因、错误/重连、长中文、200% 字号、键盘、reduced-motion 与身份未确认场景；复杂组合补 empty/partial/stale。Storybook 展示用例不是 BMAD Story 状态。
 
@@ -117,3 +117,5 @@ Canonical前置依次运行环境探针、API生成、带 `NOMAD_RECORD_PRODUCT_
 Story9.5只关闭自身CODE-QUALITY-01/UI-BROWSER-01。WebKit26.6不是Safari16.4/iPhone实证，Firefox155不是128最低版本实证；真实PNVS、法律资源、native SDK/设备、TestFlight及生产恢复由1.0/1.6/1.7/9.1/9.2和业务Story继续验收。
 
 审阅修补还强制B先认证后才释放旧A的/me响应；OTP替身绑定成功start的手机号；法律新窗口尝试后保留48px当前页回退链接，避免noopener成功误报，也不让弹窗被阻止时失去入口。下载旧报告的显式SHA审计按该提交当时合同验证，并标明contractVersion/compiledProductVerified；不能用v1历史证明替代当前v2验收。
+
+最终交付：9.5源码85eedb6完整CI36157432347通过；93项v2、777下载文件与12trace已核验，具体数字、源/资源摘要及边界见story-9-5-acceptance-2026-09-26.md和evidence/story-9-5-browser-2026-09-25/ui-delivery.yaml。

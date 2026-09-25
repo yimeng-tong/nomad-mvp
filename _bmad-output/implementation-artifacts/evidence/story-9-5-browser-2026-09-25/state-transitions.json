@@ -1,0 +1,26 @@
+{
+  "kind": "verified-story-state-transitions",
+  "story": "9.5",
+  "sourceRevision": "85eedb68d576b5378e320a16273318845ebf6fe5",
+  "transitions": [
+    {
+      "status": "review",
+      "recordedAt": "2026-09-25T16:18:59.850609+00:00",
+      "handoffExitCode": 0,
+      "logPath": "/tmp/nomad-story-9-5-state-review-handoff.log",
+      "logSha256": "685276d44cf465f7f60f183cff79c988bda169e96f3c2932f67d4ebc2a8b3f81",
+      "conditions": [
+        "CODE-QUALITY-01 verified",
+        "UI-BROWSER-01 verified"
+      ]
+    },
+    {
+      "status": "done",
+      "recordedAt": "2026-09-25T16:20:56.263187+00:00",
+      "handoffExitCode": 0,
+      "logPath": "/tmp/nomad-story-9-5-state-done-handoff.log",
+      "logSha256": "39643e06e4084a490cd647eb3e2742897746a16c003512c3b12ee377f3d1a5c1",
+      "nextPreparation": "9-3-shared-ui-components-and-safe-app-sheet"
+    }
+  ]
+}

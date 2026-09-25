@@ -7,7 +7,7 @@ source_contract_sha256: 54dc15b7f578eeb46e8b93566b2fb6a26deffc99aa8a88ed9c8cfd56
 source_epics: _bmad-output/planning-artifacts/epics.md
 scope_revision: ui-foundation-2026-09-20
 created: '2026-09-25'
-updated: '2026-09-25'
+updated: '2026-09-26'
 workflow: bmad-create-story
 preparation_status: complete
 preparation_authorization: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
@@ -40,11 +40,12 @@ preparation_validation: _bmad-output/implementation-artifacts/9-5-browser-flow-a
 independent_reviews:
 - _bmad-output/implementation-artifacts/research/story-9-5-contract-review-2026-09-25.md
 - _bmad-output/implementation-artifacts/research/story-9-5-plan-review-2026-09-25.md
+ui_delivery_evidence: _bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ui-delivery.yaml
 ---
 
 # Story 9.5: 在固定浏览器环境保护关键入口与组件迁移
 
-Status: in-progress
+Status: done
 
 当前CS与两项fresh-context独立VS已通过，ready-for-dev；下一进入已授权开发。9.4已done，完整CI36129441895及下载产物可复用；9.3未开始，3.1保持暂停。
 
@@ -141,36 +142,36 @@ So that 组件迁移前后可以核对实际行为并防止未经审阅的变化
   - [x] 从严格差异阈值开始，只可按记录的局部原因调整；不mask主要控件或用宽容差隐藏位移。截图稳定化与真实行为断言分开，不能因禁动画触发transitionend就宣称正常生命周期通过。
   - [x] Date与timer策略按场景分开：视觉静态时间可固定，FIFO/超时需安装并显式推进相同受控时钟；冻结Date而timer继续流动不能充当10秒/恢复实证。
 
-- [ ] T6 证明流程和视觉门禁会发现缺陷（AC2/3/5；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
-  - [ ] 对实际产品测试入口注入可回滚/内存缺陷：明显CTA位移、旧owner私有层残留、迟到结果越过身份围栏、未知回执恢复重复POST、未知请求漏拦截。每个须目标断言失败和非零退出，启动失败/缺资源/零用例不是成功反例。
-  - [ ] 前后正常控制实际执行非零用例。失败保留对应trace与视觉actual/expected/diff；使用retain-on-failure等保证首次失败即有trace，不靠未启用的retry。
-  - [ ] 对误删除必需引擎/场景、缺基线、自动更新基线、环境指纹不匹配提供门禁反例；不能靠配置声明项目数或旧报告通过。
-  - [ ] 注入误导入新E2E fixture、向Web/native复制浏览器helper资源的污染负例，证明扩展后的既有隔离检查会失败；移除污染后通过，不能以旧workbench/MSW命名黑名单充当新工具覆盖。
+- [x] T6 证明流程和视觉门禁会发现缺陷（AC2/3/5；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
+  - [x] 对实际产品测试入口注入可回滚/内存缺陷：明显CTA位移、旧owner私有层残留、迟到结果越过身份围栏、未知回执恢复重复POST、未知请求漏拦截。每个须目标断言失败和非零退出，启动失败/缺资源/零用例不是成功反例。
+  - [x] 前后正常控制实际执行非零用例。失败保留对应trace与视觉actual/expected/diff；使用retain-on-failure等保证首次失败即有trace，不靠未启用的retry。
+  - [x] 对误删除必需引擎/场景、缺基线、自动更新基线、环境指纹不匹配提供门禁反例；不能靠配置声明项目数或旧报告通过。
+  - [x] 注入误导入新E2E fixture、向Web/native复制浏览器helper资源的污染负例，证明扩展后的既有隔离检查会失败；移除污染后通过，不能以旧workbench/MSW命名黑名单充当新工具覆盖。
 
-- [ ] T7 保留旧探针职责并接入实际CI（AC4/5；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
-  - [ ] 按research矩阵逐项记录7个旧浏览器探针、server PG/worker/replay/socket/restore和measurements：原报告/源码、当前CI入口、替代对应、仍独立的资源与运行责任。旧报告的Chrome127/源码漂移必须明确。
-  - [ ] 本Story默认不退役旧探针；若确有重复项需要退役，先取得当前版本同场景等价执行证据与单独决定，真实IDB/WebCrypto/跨进程/SIGKILL/PG/SSE/ACK不得降级成截图或MSW。对实际受影响旧责任运行针对性原探针，未重跑项不计本次通过。
-  - [ ] CI保留9.4及全部原type/build/handoff/mobile/auth/ingest/PG/legacy/helper链；新增三引擎流程、canonical视觉、反例与结果完整性检查，源/lock/config或恢复实现变化会触发，缺必需资源明确失败。
-  - [ ] 显式让codex/story-9-5-browser-gates的push及实际PR目标分支触发完整门禁（默认父分支codex/story-9-4-workbench-quality，保留原main/1.0入口）；核验当前HEAD的真实run。候选基线入口必须能从明确当前ref实际触发，不能只写一个在仓库不可调度的workflow配置；触发方式/参数/候选身份留证。
-  - [ ] 独立候选基线入口与常规比较分离；CI下载检查实际包含trace、actual/expected/diff、各引擎结果/版本/字体及source manifest。hidden输出目录必须明确上传，并验证实际artifact成员，不能只有index。
+- [x] T7 保留旧探针职责并接入实际CI（AC4/5；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
+  - [x] 按research矩阵逐项记录7个旧浏览器探针、server PG/worker/replay/socket/restore和measurements：原报告/源码、当前CI入口、替代对应、仍独立的资源与运行责任。旧报告的Chrome127/源码漂移必须明确。
+  - [x] 本Story默认不退役旧探针；若确有重复项需要退役，先取得当前版本同场景等价执行证据与单独决定，真实IDB/WebCrypto/跨进程/SIGKILL/PG/SSE/ACK不得降级成截图或MSW。对实际受影响旧责任运行针对性原探针，未重跑项不计本次通过。
+  - [x] CI保留9.4及全部原type/build/handoff/mobile/auth/ingest/PG/legacy/helper链；新增三引擎流程、canonical视觉、反例与结果完整性检查，源/lock/config或恢复实现变化会触发，缺必需资源明确失败。
+  - [x] 显式让codex/story-9-5-browser-gates的push及实际PR目标分支触发完整门禁（默认父分支codex/story-9-4-workbench-quality，保留原main/1.0入口）；核验当前HEAD的真实run。候选基线入口必须能从明确当前ref实际触发，不能只写一个在仓库不可调度的workflow配置；触发方式/参数/候选身份留证。
+  - [x] 独立候选基线入口与常规比较分离；CI下载检查实际包含trace、actual/expected/diff、各引擎结果/版本/字体及source manifest。hidden输出目录必须明确上传，并验证实际artifact成员，不能只有index。
 
-- [ ] T8 限定审阅、逐条件闭环与交接（AC1–6；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
-  - [ ] 按6组AC保存正反例命令/退出码、真实运行环境/版本、源码/lock/config/资源摘要、截图审阅决定；列出mock/未测项，不据此更新其他Story原生/服务条件。
-  - [ ] 独立bmad-code-review、修补并复核已确认问题；新改源文件真实typed lint。创建当前checker的ui_delivery_evidence：kind=ui-verification、story_id='9.5'、同源hash、source_revision/recorded_at、两个checks的passed/environment/summary和现存repo-relative证据。UI-BROWSER-01作为首交付必须verified，不能not-applicable。
-  - [ ] 更新完整File List、Dev Agent Record、CURRENT/Sprint/monitor/当前branch与next-preparation；ci:handoff通过，若改guard才补guard回归。9.5自身done以后才临近准备9.3；3.1暂停/历史done/真实资源门槛不变。
+- [x] T8 限定审阅、逐条件闭环与交接（AC1–6；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
+  - [x] 按6组AC保存正反例命令/退出码、真实运行环境/版本、源码/lock/config/资源摘要、截图审阅决定；列出mock/未测项，不据此更新其他Story原生/服务条件。
+  - [x] 独立bmad-code-review、修补并复核已确认问题；新改源文件真实typed lint。创建当前checker的ui_delivery_evidence：kind=ui-verification、story_id='9.5'、同源hash、source_revision/recorded_at、两个checks的passed/environment/summary和现存repo-relative证据。UI-BROWSER-01作为首交付必须verified，不能not-applicable。
+  - [x] 更新完整File List、Dev Agent Record、CURRENT/Sprint/monitor/当前branch与next-preparation；ci:handoff通过，若改guard才补guard回归。9.5自身done以后才临近准备9.3；3.1暂停/历史done/真实资源门槛不变。
 
 ### Review Findings
 
 三层独立CR均完成；合并重复问题后0decision、8patch、0defer、0dismiss。已批准持续执行覆盖本轮普通修补，无需重新请求选择。
 
-- [ ] [Review][Patch] R1 报告负例递归入口传错对象，改为report.suites并实际执行CLI完整性负例。[apps/mobile/scripts/check-browser-validation-guards.mjs]
-- [ ] [Review][Patch] R2 inert不等于视觉隐藏，分别校验可见与交互输入值并补inert-only漏显反例。[apps/mobile/e2e/fixtures/privacy.ts]
-- [ ] [Review][Patch] R3 强制B已认证之后才释放旧A的/me响应，避免只检查最终覆盖后的B。[apps/mobile/e2e/flows/identity.spec.ts]
-- [ ] [Review][Patch] R4 完整覆盖HTML/public/tsconfig/native-auth等实际输入，保存并复核测试构建图谱及输出bytes，补源/输出变更拒绝反例。[apps/mobile/e2e/run-contract.json, apps/mobile/scripts/check-browser-results.mjs]
-- [ ] [Review][Patch] R5 HTTP route之外显式阻断WebSocket并检查最终ledger，补实际WebSocket反例。[apps/mobile/e2e/fixtures/api-scenario.ts]
-- [ ] [Review][Patch] R6 OTP fixture验证手机号形状且绑定成功start的号码，拒绝缺失/错配而不改变合成身份。[apps/mobile/e2e/fixtures/api-scenario.ts]
-- [ ] [Review][Patch] R7 noopener成功不报错，同时为被浏览器阻止的新窗口提供可用的当前页法律链接回退。[apps/mobile/src/auth/LoginScreen.tsx]
-- [ ] [Review][Patch] R8 每个engine×visual实例必须具备可读实际PNG，下载路径重定位后仍验证；缺capture/缺文件不得通过。[apps/mobile/scripts/check-browser-results.mjs]
+- [x] [Review][Patch] R1 报告负例递归入口传错对象，改为report.suites并实际执行CLI完整性负例。[apps/mobile/scripts/check-browser-validation-guards.mjs]
+- [x] [Review][Patch] R2 inert不等于视觉隐藏，分别校验可见与交互输入值并补inert-only漏显反例。[apps/mobile/e2e/fixtures/privacy.ts]
+- [x] [Review][Patch] R3 强制B已认证之后才释放旧A的/me响应，避免只检查最终覆盖后的B。[apps/mobile/e2e/flows/identity.spec.ts]
+- [x] [Review][Patch] R4 完整覆盖HTML/public/tsconfig/native-auth等实际输入，保存并复核测试构建图谱及输出bytes，补源/输出变更拒绝反例。[apps/mobile/e2e/run-contract.json, apps/mobile/scripts/check-browser-results.mjs]
+- [x] [Review][Patch] R5 HTTP route之外显式阻断WebSocket并检查最终ledger，补实际WebSocket反例。[apps/mobile/e2e/fixtures/api-scenario.ts]
+- [x] [Review][Patch] R6 OTP fixture验证手机号形状且绑定成功start的号码，拒绝缺失/错配而不改变合成身份。[apps/mobile/e2e/fixtures/api-scenario.ts]
+- [x] [Review][Patch] R7 noopener成功不报错，同时为被浏览器阻止的新窗口提供可用的当前页法律链接回退。[apps/mobile/src/auth/LoginScreen.tsx]
+- [x] [Review][Patch] R8 每个engine×visual实例必须具备可读实际PNG，下载路径重定位后仍验证；缺capture/缺文件不得通过。[apps/mobile/scripts/check-browser-results.mjs]
 
 ## Dev Notes
 
@@ -217,15 +218,15 @@ Canonical镜像：`mcr.microsoft.com/playwright:v1.63.0-noble@sha256:bc6ab0d6d44
 ## Dev Agent Record
 
 ### Agent Model Used
-Codex当前会话；两项独立只读研究，随后fresh-context合同VS。
+Codex主任务唯一writer；CS独立研究/VS，完整CR采用三个无会话上下文审阅者并完成定向复核。
 
 ### Debug Log References
 研究/当前代码核验不等于三引擎套件、镜像运行或截图通过。本准备阶段没有新增工具依赖或执行9.5测试。
 
-### Completion Notes List
+### Preparation Notes (historical)
 当前源六组GWT保真，CS/独立VS全部完成。两项计划补充已复核闭环；状态ready-for-dev，尚未运行9.5实现验证。
 
-### File List
+### Preparation File List (historical)
 本Story、两份research、preparation-decisions和后续validation；准备阶段只改规划状态/证据，不改产品或测试源码。
 
 ### 2026-09-25 DS开始
@@ -286,3 +287,161 @@ T2局部证明见t2-local-validation.json与t2-network-counterexamples.json（�
 ### T3/T4本机实现与File List
 
 新增e2e/flows/{home-sheet,identity,recovery}.spec.ts与fixtures/privacy.ts；扩展有状态API场景和auth-session。产品仅修补HomeScreen/HomeSheet/HomeImportDock的有效触发器焦点与新纳入lint的问题，以及LoginScreen noopener空引用误报。独立窄审阅与失败历史见execution-decisions；源码摘要、本机19×2、242+5移动/18组件和隔离检查见evidence/story-9-5-browser-2026-09-25/t34-local-validation.json。canonical三引擎尚待本提交运行，T3/T4保持未勾选，T5–T8未完成。
+
+
+### 2026-09-26 最终Dev Agent Record
+
+T0–T8与8项Review Follow-ups已完成；93项canonical/全部反例与原CI链通过，777个实际产物下载验证。完成review后进入done交接；实际验收源码85eedb6，完整结论见story-9-5-acceptance-2026-09-26.md及ui-delivery.yaml。仅自身两条件verified，其他真实资源条件与3.1暂停保持。所有失败与第一次拒绝候选保留。
+
+### File List
+
+完整差异基线a950ea0，已验证实现85eedb6；对应changed-files.json。
+
+- `.github/workflows/browser-visual-candidate.yml`
+- `.github/workflows/ci.yml`
+- `.gitignore`
+- `CURRENT.md`
+- `_bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates-validation.md`
+- `_bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates.md`
+- `_bmad-output/implementation-artifacts/capacitor-task-monitor-state.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/canonical-environment-explicit-launcher.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/canonical-environment-initial.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/changed-files.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/browser-product-graph.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/environment.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/flow-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/lint-result.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/network-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/source-manifest.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/suite-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/validation-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/visual-counterexample/actual.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/visual-counterexample/diff.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/visual-counterexample/expected.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/workbench-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/workbench-product-graph.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/workbench-product-isolation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ci/workbench-runtime.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/development-baseline.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/downloaded-artifacts.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy-final-auth/desktop-operator-authority.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy-final-auth/mobile-authority-unavailable.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy-final-auth/mobile-unknown-send.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy-final-auth/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy-final-auth/verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy/auth-desktop-operator-authority.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy/auth-mobile-authority-unavailable.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy/auth-mobile-unknown-send.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy/auth-report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy/pg-completed-before-background.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy/pg-owner-b-isolation.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy/pg-pg-browser.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/legacy/verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/review-local-validation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/state-transitions.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t0-ci-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t0-local-preflight.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t1-ci-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t1-local-validation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t2-ci-failure-history.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t2-ci-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t2-local-validation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t2-network-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t34-ci-failure-history.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t34-ci-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t34-local-validation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t5-baseline-review.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t5-initial-candidate-review.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t56-ci-failure-history.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/t6-local-flow-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-browser-2026-09-25/ui-delivery.yaml`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-preparation-2026-09-25/input-manifest.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-5-preparation-2026-09-25/preparation-checks.json`
+- `_bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md`
+- `_bmad-output/implementation-artifacts/research/story-9-5-browser-tooling-research-2026-09-25.md`
+- `_bmad-output/implementation-artifacts/research/story-9-5-contract-review-2026-09-25.md`
+- `_bmad-output/implementation-artifacts/research/story-9-5-plan-review-2026-09-25.md`
+- `_bmad-output/implementation-artifacts/research/story-9-5-repository-context-2026-09-25.md`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `_bmad-output/implementation-artifacts/story-9-5-acceptance-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/story-9-5-code-review-2026-09-25.md`
+- `_bmad-output/implementation-artifacts/story-9-5-dev-progress-2026-09-25.md`
+- `_bmad-output/implementation-artifacts/story-9-5-dev-validation-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/story-9-5-execution-decisions-2026-09-25.md`
+- `_bmad-output/implementation-artifacts/story-9-5-preparation-decisions-2026-09-25.md`
+- `_bmad-output/planning-artifacts/architecture.md`
+- `_bmad-output/project-context.md`
+- `apps/mobile/e2e/fixtures/api-scenario.ts`
+- `apps/mobile/e2e/fixtures/browser-test.ts`
+- `apps/mobile/e2e/fixtures/faults.ts`
+- `apps/mobile/e2e/fixtures/layout.ts`
+- `apps/mobile/e2e/fixtures/privacy.ts`
+- `apps/mobile/e2e/fixtures/sockets.ts`
+- `apps/mobile/e2e/flows/auth-session.spec.ts`
+- `apps/mobile/e2e/flows/bootstrap.spec.ts`
+- `apps/mobile/e2e/flows/fixture-contract.spec.ts`
+- `apps/mobile/e2e/flows/fixture-guards.spec.ts`
+- `apps/mobile/e2e/flows/home-sheet.spec.ts`
+- `apps/mobile/e2e/flows/identity.spec.ts`
+- `apps/mobile/e2e/flows/layout.spec.ts`
+- `apps/mobile/e2e/flows/recovery.spec.ts`
+- `apps/mobile/e2e/run-contract.json`
+- `apps/mobile/e2e/setup.ts`
+- `apps/mobile/e2e/visual/approval.json`
+- `apps/mobile/e2e/visual/baselines/chromium/V01-login.png`
+- `apps/mobile/e2e/visual/baselines/chromium/V02-home.png`
+- `apps/mobile/e2e/visual/baselines/chromium/V03-long-home.png`
+- `apps/mobile/e2e/visual/baselines/chromium/V04-large-login.png`
+- `apps/mobile/e2e/visual/baselines/chromium/V05-large-home.png`
+- `apps/mobile/e2e/visual/baselines/chromium/V06-keyboard-sheet.png`
+- `apps/mobile/e2e/visual/baselines/chromium/V07-large-long-sheet.png`
+- `apps/mobile/e2e/visual/baselines/chromium/V08-logout-confirmation.png`
+- `apps/mobile/e2e/visual/baselines/firefox/V01-login.png`
+- `apps/mobile/e2e/visual/baselines/firefox/V02-home.png`
+- `apps/mobile/e2e/visual/baselines/firefox/V03-long-home.png`
+- `apps/mobile/e2e/visual/baselines/firefox/V04-large-login.png`
+- `apps/mobile/e2e/visual/baselines/firefox/V05-large-home.png`
+- `apps/mobile/e2e/visual/baselines/firefox/V06-keyboard-sheet.png`
+- `apps/mobile/e2e/visual/baselines/firefox/V07-large-long-sheet.png`
+- `apps/mobile/e2e/visual/baselines/firefox/V08-logout-confirmation.png`
+- `apps/mobile/e2e/visual/baselines/webkit/V01-login.png`
+- `apps/mobile/e2e/visual/baselines/webkit/V02-home.png`
+- `apps/mobile/e2e/visual/baselines/webkit/V03-long-home.png`
+- `apps/mobile/e2e/visual/baselines/webkit/V04-large-login.png`
+- `apps/mobile/e2e/visual/baselines/webkit/V05-large-home.png`
+- `apps/mobile/e2e/visual/baselines/webkit/V06-keyboard-sheet.png`
+- `apps/mobile/e2e/visual/baselines/webkit/V07-large-long-sheet.png`
+- `apps/mobile/e2e/visual/baselines/webkit/V08-logout-confirmation.png`
+- `apps/mobile/e2e/visual/capture.ts`
+- `apps/mobile/e2e/visual/policy.json`
+- `apps/mobile/e2e/visual/screens.spec.ts`
+- `apps/mobile/package.json`
+- `apps/mobile/playwright.config.ts`
+- `apps/mobile/scripts/browser-environment.mjs`
+- `apps/mobile/scripts/check-browser-flow-guards.mjs`
+- `apps/mobile/scripts/check-browser-network-guards.mjs`
+- `apps/mobile/scripts/check-browser-results.mjs`
+- `apps/mobile/scripts/check-browser-validation-guards.mjs`
+- `apps/mobile/scripts/check-workbench-isolation.mjs`
+- `apps/mobile/scripts/check-workbench-isolation.test.mjs`
+- `apps/mobile/scripts/serve-browser-product.mjs`
+- `apps/mobile/src/auth/LoginScreen.tsx`
+- `apps/mobile/src/home/HomeImportDock.tsx`
+- `apps/mobile/src/home/HomeScreen.tsx`
+- `apps/mobile/src/home/HomeSheet.tsx`
+- `apps/mobile/src/styles.css`
+- `apps/mobile/tsconfig.e2e.json`
+- `apps/mobile/vite.config.ts`
+- `docs/ops/ui-validation.md`
+- `eslint.config.mjs`
+- `package.json`
+
+### Change Log
+
+- 2026-09-25：准备/独立VS、T0固定环境、三引擎实际入口、状态API/网络账本、页面恢复与焦点、候选与反例实施。
+- 2026-09-26：三层审阅8项修补；实际v2 CI、旧auth/PG责任和下载证据收口；逐条件verify后review→done，继续临近准备9.3。
+
+### Completion Notes List
+
+9.5适用AC/Tasks及两项自身工程条件全部完成；代码与完整CI85eedb6/run36157432347、24基线审阅、777下载文件/12trace和8项CR修补实证封存。未创建PR、未部署或外发真实Provider；下一只准备9.3，保持既有资源/3.1暂停门槛。

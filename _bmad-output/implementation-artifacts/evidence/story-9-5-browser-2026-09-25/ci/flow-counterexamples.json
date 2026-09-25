@@ -1,0 +1,187 @@
+{
+  "kind": "actual-product-browser-counterexamples",
+  "flowsOnly": false,
+  "injection": "isolated browser init script; no product writes",
+  "results": [
+    {
+      "fault": "control",
+      "pattern": "B11|B13|B15",
+      "runId": "flow-control-b33f7174-7a51-40e8-9187-35d31ca5ec30",
+      "exitCode": 0,
+      "target": null,
+      "executed": 3,
+      "attachments": []
+    },
+    {
+      "fault": "private-portal",
+      "pattern": "B13",
+      "runId": "flow-private-portal-7373a41e-193d-4f3f-b4f1-39d0961beb0f",
+      "exitCode": 1,
+      "target": "NOMAD_E2E_PRIVATE_VISIBLE",
+      "executed": 1,
+      "attachments": [
+        {
+          "name": "screenshot",
+          "path": ".browser-results/runs/flow-private-portal-7373a41e-193d-4f3f-b4f1-39d0961beb0f/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "path": ".browser-results/runs/flow-private-portal-7373a41e-193d-4f3f-b4f1-39d0961beb0f/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/error-context.md"
+        },
+        {
+          "name": "trace",
+          "path": ".browser-results/runs/flow-private-portal-7373a41e-193d-4f3f-b4f1-39d0961beb0f/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/trace.zip"
+        }
+      ]
+    },
+    {
+      "fault": "private-input",
+      "pattern": "B13",
+      "runId": "flow-private-input-3f28ec67-5c3a-48e6-a9f7-dc513fbe4ccb",
+      "exitCode": 1,
+      "target": "NOMAD_E2E_PRIVATE_VISIBLE_VALUE",
+      "executed": 1,
+      "attachments": [
+        {
+          "name": "screenshot",
+          "path": ".browser-results/runs/flow-private-input-3f28ec67-5c3a-48e6-a9f7-dc513fbe4ccb/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "path": ".browser-results/runs/flow-private-input-3f28ec67-5c3a-48e6-a9f7-dc513fbe4ccb/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/error-context.md"
+        },
+        {
+          "name": "trace",
+          "path": ".browser-results/runs/flow-private-input-3f28ec67-5c3a-48e6-a9f7-dc513fbe4ccb/test-results/flows-identity-B13-checkin-528a4--and-same-owner-can-recover-chromium/trace.zip"
+        }
+      ]
+    },
+    {
+      "fault": "late-result",
+      "pattern": "B15",
+      "runId": "flow-late-result-020ba165-a6b4-479f-a334-bff86cfa6b3e",
+      "exitCode": 1,
+      "target": "NOMAD_E2E_PRIVATE_VISIBLE",
+      "executed": 1,
+      "attachments": [
+        {
+          "name": "screenshot",
+          "path": ".browser-results/runs/flow-late-result-020ba165-a6b4-479f-a334-bff86cfa6b3e/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "path": ".browser-results/runs/flow-late-result-020ba165-a6b4-479f-a334-bff86cfa6b3e/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/error-context.md"
+        },
+        {
+          "name": "trace",
+          "path": ".browser-results/runs/flow-late-result-020ba165-a6b4-479f-a334-bff86cfa6b3e/test-results/flows-identity-B15-delayed-1bbe5-open-after-identity-changes-chromium/trace.zip"
+        }
+      ]
+    },
+    {
+      "fault": "duplicate-start",
+      "pattern": "B11",
+      "runId": "flow-duplicate-start-9a8e5479-e8c1-466d-aea7-87036270f673",
+      "exitCode": 1,
+      "target": "NOMAD_E2E_DUPLICATE_START",
+      "executed": 1,
+      "attachments": [
+        {
+          "name": "screenshot",
+          "path": ".browser-results/runs/flow-duplicate-start-9a8e5479-e8c1-466d-aea7-87036270f673/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "path": ".browser-results/runs/flow-duplicate-start-9a8e5479-e8c1-466d-aea7-87036270f673/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/error-context.md"
+        },
+        {
+          "name": "trace",
+          "path": ".browser-results/runs/flow-duplicate-start-9a8e5479-e8c1-466d-aea7-87036270f673/test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/trace.zip"
+        }
+      ]
+    },
+    {
+      "fault": "control",
+      "pattern": "V02",
+      "runId": "flow-control-e23edba6-00d1-4542-ba3c-abb0387cca1f",
+      "exitCode": 0,
+      "target": null,
+      "executed": 1,
+      "attachments": [
+        {
+          "name": "visual-actual",
+          "path": ".browser-results/runs/flow-control-e23edba6-00d1-4542-ba3c-abb0387cca1f/test-results/visual-screens-V02-Home-normal-chromium/attachments/visual-actual-ada3397f720a42bc798a51893a145ed8692d2489.png"
+        }
+      ]
+    },
+    {
+      "fault": "cta-shift",
+      "pattern": "V02",
+      "runId": "flow-cta-shift-597ede4e-b69e-494c-b1a9-4734c6980968",
+      "exitCode": 1,
+      "target": "toHaveScreenshot",
+      "executed": 1,
+      "attachments": [
+        {
+          "name": "V02-home-expected.png",
+          "path": "e2e/visual/baselines/chromium/V02-home.png"
+        },
+        {
+          "name": "V02-home-actual.png",
+          "path": ".browser-results/runs/flow-cta-shift-597ede4e-b69e-494c-b1a9-4734c6980968/test-results/visual-screens-V02-Home-normal-chromium/V02-home-actual.png"
+        },
+        {
+          "name": "V02-home-diff.png",
+          "path": ".browser-results/runs/flow-cta-shift-597ede4e-b69e-494c-b1a9-4734c6980968/test-results/visual-screens-V02-Home-normal-chromium/V02-home-diff.png"
+        },
+        {
+          "name": "screenshot",
+          "path": ".browser-results/runs/flow-cta-shift-597ede4e-b69e-494c-b1a9-4734c6980968/test-results/visual-screens-V02-Home-normal-chromium/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "path": ".browser-results/runs/flow-cta-shift-597ede4e-b69e-494c-b1a9-4734c6980968/test-results/visual-screens-V02-Home-normal-chromium/error-context.md"
+        },
+        {
+          "name": "trace",
+          "path": ".browser-results/runs/flow-cta-shift-597ede4e-b69e-494c-b1a9-4734c6980968/test-results/visual-screens-V02-Home-normal-chromium/trace.zip"
+        },
+        {
+          "name": "exported-actual.png",
+          "path": ".browser-results/runs/flow-cta-shift-597ede4e-b69e-494c-b1a9-4734c6980968/visual-diff/actual.png"
+        },
+        {
+          "name": "exported-expected.png",
+          "path": ".browser-results/runs/flow-cta-shift-597ede4e-b69e-494c-b1a9-4734c6980968/visual-diff/expected.png"
+        },
+        {
+          "name": "exported-diff.png",
+          "path": ".browser-results/runs/flow-cta-shift-597ede4e-b69e-494c-b1a9-4734c6980968/visual-diff/diff.png"
+        }
+      ]
+    },
+    {
+      "fault": "control",
+      "pattern": "V02",
+      "runId": "flow-control-0dd0c70a-df13-4405-af8a-8fdb4c2c8d68",
+      "exitCode": 0,
+      "target": null,
+      "executed": 1,
+      "attachments": [
+        {
+          "name": "visual-actual",
+          "path": ".browser-results/runs/flow-control-0dd0c70a-df13-4405-af8a-8fdb4c2c8d68/test-results/visual-screens-V02-Home-normal-chromium/attachments/visual-actual-1b187284fdb66b120c7dddd666a0ede1675226c1.png"
+        }
+      ]
+    },
+    {
+      "fault": "control",
+      "pattern": "B11|B13|B15",
+      "runId": "flow-control-5e187fb6-c129-4788-bda5-bd3d0112bf95",
+      "exitCode": 0,
+      "target": null,
+      "executed": 3,
+      "attachments": []
+    }
+  ]
+}

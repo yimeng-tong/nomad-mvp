@@ -111,7 +111,7 @@ development_status:
   9-1-capacitor-app-installation-and-host-foundation: in-progress
   9-2-android-apk-and-ios-testflight-delivery: backlog
   9-3-shared-ui-components-and-safe-app-sheet: backlog
-  9-4-component-workbench-and-enforced-code-quality: ready-for-dev
+  9-4-component-workbench-and-enforced-code-quality: in-progress
   9-5-browser-flow-and-visual-regression-gates: backlog
   9-6-identity-scoped-server-read-queries: backlog
   9-7-typed-navigation-and-host-history: backlog
@@ -379,9 +379,15 @@ condition_progress:
       state: not-started
   9-4-component-workbench-and-enforced-code-quality:
     CODE-QUALITY-01:
-      state: not-started
+      state: in-progress
+      summary: 真实typed lint与5组门禁反例已运行，保留豁免0；等待远端CI和独立CR收口。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/local-validation.json
     UI-WORKBENCH-01:
-      state: not-started
+      state: in-progress
+      summary: 17个Chromium场景、共享网络8项、10故障反例与产品双端资源隔离通过；实际CI/CR未完成。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/local-validation.json
   9-5-browser-flow-and-visual-regression-gates:
     CODE-QUALITY-01:
       state: not-started
@@ -621,7 +627,8 @@ active_workstreams:
     thread_id: 01a0d78a-3692-78b1-aee5-76268a743925
     host_id: local
     environment: current-saved-project
-    status: handed-off-pending-start-message
+    status: active
+    working_branch: codex/story-9-4-workbench-quality
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
     scope: 9.4开发审阅先行；9.5/9.3临近实施才CS/VS；在制真实门槛和3.1暂停保持
@@ -634,7 +641,7 @@ current_preparation:
   status: complete
   evidence: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
   authorization: _bmad-output/implementation-artifacts/story-9-4-preparation-decisions-2026-09-25.md
-  implementation_started: false
+  implementation_started: true
   execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_boundary_override: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md

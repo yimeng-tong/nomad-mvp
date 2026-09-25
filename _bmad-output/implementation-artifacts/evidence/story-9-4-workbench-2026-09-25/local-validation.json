@@ -1,0 +1,81 @@
+{
+  "kind": "local-story-verification",
+  "story_id": "9.4",
+  "recorded_at": "2026-09-25T08:51:06.499772+00:00",
+  "source_revision": "abac3df+story-9.4-working-tree",
+  "checks": {
+    "workbench_typecheck": {
+      "exit_code": 0
+    },
+    "workbench_network": {
+      "exit_code": 0,
+      "passed": 8
+    },
+    "workbench_browser": {
+      "exit_code": 0,
+      "passed": 17
+    },
+    "workbench_counterexamples": {
+      "exit_code": 0,
+      "expected_failures": 10,
+      "positive_controls": 2
+    },
+    "lint": {
+      "exit_code": 0,
+      "retained_exceptions": 0
+    },
+    "lint_counterexamples": {
+      "exit_code": 0,
+      "groups": 5
+    },
+    "workspace_build": {
+      "exit_code": 0
+    },
+    "mobile": {
+      "exit_code": 0,
+      "passed": 242
+    },
+    "native_config": {
+      "exit_code": 0,
+      "passed": 5
+    },
+    "server_contracts_and_helpers": {
+      "exit_code": 0,
+      "passed": 103
+    },
+    "backup_helpers": {
+      "exit_code": 0,
+      "passed": 7
+    },
+    "bounded_process": {
+      "exit_code": 0,
+      "passed": 2
+    },
+    "native_sync": {
+      "exit_code": 0,
+      "real_device": false
+    },
+    "native_verify": {
+      "exit_code": 0,
+      "real_device": false
+    },
+    "resource_counterexamples": {
+      "exit_code": 0,
+      "groups": 4
+    },
+    "runtime": {
+      "exit_code": 0,
+      "real_provider": false
+    },
+    "handoff": {
+      "exit_code": 0
+    },
+    "handoff_regression": {
+      "exit_code": 0,
+      "passed": 82
+    }
+  },
+  "remote_ci": "not-yet-run",
+  "independent_review": "not-yet-run",
+  "remaining": "Clean frozen install, remote CI, independent review/fixes and final closure evidence."
+}

@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "types": ["vite/client", "node"], "allowImportingTsExtensions": true },
+  "include": ["workbench/**/*.ts", "workbench/**/*.tsx", ".storybook/*.ts", ".storybook/*.tsx", "vitest.*.config.ts"]
+}

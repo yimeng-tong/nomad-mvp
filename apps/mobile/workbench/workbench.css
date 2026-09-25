@@ -1,0 +1,5 @@
+.workbench-stage { padding: 24px; min-height: 100vh; }
+.workbench-stage h1 { font-size: 24px; }
+.workbench-stage h2 { font-size: 20px; }
+.workbench-stage p { font-size: 16px; }
+.workbench-stage button { min-height: 44px; }

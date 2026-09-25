@@ -45,3 +45,10 @@ scripts/telemetry/__pycache__/
 # Raw runtime evidence logs stay local or in the private homelab evidence archive
 _bmad-output/implementation-artifacts/evidence/**/*.txt
 _bmad-output/implementation-artifacts/investigations/evidence/**/*.txt
+
+# Component workbench output; scenarios and evidence summaries are versioned.
+**/storybook-static/
+**/.storybook-cache/
+**/.workbench-results/
+**/test-results/
+**/playwright-report/

@@ -1,0 +1,575 @@
+{
+  "source": "npm official registry exact versions",
+  "packages": [
+    {
+      "name": "storybook",
+      "version": "10.6.0",
+      "peerDependencies": {
+        "prettier": "^2 || ^3",
+        "vite-plus": "^0.1.15 || ^0.2.0",
+        "@types/react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+      },
+      "peerDependenciesMeta": {
+        "prettier": {
+          "optional": true
+        },
+        "vite-plus": {
+          "optional": true
+        },
+        "@types/react": {
+          "optional": true
+        }
+      },
+      "dist": {
+        "shasum": "095ec809a6ff7e24ceb8766a9db86dfeb000a94f",
+        "tarball": "https://registry.npmjs.org/storybook/-/storybook-10.6.0.tgz",
+        "fileCount": 275,
+        "integrity": "sha512-H48X6AURAFTpfN2zEux6vNesee5Oq8Gxj1IanYmblPZ218sfKSeyyerF1NC7GD7BrruoC8L4/cU0zII4y+d6zw==",
+        "signatures": [
+          {
+            "sig": "MEUCIARu1i7BcKlw/3m8/1NVVLBXaCCUadRhj1QoB9Cc/cGNAiEAwDWhZ6946ydhdg09DIOP5VThy10ZlOknKgsPzOor2yI=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "sig": "MEYCIQCom6xIFKf8DgAhOhPqrRt6CqatikXhNXUP8vIWvCpUBwIhAPw3wEM0wf43GAXS7ezephP44jqcOG2pSDSRgQMCVUJy",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/storybook@10.6.0",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 22168203
+      }
+    },
+    {
+      "name": "@storybook/react-vite",
+      "version": "10.6.0",
+      "peerDependencies": {
+        "vite": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0",
+        "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+        "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+        "storybook": "^10.6.0",
+        "typescript": ">= 4.9.x"
+      },
+      "peerDependenciesMeta": {
+        "typescript": {
+          "optional": true
+        }
+      },
+      "dist": {
+        "shasum": "0647750c88f5b15f765e5ed4b4d7c1fc2c953f1f",
+        "tarball": "https://registry.npmjs.org/@storybook/react-vite/-/react-vite-10.6.0.tgz",
+        "fileCount": 24,
+        "integrity": "sha512-nc1dqnmjGOcDJvPCkAn4Hmu1gi7dNHHoibNmlBp0d1adosejELZxuNjHBkPl/KxZjbzP3jljQHnHB/guxd8e2g==",
+        "signatures": [
+          {
+            "sig": "MEQCIBOptnE2TGPi9dDNObYT/ccVL6Kk+pdTbJ0Mej05PYvmAiAEUohYKmbDARSgPV8NZrJIAZKYHG4+OKtjhaKOgVccaw==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "sig": "MEUCIHwgwOQBGsPX2Ji6R02pH2vJClx6TcGpz9xlnnPZC9ArAiEAhOmbLgraSHh9Y5nlB0QD6AZDGs6PPepUaJC8gXgRsKM=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/@storybook%2freact-vite@10.6.0",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 32012
+      }
+    },
+    {
+      "name": "@storybook/addon-a11y",
+      "version": "10.6.0",
+      "peerDependencies": {
+        "storybook": "^10.6.0"
+      },
+      "dist": {
+        "shasum": "b343dcc9afb434ef01e9ae728409e2fa7f05ed7c",
+        "tarball": "https://registry.npmjs.org/@storybook/addon-a11y/-/addon-a11y-10.6.0.tgz",
+        "fileCount": 17,
+        "integrity": "sha512-Z/CZor/F8H74/+IoeLroEQXQoVxvmjVtUgATJ95KPBolHxMaHLXLsYU0wosIiiORxmfRCnpen5pQl1n4+pBWQw==",
+        "signatures": [
+          {
+            "sig": "MEUCIQC49cOH1DBc4LLWuv46akHGCH9xdkBtQmJchhJZQGC8GgIgeuVEMlQixnbT6Yl6GnMV7Wu3Oiu83NaEfoHCf3gdVCQ=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "sig": "MEUCIQDyCy+MLi+FO0jJfqNnJhOqk0TcUft1nI686LbeyPcYhwIgDlWyUFUtlVoPAYJ+D3JKxLgO2VS7ZrK/5GwHVzUN2FI=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/@storybook%2faddon-a11y@10.6.0",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 187732
+      }
+    },
+    {
+      "name": "@storybook/addon-vitest",
+      "version": "10.6.0",
+      "peerDependencies": {
+        "vitest": "^3.0.0 || ^4.0.0",
+        "storybook": "^10.6.0",
+        "@vitest/runner": "^3.0.0 || ^4.0.0",
+        "@vitest/browser": "^3.0.0 || ^4.0.0",
+        "@vitest/browser-playwright": "^4.0.0"
+      },
+      "peerDependenciesMeta": {
+        "vitest": {
+          "optional": true
+        },
+        "@vitest/runner": {
+          "optional": true
+        },
+        "@vitest/browser": {
+          "optional": true
+        },
+        "@vitest/browser-playwright": {
+          "optional": true
+        }
+      },
+      "dist": {
+        "shasum": "f7375166d1e7005c06c43946c95d402d04d53536",
+        "tarball": "https://registry.npmjs.org/@storybook/addon-vitest/-/addon-vitest-10.6.0.tgz",
+        "fileCount": 39,
+        "integrity": "sha512-GY2SwSXLNgyMqjQ59J7YTkEQTHdEbBMggOvbbuhuPUBhWo97OGSDCmn1UW3nXDZvkoWyWhF9T9628m1uei7FbA==",
+        "signatures": [
+          {
+            "sig": "MEQCIH+PysW2mjHx8mkw5TGGpnAFO6w93DdbPq8VxN1CzBMXAiAMyeZAeSj36rTHWn6B7vzOyEtJKhsGlY1TnbjPwyhJBA==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "sig": "MEYCIQC9gQUQoZFbkkfm78tDwMkdJTwo5X9A/1IRqnBpXqKsbQIhAP/8OSE00uxUVEC5YacyZmsK/+Hj6+8al4WwEPV9OWdL",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/@storybook%2faddon-vitest@10.6.0",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 466899
+      }
+    },
+    {
+      "name": "@vitest/browser-playwright",
+      "version": "4.1.9",
+      "peerDependencies": {
+        "vitest": "4.1.9",
+        "playwright": "*"
+      },
+      "peerDependenciesMeta": {
+        "playwright": {
+          "optional": false
+        }
+      },
+      "scripts": {
+        "dev": "rollup -c --watch --watch.include 'src/**'",
+        "build": "premove dist && pnpm rollup -c"
+      },
+      "dist": {
+        "shasum": "845e65017dfed8aff59931f91016e7595b8f5c1d",
+        "tarball": "https://registry.npmjs.org/@vitest/browser-playwright/-/browser-playwright-4.1.9.tgz",
+        "fileCount": 7,
+        "integrity": "sha512-Bq1rOGf9waevzG3EOkO/dene6bvKTUsZMVg8S1i+WH3JcMjuXEjiahP9rAqZRELUqjBySOJsvvSWqK/B3wjKQw==",
+        "signatures": [
+          {
+            "sig": "MEUCIQDXqwp4P4uUrPwA2l/oavO4BkqhS86s6Y0d+95PFRMbhgIgIwcTRbdjWK9AbSjgnAml0hS19CW3PBx3zibK0+taagI=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/@vitest%2fbrowser-playwright@4.1.9",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 48598
+      }
+    },
+    {
+      "name": "playwright",
+      "version": "1.63.0",
+      "engines": {
+        "node": ">=20"
+      },
+      "dist": {
+        "shasum": "99b56f9f69b1b70c44f00bf84b2fe52348ae2511",
+        "tarball": "https://registry.npmjs.org/playwright/-/playwright-1.63.0.tgz",
+        "fileCount": 62,
+        "integrity": "sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==",
+        "signatures": [
+          {
+            "sig": "MEQCIFn72Uq9JNdpz1rV1lvXHFkN/RVw2SRE69/WaPi8+JVpAiBylqLY4s2V2Ykl102NEUg56SIXh9Ig1vzaxWMY+6phYw==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "sig": "MEYCIQDbhaeMgqrXvUZ8VnMwwCDWzJT2LAkJoad5xAQLowOEXQIhAI7AM5/Z5BCB4ChADMQtg5y2yUhs6LzrHzREhmKgiFpZ",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/playwright@1.63.0",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 5094512
+      }
+    },
+    {
+      "name": "msw",
+      "version": "2.15.0",
+      "engines": {
+        "node": ">=18"
+      },
+      "peerDependencies": {
+        "typescript": ">= 4.8.x"
+      },
+      "peerDependenciesMeta": {
+        "typescript": {
+          "optional": true
+        }
+      },
+      "scripts": {
+        "knip": "knip",
+        "lint": "oxlint ./cli ./src ./test",
+        "test": "pnpm test:unit && pnpm test:node && pnpm test:browser && pnpm test:native && pnpm test:memory",
+        "build": "pnpm clean && cross-env NODE_ENV=production tsup && pnpm patch:dts",
+        "clean": "rimraf ./lib",
+        "start": "tsup --watch",
+        "publint": "publint",
+        "release": "release publish",
+        "test:ts": "vitest --config=./test/typings/vitest.config.ts",
+        "test:e2e": "vitest run --config=./test/e2e/vitest.config.ts",
+        "patch:dts": "node \"./config/scripts/patch-ts.js\"",
+        "test:node": "vitest --config=./test/node/vitest.config.ts",
+        "test:unit": "vitest",
+        "postinstall": "node -e \"import('./config/scripts/postinstall.js').catch(() => void 0)\"",
+        "test:memory": "vitest --config=./test/memory/vitest.config.ts",
+        "test:native": "vitest --config=./test/native/vitest.config.ts",
+        "test:browser": "playwright test -c ./test/browser/playwright.config.ts",
+        "test:modules:node": "vitest run --config=./test/modules/node/vitest.config.ts",
+        "test:modules:browser": "playwright test -c ./test/modules/browser/playwright.config.ts"
+      },
+      "dist": {
+        "shasum": "4028ba3d887af8c166d45aa3bf37116f73f21cec",
+        "tarball": "https://registry.npmjs.org/msw/-/msw-2.15.0.tgz",
+        "fileCount": 670,
+        "integrity": "sha512-2wQAmKkQKxRuXvYJxVhPGG0wZNBQyD06oJvxqw90XqLvptdqxdlHrFUfEteKkpaNORX3Xzc+HtEl/q0nfmN2wQ==",
+        "signatures": [
+          {
+            "sig": "MEUCIAU4HHt/QGKPxT88zNwnY7LSz3+6zpIVch63PtHNk0bGAiEA9u6nDA5WaL7Qzpzuk5OuoE4uGh6y1bEW1ge3rfGqqek=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/msw@2.15.0",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 6048017
+      }
+    },
+    {
+      "name": "msw-storybook-addon",
+      "version": "3.0.3",
+      "peerDependencies": {
+        "msw": ">=2",
+        "storybook": "^9.0.0 || ^10.0.0 || ^11.0.0-0"
+      },
+      "scripts": {
+        "dev": "tsdown --watch",
+        "lint": "publint",
+        "build": "tsdown",
+        "release": "release publish",
+        "test:ts": "vitest --typecheck",
+        "storybook": "storybook dev --config-dir ./tests/factory/.storybook",
+        "test:play": "vitest -c ./tests/factory/vitest.config.ts --project storybook",
+        "test:codemod": "vitest run -c ./codemod/vitest.config.ts",
+        "test:stories": "playwright test",
+        "storybook:csf3": "storybook dev --config-dir ./tests/csf3/.storybook",
+        "install:browsers": "pnpm exec playwright install chromium --with-deps",
+        "storybook:factory-custom-setup": "storybook dev --config-dir ./tests/factory-custom-setup/.storybook"
+      },
+      "dist": {
+        "shasum": "63108897dc6f1e44fd2dd0ca6f7857409d467db2",
+        "tarball": "https://registry.npmjs.org/msw-storybook-addon/-/msw-storybook-addon-3.0.3.tgz",
+        "fileCount": 15,
+        "integrity": "sha512-4Jh4oKxqdHzqoBwe5mke9eCxfUQud5TaU5PME1476GDfelSXMkZLBTkDFehPvq5hMC8ksOkEjL5fAo4kS8d4pg==",
+        "signatures": [
+          {
+            "sig": "MEUCIQCXYhCot1q9RZiN9zhzHKhKPu+72X5sFOGQlib9kM5O1AIgQu1AhscjhSK3LaCTxvRDMUsh84og9W1mUAUIQgdibmE=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "sig": "MEUCIQDHavCxskeCHbP3H6R2YcWKqplW207gE5v4yQSSTLvFgQIgPXsqxUiYEBZGn6ugt89eHo9qYLw7ImrECKPRQizAChM=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/msw-storybook-addon@3.0.3",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 59262
+      }
+    },
+    {
+      "name": "eslint",
+      "version": "9.39.5",
+      "engines": {
+        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+      },
+      "peerDependencies": {
+        "jiti": "*"
+      },
+      "peerDependenciesMeta": {
+        "jiti": {
+          "optional": true
+        }
+      },
+      "scripts": {
+        "lint": "trunk check --no-fix --ignore=docs/**/*.js -a --filter=eslint && trunk check --no-fix --ignore=docs/**/*.js",
+        "test": "node Makefile.js test",
+        "lint:fix": "trunk check -y --ignore=docs/**/*.js -a --filter=eslint && trunk check -y --ignore=docs/**/*.js",
+        "test:cli": "mocha",
+        "test:fuzz": "node Makefile.js fuzz",
+        "test:pnpm": "cd tests/pnpm && node check.js && pnpm install && pnpm exec tsc",
+        "build:site": "node Makefile.js gensite",
+        "lint:types": "attw --pack",
+        "test:types": "tsc -p tests/lib/types/tsconfig.json",
+        "lint:unused": "knip",
+        "test:emfile": "node tools/check-emfile-handling.js",
+        "build:readme": "node tools/update-readme.js",
+        "lint:docs:js": "trunk check --no-fix --ignore=** --ignore=!docs/**/*.js -a --filter=eslint && trunk check --no-fix --ignore=** --ignore=!docs/**/*.js",
+        "test:browser": "node Makefile.js cypress",
+        "build:webpack": "node Makefile.js webpack",
+        "lint:rule-types": "node tools/update-rule-type-headers.js --check",
+        "release:publish": "node Makefile.js publishRelease",
+        "lint:fix:docs:js": "trunk check -y --ignore=** --ignore=!docs/**/*.js -a --filter=eslint && trunk check -y --ignore=** --ignore=!docs/**/*.js",
+        "test:performance": "node Makefile.js perf",
+        "build:rules-index": "node Makefile.js generateRuleIndexPage",
+        "release:generate:rc": "node Makefile.js generatePrerelease -- rc",
+        "release:generate:beta": "node Makefile.js generatePrerelease -- beta",
+        "release:generate:alpha": "node Makefile.js generatePrerelease -- alpha",
+        "build:docs:update-links": "node tools/fetch-docs-links.js",
+        "lint:docs:rule-examples": "node Makefile.js checkRuleExamples",
+        "release:generate:latest": "node Makefile.js generateRelease -- latest",
+        "release:generate:maintenance": "node Makefile.js generateRelease -- maintenance"
+      },
+      "dist": {
+        "shasum": "2a4e3c8b0f753196efae943c8ffaa8730fc6a3fa",
+        "tarball": "https://registry.npmjs.org/eslint/-/eslint-9.39.5.tgz",
+        "fileCount": 426,
+        "integrity": "sha512-DgZS62aPLXKlnxILS/AYCoRvHaZeXceIzlXPkkGGzJWSow1aEk0lbTlxUSlyjC8jcaKxAdOnTDz+o1JFSBsyjw==",
+        "signatures": [
+          {
+            "sig": "MEQCIHJMfgiHn8FqX/m+C6QjvjegpkewOjnsonHYZIeXRnAmAiAcR74ioJVvvL67b0gqBskGmlMDAybTPajnpK9jAKPcnA==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "unpackedSize": 3008896
+      }
+    },
+    {
+      "name": "@eslint/js",
+      "version": "9.39.5",
+      "engines": {
+        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+      },
+      "scripts": {
+        "test:types": "tsc -p tests/types/tsconfig.json"
+      },
+      "dist": {
+        "shasum": "6f2fbcff75500d229d535e0a949ae13472c84787",
+        "tarball": "https://registry.npmjs.org/@eslint/js/-/js-9.39.5.tgz",
+        "fileCount": 7,
+        "integrity": "sha512-QywQuszQh77pIXCsq998c8hbhSTI/azTty1Z6N53dmAudKHhy573j3yvRLsX2BSp8YpLtoCEG8E9DJe+8zUh4A==",
+        "signatures": [
+          {
+            "sig": "MEYCIQCn0aY4AHZg3xzgJMDCUWyAL0N5qV0foxXd4lszfodQ7gIhALM3pMq0bzlzT6Bydm+XjBBzt+PtKihH+BDYDPpxWTtd",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "unpackedSize": 15798
+      }
+    },
+    {
+      "name": "typescript-eslint",
+      "version": "8.70.0",
+      "engines": {
+        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+      },
+      "peerDependencies": {
+        "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+        "typescript": ">=4.8.4 <6.1.0"
+      },
+      "scripts": {
+        "lint": "pnpm -w exec nx lint",
+        "test": "pnpm -w exec nx test",
+        "build": "pnpm exec nx build",
+        "clean": "rimraf dist/ coverage/",
+        "format": "pnpm -w run format",
+        "typecheck": "pnpm -w exec nx typecheck",
+        "attw-check": "pnpm -w exec nx attw-check",
+        "typecheck:tsgo": "pnpm -w exec nx typecheck:tsgo"
+      },
+      "dist": {
+        "shasum": "6c90c532079132ba7d4a386bf0882c56d82fe5af",
+        "tarball": "https://registry.npmjs.org/typescript-eslint/-/typescript-eslint-8.70.0.tgz",
+        "fileCount": 13,
+        "integrity": "sha512-P/W5cz70/cQAuKfY3xwQMWWTV7BvJ0mAQmi+9mBcsVPaBUpd6Ohpa+fECv9rBFrQcig86jAiNBFNWUqnTjr4pw==",
+        "signatures": [
+          {
+            "sig": "MEUCIE8kUpPpUrnGT4YyYM2AasK3qZnEtoUKqgzkpJkw/oM6AiEAwy2a9kz+s5fv1H0ByTeLQAmPloa3eiqsYGofUFz28NI=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "sig": "MEYCIQDUF/c5VEGT9EOQQeTZ5pMGVBWT2w8/TQvT08Lt6Knt6wIhANLPYXsfpYlWc9YejLBZtm6+kZg0uTbqkxXpfGjQiOxy",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/typescript-eslint@8.70.0",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 42865
+      }
+    },
+    {
+      "name": "eslint-plugin-react-hooks",
+      "version": "7.1.1",
+      "engines": {
+        "node": ">=18"
+      },
+      "peerDependencies": {
+        "eslint": "^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0 || ^10.0.0"
+      },
+      "scripts": {
+        "test": "yarn build:compiler && jest",
+        "typecheck": "tsc --noEmit",
+        "build:compiler": "cd ../../compiler && yarn workspace babel-plugin-react-compiler build"
+      },
+      "dist": {
+        "shasum": "e6742cad75d970c0a3f30d7d3fa80a4784f55927",
+        "tarball": "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-7.1.1.tgz",
+        "fileCount": 8,
+        "integrity": "sha512-f2I7Gw6JbvCexzIInuSbZpfdQ44D7iqdWX01FKLvrPgqxoE7oMj8clOfto8U6vYiz4yd5oKu39rRSVOe1zRu0g==",
+        "signatures": [
+          {
+            "sig": "MEYCIQCdi56UBcCdIG9KuraMEEC9DmLaBSwFdu3/FH8z6uwFlAIhAPKLC+VSc1yZGOqe0obrEL1J80GrzRndCFDhDWqVCZWw",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "unpackedSize": 4095735
+      }
+    },
+    {
+      "name": "eslint-plugin-jsx-a11y",
+      "version": "6.10.2",
+      "engines": {
+        "node": ">=4.0"
+      },
+      "peerDependencies": {
+        "eslint": "^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9"
+      },
+      "scripts": {
+        "flow": "flow",
+        "lint": "npx eslint@8 --ext=js,mjs,cjs,ts,tsx .",
+        "test": "npm run tests-only",
+        "build": "rimraf lib && babel src --out-dir lib --copy-files",
+        "create": "node ./scripts/create-rule",
+        "prepack": "npmignore --auto --commentLines=autogenerated && npm run build",
+        "pretest": "npm run lint:fix && npm run flow",
+        "version": "auto-changelog && git add CHANGELOG.md",
+        "lint:fix": "npm run lint -- --fix",
+        "posttest": "npx npm@'>=10.2' audit --production",
+        "prepublish": "not-in-publish || npm run prepublishOnly",
+        "tests-only": "tape --require=@babel/register '__tests__/**/*.js'",
+        "postversion": "auto-changelog && git add CHANGELOG.md && git commit --no-edit --amend && git tag -f \"v$(node -e \"console.log(require('./package.json').version)\")\"",
+        "test:examples": "npm run test-example:legacy && npm run test-example:flat-esm && npm run test-example:flat-cjs",
+        "prepublishOnly": "safe-publish-latest && npm run lint && npm run flow && npm run tests-only",
+        "pretest:examples": "npm run build",
+        "test-example:legacy": "cd examples/legacy && npm install && npm run lint",
+        "test-example:flat-cjs": "cd examples/flat-cjs && npm install && npm run lint",
+        "test-example:flat-esm": "cd examples/flat-esm && npm install && npm run lint",
+        "generate-list-of-rules": "eslint-doc-generator --rule-doc-title-format prefix-name --rule-doc-section-options false --config-emoji recommended,☑️ --ignore-config flat/recommended --ignore-config flat/strict",
+        "pregenerate-list-of-rules": "npm run build",
+        "generate-list-of-rules:check": "npm run generate-list-of-rules -- --check"
+      },
+      "dist": {
+        "shasum": "d2812bb23bf1ab4665f1718ea442e8372e638483",
+        "tarball": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.10.2.tgz",
+        "fileCount": 229,
+        "integrity": "sha512-scB3nz4WmG75pV8+3eRUQOHZlNSUhFNq37xnpgRkCCELU3XMvXAxLk1eqWWyE22Ki4Q01Fnsw9BA3cJHDPgn2Q==",
+        "signatures": [
+          {
+            "sig": "MEQCIBLVcMo1z8881smPVhZGfvKqwjP/+8M3bzoHT8HZNUjkAiA/xOYOovyHHvvQMOBMfy5+Yr/IUGMhxRrzLV+dMim4GA==",
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA"
+          }
+        ],
+        "unpackedSize": 752797
+      }
+    },
+    {
+      "name": "globals",
+      "version": "17.12.0",
+      "engines": {
+        "node": ">=18"
+      },
+      "scripts": {
+        "test": "npm run build && xo && ava && tsd",
+        "build": "run-s build:data build:types",
+        "update": "node scripts/update.mjs",
+        "prepare": "npm run build",
+        "build:data": "node scripts/generate-data.mjs",
+        "build:types": "node scripts/generate-types.mjs",
+        "update:jest": "node scripts/update.mjs --job=jest",
+        "update:vitest": "node scripts/update.mjs --job=vitest",
+        "update:worker": "node scripts/update.mjs --job=worker",
+        "update:browser": "node scripts/update.mjs --job=browser",
+        "update:builtin": "node scripts/update.mjs --job=builtin",
+        "update:shelljs": "node scripts/update.mjs --job=shelljs",
+        "update:bunBuiltin": "node scripts/update.mjs --job=bunBuiltin",
+        "update:denoBuiltin": "node scripts/update.mjs --job=denoBuiltin",
+        "update:nodeBuiltin": "node scripts/update.mjs --job=nodeBuiltin",
+        "update:audioWorklet": "node scripts/update.mjs --job=audioWorklet",
+        "update:sharedWorker": "node scripts/update.mjs --job=sharedWorker",
+        "update:serviceworker": "node scripts/update.mjs --job=serviceworker",
+        "update:builtin-yearly": "node scripts/update.mjs --job=builtin-yearly"
+      },
+      "dist": {
+        "shasum": "910a368b8f093d3feb3f77a56dcefa05647d698e",
+        "tarball": "https://registry.npmjs.org/globals/-/globals-17.12.0.tgz",
+        "fileCount": 6,
+        "integrity": "sha512-cezEd/DTyyht9cvSSURyygXPfy04GtWO/5e6ZPvH7fCtjKz9PYOmuawphw1Ctd1f6C+5JypXfGD7ahNMXvevBA==",
+        "signatures": [
+          {
+            "sig": "MEQCIBFCvk8xnymOcWgBbl5sAhR8KdkkLdujrm81dLqxT3W3AiASr/Ws8qB74DWsOJRfh5oAgQt4/kCY1grOCplzGlRmWQ==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "sig": "MEYCIQCBHXIw9bF53Rs1ddIc10stdIEXoP+ojupagVunjQRXJgIhALIjSHG+XeNVSMB9n3z45b4TpwAc6cC5j/wZUzhe4AWC",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "unpackedSize": 256841
+      }
+    }
+  ]
+}

@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, codex/story-9-4-workbench-quality ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, codex/story-1-0-production-auth ]
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:15
@@ -30,9 +30,15 @@ jobs:
       SSE_HEARTBEAT_MS: 10000
       DATABASE_URL: postgresql://user:pass@localhost:5432/nomad_auth_test_ci
       REDIS_URL: redis://localhost:6379
+      STORYBOOK_DISABLE_TELEMETRY: '1'
+      pnpm_config_verify_deps_before_run: error
+      CODE_QUALITY_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+      CODE_QUALITY_HEAD: ${{ github.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -42,11 +48,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22.22.1'
           cache: 'pnpm'
 
       - name: Install deps
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
       - name: Generate OpenAPI types
         run: pnpm run ci:types
@@ -57,8 +63,45 @@ jobs:
       - name: Handoff regression
         run: node --test scripts/check-handoff.test.mjs
 
+      - name: Typed lint with explicit comparison and frozen coverage
+        run: pnpm run ci:lint
+
+      - name: Lint gate counterexamples
+        run: pnpm run ci:lint:negative
+
       - name: Build workspace
+        env:
+          NOMAD_RECORD_PRODUCT_GRAPH: '1'
         run: pnpm run ci:build
+
+      - name: Install locked component Chromium and Chinese fonts
+        run: |
+          pnpm -F nomad-mobile exec playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk
+
+      - name: Workbench types, static build, shared network handlers, interaction and accessibility
+        run: pnpm run ci:workbench
+
+      - name: Actual component and network counterexamples
+        run: pnpm run ci:workbench:negative
+
+      - name: Sync controlled native project resources and inspect complete inventories
+        env:
+          NOMAD_NATIVE_ENV: development
+        run: |
+          pnpm -F nomad-mobile run native:sync
+          pnpm -F nomad-mobile run native:verify
+          pnpm run ci:workbench:isolation
+
+      - name: Preserve component and resource evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: story-9-4-workbench-${{ github.sha }}
+          path: |
+            apps/mobile/.workbench-results/
+            apps/mobile/storybook-static/index.json
+          if-no-files-found: warn
 
       - name: Apply Prisma migrations to isolated CI database
         run: pnpm -F nomad-prisma run migrate:deploy

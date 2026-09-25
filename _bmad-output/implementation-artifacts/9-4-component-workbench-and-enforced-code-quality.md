@@ -11,11 +11,11 @@ updated: '2026-09-25'
 workflow: bmad-create-story
 preparation_status: complete
 preparation_authorization: _bmad-output/implementation-artifacts/story-9-4-preparation-decisions-2026-09-25.md
-implementation_started: false
+implementation_started: true
 execution_dispatch_authorized: true
 execution_stop_boundary: null
 baseline_commit: 7250a8a131a370698bff53538a4405c2ddb94c1c
-context_branch: codex/story-1-0-production-auth
+context_branch: codex/story-9-4-workbench-quality
 delivery_contract: _bmad-output/implementation-artifacts/sprint-delivery-contract-ui-foundation-2026-09-20.yaml
 migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
 engineering_conditions:
@@ -44,7 +44,7 @@ execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan
 
 # Story 9.4: 用可运行状态工作台与真实检查维护组件
 
-Status: ready-for-dev
+Status: in-progress
 
 > 2026-09-25用户已明确恢复开发并安排本Story先行；六组源GWT和工程条件保持，3.1自身暂停及真实资源门槛不变。本Story仍ready-for-dev，实际开发进展由接手任务记录。
 
@@ -295,3 +295,74 @@ Codex（当前会话）；准备包含独立工具研究、仓库上下文分析
 ### 2026-09-25 开发授权增量
 
 用户已解除原1.7完成后停止边界，依据sprint-execution-resume-2026-09-25.md允许本Story进入DS/CR。仅变更执行上下文，不改变六组源GWT、T0–T6或工程条件。当前源码/工具链复验见research/story-9-4-execution-readiness-review-2026-09-25.md；较早准备验证中“尚未授权开发/停止边界保持”仅描述当时事实。
+
+### 2026-09-25 正式开发接手
+
+已消费协调任务正式开始指令，当前唯一写入者01a0d78a-3692-78b1-aee5-76268a743925。开发分支codex/story-9-4-workbench-quality，实际开发基线abac3dfafc3e844ea62c5a73914fa65af0672a43；frontmatter.baseline_commit保留准备时历史值。T0基线见evidence/story-9-4-workbench-2026-09-25/development-baseline.json；当前任务未完成，UI条件只标in-progress。普通工具接线/窄缺陷修补已有授权，旧heartbeat保持PAUSED。
+
+### 9.4当前实现文件清单（独立CR前）
+
+- `.eslintrc.json`
+- `.github/workflows/ci.yml`
+- `.gitignore`
+- `CURRENT.md`
+- `_bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md`
+- `_bmad-output/implementation-artifacts/capacitor-task-monitor-state.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/dependency-audit.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/dev-server.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/development-baseline.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/initial-lint-diagnostics.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/lint-result.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/local-validation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/login-large-text.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/product-isolation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/product-unavailable.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/resolved-toolchain.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/runtime.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/sheet-partial.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/toolchain-registry.json`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `_bmad-output/implementation-artifacts/story-9-4-dev-progress-2026-09-25.md`
+- `_bmad-output/implementation-artifacts/story-9-4-execution-decisions-2026-09-25.md`
+- `_bmad-output/planning-artifacts/architecture.md`
+- `apps/mobile/.storybook/main.ts`
+- `apps/mobile/.storybook/preview.tsx`
+- `apps/mobile/.storybook/public/mockServiceWorker.js`
+- `apps/mobile/.storybook/vite.config.ts`
+- `apps/mobile/.storybook/vitest.setup.ts`
+- `apps/mobile/package.json`
+- `apps/mobile/scripts/check-workbench-counterexamples.mjs`
+- `apps/mobile/scripts/check-workbench-isolation.mjs`
+- `apps/mobile/scripts/check-workbench-isolation.test.mjs`
+- `apps/mobile/scripts/probe-workbench-runtime.mjs`
+- `apps/mobile/scripts/product-build-proof.ts`
+- `apps/mobile/scripts/workbench-mutations.ts`
+- `apps/mobile/src/auth/LoginScreen.tsx`
+- `apps/mobile/tsconfig.workbench.json`
+- `apps/mobile/vite.config.ts`
+- `apps/mobile/vitest.storybook.config.ts`
+- `apps/mobile/vitest.workbench-node.config.ts`
+- `apps/mobile/workbench/HomeSheet.stories.tsx`
+- `apps/mobile/workbench/LoginScreen.stories.tsx`
+- `apps/mobile/workbench/TextScale.tsx`
+- `apps/mobile/workbench/fixtures.ts`
+- `apps/mobile/workbench/handlers.test.ts`
+- `apps/mobile/workbench/handlers.ts`
+- `apps/mobile/workbench/network-policy.test.ts`
+- `apps/mobile/workbench/network-policy.ts`
+- `apps/mobile/workbench/scenario.ts`
+- `apps/mobile/workbench/workbench.css`
+- `docs/architecture/coding-standards.md`
+- `docs/architecture/testing-strategy.md`
+- `docs/ops/ui-validation.md`
+- `eslint.config.mjs`
+- `package.json`
+- `pnpm-lock.yaml`
+- `pnpm-workspace.yaml`
+- `scripts/check-code-quality.mjs`
+- `scripts/check-code-quality.test.mjs`
+- `scripts/code-quality-exceptions.json`
+- `tsconfig.lint.json`
+
+本地实际结果见evidence/story-9-4-workbench-2026-09-25/local-validation.json。10个旧lint诊断均以窄改修复，未保留例外；类型规则、组件故障、网络失效与资源污染反例已运行。任务复选框在干净安装、CI与CR最终复核后逐项收口，当前不预标done。

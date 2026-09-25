@@ -3,6 +3,8 @@ packages:
   - packages/*
 
 allowBuilds:
+  # Worker updates are explicit and checked; never copy a worker on install.
+  msw: false
   # Published dist is ready to use. Its installer only selects typings on Node10/12.
   '@alicloud/openapi-core': false
   '@prisma/client': true
@@ -19,3 +21,8 @@ onlyBuiltDependencies:
   - msgpackr-extract
   - prisma
   - puppeteer
+
+# T0 audit: patched resolutions only for the new lint dependency chain.
+overrides:
+  "eslint-plugin-jsx-a11y@6.10.2>minimatch": 3.1.5
+  "minimatch@3.1.5>brace-expansion": 1.1.18

@@ -170,3 +170,8 @@ test evidence, not extra product Stories or claims of already-run infrastructure
 ## UI scope quality gates (2026-09-20)
 
 见../ops/ui-validation.md：9.4真实lint/工作台/MSW/a11y，9.5固定浏览器场景/截图与原探针覆盖清单，9.3及后续页面交付自身证据。最低iOS16.4、Android键盘/返回、读屏/大字号、身份变化时Portal遮蔽纳入实际矩阵。当前工具尚未实施，不能把批准文档或旧16.0勾选当通过；数据迁移、PG/SIGKILL/SSE/IDB和真实服务门槛保持。
+
+
+## Story9.4工具实施进展（2026-09-25）
+
+独立Storybook/MSW工作台、typed ESLint、单Chromium interaction/axe与产品/双端资源隔离已接线；实际命令、cohort、反例、旧探针保留表与证据边界统一见docs/ops/ui-validation.md。Vitest同组由准备候选4.1.9调至安全修复4.1.11，正式决定见story-9-4-execution-decisions-2026-09-25.md。当前不修改9.3共享层、Query/Router或auth/journal/cursor权威；9.4在真实CI及独立CR收口前仍in-progress。本增量只描述工具实施，原批准范围/快照不重写。

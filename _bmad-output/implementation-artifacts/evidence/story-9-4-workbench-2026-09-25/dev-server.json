@@ -1,0 +1,8 @@
+{
+  "kind": "actual-development-server-interaction",
+  "origin": "http://127.0.0.1:6006",
+  "partialVisible": true,
+  "closeReturnedFocus": true,
+  "violations": [],
+  "browserVersion": "153.0.8010.12"
+}

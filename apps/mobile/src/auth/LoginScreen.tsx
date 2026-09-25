@@ -105,10 +105,17 @@ export function LoginScreen({
   const formGeneration = useRef(0);
   const captchaAbort = useRef<AbortController | null>(null);
   useEffect(() => {
-    const unsubscribe = subscribeAuth(() => { formGeneration.current++; captchaAbort.current?.abort(); setSubmittingOtp(false); setVerifying(false); });
-    return () => { formGeneration.current++; captchaAbort.current?.abort(); unsubscribe(); };
+    const invalidate = () => { formGeneration.current++; captchaAbort.current?.abort(); };
+    const unsubscribe = subscribeAuth(() => { invalidate(); setSubmittingOtp(false); setVerifying(false); });
+    return () => { invalidate(); unsubscribe(); };
   }, []);
 
+  const runAction = useCallback((action: () => Promise<unknown>) => {
+    const generation = formGeneration.current;
+    action().catch(() => {
+      if (generation === formGeneration.current) setNotice('操作暂未完成，请重试');
+    });
+  }, []);
 
   const track = useCallback(
     (event: Parameters<Analytics['track']>[0], props?: Parameters<Analytics['track']>[1]) => {
@@ -144,8 +151,8 @@ export function LoginScreen({
 
   useEffect(() => {
     track('auth_view', { source_page: 'login' });
-    void loadConfig();
-  }, [loadConfig, track]);
+    runAction(loadConfig);
+  }, [loadConfig, track, runAction]);
 
   useEffect(() => {
     if (cooldown <= 0) return undefined;
@@ -317,7 +324,7 @@ export function LoginScreen({
         {configError ? (
           <div className="inline-state" role="status">
             <p>{configError}</p>
-            <button type="button" onClick={() => void loadConfig()}>
+            <button type="button" onClick={() => runAction(loadConfig)}>
               重试
             </button>
           </div>
@@ -346,12 +353,14 @@ export function LoginScreen({
             className="phone-form"
             onSubmit={(event) => {
               event.preventDefault();
-              void verifyOtp();
+              runAction(verifyOtp);
             }}
           >
             <label className="field">
               <span>手机号</span>
               <input
+                aria-label="手机号"
+                aria-describedby={notice ? 'login-notice' : undefined}
                 autoComplete="tel"
                 inputMode="tel"
                 name="phone"
@@ -364,6 +373,8 @@ export function LoginScreen({
             <label className="field">
               <span>验证码</span>
               <input
+                aria-label="验证码"
+                aria-describedby={notice ? 'login-notice' : undefined}
                 autoComplete="one-time-code"
                 inputMode="numeric"
                 maxLength={12}
@@ -375,8 +386,8 @@ export function LoginScreen({
             </label>
 
             <div className="action-grid">
-              <button type="button" disabled={cooldown > 0 || submittingOtp || captchaRequired || verifying} onClick={() => void startOtp()}>
-                {cooldown > 0 ? `${cooldown}秒后重发` : sendUnconfirmed ? '重试确认发送结果' : '获取验证码'}
+              <button type="button" aria-describedby={captchaRequired ? 'login-captcha-status' : undefined} disabled={cooldown > 0 || submittingOtp || captchaRequired || verifying} onClick={() => runAction(() => startOtp())}>
+                {submittingOtp ? '正在发送验证码' : cooldown > 0 ? `${cooldown}秒后重发` : sendUnconfirmed ? '重试确认发送结果' : '获取验证码'}
               </button>
               <button type="submit" disabled={verifying || submittingOtp}>
                 {verifying ? '登录中' : '登录'}
@@ -389,24 +400,24 @@ export function LoginScreen({
 
         {captchaRequired ? (
           <div className="inline-state" role="status">
-            <p>需要完成行为验证后再发送验证码</p>
-            <button type="button" disabled={submittingOtp || cooldown > 0} onClick={() => void completeCaptchaAndRetry()}>
+            <p id="login-captcha-status">需要完成行为验证后再发送验证码</p>
+            <button type="button" disabled={submittingOtp || cooldown > 0} onClick={() => runAction(completeCaptchaAndRetry)}>
               {config?.captcha.provider === 'aliyun-pnvs' ? '开始行为验证' : '已完成验证，重新发送'}
             </button>
           </div>
         ) : null}
 
         {notice ? (
-          <p className="notice" role="status">
+          <p id="login-notice" className="notice" role="status">
             {notice}
           </p>
         ) : null}
 
         <nav className="legal-links" aria-label="合规链接">
-          <button type="button" onClick={() => void openLegalLink('privacy')}>
+          <button type="button" onClick={() => runAction(() => openLegalLink('privacy'))}>
             隐私政策
           </button>
-          <button type="button" onClick={() => void openLegalLink('terms')}>
+          <button type="button" onClick={() => runAction(() => openLegalLink('terms'))}>
             用户协议
           </button>
         </nav>

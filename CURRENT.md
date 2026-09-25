@@ -1,16 +1,16 @@
 ---
 project: nomad-mvp
 updated: '2026-09-26'
-current_epic: 9
+current_epic: 1
 last_completed_story: 9-5-browser-flow-and-visual-regression-gates
-current_story: 9-3-shared-ui-components-and-safe-app-sheet
+current_story: 1-0-production-login-and-multi-device-sessions
 current_story_status: in-progress
-current_story_file: _bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet.md
+current_story_file: _bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions.md
 current_story_spec: _bmad-output/planning-artifacts/epics.md
 planning_status: bmad-sprint-planning-complete
 execution_phase: execution
 next_bmad_action: bmad-dev-story
-next_bmad_checkpoint: in-progress-story-integration
+next_bmad_checkpoint: story-1-0-auth-measurement-current-ci
 readiness_report: _bmad-output/planning-artifacts/implementation-readiness-sp-handoff-2026-09-15.md
 prompt_strength_status: approved-applied-and-revalidated
 prompt_strength_record: _bmad-output/planning-artifacts/prompt-strength-adoption-2026-09-15.md
@@ -18,15 +18,15 @@ sprint_planning_authorized: true
 sprint_planning_completed: true
 create_story_authorized: true
 implementation_authorized: true
-handoff_status: story-9-3-local-ui-verified-native-open
+handoff_status: story-1-0-independent-auth-measurement-in-progress
 tracking_system: _bmad-output/implementation-artifacts/sprint-status.yaml
 migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
 migration_report: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.md
 delivery_contract: _bmad-output/implementation-artifacts/sprint-delivery-contract-ui-foundation-2026-09-20.yaml
 revalidation_report: _bmad-output/planning-artifacts/implementation-readiness-ui-foundation-2026-09-20.md
 paused_story: 3-1-minute-timeline-editing-and-plan-wide-undo
-working_branch: codex/story-9-3-shared-ui
-story_preparation_report: _bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet-validation.md
+working_branch: codex/story-1-0-auth-measurements
+story_preparation_report: _bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions-validation.md
 resource_alignment: _bmad-output/implementation-artifacts/research/story-1-0-resource-confirmation-2026-09-19.md
 input_import_progress: _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
 authentication_progress: _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
@@ -52,6 +52,12 @@ development_thread_host: local
 ---
 
 # Nomad Current Handoff
+
+## 当前继续执行（2026-09-26）
+
+9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的受影响集成回归已落盘，当前回到1.0独立T9/METRICS-01：建立WL-AUTH版本化测量manifest、真实浏览器/显式HTTP替身采集和可重算报告，保持真实staging/费用/目标待验收。当前分支codex/story-1-0-auth-measurements，仍由本任务唯一写入；原Story baseline7250a8a不改。
+
+Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不批量准备1.8。
 
 ## 当前执行交接（2026-09-25）
 

@@ -172,8 +172,10 @@ condition_progress:
       evidence:
       - _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
     METRICS-01:
-      state: not-started
-      summary: 已纳入1.0实施合同；本轮只完成准备，未运行该工程条件。
+      state: in-progress
+      summary: WL-AUTH本地manifest/实际App替身采集/报告已实现，三层9项修补与本地正反例通过；等待当前提交完整CI，真实服务基线/目标未关闭。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-0-auth-measurement-progress-2026-09-26.md
     METRICS-02:
       state: not-started
       summary: 已纳入1.0实施合同；本轮只完成准备，未运行该工程条件。
@@ -188,8 +190,10 @@ condition_progress:
       evidence:
       - _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
     CODE-QUALITY-01:
-      state: not-started
-      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+      state: in-progress
+      summary: 本次1.0测量与登录提示改动已通过99文件typed lint及6门禁反例；仅记录当前切片，整Story条件未关闭。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-0-auth-measurement-progress-2026-09-26.md
     UI-COMPONENT-01:
       state: not-started
       summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
@@ -690,15 +694,15 @@ active_workstreams:
     contract: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md
     evidence: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
   near_term_execution:
-    story: 9-3-shared-ui-components-and-safe-app-sheet
+    story: 1-0-production-login-and-multi-device-sessions
     thread_id: 01a0d78a-3692-78b1-aee5-76268a743925
     host_id: local
     environment: current-saved-project
     status: active
-    working_branch: codex/story-9-3-shared-ui
+    working_branch: codex/story-1-0-auth-measurements
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.4/9.5已done；9.3本地UI切片和独立CR/最终CI已通过，T9原生未关闭；接续在制1.0/1.6/1.7/9.1独立集成，保持唯一writer与3.1暂停
+    scope: 9.3本地gate已verified、T9仍open；接续1.0独立T9/WL-AUTH测量。第三方/许可SDK真实资源保持未完成；唯一writer与3.1暂停不变
 previous_preparation:
   story: 9-5-browser-flow-and-visual-regression-gates
   status: complete

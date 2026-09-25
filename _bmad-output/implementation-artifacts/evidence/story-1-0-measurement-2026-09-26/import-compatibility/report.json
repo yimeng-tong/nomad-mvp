@@ -1,0 +1,1750 @@
+{
+  "provenance": {
+    "measurementVersion": "nomad.import.v1",
+    "startedAt": "2026-09-25T20:54:49.434Z",
+    "endedAt": "2026-09-25T20:55:15.897Z",
+    "baselineCommit": "dd2a9700109425d2e80751e3ab4bf419c230af0f",
+    "sourceSha256": {
+      "scripts/measurements/run-import-dock.mts": "314328f63687c4871cfd53cd7b3624f21d7935fc7815714af457de9faae64771",
+      "scripts/measurements/tsconfig.json": "c35d0b26dfd7139ecbfdd056a6bd975713b25a3905bf3aa0372a003b060b8d56",
+      "packages/types/package.json": "9b85961e7978261473b23825f17716077aab767d4c73fe2c4c90b79e413f6217",
+      "pnpm-lock.yaml": "cb46e481d48e482e46cc08d8d0cee350c55b820c3136bcc923675a466fe90e13",
+      "apps/mobile/vite.config.ts": "340513ae49a7af78ba1f676678a5f2f4fe173f26355a9a58a93e513683fb2189",
+      "packages/types/src/import-measurements.ts": "c216f12a623b9b2c9b6d008eabf424d5b7580ad3bee19ebf6df65a51b1042ee9",
+      "packages/types/src/measurement-common.ts": "c1f407d3c2d304caea8c0ee0712ee32def507f479bc483f82a93b4064a5fce03",
+      "apps/mobile/scripts/import-measurement-harness.tsx": "72d8aea03754a06820c89327b2263e33ed895815303efac626cf04982cdfe128",
+      "apps/mobile/src/home/dock-controller.ts": "cc3f5e23de764f291c365c62debe1befa8ebd76eb592c4da3016f1586f3e3f70",
+      "apps/mobile/src/home/dock-model.ts": "e460eee431b23e17255b2af6bbb658942a0975a51827af0268489583ad67d038",
+      "apps/mobile/src/home/HomeImportDock.tsx": "3472116550e5b168296b75c14811e5d698c6b894aff3043ed997af100c365c4d",
+      "apps/mobile/src/home/operation-journal.ts": "b8e799eecd0f02bd329925cc8bab6bc1fea96cfa04f753a3a3c4dc622ba753d7"
+    },
+    "fixtureSha256": "72d8aea03754a06820c89327b2263e33ed895815303efac626cf04982cdfe128",
+    "fixturePlan": [
+      {
+        "scenario": "single",
+        "count": 3
+      },
+      {
+        "scenario": "batch",
+        "count": 3
+      },
+      {
+        "scenario": "partial",
+        "count": 1
+      },
+      {
+        "scenario": "failure",
+        "count": 1
+      },
+      {
+        "scenario": "rejected",
+        "count": 1
+      },
+      {
+        "scenario": "unknown-ack",
+        "count": 1
+      },
+      {
+        "scenario": "reused",
+        "count": 1
+      },
+      {
+        "scenario": "retry",
+        "count": 1
+      },
+      {
+        "scenario": "reconnect",
+        "count": 1
+      },
+      {
+        "scenario": "missing-acceptance",
+        "count": 1
+      },
+      {
+        "scenario": "missing-terminal",
+        "count": 1
+      }
+    ],
+    "browser": "Chrome/127.0.6533.88",
+    "node": "v22.22.1",
+    "os": {
+      "platform": "linux",
+      "release": "6.18.33.2-microsoft-standard-WSL2",
+      "availableCpuCount": 12,
+      "cpuPinned": false
+    },
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "network": "in-process-api-fixture; external requests blocked",
+    "actualIndexedDb": true,
+    "serviceClockCalibration": "not-applicable-fixture",
+    "routesModelsPrompts": null,
+    "routesModelsPromptsReason": "no-real-provider-execution",
+    "externalProviderCalls": 0,
+    "blockedExternalRequests": 0,
+    "usage": null,
+    "cost": null,
+    "productionPerformanceVerified": false,
+    "nativeDeviceVerified": false
+  },
+  "overall": {
+    "manifest": {
+      "measurementVersion": "nomad.import.v1",
+      "workload": "WL-IMPORT-DOCK",
+      "mode": "fixture",
+      "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+      "scenarioPlan": [
+        {
+          "scenario": "single",
+          "count": 3
+        },
+        {
+          "scenario": "batch",
+          "count": 3
+        },
+        {
+          "scenario": "partial",
+          "count": 1
+        },
+        {
+          "scenario": "failure",
+          "count": 1
+        },
+        {
+          "scenario": "rejected",
+          "count": 1
+        },
+        {
+          "scenario": "unknown-ack",
+          "count": 1
+        },
+        {
+          "scenario": "reused",
+          "count": 1
+        },
+        {
+          "scenario": "retry",
+          "count": 1
+        },
+        {
+          "scenario": "reconnect",
+          "count": 1
+        },
+        {
+          "scenario": "missing-acceptance",
+          "count": 1
+        },
+        {
+          "scenario": "missing-terminal",
+          "count": 1
+        }
+      ],
+      "plannedLogicalRequests": 15,
+      "windowStartMs": 1444.5999999940395,
+      "windowEndMs": 26444.59999999404,
+      "deadlineMs": 25000,
+      "fixtureVersion": "import-matrix-v1",
+      "sampling": 1
+    },
+    "measurementVersion": "nomad.import.v1",
+    "workload": "WL-IMPORT-DOCK",
+    "mode": "fixture",
+    "quantileMethod": "nearest-rank-ceil-p-times-n",
+    "coverage": {
+      "plannedLogicalRequests": 15,
+      "rawSamples": 15,
+      "observedLogicalRequests": 15,
+      "missingLogicalRequests": 0,
+      "extraLogicalRequests": 0,
+      "invalidSamples": 0,
+      "duplicateSamples": 0,
+      "conflictingSamples": 0,
+      "unplannedScenario": 0,
+      "invalidClock": 0,
+      "invalidTiming": 0,
+      "outsideWindow": 0,
+      "missingAcceptance": 2,
+      "missingTerminal": 0
+    },
+    "outcomes": {
+      "done": 10,
+      "partial": 1,
+      "failed": 1,
+      "rejected": 1,
+      "unknown": 1,
+      "running": 1
+    },
+    "operations": 16,
+    "observedAttempts": 14,
+    "commandRequests": 16,
+    "reconnects": 1,
+    "duplicateFrames": 16,
+    "missingFrameCoverage": 0,
+    "exclusions": {
+      "reusedProcessing": 1,
+      "recoveredAcceptance": 1,
+      "retriedProcessing": 1,
+      "unknownAttempt": 2,
+      "unknownDisposition": 2
+    },
+    "presentation": {
+      "completedWindows": 2,
+      "incompleteWindows": 1,
+      "notPresented": 6
+    },
+    "stagesObservedInSamples": {
+      "created": 11,
+      "fetching": 5,
+      "parsing": 5,
+      "geo": 0,
+      "storing": 5,
+      "done": 10,
+      "failed": 3
+    },
+    "unfinished": [
+      {
+        "logicalId": "2aff39b6-c4cc-4ee0-b2f1-3d6d2837685a",
+        "outcome": "unknown",
+        "waitedMs": 23334.90000000596
+      },
+      {
+        "logicalId": "7c448cee-3f22-4e81-9d77-60ed9748815f",
+        "outcome": "running",
+        "waitedMs": 23196.30000001192
+      }
+    ],
+    "metrics": {
+      "acceptanceMs": {
+        "n": 13,
+        "p50": 22.30000001192093,
+        "p95": 139.40000000596046
+      },
+      "firstFactMs": {
+        "n": 13,
+        "p50": 17.5,
+        "p95": 3719.2999999821186
+      },
+      "successElapsedMs": {
+        "n": 9,
+        "p50": 139.40000000596046,
+        "p95": 3739.9000000059605
+      },
+      "allTerminalElapsedMs": {
+        "n": 13,
+        "p50": 139.40000000596046,
+        "p95": 3739.9000000059605
+      },
+      "acceptedToTerminalMs": {
+        "n": 9,
+        "p50": 124.60000002384186,
+        "p95": 3719.2999999821186
+      },
+      "terminalToPresentationMs": {
+        "n": 3,
+        "p50": 10005.59999999404,
+        "p95": 20124.59999999404
+      },
+      "visibleWindowMs": {
+        "n": 2,
+        "p50": 10136.600000023842,
+        "p95": 10246.09999999404
+      }
+    },
+    "cost": {
+      "amount": null,
+      "currency": null,
+      "reason": "not-measured"
+    },
+    "serverCommitToPresentation": {
+      "n": 0,
+      "p50": null,
+      "p95": null,
+      "reason": "server-clock-not-calibrated"
+    },
+    "notes": [
+      "Client observations are not provider execution time.",
+      "Logical requests and observed attempts have separate denominators.",
+      "Visible FIFO duration is not parsing time.",
+      "No cancellation or authoritative timeout capability is inferred."
+    ]
+  },
+  "scenarios": [
+    {
+      "scenario": "single",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "single",
+              "count": 3
+            }
+          ],
+          "plannedLogicalRequests": 3,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 3,
+          "rawSamples": 3,
+          "observedLogicalRequests": 3,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 0,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 3,
+          "partial": 0,
+          "failed": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "running": 0
+        },
+        "operations": 3,
+        "observedAttempts": 3,
+        "commandRequests": 3,
+        "reconnects": 0,
+        "duplicateFrames": 7,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 0,
+          "recoveredAcceptance": 0,
+          "retriedProcessing": 0,
+          "unknownAttempt": 0,
+          "unknownDisposition": 0
+        },
+        "presentation": {
+          "completedWindows": 2,
+          "incompleteWindows": 1,
+          "notPresented": 0
+        },
+        "stagesObservedInSamples": {
+          "created": 3,
+          "fetching": 2,
+          "parsing": 3,
+          "geo": 0,
+          "storing": 3,
+          "done": 3,
+          "failed": 0
+        },
+        "unfinished": [],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 3,
+            "p50": 20.400000005960464,
+            "p95": 75.80000001192093
+          },
+          "firstFactMs": {
+            "n": 3,
+            "p50": 13.800000011920929,
+            "p95": 14.200000017881393
+          },
+          "successElapsedMs": {
+            "n": 3,
+            "p50": 94.40000000596046,
+            "p95": 103.59999999403954
+          },
+          "allTerminalElapsedMs": {
+            "n": 3,
+            "p50": 94.40000000596046,
+            "p95": 103.59999999403954
+          },
+          "acceptedToTerminalMs": {
+            "n": 3,
+            "p50": 74,
+            "p95": 74.10000002384186
+          },
+          "terminalToPresentationMs": {
+            "n": 3,
+            "p50": 10005.59999999404,
+            "p95": 20124.59999999404
+          },
+          "visibleWindowMs": {
+            "n": 2,
+            "p50": 10136.600000023842,
+            "p95": 10246.09999999404
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    },
+    {
+      "scenario": "batch",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "batch",
+              "count": 3
+            }
+          ],
+          "plannedLogicalRequests": 3,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 3,
+          "rawSamples": 3,
+          "observedLogicalRequests": 3,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 0,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 3,
+          "partial": 0,
+          "failed": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "running": 0
+        },
+        "operations": 3,
+        "observedAttempts": 3,
+        "commandRequests": 3,
+        "reconnects": 0,
+        "duplicateFrames": 3,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 0,
+          "recoveredAcceptance": 0,
+          "retriedProcessing": 0,
+          "unknownAttempt": 0,
+          "unknownDisposition": 0
+        },
+        "presentation": {
+          "completedWindows": 0,
+          "incompleteWindows": 0,
+          "notPresented": 3
+        },
+        "stagesObservedInSamples": {
+          "created": 3,
+          "fetching": 1,
+          "parsing": 1,
+          "geo": 0,
+          "storing": 1,
+          "done": 3,
+          "failed": 0
+        },
+        "unfinished": [],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 3,
+            "p50": 29,
+            "p95": 39.5
+          },
+          "firstFactMs": {
+            "n": 3,
+            "p50": 124.60000002384186,
+            "p95": 247.30000001192093
+          },
+          "successElapsedMs": {
+            "n": 3,
+            "p50": 153.60000002384186,
+            "p95": 286.80000001192093
+          },
+          "allTerminalElapsedMs": {
+            "n": 3,
+            "p50": 153.60000002384186,
+            "p95": 286.80000001192093
+          },
+          "acceptedToTerminalMs": {
+            "n": 3,
+            "p50": 124.60000002384186,
+            "p95": 247.30000001192093
+          },
+          "terminalToPresentationMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "visibleWindowMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    },
+    {
+      "scenario": "partial",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "partial",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 0,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 0,
+          "partial": 1,
+          "failed": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "running": 0
+        },
+        "operations": 1,
+        "observedAttempts": 1,
+        "commandRequests": 1,
+        "reconnects": 0,
+        "duplicateFrames": 0,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 0,
+          "recoveredAcceptance": 0,
+          "retriedProcessing": 0,
+          "unknownAttempt": 0,
+          "unknownDisposition": 0
+        },
+        "presentation": {
+          "completedWindows": 0,
+          "incompleteWindows": 0,
+          "notPresented": 0
+        },
+        "stagesObservedInSamples": {
+          "created": 1,
+          "fetching": 0,
+          "parsing": 0,
+          "geo": 0,
+          "storing": 0,
+          "done": 0,
+          "failed": 1
+        },
+        "unfinished": [],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 1,
+            "p50": 16.399999976158142,
+            "p95": 16.399999976158142
+          },
+          "firstFactMs": {
+            "n": 1,
+            "p50": 527.2000000178814,
+            "p95": 527.2000000178814
+          },
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "allTerminalElapsedMs": {
+            "n": 1,
+            "p50": 543.5999999940395,
+            "p95": 543.5999999940395
+          },
+          "acceptedToTerminalMs": {
+            "n": 1,
+            "p50": 527.2000000178814,
+            "p95": 527.2000000178814
+          },
+          "terminalToPresentationMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "visibleWindowMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    },
+    {
+      "scenario": "failure",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "failure",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 0,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 0,
+          "partial": 0,
+          "failed": 1,
+          "rejected": 0,
+          "unknown": 0,
+          "running": 0
+        },
+        "operations": 1,
+        "observedAttempts": 1,
+        "commandRequests": 1,
+        "reconnects": 0,
+        "duplicateFrames": 0,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 0,
+          "recoveredAcceptance": 0,
+          "retriedProcessing": 0,
+          "unknownAttempt": 0,
+          "unknownDisposition": 0
+        },
+        "presentation": {
+          "completedWindows": 0,
+          "incompleteWindows": 0,
+          "notPresented": 0
+        },
+        "stagesObservedInSamples": {
+          "created": 1,
+          "fetching": 0,
+          "parsing": 0,
+          "geo": 0,
+          "storing": 0,
+          "done": 0,
+          "failed": 1
+        },
+        "unfinished": [],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 1,
+            "p50": 17.100000023841858,
+            "p95": 17.100000023841858
+          },
+          "firstFactMs": {
+            "n": 1,
+            "p50": 424.09999999403954,
+            "p95": 424.09999999403954
+          },
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "allTerminalElapsedMs": {
+            "n": 1,
+            "p50": 441.2000000178814,
+            "p95": 441.2000000178814
+          },
+          "acceptedToTerminalMs": {
+            "n": 1,
+            "p50": 424.09999999403954,
+            "p95": 424.09999999403954
+          },
+          "terminalToPresentationMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "visibleWindowMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    },
+    {
+      "scenario": "rejected",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "rejected",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 1,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 0,
+          "partial": 0,
+          "failed": 0,
+          "rejected": 1,
+          "unknown": 0,
+          "running": 0
+        },
+        "operations": 1,
+        "observedAttempts": 0,
+        "commandRequests": 1,
+        "reconnects": 0,
+        "duplicateFrames": 0,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 0,
+          "recoveredAcceptance": 0,
+          "retriedProcessing": 0,
+          "unknownAttempt": 1,
+          "unknownDisposition": 1
+        },
+        "presentation": {
+          "completedWindows": 0,
+          "incompleteWindows": 0,
+          "notPresented": 0
+        },
+        "stagesObservedInSamples": {
+          "created": 0,
+          "fetching": 0,
+          "parsing": 0,
+          "geo": 0,
+          "storing": 0,
+          "done": 0,
+          "failed": 0
+        },
+        "unfinished": [],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "firstFactMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "allTerminalElapsedMs": {
+            "n": 1,
+            "p50": 18.400000005960464,
+            "p95": 18.400000005960464
+          },
+          "acceptedToTerminalMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "terminalToPresentationMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "visibleWindowMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    },
+    {
+      "scenario": "unknown-ack",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "unknown-ack",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 0,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 1,
+          "partial": 0,
+          "failed": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "running": 0
+        },
+        "operations": 1,
+        "observedAttempts": 1,
+        "commandRequests": 1,
+        "reconnects": 0,
+        "duplicateFrames": 0,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 0,
+          "recoveredAcceptance": 1,
+          "retriedProcessing": 0,
+          "unknownAttempt": 0,
+          "unknownDisposition": 0
+        },
+        "presentation": {
+          "completedWindows": 0,
+          "incompleteWindows": 0,
+          "notPresented": 1
+        },
+        "stagesObservedInSamples": {
+          "created": 0,
+          "fetching": 0,
+          "parsing": 0,
+          "geo": 0,
+          "storing": 0,
+          "done": 1,
+          "failed": 0
+        },
+        "unfinished": [],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 1,
+            "p50": 139.40000000596046,
+            "p95": 139.40000000596046
+          },
+          "firstFactMs": {
+            "n": 1,
+            "p50": 0,
+            "p95": 0
+          },
+          "successElapsedMs": {
+            "n": 1,
+            "p50": 139.40000000596046,
+            "p95": 139.40000000596046
+          },
+          "allTerminalElapsedMs": {
+            "n": 1,
+            "p50": 139.40000000596046,
+            "p95": 139.40000000596046
+          },
+          "acceptedToTerminalMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "terminalToPresentationMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "visibleWindowMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    },
+    {
+      "scenario": "reused",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "reused",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 0,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 1,
+          "partial": 0,
+          "failed": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "running": 0
+        },
+        "operations": 1,
+        "observedAttempts": 1,
+        "commandRequests": 1,
+        "reconnects": 0,
+        "duplicateFrames": 0,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 1,
+          "recoveredAcceptance": 0,
+          "retriedProcessing": 0,
+          "unknownAttempt": 0,
+          "unknownDisposition": 0
+        },
+        "presentation": {
+          "completedWindows": 0,
+          "incompleteWindows": 0,
+          "notPresented": 0
+        },
+        "stagesObservedInSamples": {
+          "created": 0,
+          "fetching": 0,
+          "parsing": 0,
+          "geo": 0,
+          "storing": 0,
+          "done": 1,
+          "failed": 0
+        },
+        "unfinished": [],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 1,
+            "p50": 22.80000001192093,
+            "p95": 22.80000001192093
+          },
+          "firstFactMs": {
+            "n": 1,
+            "p50": 0,
+            "p95": 0
+          },
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "allTerminalElapsedMs": {
+            "n": 1,
+            "p50": 22.80000001192093,
+            "p95": 22.80000001192093
+          },
+          "acceptedToTerminalMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "terminalToPresentationMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "visibleWindowMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    },
+    {
+      "scenario": "retry",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "retry",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 0,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 1,
+          "partial": 0,
+          "failed": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "running": 0
+        },
+        "operations": 2,
+        "observedAttempts": 2,
+        "commandRequests": 2,
+        "reconnects": 0,
+        "duplicateFrames": 6,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 0,
+          "recoveredAcceptance": 0,
+          "retriedProcessing": 1,
+          "unknownAttempt": 0,
+          "unknownDisposition": 0
+        },
+        "presentation": {
+          "completedWindows": 0,
+          "incompleteWindows": 0,
+          "notPresented": 1
+        },
+        "stagesObservedInSamples": {
+          "created": 1,
+          "fetching": 1,
+          "parsing": 1,
+          "geo": 0,
+          "storing": 1,
+          "done": 1,
+          "failed": 1
+        },
+        "unfinished": [],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 1,
+            "p50": 25.599999994039536,
+            "p95": 25.599999994039536
+          },
+          "firstFactMs": {
+            "n": 1,
+            "p50": 14.199999988079071,
+            "p95": 14.199999988079071
+          },
+          "successElapsedMs": {
+            "n": 1,
+            "p50": 233.09999999403954,
+            "p95": 233.09999999403954
+          },
+          "allTerminalElapsedMs": {
+            "n": 1,
+            "p50": 233.09999999403954,
+            "p95": 233.09999999403954
+          },
+          "acceptedToTerminalMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "terminalToPresentationMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "visibleWindowMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    },
+    {
+      "scenario": "reconnect",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "reconnect",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 0,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 1,
+          "partial": 0,
+          "failed": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "running": 0
+        },
+        "operations": 1,
+        "observedAttempts": 1,
+        "commandRequests": 1,
+        "reconnects": 1,
+        "duplicateFrames": 0,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 0,
+          "recoveredAcceptance": 0,
+          "retriedProcessing": 0,
+          "unknownAttempt": 0,
+          "unknownDisposition": 0
+        },
+        "presentation": {
+          "completedWindows": 0,
+          "incompleteWindows": 0,
+          "notPresented": 1
+        },
+        "stagesObservedInSamples": {
+          "created": 1,
+          "fetching": 0,
+          "parsing": 0,
+          "geo": 0,
+          "storing": 0,
+          "done": 1,
+          "failed": 0
+        },
+        "unfinished": [],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 1,
+            "p50": 20.600000023841858,
+            "p95": 20.600000023841858
+          },
+          "firstFactMs": {
+            "n": 1,
+            "p50": 3719.2999999821186,
+            "p95": 3719.2999999821186
+          },
+          "successElapsedMs": {
+            "n": 1,
+            "p50": 3739.9000000059605,
+            "p95": 3739.9000000059605
+          },
+          "allTerminalElapsedMs": {
+            "n": 1,
+            "p50": 3739.9000000059605,
+            "p95": 3739.9000000059605
+          },
+          "acceptedToTerminalMs": {
+            "n": 1,
+            "p50": 3719.2999999821186,
+            "p95": 3719.2999999821186
+          },
+          "terminalToPresentationMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "visibleWindowMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    },
+    {
+      "scenario": "missing-acceptance",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "missing-acceptance",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 1,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 0,
+          "partial": 0,
+          "failed": 0,
+          "rejected": 0,
+          "unknown": 1,
+          "running": 0
+        },
+        "operations": 1,
+        "observedAttempts": 0,
+        "commandRequests": 1,
+        "reconnects": 0,
+        "duplicateFrames": 0,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 0,
+          "recoveredAcceptance": 0,
+          "retriedProcessing": 0,
+          "unknownAttempt": 1,
+          "unknownDisposition": 1
+        },
+        "presentation": {
+          "completedWindows": 0,
+          "incompleteWindows": 0,
+          "notPresented": 0
+        },
+        "stagesObservedInSamples": {
+          "created": 0,
+          "fetching": 0,
+          "parsing": 0,
+          "geo": 0,
+          "storing": 0,
+          "done": 0,
+          "failed": 0
+        },
+        "unfinished": [
+          {
+            "logicalId": "2aff39b6-c4cc-4ee0-b2f1-3d6d2837685a",
+            "outcome": "unknown",
+            "waitedMs": 23334.90000000596
+          }
+        ],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "firstFactMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "allTerminalElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "acceptedToTerminalMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "terminalToPresentationMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "visibleWindowMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    },
+    {
+      "scenario": "missing-terminal",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.import.v1",
+          "workload": "WL-IMPORT-DOCK",
+          "mode": "fixture",
+          "clockId": "d74e20ce-3235-43f2-8d4e-80d71b823207",
+          "scenarioPlan": [
+            {
+              "scenario": "missing-terminal",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 1444.5999999940395,
+          "windowEndMs": 26444.59999999404,
+          "deadlineMs": 25000,
+          "fixtureVersion": "import-matrix-v1",
+          "sampling": 1
+        },
+        "measurementVersion": "nomad.import.v1",
+        "workload": "WL-IMPORT-DOCK",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "invalidTiming": 0,
+          "outsideWindow": 0,
+          "missingAcceptance": 0,
+          "missingTerminal": 0
+        },
+        "outcomes": {
+          "done": 0,
+          "partial": 0,
+          "failed": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "running": 1
+        },
+        "operations": 1,
+        "observedAttempts": 1,
+        "commandRequests": 1,
+        "reconnects": 0,
+        "duplicateFrames": 0,
+        "missingFrameCoverage": 0,
+        "exclusions": {
+          "reusedProcessing": 0,
+          "recoveredAcceptance": 0,
+          "retriedProcessing": 0,
+          "unknownAttempt": 0,
+          "unknownDisposition": 0
+        },
+        "presentation": {
+          "completedWindows": 0,
+          "incompleteWindows": 0,
+          "notPresented": 0
+        },
+        "stagesObservedInSamples": {
+          "created": 1,
+          "fetching": 1,
+          "parsing": 0,
+          "geo": 0,
+          "storing": 0,
+          "done": 0,
+          "failed": 0
+        },
+        "unfinished": [
+          {
+            "logicalId": "7c448cee-3f22-4e81-9d77-60ed9748815f",
+            "outcome": "running",
+            "waitedMs": 23196.30000001192
+          }
+        ],
+        "metrics": {
+          "acceptanceMs": {
+            "n": 1,
+            "p50": 22.30000001192093,
+            "p95": 22.30000001192093
+          },
+          "firstFactMs": {
+            "n": 1,
+            "p50": 3445.800000011921,
+            "p95": 3445.800000011921
+          },
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "allTerminalElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "acceptedToTerminalMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "terminalToPresentationMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "visibleWindowMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "serverCommitToPresentation": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "server-clock-not-calibrated"
+        },
+        "notes": [
+          "Client observations are not provider execution time.",
+          "Logical requests and observed attempts have separate denominators.",
+          "Visible FIFO duration is not parsing time.",
+          "No cancellation or authoritative timeout capability is inferred."
+        ]
+      }
+    }
+  ]
+}

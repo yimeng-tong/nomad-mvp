@@ -1,0 +1,11 @@
+{
+  "kind": "auth-measurement-run-status",
+  "runId": "fdecd932-3d87-4648-b5eb-adfa1ac5b116",
+  "profile": "matrix",
+  "testFault": "between-cases",
+  "status": "failed",
+  "failure": {
+    "code": "AUTH_MEASUREMENT_INTEGRITY_OR_DEADLINE_FAILED"
+  },
+  "captureAvailable": true
+}

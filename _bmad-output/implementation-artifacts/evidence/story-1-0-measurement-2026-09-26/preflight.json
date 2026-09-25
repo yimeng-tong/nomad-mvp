@@ -1,0 +1,74 @@
+{
+  "kind": "auth-measurement-local-preflight",
+  "story_id": "1.0",
+  "recorded_at": "2026-09-25T21:30:41.821600+00:00",
+  "source_contract_sha256": "1b2306196fb9b9ebc1284e3404004112349d7a0a352a1622bebf5a7188f77c4b",
+  "resume_baseline": "dd2a9700109425d2e80751e3ab4bf419c230af0f",
+  "matrix": {
+    "planned": 12,
+    "observed": 12,
+    "outcomes": {
+      "success": 6,
+      "rejected": 3,
+      "unknown": 1,
+      "unavailable": 1,
+      "unfinished": 1
+    },
+    "http_writes": 15,
+    "note": "R6 source/clock/code hashes are retained; before final AM9 runner-only failure-preservation patch. Final committed CI still required."
+  },
+  "cutoff": {
+    "planned": 12,
+    "observed": 1,
+    "missing": 11,
+    "http_writes": 1,
+    "note": "R2 after initial8patches, before AM9 runner-only patch; not final CI."
+  },
+  "guards": {
+    "actual_process_counterexamples": 5,
+    "current_after_AM9": true,
+    "preserved_failed_runs": 4,
+    "samples": [
+      1,
+      1,
+      12,
+      12
+    ]
+  },
+  "tests": {
+    "auth_report": 15,
+    "actual_harness_clock": 2,
+    "import_report": 13,
+    "mobile": 266,
+    "native_config": 5,
+    "typed_lint_files": 99,
+    "lint_exceptions": 0,
+    "lint_gate_regressions": 6
+  },
+  "import_compatibility": {
+    "actual_browser_cases": 15,
+    "recomputed_equal": true,
+    "scope": "original scenario and statistic responsibility, changed common helper/report source; not new import/provider/native acceptance"
+  },
+  "independent_review": {
+    "layers": 3,
+    "patched_and_rechecked": 9,
+    "open_findings": 0
+  },
+  "raw_log_hashes": {
+    "/tmp/nomad-auth-measurement-otp-red.log": "dfc1355d744934706fda20c0a2e6c3f3820444f50b22e6b24a9339ed6e76a349",
+    "/tmp/nomad-auth-measurement-otp-green.log": "55b26218eac0389cba7eb8aa7ab965f6009413f14b03b43eea60d0a81aab27f4",
+    "/tmp/nomad-auth-measurement-review-red.log": "1ccd0dd6b9ce01433bfb358fdc75c24f29d791d640b05d9bc0ea386ba6da6036",
+    "/tmp/nomad-auth-harness-review-red.log": "1ad385b1646d61dea4e510c7021a4a01ba1b649617cf87775e2406240cfd24e6",
+    "/tmp/nomad-auth-measurement-review-core.log": "c8d15123cc6a5f883038b6eabb404cfea177da0b132568959d152ad2f6470d35",
+    "/tmp/nomad-auth-measurement-mobile.log": "85e7dfe1a90d97e2740932029c8c90c737da1c4801d330c2a5471909b4c46756",
+    "/tmp/nomad-auth-measurement-lint-negative.log": "90ac3fd3a2386c9177daef481d3f299f62e01ee9d38c3bb6ea7c9b177bbd58e2",
+    "/tmp/nomad-auth-measurement-final-unit.log": "4f76c41bbd1dba5261edff3f7aa205fde09069d00ce158ac20e0a187f7b29824",
+    "/tmp/nomad-auth-measurement-guards-r2.log": "5544b56fa3dfe0e8cf3a4e3b6312a8c42cce109295abc879314b111daa7728f7",
+    "/tmp/nomad-auth-measurement-final-handoff.log": "fa6618f0ada428387dcd1bd24c0b50f7559dbea3c5a547d2f5227007d904fe67"
+  },
+  "real_provider_calls": 0,
+  "native_device_verified": false,
+  "real_staging_metrics_verified": false,
+  "current_commit_full_ci": "pending"
+}

@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates, codex/story-9-3-shared-ui ]
+    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates, codex/story-9-3-shared-ui, codex/story-1-0-auth-measurements ]
   pull_request:
     branches: [ main, codex/story-1-0-production-auth, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates ]
 
@@ -187,6 +187,11 @@ jobs:
       - name: Mobile tests
         run: pnpm run ci:mobile
 
+      - name: Authentication and import measurement contracts
+        run: |
+          pnpm run ci:auth-measurements
+          pnpm run ci:import-measurements
+
       - name: Home and Library contract probe
         run: pnpm run ci:home-library
 
@@ -198,6 +203,32 @@ jobs:
 
       - name: Install Puppeteer Chrome
         run: pnpm -F nomad-server exec puppeteer browsers install chrome
+
+      - name: Actual isolated authentication workload and cutoff
+        run: |
+          AUTH_MEASUREMENT_OUTPUT=.measurement-results/auth/matrix pnpm run measure:auth matrix
+          AUTH_MEASUREMENT_OUTPUT=.measurement-results/auth/cutoff pnpm run measure:auth deadline-cutoff
+          pnpm run measure:auth-report .measurement-results/auth/matrix/samples.json .measurement-results/auth/matrix/recomputed.json
+          node --input-type=module - <<'JS'
+          import assert from 'node:assert/strict';
+          import { readFileSync } from 'node:fs';
+          const base = '.measurement-results/auth/matrix/';
+          const report = JSON.parse(readFileSync(base + 'report.json', 'utf8'));
+          const recomputed = JSON.parse(readFileSync(base + 'recomputed.json', 'utf8'));
+          assert.deepEqual(recomputed, { overall: report.overall, scenarios: report.scenarios });
+          JS
+
+      - name: Authentication measurement cutoff visibility and failure evidence counterexamples
+        run: pnpm run ci:auth-measurements:negative
+
+      - name: Preserve isolated authentication measurement evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nomad-auth-measurement-${{ github.sha }}
+          path: .measurement-results/auth/
+          include-hidden-files: true
+          if-no-files-found: error
 
       - name: Start explicit fixture server for legacy contract probes
         env:

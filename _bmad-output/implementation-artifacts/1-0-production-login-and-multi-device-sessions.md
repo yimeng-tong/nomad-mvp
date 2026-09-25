@@ -326,6 +326,18 @@ App 宿主补充：FR52; NFR25; AR23-AR24; UX-DR36。
   - [ ] UI-BROWSER-01：执行本Story适用检查/记录适用性及当前证据，不继承其他Story的verified。
   - [ ] shared-ui-adoption：落实共享组件、品牌、Portal身份、焦点/返回/状态与本Story平台回归；旧组件记录迁移责任；证据：当前源码组件/浏览器/适用原生证据，逐Story关闭。
 
+### Review Findings — WL-AUTH独立切片（2026-09-26）
+
+- [x] [Review][Patch] AM1：以同一截止端点比较窗口，避免浮点加减拒绝合法250ms运行。[packages/types/src/measurement-common.ts]
+- [x] [Review][Patch] AM2：终结样本重新核对真实单调截止；到期后不得把成功裁回窗口内，或继续发API请求/挂载App。[apps/mobile/scripts/auth-measurement-harness.tsx]
+- [x] [Review][Patch] AM3：服务所有权探测覆盖连接和body读取的有界超时，不挂起在占用端口。[scripts/measurements/run-auth.mts]
+- [x] [Review][Patch] AM4：manifest和sample的clock UUID版本约束一致。[packages/types/src/auth-measurements.ts]
+- [x] [Review][Patch] AM5：冲突身份先隔离，整体/分场景缺失、额外与重复计数不依赖输入顺序。[packages/types/src/auth-measurements.ts]
+- [x] [Review][Patch] AM6：阶段缺失按各预期场景计数，其他场景额外事件不能抵消。[packages/types/src/auth-measurements.ts]
+- [x] [Review][Patch] AM7：首页成功终点必须真实可见，保留的hidden私有DOM不计成功。[scripts/measurements/run-auth.mts]
+- [x] [Review][Patch] AM8：场景准备、运行、截止和完整性失败均保留已采样数据/缺失报告，再非零退出。[scripts/measurements/run-auth.mts]
+- [x] [Review][Patch] AM9：源码复核不可读时先保存安全样本，失败报告明确sourceReadable=false，不能因再次hash而丢失结果。[scripts/measurements/run-auth.mts]
+
 ## Dev Notes
 
 ### 实施顺序与范围
@@ -472,6 +484,8 @@ GPT-6 Astra（当前任务配置）；create-story阶段使用两个独立分析
 
 ### Completion Notes List
 
+- 2026-09-26：1.0 T9独立WL-AUTH本地代码/反例与9项三层CR修补已复核；T7验证码错误提示补齐，真实provider/SDK/native仍未关闭。当前提交完整CI待验证，证据见story-1-0-auth-measurement-progress-2026-09-26.md。
+
 - Ultimate context engine analysis completed - comprehensive developer guide created.
 - 创建完整实施合同；业务任务尚未实施，生产证据尚待对应授权与验收。
 
@@ -551,3 +565,60 @@ GPT-6 Astra（当前任务配置）；create-story阶段使用两个独立分析
 - `_bmad-output/implementation-artifacts/evidence/story-1-6-telemetry-2026-09-19/browser-report.json`
 
 首次消费隐私边界证据已补，真实SDK/许可UI/规范事件及查询仍未接通；详见9月19dev-progress最新T8段，Story仍in-progress。
+
+
+### T9测量切片追加文件（2026-09-26）
+
+- `.github/workflows/ci.yml`
+- `.gitignore`
+- `CURRENT.md`
+- `_bmad-output/implementation-artifacts/1-0-production-login-and-multi-device-sessions.md`
+- `_bmad-output/implementation-artifacts/capacitor-task-monitor-state.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/cutoff-preflight/recomputed.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/cutoff-preflight/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/cutoff-preflight/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/cutoff-preflight/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/between-cases/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/between-cases/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/between-cases/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/hidden-home/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/hidden-home/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/hidden-home/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/integrity-failure/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/integrity-failure/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/integrity-failure/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/owned-port-stalled-body/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/source-read-failure/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/source-read-failure/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/source-read-failure/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/guards-preflight/verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/import-compatibility/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/import-compatibility/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/lint-preflight.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/matrix-preflight/recomputed.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/matrix-preflight/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/matrix-preflight/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/matrix-preflight/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/preflight.json`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `_bmad-output/implementation-artifacts/story-1-0-auth-measurement-code-review-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/story-1-0-auth-measurement-progress-2026-09-26.md`
+- `apps/mobile/scripts/auth-measurement-harness.tsx`
+- `apps/mobile/src/auth/LoginScreen.test.tsx`
+- `apps/mobile/src/auth/LoginScreen.tsx`
+- `docs/ops/auth-measurements.md`
+- `docs/ops/import-measurements.md`
+- `eslint.config.mjs`
+- `package.json`
+- `packages/types/src/auth-measurements.ts`
+- `packages/types/src/import-measurements.ts`
+- `packages/types/src/measurement-common.ts`
+- `scripts/measurements/auth-harness-boundaries.test.mts`
+- `scripts/measurements/auth-report.mts`
+- `scripts/measurements/auth-report.test.mts`
+- `scripts/measurements/check-auth-guards.mts`
+- `scripts/measurements/run-auth.mts`
+- `scripts/measurements/run-import-dock.mts`
+- `scripts/measurements/tsconfig.json`
+
+本地结果与源指纹见story-1-0-auth-measurement-progress-2026-09-26.md及evidence/story-1-0-measurement-2026-09-26/preflight.json；原baseline、GWT与整Story状态保留。

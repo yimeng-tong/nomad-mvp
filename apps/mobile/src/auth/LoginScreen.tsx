@@ -36,6 +36,7 @@ function detectPlatform(): Platform {
 }
 
 function getErrorMessage(error: unknown) {
+  if (getErrorCode(error) === 'AUTH_OTP_INVALID') return '验证码不正确，请检查后重试';
   const status = getErrorStatus(error);
   if (status === 401) return '登录状态已失效，请重新获取验证码';
   if (status === 429) return '请求过于频繁，请稍后再试';

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { LoginScreen } from './LoginScreen';
-import type { AuthApiClient, AuthConfigResponse } from './api';
+import { AuthApiError, type AuthApiClient, type AuthConfigResponse } from './api';
 import type { Analytics } from './analytics';
 
 function createApiClient(overrides: Partial<AuthApiClient> = {}): AuthApiClient {
@@ -39,6 +39,22 @@ function createAnalytics(): Analytics {
 }
 
 describe('LoginScreen', () => {
+  it('keeps an invalid OTP distinct from session expiry and only retries on explicit confirmation', async () => {
+    const apiClient = createApiClient(); const onAuthenticated = vi.fn();
+    vi.mocked(apiClient.verifyOtp).mockRejectedValueOnce(new AuthApiError('provider-private-message', { status: 401, code: 'AUTH_OTP_INVALID' }));
+    render(<LoginScreen apiClient={apiClient} onAuthenticated={onAuthenticated} />);
+    fireEvent.change(await screen.findByLabelText('手机号'), { target: { value: '13800138000' } });
+    fireEvent.change(screen.getByLabelText('验证码'), { target: { value: '123456' } });
+    fireEvent.click(screen.getByRole('button', { name: '登录' }));
+    await screen.findByText('验证码不正确，请检查后重试');
+    expect(screen.queryByText('登录状态已失效，请重新获取验证码')).toBeNull();
+    expect(screen.getByLabelText('手机号')).toHaveValue('13800138000'); expect(screen.getByLabelText('验证码')).toHaveValue('123456');
+    expect(apiClient.startOtp).not.toHaveBeenCalled(); expect(apiClient.verifyOtp).toHaveBeenCalledTimes(1); expect(apiClient.getCurrentUser).not.toHaveBeenCalled();
+    expect(onAuthenticated).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '登录' }));
+    await waitFor(() => expect(onAuthenticated).toHaveBeenCalledTimes(1));
+    expect(apiClient.verifyOtp).toHaveBeenCalledTimes(2); expect(apiClient.startOtp).not.toHaveBeenCalled();
+  });
   it('renders iOS login methods with equal weight and configured order', async () => {
     const apiClient = createApiClient();
     const analytics = createAnalytics();
@@ -87,7 +103,7 @@ describe('LoginScreen', () => {
     expect(apiClient.verifyOtp).toHaveBeenCalledWith({
       phone: '+8613800138000',
       otp: '000000',
-      device_fingerprint: expect.any(String),
+      device_fingerprint: expect.any(String) as unknown,
     });
 
     const trackedPayloads = vi.mocked(analytics.track).mock.calls.map(([, props]) => JSON.stringify(props ?? {}));
@@ -179,7 +195,7 @@ describe('LoginScreen', () => {
 
 it('PNVS binds retry to one intent and says unknown delivery truthfully', async () => {
   const config: AuthConfigResponse = { privacy_url: '/legal/privacy', user_agreement_url: '/legal/terms', enabled_methods: [{ id: 'phone', label: '手机号', type: 'phone', enabled: true }], ios_equal_weight_order: ['phone'], captcha: { provider: 'aliyun-pnvs', mode: 'risk', app_id: 'public', sdk_url: '/vendor/pnvs/ct4.js' } };
-  const startOtp = vi.fn().mockRejectedValueOnce(new Error('network')).mockResolvedValue({ sent: false, captcha_required: false, retry_after_sec: 60, challenge_id: 'challenge', delivery_state: 'unknown' });
+  const startOtp = vi.fn<AuthApiClient['startOtp']>().mockRejectedValueOnce(new Error('network')).mockResolvedValue({ sent: false, captcha_required: false, retry_after_sec: 60, challenge_id: 'challenge', delivery_state: 'unknown' });
   const client = createApiClient({ getConfig: async () => config, startOtp });
   render(<LoginScreen apiClient={client} />);
   fireEvent.change(await screen.findByLabelText('手机号'), { target: { value: '13800138000' } });

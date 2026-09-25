@@ -1,5 +1,5 @@
 {
   "extends": "../../apps/mobile/tsconfig.json",
   "compilerOptions": { "types": ["node", "vite/client", "vitest/globals"], "typeRoots": ["../../apps/server/node_modules/@types", "../../apps/mobile/node_modules/@types", "../../apps/mobile/node_modules"], "paths": {"puppeteer": ["../../apps/server/node_modules/puppeteer"]} },
-  "include": ["./*.mts", "../../packages/types/src/import-measurements.ts", "../../apps/mobile/scripts/import-measurement-harness.tsx"]
+  "include": ["./*.mts", "../../packages/types/src/*measure*.ts", "../../apps/mobile/scripts/*-measurement-harness.tsx"]
 }

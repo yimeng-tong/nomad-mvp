@@ -7,10 +7,10 @@ Android/iOS 真机、生产 SLA、METRICS-02 目标或 U-App/U-Link 真实归因
 ## 执行与输入
 
 - `pnpm run ci:import-measurements`：严格数据合同、统计边界测试和测量工具类型检查。
-- `pnpm run measure:import-dock -- matrix`：独占 localhost:5190，启动隔离 Chromium 配置与真实 IndexedDB；阻止外部请求。
-- `pnpm run measure:import-dock -- deadline-cutoff`：250ms 固定截止、400ms 分类延迟的负例；计划15项全部保留为缺失，不能继续提交。
-- `pnpm run measure:import-dock -- fixed-single`：7 秒单请求回归测量。
-- `pnpm run measure:import-report -- samples.json report.json`：从严格 `{manifest,samples}` 数据重新计算相同整体/场景统计。窗口、采样率、fixtureVersion、scenarioPlan保留；环境/源码 provenance 以原 runner report 为准，重算不回显外部文件中的任意 provenance 字段。
+- `pnpm run measure:import-dock matrix`：独占 localhost:5190，启动隔离 Chromium 配置与真实 IndexedDB；阻止外部请求。
+- `pnpm run measure:import-dock deadline-cutoff`：250ms 固定截止、400ms 分类延迟的负例；计划15项全部保留为缺失，不能继续提交。
+- `pnpm run measure:import-dock fixed-single`：7 秒单请求回归测量。
+- `pnpm run measure:import-report samples.json report.json`：从严格 `{manifest,samples}` 数据重新计算相同整体/场景统计。窗口、采样率、fixtureVersion、scenarioPlan保留；环境/源码 provenance 以原 runner report 为准，重算不回显外部文件中的任意 provenance 字段。
 
 浏览器使用项目 server 的 Puppeteer 运行时；Linux 需安装该 Chromium 所需共享库/字体，或显式设置
 `LD_LIBRARY_PATH`、`FONTCONFIG_FILE` 指向已有运行时。不得使用真实浏览器配置或账号。

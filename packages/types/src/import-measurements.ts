@@ -1,11 +1,12 @@
 /** Local/staging measurement contract, not an analytics SDK payload or business authority. */
+import { measurementQuantiles as quantiles, measurementWindowIsValid, type MeasurementWindow, type Quantiles as Quantile } from './measurement-common.js';
 export const importStages = ['created', 'fetching', 'parsing', 'geo', 'storing', 'done', 'failed'] as const;
 export const importOutcomes = ['done', 'partial', 'failed', 'rejected', 'unknown', 'running'] as const;
 export const importScenarios = ['single', 'batch', 'partial', 'failure', 'rejected', 'unknown-ack', 'reused', 'retry', 'reconnect', 'missing-terminal', 'missing-acceptance'] as const;
 const timeKeys = ['confirmed', 'prepared', 'accepted', 'firstFact', 'terminal', 'presented', 'presentationEnded'] as const;
-export type ImportMeasurementManifest = {
-  measurementVersion: 'nomad.import.v1'; workload: 'WL-IMPORT-DOCK'; mode: 'fixture' | 'staging' | 'production'; clockId: string;
-  scenarioPlan: Array<{ scenario: typeof importScenarios[number]; count: number }>; plannedLogicalRequests: number; windowStartMs: number; windowEndMs: number; deadlineMs: number; fixtureVersion: string; sampling: number;
+export type ImportMeasurementManifest = MeasurementWindow & {
+  measurementVersion: 'nomad.import.v1'; workload: 'WL-IMPORT-DOCK'; mode: 'fixture' | 'staging' | 'production';
+  scenarioPlan: Array<{ scenario: typeof importScenarios[number]; count: number }>; plannedLogicalRequests: number; fixtureVersion: string;
 };
 export type ImportMeasurementSample = {
   logicalId: string; clockId: string; scenario: typeof importScenarios[number]; outcome: typeof importOutcomes[number];
@@ -13,7 +14,6 @@ export type ImportMeasurementSample = {
   operations: string[]; attemptsObserved: number[]; commandRequests: number; reconnects: number; duplicateFrames: number | null;
   times: Record<typeof timeKeys[number], number | null>; visibleMs: number | null; observedStages: Array<typeof importStages[number]>;
 };
-type Quantile = { n: number; p50: number | null; p95: number | null };
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER;
 const count = (value: unknown): value is number => finite(value) && Number.isSafeInteger(value) && value <= 1000000;
@@ -35,7 +35,7 @@ export function parseImportMeasurementSample(value: unknown): ImportMeasurementS
     return {
       logicalId: value.logicalId, clockId: value.clockId, scenario: value.scenario, outcome: value.outcome,
       disposition: value.disposition, acceptanceSource: value.acceptanceSource,
-      operations: [...new Set(value.operations)].sort(), attemptsObserved: [...new Set(value.attemptsObserved)].sort((a, b) => a - b),
+      operations: [...new Set(value.operations as string[])].sort(), attemptsObserved: [...new Set(value.attemptsObserved as number[])].sort((a, b) => a - b),
       commandRequests: value.commandRequests, reconnects: value.reconnects, duplicateFrames: value.duplicateFrames as number | null,
       times: Object.fromEntries(timeKeys.map((key) => [key, (value.times as Record<string, number | null>)[key]])) as ImportMeasurementSample['times'],
       visibleMs: value.visibleMs as number | null, observedStages: [...new Set(value.observedStages)].sort(),
@@ -48,15 +48,9 @@ export function validateImportMeasurementManifest(value: unknown): asserts value
     || !enumValue(value.mode, ['fixture', 'staging', 'production'] as const) || typeof value.clockId !== 'string' || !uuid.test(value.clockId)
     || !Array.isArray(value.scenarioPlan) || value.scenarioPlan.length > importScenarios.length
     || !value.scenarioPlan.every((item) => object(item) && exact(item, ['scenario', 'count']) && enumValue(item.scenario, importScenarios) && count(item.count) && item.count > 0)
-    || new Set(value.scenarioPlan.map((item) => item.scenario)).size !== value.scenarioPlan.length
-    || value.scenarioPlan.reduce((sum, item) => sum + item.count, 0) !== value.plannedLogicalRequests
-    || !count(value.plannedLogicalRequests) || !finite(value.windowStartMs) || !finite(value.windowEndMs) || value.windowEndMs < value.windowStartMs
-    || !finite(value.deadlineMs) || value.windowEndMs - value.windowStartMs > value.deadlineMs || typeof value.fixtureVersion !== 'string' || !/^[a-z][a-z0-9._-]{0,79}$/i.test(value.fixtureVersion)
-    || !finite(value.sampling) || value.sampling > 1) throw new Error('MEASUREMENT_MANIFEST_INVALID');
-}
-function quantiles(values: number[]): Quantile {
-  const sorted = [...values].sort((a, b) => a - b), n = sorted.length;
-  return { n, p50: n ? sorted[Math.ceil(0.5 * n) - 1] : null, p95: n ? sorted[Math.ceil(0.95 * n) - 1] : null };
+    || new Set((value.scenarioPlan as ImportMeasurementManifest['scenarioPlan']).map((item) => item.scenario)).size !== value.scenarioPlan.length
+    || (value.scenarioPlan as ImportMeasurementManifest['scenarioPlan']).reduce((sum, item) => sum + item.count, 0) !== value.plannedLogicalRequests
+    || !count(value.plannedLogicalRequests) || !measurementWindowIsValid(value) || typeof value.fixtureVersion !== 'string' || !/^[a-z][a-z0-9._-]{0,79}$/i.test(value.fixtureVersion)) throw new Error('MEASUREMENT_MANIFEST_INVALID');
 }
 function globalConflicts(input: unknown[]) {
   if (!Array.isArray(input) || input.length > 20000) throw new Error('MEASUREMENT_INPUT_INVALID');

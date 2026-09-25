@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-09-25T07:24:38.810285+00:00",
+  "recorded_at": "2026-09-25T07:40:18.168928+00:00",
   "scope": "explicit-execution-resume-and-cross-device-checkpoint",
   "stop_after_story": null,
   "story_statuses": {
@@ -48,18 +48,33 @@
     "non_secret_template_matches": [
       "Langfuse example MinIO access key ID is the default account name, not its private key"
     ],
-    "environment_files_in_git": false
+    "environment_files_in_git": false,
+    "raw_runtime_logs_in_git": false,
+    "raw_logs_retained_count": 16
   },
   "case_insensitive_path_collisions": [],
   "homelab": {
     "provider_config_record": "_bmad-output/implementation-artifacts/evidence/cross-device-development-2026-09-25/homelab-env-placement.json",
     "isolated_runtime_record": "_bmad-output/implementation-artifacts/evidence/cross-device-development-2026-09-25/development-database-and-runtime.json",
-    "deployment_status": "pending-git-checkpoint",
-    "https_frp_status": "configuration-location-requested"
+    "deployment_status": "healthy-isolated-development-api",
+    "https_frp_status": "configuration-location-requested",
+    "source_commit": "b8b445567f60fcafd0ff2d8dcd75498659b8728d",
+    "backend_verification": "_bmad-output/implementation-artifacts/evidence/cross-device-development-2026-09-25/backend-verification.json",
+    "migration_count": 6,
+    "existing_staging_preserved": true,
+    "real_provider_acceptance": false
   },
   "git_checkpoint": {
-    "status": "pending",
-    "branch": "codex/story-1-0-production-auth"
+    "status": "committed-and-pushed",
+    "commit": "b8b445567f60fcafd0ff2d8dcd75498659b8728d",
+    "branch": "codex/story-1-0-production-auth",
+    "remote": "origin",
+    "method": "existing-yimeng-tong-WSL-SSH-key",
+    "failed_attempts": [
+      "Windows homelab SSH identity shangji666 lacked repository write access",
+      "Existing gh OAuth token lacked workflow scope; no token scopes changed"
+    ],
+    "files_changed": 1006
   },
   "new_development_task": {
     "status": "not-dispatched-before-git-checkpoint"

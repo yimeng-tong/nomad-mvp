@@ -619,7 +619,7 @@ active_workstreams:
   near_term_execution:
     story: 9-4-component-workbench-and-enforced-code-quality
     thread_id: null
-    status: awaiting-git-checkpoint-before-development
+    status: ready-for-new-development-task
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
     scope: 9.4开发审阅先行；9.5/9.3临近实施才CS/VS；在制真实门槛和3.1暂停保持
@@ -651,3 +651,7 @@ cross_device_development:
   backend_host: homelab-vm104
   configuration_record: docs/ops/cross-device-development.md
   secret_configuration_in_git: false
+  baseline_commit: b8b445567f60fcafd0ff2d8dcd75498659b8728d
+  baseline_pushed: true
+  backend_api_verified: true
+  backend_native_https_verified: false

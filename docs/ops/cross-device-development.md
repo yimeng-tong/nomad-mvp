@@ -65,12 +65,13 @@ WSL现有密钥在Windows OpenSSH中，使用同样转发，不复制密钥：
   -J root@192.168.31.2 nomad@192.168.31.104
 ~~~
 
-另开终端：
+另开终端启动前端：
 
 ~~~bash
-curl --fail http://localhost:43104/health
 pnpm run dev:homelab
 ~~~
+
+Mac可直接curl --fail http://localhost:43104/health。使用Windows OpenSSH建立隧道时，回环监听在Windows；本轮实际验证使用/mnt/c/Windows/System32/curl.exe --noproxy "*" --fail http://localhost:43104/health，浏览器也在Windows打开localhost。WSL自身是否共享Windows回环取决于其网络模式，不能把WSL内curl失败当远端API故障。
 
 打开http://localhost:5173。前端只设置公开VITE_API_BASE_URL=http://localhost:43104，保留credentials/include与现有auth transport，不带云Key/DB密码。固定localhost/端口以匹配开发Origin，不用任意LAN host或改成通配符。浏览器同一localhost站点的不同端口由后端精确CORS校验；不重写Origin绕过CSRF。组件开发的合成场景仍留在独立工作台。
 
@@ -85,3 +86,9 @@ SSH隧道只供桌面开发。iPhone/Android真机不能把自己的localhost当
 使用ops/pve-staging/deploy-development.sh部署指定干净Git提交的archive。它只写新的development release、独立开发数据库和服务，不替换旧current、不重启共享PostgreSQL、不执行真实用户迁移/清理。私有runtime/providers配置必须事先就位；部署缺项失败，不生成假资源。
 
 单次部署检查archive SHA、迁移、server build、local健康及/auth/config，并记录源码commit、lockfile、配置存在性和实际HTTP结果。回退仅切development/current到前一开发release并重启开发服务；数据库变化仍按DB-CHANGE-01前向/恢复计划处理，不能假称切二进制回滚了schema。
+
+## 本轮实际核验
+
+基线b8b445567f60fcafd0ff2d8dcd75498659b8728d已提交并推送origin/codex/story-1-0-production-auth。VM104已从该提交部署独立开发服务，6个迁移只应用于新开发库；旧10f940c49e2d发布保持。/health=200、/me未认证=401；localhost:5173精确CORS可用，不可信Origin无许可。正式协议未配置时/auth/config诚实unavailable，未发送短信或测试付费Provider。Windows回环SSH隧道健康验证成功，临时探针隧道已停止；Mac和原生HTTPS未由此替代验收。
+
+具体脱敏证据在_bmad-output/implementation-artifacts/evidence/cross-device-development-2026-09-25/。原16份运行日志留在本地及VM104的/var/lib/nomad-mvp/development-evidence/pre-ui-logs-2026-09-25.tar.gz；Git仅记录路径/校验和，保留历史报告与失败事实。

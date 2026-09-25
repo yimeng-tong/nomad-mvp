@@ -73,3 +73,7 @@ Query9.6与Router9.7分别开发/验收：依赖9.4/9.5和9.3的shared-ui-local-
 - 远期草稿归档：archive/deferred-story-drafts-2026-09-25/manifest.json（17份合同/17份草稿自查）。
 - 状态同步后必须运行ci:handoff；检查器不因解除边界而改写。边界override走已存在的用户恢复记录接口。
 - 本轮检查结果与新任务回执记录见sprint-execution-resume-checks-2026-09-25.json，后续实际开发结果由新任务产生，不能在此预填。
+
+## Git与后端交接结果
+
+2026-09-25基线b8b445567f60fcafd0ff2d8dcd75498659b8728d已推送origin/codex/story-1-0-production-auth，9.4尚未实施。独立VM104开发API和环境集中已实际验证，原staging保留；原生HTTPS/frp配置位置仍待确认。后端连接、Mac/WSL步骤和实证边界见docs/ops/cross-device-development.md。新任务应从此后已推送的当前交接提交继续，先处理9.4，后续遵循上表九步，不重新批量准备。

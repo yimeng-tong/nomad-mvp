@@ -1,0 +1,15 @@
+{
+  "source_commit": "b8b445567f60fcafd0ff2d8dcd75498659b8728d",
+  "archive_sha256": "0afa33ff4d3dadfc2c5b25fd1cd355baf91b1257b2cfd3f609c4c6e7cb0f5cd8",
+  "archive_bytes": 141504741,
+  "deployment_exit": 0,
+  "migration_count": 6,
+  "service": "nomad-development.service",
+  "database": "nomad_development",
+  "original_service": "nomad-server.service",
+  "original_release": "10f940c49e2d",
+  "original_release_preserved": true,
+  "postgres_restarted": false,
+  "real_provider_calls_tested": false,
+  "native_https_verified": false
+}

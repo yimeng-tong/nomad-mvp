@@ -1,0 +1,99 @@
+{
+  "source_commit": "b8b445567f60fcafd0ff2d8dcd75498659b8728d",
+  "release": "/opt/nomad-mvp/development/releases/b8b445567f60fcafd0ff2d8dcd75498659b8728d",
+  "original_release": "/opt/nomad-mvp/releases/10f940c49e2d",
+  "original_release_preserved": true,
+  "services": [
+    "active",
+    "active",
+    "active",
+    "active",
+    "active"
+  ],
+  "checks": {
+    "health": {
+      "status": 200,
+      "allow_origin": null,
+      "availability": null,
+      "health": "ok",
+      "error_code": null,
+      "login_enabled": false
+    },
+    "auth_config": {
+      "status": 200,
+      "allow_origin": "http://localhost:5173",
+      "availability": "unavailable",
+      "health": null,
+      "error_code": null,
+      "login_enabled": false
+    },
+    "unauthenticated_me": {
+      "status": 401,
+      "allow_origin": null,
+      "availability": null,
+      "health": null,
+      "error_code": "AUTH_SESSION_EXPIRED",
+      "login_enabled": false
+    },
+    "untrusted_origin": {
+      "status": 200,
+      "allow_origin": null,
+      "availability": "unavailable",
+      "health": null,
+      "error_code": null,
+      "login_enabled": false
+    }
+  },
+  "configuration_preflight": {
+    "runtimeMode": "local",
+    "provider": "aliyun-pnvs",
+    "loginMethods": [
+      "phone"
+    ],
+    "configuredDatabase": true,
+    "configuredOrigins": 2,
+    "explicitProxyRanges": 0,
+    "cookieSecure": false,
+    "cookieSameSite": "lax",
+    "captchaProvider": "aliyun-pnvs",
+    "captchaMode": "always",
+    "oidcConfigured": false,
+    "configurationValidated": true,
+    "legalDocumentsConfigured": false,
+    "realServicesVerified": false,
+    "resources": {
+      "pnvsSms": {
+        "accessKeyPairPresent": true,
+        "signNamePresent": true,
+        "templateCodePresent": true,
+        "templateParamPresent": true
+      },
+      "pnvsGraphic": {
+        "appIdPresent": true,
+        "appKeyPresent": true,
+        "selectedPlatform": "h5"
+      },
+      "attribution": {
+        "uAppKeyPresent": false,
+        "registeredPlatform": "unspecified",
+        "configuredPlatformKeys": {
+          "android": true,
+          "ios": true
+        },
+        "currentRuntimeHost": "web-pwa",
+        "integrationVerified": false
+      },
+      "realServicesVerified": false
+    }
+  },
+  "configuration_file_modes": {
+    "runtime.env": "0o640",
+    "providers.env": "0o640"
+  },
+  "native_https_verified": false,
+  "real_provider_calls_tested": false,
+  "new_story_9_4_implemented": false,
+  "windows_loopback_ssh_tunnel_health_verified": true,
+  "macos_connection_executed": false,
+  "temporary_probe_tunnel_stopped": true
+}

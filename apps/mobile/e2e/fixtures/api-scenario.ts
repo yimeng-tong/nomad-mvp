@@ -30,8 +30,10 @@ const fault = (code: string, message = '合成请求暂不可用'): Schema['Erro
 export class ApiScenario {
   readonly marker = 'NOMAD_E2E_FIXTURE';
   identity: Owner | null = null;
+  sessionRevision = 0;
   authorityUnavailable = false;
   library: 'normal' | 'empty' | 'error' | 'long' = 'normal';
+  pendingInspirationCount = 1;
   otpError = false;
   dropNextAck = false;
   blockReceipts = false;
@@ -45,6 +47,7 @@ export class ApiScenario {
   private readonly held = new Set<string>();
   private readonly releases = new Map<string, Set<() => void>>();
   private readonly pending = new Set<Promise<void>>();
+  private readonly pendingPaths = new Map<Promise<void>, string>();
   private readonly streams = new Map<string, Set<() => void>>();
   private readonly intentionalAborts = new Set<Request>();
   private closing = false;
@@ -56,6 +59,15 @@ export class ApiScenario {
     this.held.delete(path);
     for (const release of this.releases.get(path) ?? []) release();
     this.releases.delete(path);
+  }
+  async releaseAndWait(path: string) {
+    this.release(path);
+    await Promise.all([...this.pendingPaths].filter(([, requestPath]) => requestPath === path).map(([work]) => work));
+  }
+  private user(owner: Owner) {
+    const value = user(owner);
+    if (this.sessionRevision) value.session.id = value.session.id.slice(0, -8) + (parseInt(value.session.id.slice(-8), 16) + this.sessionRevision).toString(16).padStart(8, '0');
+    return value;
   }
   private gate(path: string): Promise<void> {
     if (!this.held.has(path) || this.closing) return Promise.resolve();
@@ -85,7 +97,8 @@ export class ApiScenario {
         await this.abort(route);
       });
       this.pending.add(work);
-      try { await work; } finally { this.pending.delete(work); }
+      this.pendingPaths.set(work, new URL(route.request().url()).pathname);
+      try { await work; } finally { this.pending.delete(work); this.pendingPaths.delete(work); }
     });
   }
   async finish() {
@@ -163,7 +176,7 @@ export class ApiScenario {
     if (!path.startsWith('/api/')) {
       const kind = req.resourceType();
       if (method === 'GET' && kind === 'document' && ['/__nomad_e2e/legal/privacy', '/__nomad_e2e/legal/terms'].includes(path)) {
-        await route.fulfill({ status: 200, contentType: 'text/html', headers: { 'Content-Security-Policy': "default-src 'none'", 'Cache-Control': 'no-store' },
+        await route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', headers: { 'Content-Security-Policy': "default-src 'none'", 'Cache-Control': 'no-store' },
           body: '<!doctype html><html lang="zh-CN"><title>合成公开说明</title><main><h1>合成公开说明</h1><p>仅用于浏览器测试，不是正式协议。</p></main></html>' }); return;
       }
       if (method === 'GET' && !['fetch', 'xhr', 'eventsource'].includes(kind)
@@ -177,7 +190,7 @@ export class ApiScenario {
       await this.json(route, { ...authConfig, privacy_url: `${origin}/__nomad_e2e/legal/privacy`, user_agreement_url: `${origin}/__nomad_e2e/legal/terms` }); return;
     }
     if (method === 'GET' && path === '/api/me') {
-      await this.json(route, this.authorityUnavailable ? fault('AUTH_AUTHORITY_UNAVAILABLE') : owner ? user(owner) : fault('AUTH_SESSION_EXPIRED'), this.authorityUnavailable ? 503 : owner ? 200 : 401); return;
+      await this.json(route, this.authorityUnavailable ? fault('AUTH_AUTHORITY_UNAVAILABLE') : owner ? this.user(owner) : fault('AUTH_SESSION_EXPIRED'), this.authorityUnavailable ? 503 : owner ? 200 : 401); return;
     }
     if (method === 'POST' && path === '/api/auth/otp/start') {
       if (!/^1\d{10}$/.test(string(body.phone))) { await this.json(route, fault('AUTH_PHONE_INVALID', '合成错误：请输入有效手机号'), 400); return; }
@@ -186,7 +199,7 @@ export class ApiScenario {
     if (method === 'POST' && path === '/api/auth/otp/verify') {
       if (body.otp !== '123456') { await this.json(route, fault('AUTH_OTP_INVALID', '合成错误：验证码无效'), 400); return; }
       this.identity = body.phone === '13900139000' ? 'B' : 'A';
-      await this.json(route, user(this.identity)); return;
+      await this.json(route, this.user(this.identity)); return;
     }
     const command = /^\/api\/ingest\/commands\/([^/]+)$/.exec(path);
     const match = /^\/api\/ingest\/([^/]+)(?:\/(recovery|events|result|retry))?$/.exec(path);
@@ -198,7 +211,7 @@ export class ApiScenario {
       || !!job && !!match && (method === 'GET' && match[2] !== 'retry' || method === 'POST' && match[2] === 'retry');
     if (!declared) { this.violations.push('NOMAD_E2E_UNDECLARED_REQUEST'); await this.abort(route); return; }
     if (!owner) { await this.json(route, fault('AUTH_SESSION_EXPIRED'), 401); return; }
-    const expected = user(owner), headers = req.headers();
+    const expected = this.user(owner), headers = req.headers();
     const suppliedOwner = headers['x-auth-user-id'] ?? url.searchParams.get('auth_user_id');
     const suppliedSession = headers['x-auth-session-id'] ?? url.searchParams.get('auth_session_id');
     if (suppliedOwner !== expected.user_id || suppliedSession !== expected.session.id) { await this.json(route, fault('AUTH_CONTEXT_CHANGED'), 409); return; }
@@ -208,11 +221,17 @@ export class ApiScenario {
     if (method === 'GET' && path === '/api/library/cities') {
       if (this.library === 'error') { await this.json(route, fault('LIBRARY_UNAVAILABLE', '合成错误：灵感暂未更新'), 503); return; }
       const cities: Schema['LibraryCitiesResponse'] = this.library === 'empty' ? { cities: [], unlocated_count: 0 }
-        : { cities: [{ city_id: `city-${owner}`, name: this.library === 'long' ? `${owner}的长中文城市名称`.repeat(12) : `${owner}的合成城市`, inspiration_count: 1, pending_count: 1 }], unlocated_count: 1 };
+        : { cities: [{ city_id: `city-${owner}`, name: this.library === 'long' ? `${owner}的长中文城市名称`.repeat(12) : `${owner}的合成城市`, inspiration_count: 1, pending_count: 0 }], unlocated_count: this.pendingInspirationCount };
       await this.json(route, cities); return;
     }
     if (method === 'GET' && path === '/api/library/inspirations') {
-      const items: Schema['LibraryInspirationsResponse'] = { items: this.library === 'empty' ? [] : [this.item(owner)] };
+      const pending = Array.from({ length: this.pendingInspirationCount }, (_, index) => ({ ...this.item(owner, index ? `fixture-${owner}-${index}` : `fixture-${owner}`),
+        title: index ? `${owner}的合成灵感 ${index + 1}` : `${owner}的合成灵感`, candidate_count: index ? 0 : 1 }));
+      const located: Schema['LibraryInspirationItem'] = { ...this.item(owner, `located-${owner}`), title: `${owner}的合成已定位灵感`, locate_status: 'resolved',
+        city_id: `city-${owner}`, city_name: `${owner}的合成城市`, poi_id: `poi-${owner}`, poi_name: '合成地点', poi_address: '合成地址', candidate_count: 0 };
+      const filtered = url.searchParams.get('locate_status') === 'pending' ? pending : url.searchParams.has('city_id')
+        ? url.searchParams.get('city_id') === `city-${owner}` ? [located] : [] : [located, ...pending];
+      const items: Schema['LibraryInspirationsResponse'] = { items: this.library === 'empty' ? [] : filtered };
       await this.json(route, items); return;
     }
     if (method === 'GET' && path === `/api/library/inspirations/fixture-${owner}/candidates`) {

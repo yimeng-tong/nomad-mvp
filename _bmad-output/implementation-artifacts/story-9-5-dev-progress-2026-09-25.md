@@ -21,3 +21,8 @@ T2状态API fixture已实现：复用9.4DTO/合成配置，实际HTTP客户端�
 每次run独立目录，重用已有report的run ID会失败；suite-run指针与counterexample分开，避免最终控制覆盖完整矩阵。初次B01红灯只保留原日志，早期默认目录的trace被后续run覆盖的事实如实记录；新目录机制保护后续失败记录。下一canonical三引擎完整复验T2后进入T3/T4。
 
 T2 canonical run36142149598实际14/15通过，WebKit的fetch超时拒绝名为AbortError，原检查只接受TimeoutError而失败。新断言同时要求signal.aborted=true、signal.reason.name=TimeoutError，再限定fetch拒绝为TimeoutError/AbortError，未把一般网络失败当超时。真实失败trace/截图已从新独立run目录下载并记录hash；本地Chrome新断言/类型/lint通过后重取CI，T2保持未勾选。
+
+T2 canonical结果已实际下载：4feb294/run36142857181，三引擎15/15、0skip；4故障+2控制和四个失败trace存在。signal超时原因断言在WebKit通过。T2勾选，转T3/T4实际页面组合。
+
+
+T3/T4本机 Chromium/Firefox 各19/19通过；实际异步Sheet焦点与noopener误报修补有红/绿与独立窄审阅。242移动+5native配置、18工作台、typed lint、native sync/verify、7组隔离负例和handoff通过。原9.4反例在正常控制/焦点负例通过后 keyboard 子进程90秒超时，保留为未完成运行，正做定向复验；不计全部反例通过。T3/T4须等canonical三引擎证据，不先勾选。下一T5固定环境视觉候选与T6缺陷/完整性证明。

@@ -1,0 +1,92 @@
+import { test, expect } from '../fixtures/browser-test';
+import { expectPrivateHidden } from '../fixtures/privacy';
+
+test('B09 login errors retain fields and public legal content remains readable', async ({ page, api, context }) => {
+  api.otpError = true;
+  await page.goto('/');
+  const phone = page.getByLabel('手机号', { exact: true });
+  await phone.fill('13800138000');
+  await page.getByRole('button', { name: '获取验证码', exact: true }).click();
+  await expect(page.getByText('验证码未发送，请稍后重试', { exact: true })).toBeVisible();
+  await expect(phone).toHaveValue('13800138000');
+  expect(api.identity).toBeNull();
+  const popupPromise = context.waitForEvent('page');
+  await page.getByRole('button', { name: '隐私政策', exact: true }).click();
+  const popup = await popupPromise;
+  await expect(popup.getByRole('heading', { name: '合成公开说明' })).toBeVisible();
+  await expect(popup.getByText('仅用于浏览器测试，不是正式协议。')).toBeVisible();
+  await popup.close();
+  await expect(page.getByText('页面暂时无法打开，请重试', { exact: true })).toHaveCount(0);
+  expect(api.count('POST', '/api/ingest/xhs')).toBe(0);
+});
+
+test('B10 actual Home loading empty and error states never invent saved facts', async ({ page, api }) => {
+  api.identity = 'A'; api.library = 'empty';
+  api.hold('/api/library/cities'); api.hold('/api/library/inspirations');
+  await page.goto('/');
+  await expect(page.getByText('正在加载灵感', { exact: true })).toBeVisible();
+  api.release('/api/library/cities'); api.release('/api/library/inspirations');
+  await expect(page.getByText('还没有城市灵感，先粘贴一条小红书链接。', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '灵感', exact: true }).click();
+  await expect(page.getByText('这个筛选下暂时没有灵感。', { exact: true })).toBeVisible();
+  api.library = 'error';
+  await page.reload();
+  await expect(page.getByText('灵感库暂时不可用，请稍后重试', { exact: true })).toBeVisible();
+  await expect(page.locator('.destination-card')).toHaveCount(0);
+  await expect(page.locator('.dock-completion')).toHaveCount(0);
+  expect(api.count('POST', '/api/ingest/xhs')).toBe(0);
+});
+
+test('B11 unknown acknowledgement reload reads original receipt without a second write', async ({ page, api }) => {
+  api.identity = 'A'; api.dropNextAck = true; api.blockReceipts = true; api.nextImport = 'partial';
+  await page.goto('/');
+  await page.getByRole('textbox', { name: '统一输入', exact: true }).fill('https://xhslink.com/unknown');
+  await page.getByRole('button', { name: '发送', exact: true }).click();
+  await expect(page.locator('.dock-item-facts').getByText('受理结果尚未确认', { exact: true })).toBeVisible();
+  const writes = api.records.filter((entry) => entry.method === 'POST' && entry.path === '/api/ingest/xhs');
+  expect(writes).toHaveLength(1);
+  const operation = writes[0].operationId;
+  expect(operation).toBeTruthy();
+  await page.getByRole('button', { name: '确认受理结果', exact: true }).click();
+  await expect.poll(() => api.count('GET', `/api/ingest/commands/${operation}`)).toBeGreaterThan(0);
+  api.blockReceipts = false;
+  const beforeReload = api.records.length;
+  await page.reload();
+  await expect(page.locator('.dock-item-facts').getByText('部分内容已保存', { exact: true })).toBeVisible();
+  expect(api.records.slice(beforeReload).some((entry) => entry.method === 'GET' && entry.path === `/api/ingest/commands/${operation}`)).toBe(true);
+  expect(api.count('POST', '/api/ingest/xhs'), 'NOMAD_E2E_DUPLICATE_START').toBe(1);
+  expect(api.jobs.size).toBe(1);
+  await page.getByRole('button', { name: '查看已保存内容', exact: true }).click();
+  const sheet = page.getByRole('dialog', { name: '已保存的灵感', exact: true });
+  await expect(sheet.getByText('A的合成私有内容', { exact: true })).toBeVisible();
+  await sheet.getByRole('button', { name: '关闭', exact: true }).click();
+  const job = [...api.jobs.values()][0];
+  expect(job.snapshot.state).toBe('failed'); expect(job.snapshot.partial).toBe(true);
+  await page.getByRole('button', { name: '重试这条导入', exact: true }).click();
+  await expect.poll(() => api.count('POST', `/api/ingest/${job.id}/retry`)).toBe(1);
+  expect(job.snapshot.attempt).toBe(2);
+  api.complete(job.id);
+  await expect(page.locator('.dock-completion')).toBeVisible();
+  expect(api.count('POST', '/api/ingest/xhs'), 'NOMAD_E2E_DUPLICATE_START').toBe(1);
+});
+
+test('B12 actual EventSource loss reconciles the existing job without replaying its POST', async ({ page, api }) => {
+  api.identity = 'A'; api.disconnectNextStream = true;
+  await page.goto('/');
+  await page.getByRole('textbox', { name: '统一输入', exact: true }).fill('https://xhslink.com/reconnect');
+  const before = api.count('GET', '/api/me');
+  api.hold('/api/me');
+  await page.getByRole('button', { name: '发送', exact: true }).click();
+  await expect(page.getByText('正在恢复登录状态', { exact: true })).toBeVisible();
+  await expectPrivateHidden(page, ['A的合成']);
+  await expect.poll(() => api.count('GET', '/api/me')).toBeGreaterThan(before);
+  const job = [...api.jobs.values()][0];
+  expect(job).toBeDefined();
+  expect(api.count('GET', `/api/ingest/${job.id}/events`)).toBeGreaterThan(0);
+  api.complete(job.id);
+  await api.releaseAndWait('/api/me');
+  await expect(page.locator('.dock-completion')).toBeVisible();
+  expect(api.count('GET', `/api/ingest/${job.id}/recovery`)).toBeGreaterThan(0);
+  expect(api.count('POST', '/api/ingest/xhs')).toBe(1);
+  expect(api.jobs.size).toBe(1);
+});

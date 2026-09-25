@@ -1,0 +1,364 @@
+{
+  "kind": "actual-local-browser-and-focused-regression-validation",
+  "recordedAt": "2026-09-25T14:35:49.692905+00:00",
+  "baseRevision": "4feb2946dc8a390b32c542dea272d8150d847d9a",
+  "dirtyImplementation": true,
+  "sourceHashes": {
+    "apps/mobile/e2e/fixtures/api-scenario.ts": "b8513f30c4256e2843023547dae1f53b75b79aad5b31f1d7c633b692301ce4a8",
+    "apps/mobile/e2e/fixtures/browser-test.ts": "cf9a6e75e801b6d69078d508f0e91d72cf5d9f0cdc09bb443688a8901cb4525a",
+    "apps/mobile/e2e/fixtures/privacy.ts": "d044b05831889112fd72070aec159c4465719a0d36cd5e7729d2c2f7d784e229",
+    "apps/mobile/e2e/flows/auth-session.spec.ts": "e668944ca9392ce4b9a452215b9e16825a506fb30e1a82eb5f73b57ff68d42f5",
+    "apps/mobile/e2e/flows/bootstrap.spec.ts": "6b25c4f2bd65c873141f43d72643149100416ca1070d9ec333609c1e9de05511",
+    "apps/mobile/e2e/flows/fixture-contract.spec.ts": "bd71503dcbbdd675339e2fcca5c4d22cd8714ed3070f5d373412183ec7ead9a2",
+    "apps/mobile/e2e/flows/fixture-guards.spec.ts": "c52d0d7b1c701c1c29ec4aa37a3ea176677acffa7aea12a5995bba889ffbd3fc",
+    "apps/mobile/e2e/flows/home-sheet.spec.ts": "a47c071ad403b62bb60296fdbd289ae030273c1c67062a6be875184723db60d3",
+    "apps/mobile/e2e/flows/identity.spec.ts": "5038517371a94e636ff2026c454ab0811ac37ee1e130616ac0bed1eddb9dc0fc",
+    "apps/mobile/e2e/flows/recovery.spec.ts": "d4679a44a3be96afaa351bfca2885094a1aa362d1ddc4860c73a6c9249d00a26",
+    "apps/mobile/playwright.config.ts": "6e09f0b0593740c409b1e44202c2385cf79a35f64e75ffbcca347337fa073edd",
+    "apps/mobile/src/auth/LoginScreen.tsx": "5abf1cd8044874369f8b62242931cf3dd6ef6ab89690da35b0c82b8557825fb1",
+    "apps/mobile/src/home/HomeImportDock.tsx": "03d197200f059146f1e1d159fa33b4db423373c7b66eca6088656183b0112c7d",
+    "apps/mobile/src/home/HomeScreen.tsx": "2f614915ea360c5112cc69f2ecf4e5a98de1c060fa98eeb748b77da2aa78a326",
+    "apps/mobile/src/home/HomeSheet.tsx": "42a7c8fadf1b017a85bc7c420e7fba2b2610d4b9895b3710611bb1cb821ab0d1",
+    "pnpm-lock.yaml": "003ccce865b0adf03ed8451185d19ca3613d904023ff792f4d84bc633f18676d"
+  },
+  "logs": {
+    "/tmp/nomad-story-9-5-t34-keyboard-negative.log": {
+      "sha256": "025ef5916a4fb184186f2fcf13825ce5221a33998159a9605ca7c91a6219d2db",
+      "bytes": 2558
+    },
+    "/tmp/nomad-story-9-5-t34-handoff.log": {
+      "sha256": "70ce89da0e8a90a18005e13d50f51af31bd885c644d3690f9cd7757fc1ad178f",
+      "bytes": 235
+    },
+    "/tmp/nomad-story-9-5-t34-isolation-tests.log": {
+      "sha256": "dfdd9a50f8e6610aa1e93c8124ca5dc2353609322891ab9e1369070f0563edf1",
+      "bytes": 1754
+    },
+    "/tmp/nomad-story-9-5-t34-isolation.log": {
+      "sha256": "e01c67deaf3c3d6e156a6de28dd03e623e61dc83b647f161183eb0541790373d",
+      "bytes": 3179
+    },
+    "/tmp/nomad-story-9-5-t34-native-verify.log": {
+      "sha256": "8658a819f80d80944d80d98adb7682750f331552ae1ba0d766ca198f64a6bca6",
+      "bytes": 1225
+    },
+    "/tmp/nomad-story-9-5-t34-native-sync.log": {
+      "sha256": "25eac75e1669363bbba27653de3257b22bcc76761a79c02b97e11e275953c049",
+      "bytes": 1198
+    },
+    "/tmp/nomad-story-9-5-t34-firefox.log": {
+      "sha256": "d96320e36b7ee60d54964a1954e5ae88577c79434496f32aa090bc7f008150bc",
+      "bytes": 3178
+    },
+    "/tmp/nomad-story-9-5-t34-counterexamples.log": {
+      "sha256": "23d1fd0c01e5b09f3fb1095b5db2d811223d14a60cb741f56ba023a129fda8dc",
+      "bytes": 2885
+    },
+    "/tmp/nomad-story-9-5-t34-workbench.log": {
+      "sha256": "90400793a20be1de33d1e0dfb37420a60db7edd0bf577b4462065f2b3d738163",
+      "bytes": 306
+    },
+    "/tmp/nomad-story-9-5-t34-mobile.log": {
+      "sha256": "63b10801c01ee2c05b8874395b6d5266a30578c31dba3ac4574046acab38ed2b",
+      "bytes": 1573
+    },
+    "/tmp/nomad-story-9-5-t34-lint.log": {
+      "sha256": "ac82c659c6bc191680ae2513668e7dfa4e61b100668040c1080402285c3d0bcd",
+      "bytes": 25562
+    },
+    "/tmp/nomad-story-9-5-t34-chromium.log": {
+      "sha256": "801ee0ebd0d1aac10845cd6bd5dea163d83388c66542e46f7abe55de76f963dd",
+      "bytes": 3194
+    },
+    "/tmp/nomad-story-9-5-t34-build.log": {
+      "sha256": "9b95f75be2fdd052227985165ba9bbb74a3557a46bfd38062c5e4a2f5ca9c875",
+      "bytes": 526
+    },
+    "/tmp/nomad-story-9-5-t4-recovery.log": {
+      "sha256": "9583667a5e4472fee85db6d87d2ef60faf1dec33c20bc306705f2c7fd744fa9b",
+      "bytes": 781
+    },
+    "/tmp/nomad-story-9-5-t4-chromium.log": {
+      "sha256": "471a2523fbd0a0a2ac5aff3166f3ffc7852ce594a0b46ccd065063fa2ca42221",
+      "bytes": 9379
+    },
+    "/tmp/nomad-story-9-5-t4-build.log": {
+      "sha256": "cd5b2b9c0295a2fbe8421834977d5b6707ecf032815d48b6688994454acd47f9",
+      "bytes": 526
+    },
+    "/tmp/nomad-story-9-5-t4-first.log": {
+      "sha256": "f0d6fdae9dbbd85e3b5274ccd54266f2c743b1244ca5e245c94cd24f83568ab3",
+      "bytes": 11703
+    },
+    "/tmp/nomad-story-9-5-t3-review-browser.log": {
+      "sha256": "fb9e2832ed138f4836668451a8852becc053df58ea55a1e56035fdfb4c29efe0",
+      "bytes": 932
+    },
+    "/tmp/nomad-story-9-5-legal-red.log": {
+      "sha256": "8081fd21ff268524591114504b184a5b5ed6cdb358392647bd17c44ee4df9cef",
+      "bytes": 3797
+    }
+  },
+  "browserReports": [
+    {
+      "runId": "b7b95943-4de8-474e-bf54-0d35e39099dc",
+      "sha256": "a06a867d9f199818cae1b3eba31e7dc01e1882aeaa9e82e918417ed7bd730a6f",
+      "stats": {
+        "startTime": "2026-09-25T14:30:48.474Z",
+        "duration": 7529.914,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "b7b95943-4de8-474e-bf54-0d35e39099dc",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {
+        "test-results/flows-recovery-B09-login-e-3a1d1-al-content-remains-readable-chromium/test-failed-1.png": {
+          "bytes": 45874,
+          "sha256": "9b574e7c121e20d165cf8ddc35deb3fedebc77c2eedbcf4dddf48fbe3547fa55"
+        },
+        "test-results/flows-recovery-B09-login-e-3a1d1-al-content-remains-readable-chromium/trace.zip": {
+          "bytes": 248804,
+          "sha256": "feee34b05458d57aa4604eba8b5e10d6928d06a55ec8114f126a2957f40ba9be"
+        }
+      }
+    },
+    {
+      "runId": "8cfb4ae2-4215-48c3-9e6a-07e93c46cddb",
+      "sha256": "5093b8afdc235d5ad87d197256435074dcf3165772155a8fd61e4afe871fbc88",
+      "stats": {
+        "startTime": "2026-09-25T14:01:40.436Z",
+        "duration": 2680.2430000000004,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "8cfb4ae2-4215-48c3-9e6a-07e93c46cddb",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {}
+    },
+    {
+      "runId": "bd235175-cb44-4273-a6b6-71f9bb34ea84",
+      "sha256": "ed539b57e37c6d0badf09e0b5613dd4120ad5b50f865165718d85d50aad5c625",
+      "stats": {
+        "startTime": "2026-09-25T14:31:29.263Z",
+        "duration": 41590.033,
+        "expected": 19,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "bd235175-cb44-4273-a6b6-71f9bb34ea84",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {}
+    },
+    {
+      "runId": "67e25c5b-3bd8-4dd6-a28e-1b159c9fb568",
+      "sha256": "3e7b7a982757429aac9c049a87669c365dbe4fff59bd5c2cc8588f9d870d6625",
+      "stats": {
+        "startTime": "2026-09-25T14:32:53.144Z",
+        "duration": 49367.887,
+        "expected": 19,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "67e25c5b-3bd8-4dd6-a28e-1b159c9fb568",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {}
+    },
+    {
+      "runId": "888c89fa-86ea-41ff-88c5-d2f86772256d",
+      "sha256": "afa7f707b7fba88c7bb0054b568cfb324189c1fd8357ecd76517f0e6701de503",
+      "stats": {
+        "startTime": "2026-09-25T14:26:54.195Z",
+        "duration": 93330.669,
+        "expected": 17,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "888c89fa-86ea-41ff-88c5-d2f86772256d",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {
+        "test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/test-failed-1.png": {
+          "bytes": 56275,
+          "sha256": "dd9ae0bc40d69e9c298dcbd58624103853a9a1dcb679733ce5d5ea503ff0fa82"
+        },
+        "test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/trace.zip": {
+          "bytes": 347599,
+          "sha256": "a7cf576478d46dd9ddd32f97357baa933fd2fad4a758406d10c6f90ffeeffef5"
+        },
+        "test-results/flows-recovery-B12-actual--59ddf--without-replaying-its-POST-chromium/test-failed-1.png": {
+          "bytes": 44388,
+          "sha256": "920dea37ed5f183cc6664e1da8e486c80297e981cff9e5d81230ebe23eec9c1f"
+        },
+        "test-results/flows-recovery-B12-actual--59ddf--without-replaying-its-POST-chromium/trace.zip": {
+          "bytes": 439864,
+          "sha256": "1b320064e70c295d0e8ca73485dcffebc4cf77e23ec0d4b158af4ba26b51f211"
+        }
+      }
+    },
+    {
+      "runId": "5127dbe6-ded9-4eaf-a780-44eee32b77cc",
+      "sha256": "2f9cf9fff430943eb4d37fb60cf71cddfde7c042e24462de541088d173da2c91",
+      "stats": {
+        "startTime": "2026-09-25T14:08:22.517Z",
+        "duration": 14489.580999999998,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "5127dbe6-ded9-4eaf-a780-44eee32b77cc",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {}
+    },
+    {
+      "runId": "588283f5-bb79-4eb1-a8af-2cda48562b9d",
+      "sha256": "3fa62e794ea7d67eb13119b3de12a987ad44302b7789accf0e3b8f5ade2d84e5",
+      "stats": {
+        "startTime": "2026-09-25T14:13:47.576Z",
+        "duration": 19880.939000000002,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "588283f5-bb79-4eb1-a8af-2cda48562b9d",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {}
+    },
+    {
+      "runId": "5d48d452-a20a-45fb-83e9-b398404abe62",
+      "sha256": "e645b0a4cce58cd549adb183a6c70cee6b385e9204559db8bd1fc4c515251308",
+      "stats": {
+        "startTime": "2026-09-25T14:04:16.364Z",
+        "duration": 3177.19,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "5d48d452-a20a-45fb-83e9-b398404abe62",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {}
+    },
+    {
+      "runId": "250b9871-bd16-4edb-ada9-4669c30b7296",
+      "sha256": "9c95465c9189fe1c2eabaf03f6b8b95ee43842acd7f91e2b18cc300aca17801e",
+      "stats": {
+        "startTime": "2026-09-25T14:23:39.450Z",
+        "duration": 23506.433999999997,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 3,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "250b9871-bd16-4edb-ada9-4669c30b7296",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {
+        "test-results/flows-recovery-B09-login-e-3a1d1-al-content-remains-readable-chromium/test-failed-1.png": {
+          "bytes": 45874,
+          "sha256": "9b574e7c121e20d165cf8ddc35deb3fedebc77c2eedbcf4dddf48fbe3547fa55"
+        },
+        "test-results/flows-recovery-B09-login-e-3a1d1-al-content-remains-readable-chromium/test-failed-2.png": {
+          "bytes": 17578,
+          "sha256": "49e713e6fddeaa489ccf616aa86d52f6cfad9f7fb7c5b53f57220e55dccd770c"
+        },
+        "test-results/flows-recovery-B09-login-e-3a1d1-al-content-remains-readable-chromium/trace.zip": {
+          "bytes": 282905,
+          "sha256": "3d81190861613ed57b07061fdbdbf19014b70ebdff1b4eeb8276ecc56ebb7ff0"
+        },
+        "test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/test-failed-1.png": {
+          "bytes": 48780,
+          "sha256": "b0a510e568b07e98920a8c7837e728d2ad3a9e0932962b6b8b265e169b2b499f"
+        },
+        "test-results/flows-recovery-B11-unknown-aa39a-eipt-without-a-second-write-chromium/trace.zip": {
+          "bytes": 215210,
+          "sha256": "80736d10400362a4f7905fc051e0325b2281563eb47c66ffb6bea4fb7d1348bd"
+        },
+        "test-results/flows-recovery-B12-actual--59ddf--without-replaying-its-POST-chromium/test-failed-1.png": {
+          "bytes": 44388,
+          "sha256": "920dea37ed5f183cc6664e1da8e486c80297e981cff9e5d81230ebe23eec9c1f"
+        },
+        "test-results/flows-recovery-B12-actual--59ddf--without-replaying-its-POST-chromium/trace.zip": {
+          "bytes": 273659,
+          "sha256": "d96ad9427f42499df13d8e2a7406f7ef4ba75d35203f57f7e6450676ed16ee1a"
+        }
+      }
+    },
+    {
+      "runId": "8e7dda13-406a-4384-8435-6831a1f1ba6f",
+      "sha256": "3969f9d688e6201516b9e2e51e6471ccde04d7832b90c6006b3bf26ffbc5eb0a",
+      "stats": {
+        "startTime": "2026-09-25T14:29:53.534Z",
+        "duration": 4443.286,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "8e7dda13-406a-4384-8435-6831a1f1ba6f",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {}
+    },
+    {
+      "runId": "dc46c84f-1a4d-40f3-a3d3-4343f26be540",
+      "sha256": "0cfb5b484796410e3fe340783932ca0eaaa31e74be838f603e094adc0aaf0b78",
+      "stats": {
+        "startTime": "2026-09-25T14:20:26.835Z",
+        "duration": 25326.067000000003,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "metadata": {
+        "runId": "dc46c84f-1a4d-40f3-a3d3-4343f26be540",
+        "runKind": "local",
+        "actualWorkers": 1
+      },
+      "artifacts": {}
+    }
+  ],
+  "boundaries": [
+    "local Ubuntu26.04 Chromium153 Firefox155 only",
+    "canonical WebKit pending",
+    "synthetic HTTP only; real browser IDB and crypto",
+    "no provider or native device acceptance",
+    "workbench complete counterexample script timed out at keyboard; targeted rerun pending"
+  ]
+}

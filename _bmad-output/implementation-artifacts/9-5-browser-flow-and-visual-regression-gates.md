@@ -117,11 +117,11 @@ So that 组件迁移前后可以核对实际行为并防止未经审阅的变化
   - [x] 测试产物/cache/trace/profile独立且Git忽略，版本化基线/摘要另有明确路径；不加载本地env/真实身份，不改原native/API生产入口，不把test runner打包到Web或原生资源。
   - [x] 扩展9.4既有check-workbench-isolation及其反例，覆盖新e2e/fixtures、playwright/test runner、浏览器注入helper和可识别的生成资源；同时检查实际产品模块图/输出bytes与Android/iOS完整复制清单，不另建重复checker。
 
-- [ ] T2 建立有状态且拒绝漏拦截的产品API场景（AC1/2/5；NFR3、ui-quality-tooling）
-  - [ ] 复用9.4的生成DTO/合成fixture和隔离原则，补匿名→登录、owner A/B、Settings、inspirations/candidates、operation receipt、job/result/retry、recovery/SSE等实际所需合同；不把9.4永远authenticated的/me当作登录流程。
-  - [ ] 在真实HTTP边界控制响应，覆盖App/Login/Home/Settings各自创建的client；使用独立loopback端口/上下文，ServiceWorker/任意外网默认拒绝。静态资产来自受控实际产品输出；programmatic fetch不能借静态资源例外放行。
-  - [ ] 记录有限请求/operation/owner与受控迟到响应，未声明、外网、被业务catch或场景结束后到达的请求使用例失败；日志只留合成数据/脱敏字段。场景cleanup必须等待取消并检查账本，不向后续场景借身份或handler。
-  - [ ] 需要“断线/超时/未知回执”时真正切断/延迟相应HTTP/SSE边界并记录已受理与未知状态；不以返回empty/成功替代。替身不替代PG、lease、原生bridge或真实PNVS。
+- [x] T2 建立有状态且拒绝漏拦截的产品API场景（AC1/2/5；NFR3、ui-quality-tooling）
+  - [x] 复用9.4的生成DTO/合成fixture和隔离原则，补匿名→登录、owner A/B、Settings、inspirations/candidates、operation receipt、job/result/retry、recovery/SSE等实际所需合同；不把9.4永远authenticated的/me当作登录流程。
+  - [x] 在真实HTTP边界控制响应，覆盖App/Login/Home/Settings各自创建的client；使用独立loopback端口/上下文，ServiceWorker/任意外网默认拒绝。静态资产来自受控实际产品输出；programmatic fetch不能借静态资源例外放行。
+  - [x] 记录有限请求/operation/owner与受控迟到响应，未声明、外网、被业务catch或场景结束后到达的请求使用例失败；日志只留合成数据/脱敏字段。场景cleanup必须等待取消并检查账本，不向后续场景借身份或handler。
+  - [x] 需要“断线/超时/未知回执”时真正切断/延迟相应HTTP/SSE边界并记录已受理与未知状态；不以返回empty/成功替代。替身不替代PG、lease、原生bridge或真实PNVS。
 
 - [ ] T3 在三个引擎保护既有入口与Sheet（AC1/2/5；FR1、FR18、FR52；UI-BROWSER-01）
   - [ ] 实际执行匿名登录→Home→Settings→返回，验证当前可见surface和导航事实；现有App使用view state，不能要求尚未交付Router的pathname/history合同。确认同身份Dock草稿保留，导航不新建写入。
@@ -264,3 +264,12 @@ Codex当前会话；两项独立只读研究，随后fresh-context合同VS。
 - `.github/workflows/ci.yml`
 
 T2局部证明见t2-local-validation.json与t2-network-counterexamples.json（本Story evidence目录）；等待canonical三引擎复验，未勾选T2或关闭UI-BROWSER-01。
+
+### T2实际CI
+
+4feb294在run36142857181/job108096653140三引擎15/15通过、0skip；四网络故障和前后控制全部按预期，失败trace均实际下载存在。T2完成，下一T3导航/Sheet行为与T4实际App恢复；本次直接HTTP fixture合同测试不冒充完整App恢复或真实PG。
+
+
+### T3/T4本机实现与File List
+
+新增e2e/flows/{home-sheet,identity,recovery}.spec.ts与fixtures/privacy.ts；扩展有状态API场景和auth-session。产品仅修补HomeScreen/HomeSheet/HomeImportDock的有效触发器焦点与新纳入lint的问题，以及LoginScreen noopener空引用误报。独立窄审阅与失败历史见execution-decisions；源码摘要、本机19×2、242+5移动/18组件和隔离检查见evidence/story-9-5-browser-2026-09-25/t34-local-validation.json。canonical三引擎尚待本提交运行，T3/T4保持未勾选，T5–T8未完成。

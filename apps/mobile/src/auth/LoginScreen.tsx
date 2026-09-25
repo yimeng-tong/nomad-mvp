@@ -183,7 +183,9 @@ export function LoginScreen({
         if (!result.opened) setNotice('页面暂时无法打开，请重试');
         return;
       }
-      if (!globalThis.open?.(url, '_blank', 'noopener,noreferrer')) setNotice('页面暂时无法打开，请重试');
+      // noopener deliberately returns null even when the new page opens successfully.
+      if (!globalThis.open) { setNotice('页面暂时无法打开，请重试'); return; }
+      globalThis.open(url, '_blank', 'noopener,noreferrer');
     } catch { setNotice('页面暂时无法打开，请重试'); }
   };
 

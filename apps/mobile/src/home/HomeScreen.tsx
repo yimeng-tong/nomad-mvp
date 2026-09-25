@@ -69,6 +69,7 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
   const dock = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
   useEffect(() => { if (!dockController) controller.activate(); return () => { if (!dockController) controller.deactivate(); }; }, [controller, dockController]);
   const shell = useRef<HTMLElement>(null);
+  const sheetReturnFocus = useRef<HTMLElement | null>(null);
   const setDockHeight = useCallback((height: number) => shell.current?.style.setProperty('--dock-height', `${height}px`), []);
   const activeResult = useRef<symbol | null>(null);
   const [result, setResult] = useState<LibraryInspirationItem | null>(null);
@@ -86,6 +87,13 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
   const [candidateTarget, setCandidateTarget] = useState<LibraryInspirationItem | null>(null);
   const [candidates, setCandidates] = useState<LibraryCandidate[]>([]);
   const [selectedItems, setSelectedItems] = useState<LibraryInspirationItem[]>([]);
+  const runAction = useCallback((operation: () => Promise<void>) => {
+    const scope = getAuthSnapshot();
+    operation().catch(() => {
+      const current = getAuthSnapshot();
+      if (current.phase === 'authenticated' && current.epoch === scope.epoch && current.activity === scope.activity) setNotice('操作暂时不可用，请稍后重试');
+    });
+  }, []);
 
 
 
@@ -120,8 +128,8 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
   }, [track]);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh, track]);
+    runAction(refresh);
+  }, [refresh, track, runAction]);
 
   const selectedIds = useMemo(() => selectedItems.map((item) => item.id), [selectedItems]);
   const resolvedItems = useMemo(() => inspirations.filter((item) => item.locate_status !== 'pending'), [inspirations]);
@@ -203,8 +211,8 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
     } catch { if (activeResult.current === request) { setNotice('已保存内容暂时无法读取，请重试'); closeResult(); } }
     finally { if (activeResult.current === request) setResultLoading(false); }
   };
-  const closeUnknown = () => controller.clearParsed();
-  const handleUnknownAsLink = () => { if (unknownInput) controller.confirmUnknownLink(unknownInput); };
+  const closeUnknown = useCallback(() => controller.clearParsed(), [controller]);
+  const handleUnknownAsLink = () => { if (unknownInput) runAction(() => controller.confirmUnknownLink(unknownInput)); };
   const handleUnknownAsPlan = () => {
     if (!unknownInput) return;
     closeUnknown();
@@ -220,11 +228,16 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
     if (candidateTarget) { closeCandidates(); return true; }
     if (unknownInput) { closeUnknown(); return true; }
     return false;
-  }, 20), [result, resultLoading, candidateTarget, unknownInput, controller]);
+  }, 20), [result, resultLoading, candidateTarget, unknownInput, controller, closeUnknown]);
   useEffect(() => () => { activeCandidateId.current = null; activeResult.current = null; }, []);
 
   return (
-    <main ref={shell} className="home-shell" aria-labelledby="home-title">
+    <main ref={shell} className="home-shell" aria-labelledby="home-title" onClickCapture={(event) => {
+      // Capture the activated Dock control before submit disables it. Pointer activation
+      // need not focus a button, and later focus during parsing must not replace it.
+      const trigger = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-home-sheet-trigger]') : null;
+      if (trigger) sheetReturnFocus.current = trigger;
+    }}>
       <div className="home-body" inert={!!(unknownInput || candidateTarget || result || resultLoading)}>
       <header className="home-header">
         <button className="icon-button" type="button" aria-label="菜单" onClick={onOpenSettings}>
@@ -327,7 +340,7 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
                         </div>
                         <div className="row-actions">
                           {item.candidate_count > 0 ? (
-                            <button type="button" onClick={() => void openCandidates(item)}>
+                            <button type="button" onClick={(event) => { sheetReturnFocus.current = event.currentTarget; runAction(() => openCandidates(item)); }}>
                               定位 {titleFor(item)}
                             </button>
                           ) : null}
@@ -350,11 +363,11 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
         )}
       </section>
 
-      <HomeImportDock controller={controller} selectedCount={selectedItems.length} onPlan={startWithSelection} onView={(id) => void viewResult(id)} notice={notice} onHeight={setDockHeight} onRecognizedPlan={continueRecognized} active={!(unknownInput || candidateTarget || result || resultLoading)} />
+      <HomeImportDock controller={controller} selectedCount={selectedItems.length} onPlan={startWithSelection} onView={(id) => runAction(() => viewResult(id))} notice={notice} onHeight={setDockHeight} onRecognizedPlan={continueRecognized} active={!(unknownInput || candidateTarget || result || resultLoading)} />
 
       </div>
       {unknownInput && !candidateTarget && !result && !resultLoading ? (
-        <HomeSheet label="选择输入类型" onClose={closeUnknown}>
+        <HomeSheet label="选择输入类型" onClose={closeUnknown} restoreFocusTo={sheetReturnFocus.current}>
           <p>{unknownInput}</p>
           <div className="sheet-actions">
             <button type="button" onClick={handleUnknownAsLink}>
@@ -369,7 +382,7 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
       ) : null}
 
       {candidateTarget ? (
-        <HomeSheet label="定位候选" onClose={closeCandidates}>
+        <HomeSheet label="定位候选" onClose={closeCandidates} restoreFocusTo={sheetReturnFocus.current}>
           <h2>{titleFor(candidateTarget)}</h2>
           <div className="candidate-list">
             {candidates.map((candidate) => (
@@ -384,11 +397,11 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
           </button>
         </HomeSheet>
       ) : null}
-      {result || resultLoading ? <HomeSheet label="已保存的灵感" onClose={closeResult}>
+      {result || resultLoading ? <HomeSheet label="已保存的灵感" onClose={closeResult} restoreFocusTo={sheetReturnFocus.current}>
         {resultLoading ? <p role="status">正在读取已保存内容</p> : result ? <>
           <h2>{titleFor(result)}</h2><p>{summaryFor(result)}</p>
           <p>{result.city_name || (result.locate_status === 'pending' ? '待定位' : '已入库')} · {result.asset_count} 个素材</p>
-          <button type="button" disabled={selectedIds.includes(result.id)} onClick={() => { if (!selectedIds.includes(result.id)) toggleSelected(result); closeResult(); setSegment('library'); void refresh(); }}>{selectedIds.includes(result.id) ? '已选此灵感' : '加入已选灵感'}</button>
+          <button type="button" disabled={selectedIds.includes(result.id)} onClick={() => { if (!selectedIds.includes(result.id)) toggleSelected(result); closeResult(); setSegment('library'); runAction(refresh); }}>{selectedIds.includes(result.id) ? '已选此灵感' : '加入已选灵感'}</button>
         </> : null}
         <button type="button" onClick={closeResult}>关闭</button>
       </HomeSheet> : null}

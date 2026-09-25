@@ -3,7 +3,15 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, waitFor } from 'storybook/test';
 import { AppDialog, AppSheet, Button, ModalClose, useModalCovered, useUiToast } from '../src/ui';
 import { PrivateUiFixture } from './PrivateUiFixture';
-import { commitIdentity, markChecking } from '../src/auth/session-context';
+import { commitIdentity, markChecking, markUnavailable } from '../src/auth/session-context';
+
+async function expectSelectedBrowser() {
+  const configured: unknown = import.meta.env.NOMAD_WORKBENCH_PUBLIC_BROWSER;
+  if (typeof configured !== 'string' || !configured) return;
+  const ua = navigator.userAgent;
+  const observed = /Firefox\//.test(ua) ? 'firefox' : /(?:Chrome|Chromium)\//.test(ua) ? 'chromium' : /AppleWebKit\//.test(ua) ? 'webkit' : 'unknown';
+  await expect(observed, 'NOMAD_SHARED_UI_ENGINE').toBe(configured);
+}
 
 function ModalDemo({ policy = 'allow' }: { policy?: 'allow' | 'deny' | 'async' }) {
   const [open, setOpen] = useState(false), [child, setChild] = useState(false), [deciding, setDeciding] = useState(false);
@@ -92,8 +100,10 @@ function ImplicitFocusDemo() {
   </main>;
 }
 export const ImplicitFocusRecovery: Story = {
+  name: '身份恢复 · 隐式触发器',
   render: () => <PrivateUiFixture><ImplicitFocusDemo /></PrivateUiFixture>,
   play: async ({ canvas, userEvent }) => {
+    await expectSelectedBrowser();
     const trigger = canvas.getByRole('button', { name: '打开未传ref的确认' });
     await userEvent.click(trigger);
     await expect(await canvas.findByRole('dialog', { name: '保持实际触发器' })).toBeVisible();
@@ -103,5 +113,50 @@ export const ImplicitFocusRecovery: Story = {
     await expect(await canvas.findByRole('dialog', { name: '保持实际触发器' })).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: '关闭确认' }));
     await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};
+
+function ToastLifecycleDemo() {
+  const notify = useUiToast();
+  const release = useRef<(() => void) | null>(null);
+  const [pending, setPending] = useState(false), [outcome, setOutcome] = useState('');
+  return <main className="workbench-stage"><h1>私有提示生命周期</h1>
+    <Button onClick={() => notify({ key: 'private-note', message: '已核实身份的私有提示' })}>显示私有提示</Button>
+    <Button onClick={() => {
+      const captured = notify; setPending(true);
+      new Promise<void>((resolve) => { release.current = resolve; }).then(() => {
+        const accepted = captured({ key: 'late-note', message: '旧身份周期的迟到提示' });
+        setOutcome(accepted ? '错误接收迟到提示' : '迟到提示已拒绝'); setPending(false);
+      }).catch(() => { setOutcome('合成等待失败'); setPending(false); });
+    }}>保留迟到回调</Button>
+    {pending ? <Button onClick={() => release.current?.()}>释放旧回调</Button> : null}
+    <p role="status">{outcome}</p>
+  </main>;
+}
+export const PrivateToastLifecycle: Story = {
+  name: '身份恢复 · 私有提示与迟到回调',
+  render: () => <PrivateUiFixture><ToastLifecycleDemo /></PrivateUiFixture>,
+  play: async ({ canvas, userEvent }) => {
+    await expectSelectedBrowser();
+    await userEvent.click(canvas.getByRole('button', { name: '显示私有提示' }));
+    await expect(await canvas.findByText('已核实身份的私有提示')).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: '保留迟到回调' }));
+    markChecking(false);
+    await waitFor(() => expect(document.body.innerText).not.toContain('已核实身份的私有提示'));
+    await expect(canvas.queryByText('已核实身份的私有提示')).not.toBeInTheDocument();
+    markUnavailable();
+    await expect(canvas.queryByText('已核实身份的私有提示')).not.toBeInTheDocument();
+    commitIdentity({ ownerId: 'workbench-ui-owner', sessionId: 'workbench-ui-session' });
+    await userEvent.click(await canvas.findByRole('button', { name: '释放旧回调' }));
+    await expect(await canvas.findByText('迟到提示已拒绝')).toBeVisible();
+    await expect(canvas.queryByText('旧身份周期的迟到提示')).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole('button', { name: '显示私有提示' }));
+    await expect(await canvas.findByText('已核实身份的私有提示')).toBeVisible();
+    commitIdentity({ ownerId: 'workbench-ui-owner', sessionId: 'workbench-ui-session-new' });
+    await waitFor(() => expect(canvas.queryByText('已核实身份的私有提示')).not.toBeInTheDocument());
+    await userEvent.click(await canvas.findByRole('button', { name: '显示私有提示' }));
+    await expect(await canvas.findByText('已核实身份的私有提示')).toBeVisible();
+    commitIdentity({ ownerId: 'workbench-ui-other-owner', sessionId: 'workbench-ui-other-session' });
+    await waitFor(() => expect(canvas.queryByText('已核实身份的私有提示')).not.toBeInTheDocument());
   },
 };

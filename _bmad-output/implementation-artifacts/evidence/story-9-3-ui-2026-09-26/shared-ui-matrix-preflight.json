@@ -1,0 +1,12 @@
+{
+  "kind": "shared-ui-browser-matrix-preflight",
+  "recorded_at": "2026-09-25T20:06:11.202036+00:00",
+  "source_base": "26dab0a06f7eaf0dea0c8ec601ae1359e90b5bb1",
+  "production_code_changed": false,
+  "local_chromium_two_selected_tests": "passed",
+  "local_full_workbench_count": 32,
+  "mismatched_engine_counterexample": 2,
+  "independent_acceptance_audit": "passed; no actionable finding",
+  "canonical_three_engine_six_tests": "pending current CI",
+  "scope": "isolated actual shared components; no added business Toast entry or native claim"
+}

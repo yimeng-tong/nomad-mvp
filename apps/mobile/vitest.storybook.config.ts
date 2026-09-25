@@ -3,6 +3,11 @@ import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { workbenchMutation } from './scripts/workbench-mutations';
+import { chromium, firefox, webkit } from 'playwright';
+
+const browserName = process.env.NOMAD_WORKBENCH_BROWSER ?? 'chromium';
+if (!['chromium', 'firefox', 'webkit'].includes(browserName)) throw new Error('WORKBENCH_BROWSER_INVALID');
+const browserType = { chromium, firefox, webkit }[browserName as 'chromium' | 'firefox' | 'webkit'];
 
 export default defineConfig({
   cacheDir: `.storybook-cache/browser-${process.env.NOMAD_WORKBENCH_MUTATION || 'normal'}`,
@@ -22,8 +27,8 @@ export default defineConfig({
     browser: {
       enabled: true,
       headless: true,
-      provider: playwright({ contextOptions: { locale: 'zh-CN', timezoneId: 'Asia/Shanghai', reducedMotion: 'reduce' } }),
-      instances: [{ browser: 'chromium', viewport: { width: 390, height: 844 } }],
+      provider: playwright({ launchOptions: { executablePath: browserType.executablePath() }, contextOptions: { locale: 'zh-CN', timezoneId: 'Asia/Shanghai', reducedMotion: 'reduce' } }),
+      instances: [{ browser: browserName as 'chromium' | 'firefox' | 'webkit', viewport: { width: 390, height: 844 } }],
     },
   },
 });

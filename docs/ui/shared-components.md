@@ -77,3 +77,39 @@ an async operation; captures expire when the consuming component, owner/session,
 activity or boundary expires. Messages deduplicate per activity, remain in the
 private portal, and never start or acknowledge business work. Inline errors,
 unknown writes and recovery actions stay in their original interface.
+
+## Consumer API
+
+Business screens import from `src/ui`. App already owns `PrivateUiBoundary`; a
+private dialog outside that boundary renders nothing. Do not add another body
+portal, focus trap, scroll lock or native back listener around these components.
+Capture the actual trigger in its click handler, before a busy state disables it.
+
+```tsx
+<Button onClick={(event) => {
+  trigger.current = event.currentTarget;
+  setOpen(true);
+}}>查看</Button>
+<AppSheet open={open} title="当前内容" restoreFocusTo={trigger.current}
+  onOpenChange={() => setOpen(false)}
+  onCloseComplete={clearTemporarySelection}>
+  <FormField label="备注" description="保留输入，确认后再提交">
+    {(field) => <Input {...field} value={draft} onValueChange={setDraft} />}
+  </FormField>
+  <ModalClose>关闭</ModalClose>
+</AppSheet>
+```
+
+Keep the controlled AppSheet mounted during exit; keep business drafts above it.
+`onOpenChange(false)` means the close decision was accepted. `onCloseComplete` is
+for temporary UI cleanup, not saving, retrying or creating an operation. If an
+accepted close was safely interrupted by identity checking, cleanup resumes only
+after that same identity is verified. Pending decisions receive an AbortSignal;
+the gate also releases a canceled wait when caller code fails to honor it.
+
+`Button` defaults to type=button; use submit explicitly. `Input`/`Textarea` retain
+DOM props/ref and contain composing Enter. `FormField` supplies stable label,
+description/error links without deciding server validity. Tabs selection stays a
+read/navigation presentation choice. `AsyncState` requires an observed state and
+honest copy; unknown writes and recovery actions stay inline. Do not use a Toast
+promise helper to invent success or move critical errors away from their action.

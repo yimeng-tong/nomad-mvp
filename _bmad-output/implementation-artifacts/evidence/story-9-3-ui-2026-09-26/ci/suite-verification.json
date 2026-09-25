@@ -1,0 +1,281 @@
+{
+  "kind": "complete-canonical-browser-suite",
+  "sourceRevision": "26dab0a06f7eaf0dea0c8ec601ae1359e90b5bb1",
+  "runId": "c7b2b750-c75c-428c-a9d5-8ea67b76295b",
+  "requiredCases": 129,
+  "skipped": 0,
+  "environmentFingerprint": "7a174c57a759784e37a22d2c3cf4943c57b70bb22bcfd938b0ce11d6be8e9c0b",
+  "reportHash": "2c4ea89ae224cf64dce388d0eadb81fb79d4d214b536c7c81490d7fdc11a68a0",
+  "sourceManifestHash": "ea0107cc5e6040f6e7b3307535fd3b6f04ebc959725e700e2aeec5513c8a4d47",
+  "contractVersion": 2,
+  "compiledProductVerified": true,
+  "visualFiles": {
+    "chromium/V01-login.png": "58296bd7994c1a5c5642f09f4f5d0bfcd1b0fff8203e6bcec9ffd54d9d00a392",
+    "chromium/V02-home.png": "069b0677f60feb830c36d68be80dc80f54e200987405289a937b4979ea2e76be",
+    "chromium/V03-long-home.png": "f0da76fa05008395702c9c4a54c85968118a5e8a78d9d7d0d4094bda7c50de7a",
+    "chromium/V04-large-login.png": "b78b883d18a99d6872f421c748cee375d637b3a36c452836f2b82c7287cb0e21",
+    "chromium/V05-large-home.png": "bcf3e81c9204eea2d8764cca0326d51b2f38d5283ec3e1303bf94e34bd93de99",
+    "chromium/V06-keyboard-sheet.png": "f8c4f407c3d9034bfdfcecb9f98e4c4049b37cbe7fe66a76fa92b4e5e123f92b",
+    "chromium/V07-large-long-sheet.png": "c90a3de2180e44ce63b38bb1ff7e89fd2bf2ce8206f53946625ab00c34c52620",
+    "chromium/V08-logout-confirmation.png": "cdc73fbaab8b9ddfbdf8134ce8b044495ce13f5541b53ddbec817951b297ea7f",
+    "chromium/V09-narrow-login.png": "c4cf78ded209a0452d591052696f4882ce74b839d56a80fa8cd2c90fbd685e0b",
+    "chromium/V10-desktop-home.png": "f55d16a43b86fb79ef57fdbb3fa3e11cf62a52cbcafd0b4cad839b900b1a23e2",
+    "chromium/V11-narrow-sheet.png": "680a97041d02e8b562c983fd3a679e428973f1feff2d11f0d441ab0e817e06e3",
+    "firefox/V01-login.png": "e8dc25a13eca4c7ffac95526af208837e2f3bdef69003d4be343db334bf2fdcd",
+    "firefox/V02-home.png": "a838847d4b00369cd76a6a3f51e69f5e3a7d72b2c66e5328faf365f327fbd442",
+    "firefox/V03-long-home.png": "11910aca83557049449f5344b9a052813dcbfd39615723f298c6e45523d59103",
+    "firefox/V04-large-login.png": "fd9dc7851689fa892b9b9f3f955fe16a4b9b50567288db60496d96681f7c3bd9",
+    "firefox/V05-large-home.png": "20ab296c2ebedc0e10ccc0d76405cf03f8b6eb1d53c47c38c90c204598b11fe1",
+    "firefox/V06-keyboard-sheet.png": "1c4403b8c8a31cfc98d0dfc3bfa5e87a9520ac3fada1f26524a737af580eb829",
+    "firefox/V07-large-long-sheet.png": "62791a4170e5888f165ab07c3c486f307f7f1009f789c163a70274d6329feb30",
+    "firefox/V08-logout-confirmation.png": "e3a197b0cd925a3d80f2915aa855f825719578d4ecff3527d0d7b53b648c0fe4",
+    "firefox/V09-narrow-login.png": "681f02cfdc1668180f026adcfad9f0da7b292a6152977003a47ee0595543ceee",
+    "firefox/V10-desktop-home.png": "19275fab0dd865a55f230645d5d18d19294b49427d6fdee93b77f65109c65464",
+    "firefox/V11-narrow-sheet.png": "3e7b7aa75fc04370168f016c1baa4100d10a79771383ebea6de159272841ce43",
+    "webkit/V01-login.png": "2a48461d7fbae0da666832cbc1a2db37288fd4320e81a1a4eb6fa928ba99241c",
+    "webkit/V02-home.png": "f00ca200693ea73f7e59a693f282dfb31e47ac932e3edd4a2c503d44c70d43e8",
+    "webkit/V03-long-home.png": "f84271665010e2601a04bbfec3f8e0552a0d5a2fba9fa6c8363a18021fd22962",
+    "webkit/V04-large-login.png": "0dc163697e106866d4e1a2c8b414f26704054730dd17f799a98cf9e2d6a22ef5",
+    "webkit/V05-large-home.png": "c40fc03a169d8e874b20d56baa7e9bd0ac4192fcc69f5164d391104e1c5db699",
+    "webkit/V06-keyboard-sheet.png": "b90196f3c2fce47c919eb4e310d3b8c050ee8cef47422a364044d95985bdf2ba",
+    "webkit/V07-large-long-sheet.png": "2145169f55d89259a0fbcbe2fc18df16ad0daab2f064921c1b1f065ae542c710",
+    "webkit/V08-logout-confirmation.png": "f826c08cfdde6e2d2ec61d3f98e6c620e5aee7e95da9c5118c3c69ea4d522e0c",
+    "webkit/V09-narrow-login.png": "490823723836ff84ee029fdb38be7153aec7b5b911728658c8fa95c72de04ae1",
+    "webkit/V10-desktop-home.png": "2e19d2038e19d68cce1e16e703a8b836716156c490630d9abef90b760ca08413",
+    "webkit/V11-narrow-sheet.png": "35420fc42f1eed32af8b1c7063e8979c8b420ac62d853bca4884286e716a031d"
+  },
+  "visualArtifacts": [
+    {
+      "engine": "chromium",
+      "scene": "V01-login",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V01-login-normal-chromium/attachments/visual-actual-04f39006c424ffc947c73628436de916a18563c8.png",
+      "bytes": 41546,
+      "sha256": "58296bd7994c1a5c5642f09f4f5d0bfcd1b0fff8203e6bcec9ffd54d9d00a392"
+    },
+    {
+      "engine": "chromium",
+      "scene": "V02-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V02-Home-normal-chromium/attachments/visual-actual-2a4848c3413d3abc69c10efc6665d66bd9cf4783.png",
+      "bytes": 38084,
+      "sha256": "069b0677f60feb830c36d68be80dc80f54e200987405289a937b4979ea2e76be"
+    },
+    {
+      "engine": "chromium",
+      "scene": "V03-long-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V03-Home-long-Chinese-chromium/attachments/visual-actual-97dcdc2c9843a1ef331ecb13d3dd7b6660e88da2.png",
+      "bytes": 54202,
+      "sha256": "f0da76fa05008395702c9c4a54c85968118a5e8a78d9d7d0d4094bda7c50de7a"
+    },
+    {
+      "engine": "chromium",
+      "scene": "V04-large-login",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V04-login-actual-200-percent-text-chromium/attachments/visual-actual-28200d3fe19cc92ffd7d896626283937869393a6.png",
+      "bytes": 86247,
+      "sha256": "b78b883d18a99d6872f421c748cee375d637b3a36c452836f2b82c7287cb0e21"
+    },
+    {
+      "engine": "chromium",
+      "scene": "V05-large-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V05-Home-actual-200-percent-text-chromium/attachments/visual-actual-d48a249c7a84fe1d0ad7aa0d1862e46b4277a87c.png",
+      "bytes": 61955,
+      "sha256": "bcf3e81c9204eea2d8764cca0326d51b2f38d5283ec3e1303bf94e34bd93de99"
+    },
+    {
+      "engine": "chromium",
+      "scene": "V06-keyboard-sheet",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V06-actual-Sheet-keyboard-focus-chromium/attachments/visual-actual-f472eea76a4b8d03e8301ec7f22578766eb49325.png",
+      "bytes": 35773,
+      "sha256": "f8c4f407c3d9034bfdfcecb9f98e4c4049b37cbe7fe66a76fa92b4e5e123f92b"
+    },
+    {
+      "engine": "chromium",
+      "scene": "V07-large-long-sheet",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V07-long-Sheet-actual-200-percent-text-chromium/attachments/visual-actual-33e768d363a928c029081d9187e4ea266d77306e.png",
+      "bytes": 80437,
+      "sha256": "c90a3de2180e44ce63b38bb1ff7e89fd2bf2ce8206f53946625ab00c34c52620"
+    },
+    {
+      "engine": "chromium",
+      "scene": "V08-logout-confirmation",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V08-current-logout-confirmation-only-chromium/attachments/visual-actual-0d5444aef43a3e4c4e4e98c5ac27efb21d855f11.png",
+      "bytes": 11806,
+      "sha256": "cdc73fbaab8b9ddfbdf8134ce8b044495ce13f5541b53ddbec817951b297ea7f"
+    },
+    {
+      "engine": "chromium",
+      "scene": "V09-narrow-login",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V09-minimum-4d4c7-nd-primary-action-reachable-chromium/attachments/visual-actual-fc0e4c02999ef84c454d0647590da49b2641f790.png",
+      "bytes": 37451,
+      "sha256": "c4cf78ded209a0452d591052696f4882ce74b839d56a80fa8cd2c90fbd685e0b"
+    },
+    {
+      "engine": "chromium",
+      "scene": "V10-desktop-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V10-represe-5b14e-ns-current-layout-and-input-chromium/attachments/visual-actual-d27b73cec6aa6b92d7030812ac77f8c552f85d37.png",
+      "bytes": 44054,
+      "sha256": "f55d16a43b86fb79ef57fdbb3fa3e11cf62a52cbcafd0b4cad839b900b1a23e2"
+    },
+    {
+      "engine": "chromium",
+      "scene": "V11-narrow-sheet",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V11-minimum-7789b-long-content-to-its-actions-chromium/attachments/visual-actual-aac642c1d7f2cc6105f9875ff055231c1f6d5276.png",
+      "bytes": 49032,
+      "sha256": "680a97041d02e8b562c983fd3a679e428973f1feff2d11f0d441ab0e817e06e3"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V01-login",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V01-login-normal-firefox/attachments/visual-actual-95124cb24e33a9b18dad28f6e52eab4d561b6521.png",
+      "bytes": 44884,
+      "sha256": "e8dc25a13eca4c7ffac95526af208837e2f3bdef69003d4be343db334bf2fdcd"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V02-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V02-Home-normal-firefox/attachments/visual-actual-383b31b28385566b6c9e41b77f5cb6527e060067.png",
+      "bytes": 46029,
+      "sha256": "a838847d4b00369cd76a6a3f51e69f5e3a7d72b2c66e5328faf365f327fbd442"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V03-long-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V03-Home-long-Chinese-firefox/attachments/visual-actual-2b192e00d3dc316a292dc813e8d1c2594917b944.png",
+      "bytes": 79512,
+      "sha256": "11910aca83557049449f5344b9a052813dcbfd39615723f298c6e45523d59103"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V04-large-login",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V04-login-actual-200-percent-text-firefox/attachments/visual-actual-6bb82ddf736dda3884da982d2d32e351f735a72c.png",
+      "bytes": 76421,
+      "sha256": "fd9dc7851689fa892b9b9f3f955fe16a4b9b50567288db60496d96681f7c3bd9"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V05-large-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V05-Home-actual-200-percent-text-firefox/attachments/visual-actual-994c870d82b63af478be85233cf17eeb0ded9d2e.png",
+      "bytes": 78846,
+      "sha256": "20ab296c2ebedc0e10ccc0d76405cf03f8b6eb1d53c47c38c90c204598b11fe1"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V06-keyboard-sheet",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V06-actual-Sheet-keyboard-focus-firefox/attachments/visual-actual-bda9e54378c769adf67c76c5c36da809bd60a828.png",
+      "bytes": 42644,
+      "sha256": "1c4403b8c8a31cfc98d0dfc3bfa5e87a9520ac3fada1f26524a737af580eb829"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V07-large-long-sheet",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V07-long-Sheet-actual-200-percent-text-firefox/attachments/visual-actual-188e9a354ee7e92512d7fc16982e539c85ceb2b4.png",
+      "bytes": 95023,
+      "sha256": "62791a4170e5888f165ab07c3c486f307f7f1009f789c163a70274d6329feb30"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V08-logout-confirmation",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V08-current-logout-confirmation-only-firefox/attachments/visual-actual-346543a6005709338fe1c92d4a39217f49627ee5.png",
+      "bytes": 14099,
+      "sha256": "e3a197b0cd925a3d80f2915aa855f825719578d4ecff3527d0d7b53b648c0fe4"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V09-narrow-login",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V09-minimum-4d4c7-nd-primary-action-reachable-firefox/attachments/visual-actual-b2b61f81553dfd92b1e49217c4adfa5401db8ec8.png",
+      "bytes": 41590,
+      "sha256": "681f02cfdc1668180f026adcfad9f0da7b292a6152977003a47ee0595543ceee"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V10-desktop-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V10-represe-5b14e-ns-current-layout-and-input-firefox/attachments/visual-actual-7354c27d1e0a1bc6ad38c7692febb1ea571c476c.png",
+      "bytes": 56591,
+      "sha256": "19275fab0dd865a55f230645d5d18d19294b49427d6fdee93b77f65109c65464"
+    },
+    {
+      "engine": "firefox",
+      "scene": "V11-narrow-sheet",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V11-minimum-7789b-long-content-to-its-actions-firefox/attachments/visual-actual-2116d7223751c34fe54b616074fb85adcae48597.png",
+      "bytes": 68731,
+      "sha256": "3e7b7aa75fc04370168f016c1baa4100d10a79771383ebea6de159272841ce43"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V01-login",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V01-login-normal-webkit/attachments/visual-actual-c4fba8b8c942b69149700c3711380eebd5945656.png",
+      "bytes": 45755,
+      "sha256": "2a48461d7fbae0da666832cbc1a2db37288fd4320e81a1a4eb6fa928ba99241c"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V02-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V02-Home-normal-webkit/attachments/visual-actual-4f372a31524ebe4bead6aa71ab20b5d46e44b95e.png",
+      "bytes": 47830,
+      "sha256": "f00ca200693ea73f7e59a693f282dfb31e47ac932e3edd4a2c503d44c70d43e8"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V03-long-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V03-Home-long-Chinese-webkit/attachments/visual-actual-5859bf4c02358fb859a2516940b5b615e95a3de5.png",
+      "bytes": 95603,
+      "sha256": "f84271665010e2601a04bbfec3f8e0552a0d5a2fba9fa6c8363a18021fd22962"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V04-large-login",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V04-login-actual-200-percent-text-webkit/attachments/visual-actual-75b0789f9646e55a6a927f70900fb97513fbeeec.png",
+      "bytes": 74884,
+      "sha256": "0dc163697e106866d4e1a2c8b414f26704054730dd17f799a98cf9e2d6a22ef5"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V05-large-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V05-Home-actual-200-percent-text-webkit/attachments/visual-actual-4476857cf1d96cdac17bc228a579e32fe825e1d5.png",
+      "bytes": 73609,
+      "sha256": "c40fc03a169d8e874b20d56baa7e9bd0ac4192fcc69f5164d391104e1c5db699"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V06-keyboard-sheet",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V06-actual-Sheet-keyboard-focus-webkit/attachments/visual-actual-ea24910d63c65eeea9c013efbb58a7efd55fe198.png",
+      "bytes": 45129,
+      "sha256": "b90196f3c2fce47c919eb4e310d3b8c050ee8cef47422a364044d95985bdf2ba"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V07-large-long-sheet",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V07-long-Sheet-actual-200-percent-text-webkit/attachments/visual-actual-fc7b3eb16be370a53fb47e72c5a41ec06171cda7.png",
+      "bytes": 98804,
+      "sha256": "2145169f55d89259a0fbcbe2fc18df16ad0daab2f064921c1b1f065ae542c710"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V08-logout-confirmation",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V08-current-logout-confirmation-only-webkit/attachments/visual-actual-72e1ed955f098e203d6a0f7459384498c3f54d45.png",
+      "bytes": 14619,
+      "sha256": "f826c08cfdde6e2d2ec61d3f98e6c620e5aee7e95da9c5118c3c69ea4d522e0c"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V09-narrow-login",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V09-minimum-4d4c7-nd-primary-action-reachable-webkit/attachments/visual-actual-042e41cdf36ecfcbde3ffae257b6c6d47d4d7256.png",
+      "bytes": 41961,
+      "sha256": "490823723836ff84ee029fdb38be7153aec7b5b911728658c8fa95c72de04ae1"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V10-desktop-home",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V10-represe-5b14e-ns-current-layout-and-input-webkit/attachments/visual-actual-a8a4fb34fb915ffaac2cdcb7a8c18252dca0adc2.png",
+      "bytes": 55782,
+      "sha256": "2e19d2038e19d68cce1e16e703a8b836716156c490630d9abef90b760ca08413"
+    },
+    {
+      "engine": "webkit",
+      "scene": "V11-narrow-sheet",
+      "artifact": "runs/c7b2b750-c75c-428c-a9d5-8ea67b76295b/test-results/visual-screens-V11-minimum-7789b-long-content-to-its-actions-webkit/attachments/visual-actual-d56b93c76b1cf6beedc12c354a83eb012ac0bc06.png",
+      "bytes": 62487,
+      "sha256": "35420fc42f1eed32af8b1c7063e8979c8b420ac62d853bca4884286e716a031d"
+    }
+  ],
+  "nativeDeviceAcceptance": false
+}

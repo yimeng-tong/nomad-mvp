@@ -1,0 +1,92 @@
+{
+  "kind": "isolated-browser-runtime",
+  "browserVersion": "153.0.8010.12",
+  "productRequests": [
+    {
+      "method": "GET",
+      "route": "/api/me"
+    },
+    {
+      "method": "GET",
+      "route": "/api/auth/config"
+    }
+  ],
+  "productWorkers": [],
+  "workbenchWorkers": [
+    "/mockServiceWorker.js"
+  ],
+  "violations": [],
+  "errors": [],
+  "captures": [
+    {
+      "name": "sheet-partial",
+      "actualFonts": []
+    },
+    {
+      "name": "login-large-text",
+      "actualFonts": [
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 28,
+          "actual": 56
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        },
+        {
+          "base": 16,
+          "actual": 32
+        }
+      ]
+    }
+  ],
+  "evidenceBoundary": "Real browser on built product/workbench, synthetic unavailable API only; no native/provider/device acceptance."
+}

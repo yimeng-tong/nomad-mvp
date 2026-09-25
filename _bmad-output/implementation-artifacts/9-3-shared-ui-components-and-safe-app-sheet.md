@@ -248,7 +248,6 @@ Codex当前任务，两个独立只读研究者和两个fresh-context VS；合�
 CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。准备时状态ready-for-dev；当前已in-progress，五条件进行中，本地与真实设备验收分别执行。
 
 ### File List
-- `_bmad-output/planning-artifacts/architecture.md`
 - `.github/workflows/browser-visual-candidate.yml`
 - `.github/workflows/ci.yml`
 - `CURRENT.md`
@@ -259,7 +258,25 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate2-verification.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate2-visual-review.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/candidate3-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/browser-product-graph.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/downloaded-suite-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/environment.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/flow-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/lint-result.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/network-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/source-manifest.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/suite-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/validation-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/visual-counterexample/actual.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/visual-counterexample/diff.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/visual-counterexample/expected.png`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/workbench-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/workbench-index.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/workbench-product-isolation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/ci/workbench-runtime.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/dependency-and-foundation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/downloaded-artifacts.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/legacy/auth-report.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/legacy/pg-browser.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/legacy/verification.json`
@@ -271,11 +288,13 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/local/workbench-counterexamples-before-page-mask.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/previous-baseline-approval.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/review-fix-validation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/shared-ui-matrix-preflight.json`
 - `_bmad-output/implementation-artifacts/evidence/story-9-3-ui-2026-09-26/token-contrast.json`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
 - `_bmad-output/implementation-artifacts/story-9-3-code-review-2026-09-26.md`
 - `_bmad-output/implementation-artifacts/story-9-3-dev-progress-2026-09-26.md`
 - `_bmad-output/implementation-artifacts/story-9-3-execution-decisions-2026-09-26.md`
+- `_bmad-output/planning-artifacts/architecture.md`
 - `_bmad-output/project-context.md`
 - `apps/mobile/.storybook/vite.config.ts`
 - `apps/mobile/e2e/fixtures/browser-test.ts`
@@ -328,6 +347,7 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 - `apps/mobile/scripts/check-browser-flow-guards.mjs`
 - `apps/mobile/scripts/check-browser-results.mjs`
 - `apps/mobile/scripts/check-browser-validation-guards.mjs`
+- `apps/mobile/scripts/check-shared-ui-matrix.mjs`
 - `apps/mobile/scripts/check-workbench-counterexamples.mjs`
 - `apps/mobile/scripts/workbench-mutations.ts`
 - `apps/mobile/src/App.test.tsx`
@@ -360,6 +380,7 @@ CS/VS完成，8组源GWT与source hash保真；T4/T5/T9修补已独立复核。�
 - `apps/mobile/src/ui/styles/modal.css`
 - `apps/mobile/src/ui/styles/tokens.css`
 - `apps/mobile/vite.config.ts`
+- `apps/mobile/vitest.storybook.config.ts`
 - `apps/mobile/workbench/HomeSheet.stories.tsx`
 - `apps/mobile/workbench/PrivateUiFixture.tsx`
 - `apps/mobile/workbench/SharedControls.stories.tsx`

@@ -46,6 +46,8 @@ jobs:
         run: node apps/mobile/scripts/check-browser-flow-guards.mjs
       - name: Missing coverage baseline environment and auto-update counterexamples
         run: node apps/mobile/scripts/check-browser-validation-guards.mjs
+      - name: Private shared UI lifecycle in all three actual browser engines
+        run: node apps/mobile/scripts/check-shared-ui-matrix.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -55,3 +55,9 @@ CI36176188637（6e0b973）33/33候选及显式下载来源/图谱/viewport检查
 接纳只是视觉候选审阅，不代表完整CI或T9通过；下一在提交这些PNG/approval后的当前源码跑129项、全部counterexamples、原PG/工作台/类型/native资源链。细节baseline-review.json。
 
 基线提交734efb7时交接检查发现docs/ops/ui-validation.md增量尚未同步architecture source packet；已按原marker同步对应段落，保留源/规划镜像一致性，不修改checker或源Story指纹。该首次完整CI提交不能作为全绿验收，后继提交重新执行。
+
+## 封存前补齐共享组件三引擎覆盖
+
+26dab0a/run36180644424两个完整CI job通过；129产品场景/33实际PNG/87typed lint/265移动+5配置/31工作台/全部正反例与原PG链通过；963文件和30ZIP（15唯一hash）实际下载与CRC核验。该记录保存在ci-verification.json和ci/，不重写。
+
+逐Task核对发现私有Toast迟到回调与隐式focus此前只覆盖单测/单Chromium，现新增独立三引擎组件矩阵：同一实际PrivateUiBoundary/Toast/Dialog在隔离Storybook中运行两个场景，不增加产品通知入口。每engine真实executablePath、UA校验及JSON两条必须passed，禁止零执行。当前Chrome正控2通过，错标Firefox的两项实际失败；工作台增至32，独立Acceptance只读复核无问题。等待新CI产出6个实际三引擎组件结果，再验证本地gate；T9/全部真实资源要求保持。

@@ -1,0 +1,897 @@
+{
+  "kind": "actual-product-module-graph",
+  "entry": "src/main.tsx",
+  "entrySha256": "5fc9608237889fc7a087c815f4d060549a5f229fa3889067080276a1c527a492",
+  "outputs": {
+    "assets/index-C2QVUaY9.js": "5bb7d56f78c307313f15296c2bc3e6ce8e2c834343855784c2882cc2670a0d65",
+    "assets/index-qPeNHhAG.css": "b5cd65649403777093b00a9adc1a0808df0fdb5d4b748185d2594365d2cd4b3c",
+    "assets/web-BwPFxoKa.js": "6bfb65380461422a5d162ce62629100272f4f8a9a64daf9a660df68a737006a0",
+    "assets/web-CzRXqtZa.js": "1fdec741a7d125b9078308d4397131c49bcb7ced17b835192a8cda270aebf8e0",
+    "index.html": "946243ef37c775e0cd99f1833b67754777a11b57d10f0c32fbf85de70d5f6428",
+    "vendor/pnvs/ct4.js": "f2e9d00c14e079590367bff6dbeb09b142f6d4b1353c56afb3caa4d7d0164861",
+    "vendor/pnvs/provenance.json": "81e6406699d10940107819eb4f06e72197c1f101c1766f67848941023156cfca",
+    "webview-unavailable.html": "046534ab2c64021dcb3c48e76de9ca48a953a09f387e0502bc9e5578841c374e"
+  },
+  "modules": [
+    {
+      "id": "[virtual]rolldown/runtime.js",
+      "sha256": null
+    },
+    {
+      "id": "[virtual]vite/modulepreload-polyfill.js",
+      "sha256": null
+    },
+    {
+      "id": "[virtual]vite/preload-helper.js",
+      "sha256": null
+    },
+    {
+      "id": "index.html",
+      "sha256": "9ec162018809ab4667c43e3299002a9d84d5c7b804caafb9a4b9bdcb3324f1d6"
+    },
+    {
+      "id": "src/App.tsx",
+      "sha256": "ab97fe19eb4b111c393a9101ed9e6a2580107354032e96091656162bd7af0efb"
+    },
+    {
+      "id": "src/auth/LoginScreen.tsx",
+      "sha256": "4aec861b8199e8324e29927739fcfd2483c17f75aef7b399cb115fa7e4c0c07e"
+    },
+    {
+      "id": "src/auth/analytics.ts",
+      "sha256": "9fb3bcd74575162082cb0f11b4640032a570419e780c798a6cc22b05bb38490a"
+    },
+    {
+      "id": "src/auth/api.ts",
+      "sha256": "d7330578c4bca1a5c3b333a9c8a9b08ca3ca4ad0fce705d1777d2be31ed5307b"
+    },
+    {
+      "id": "src/auth/device.ts",
+      "sha256": "956e194a8239d65651b64eebcf64a3a0b36d097ac407109f8eae5e6367bc685c"
+    },
+    {
+      "id": "src/auth/native.ts",
+      "sha256": "dcb0f80dc3f1ea22b513d7303e2d850b773865e2733f4e21abe7a4b5b178cf4e"
+    },
+    {
+      "id": "src/auth/ordered-stream.ts",
+      "sha256": "a5a2c801f21e5b827ece752be0e7d7cf063dfdf466f6db47c71fa2797e3b1e76"
+    },
+    {
+      "id": "src/auth/pnvs-captcha.ts",
+      "sha256": "97db0e4bec62ef35433ff61dbee65624aa2edca81d2b1358b7fe0e3cb4cc81a7"
+    },
+    {
+      "id": "src/auth/session-context.ts",
+      "sha256": "a8294d5f068464d46f6d26f009413e6b7108a71ddf672b528a7c36effc70a719"
+    },
+    {
+      "id": "src/auth/stream.ts",
+      "sha256": "b87e8788f536673cc9f9e203f77929bdb530e96ff7fcc065c2d2dda584adb617"
+    },
+    {
+      "id": "src/auth/transport.ts",
+      "sha256": "784e6b54be5dfad2ed9ed4026ca2dac50cc2dd7259f2c2bf24de2b4bad025448"
+    },
+    {
+      "id": "src/home/HomeImportDock.tsx",
+      "sha256": "3472116550e5b168296b75c14811e5d698c6b894aff3043ed997af100c365c4d"
+    },
+    {
+      "id": "src/home/HomeScreen.tsx",
+      "sha256": "fe78b6714c226ee822d624a3e7ad698fcab4bbd841abcd607cb7af6a1d44184b"
+    },
+    {
+      "id": "src/home/HomeSheet.tsx",
+      "sha256": "99697e51bf02c99f9fba4911185b9e2b053a0c6a386e4d86b566443abb8bb2b7"
+    },
+    {
+      "id": "src/home/api.ts",
+      "sha256": "408d2e9092e83bd3ca8a9433ab65204e25432737aea56b7c95a9a9a6acab1a73"
+    },
+    {
+      "id": "src/home/clipboard.ts",
+      "sha256": "9ff088bc4419063b2afb5e68fc774db8195093f31f3dea22b0d74a3cde1e8d84"
+    },
+    {
+      "id": "src/home/dock-controller.ts",
+      "sha256": "cc3f5e23de764f291c365c62debe1befa8ebd76eb592c4da3016f1586f3e3f70"
+    },
+    {
+      "id": "src/home/dock-model.ts",
+      "sha256": "e460eee431b23e17255b2af6bbb658942a0975a51827af0268489583ad67d038"
+    },
+    {
+      "id": "src/home/durable-watch.ts",
+      "sha256": "3cebb45f3e8af8b86f1c7f083bd36cd07a56dc5ac2044302b76a96ca06d2f944"
+    },
+    {
+      "id": "src/home/ingest-checkpoint-store.ts",
+      "sha256": "7f03328cf52da654c49ed330b526f4a496d1f957db99615e4c944a1836457e8f"
+    },
+    {
+      "id": "src/home/ingest-protocol.ts",
+      "sha256": "99c4c43f15e8e765f5f40e5a0c09e31180786299782d43adc68a9162cf4cfd9e"
+    },
+    {
+      "id": "src/home/input-inbox.ts",
+      "sha256": "14fc6c3c4eb5b762809bd735a5fdae3db8459cf3b4c781bd6c757ef62716f75a"
+    },
+    {
+      "id": "src/home/input-runtime.ts",
+      "sha256": "879b721a8e82e7f2fc12ccb19996e9224bd32465da9d6151b8180e61ae21a6d2"
+    },
+    {
+      "id": "src/home/operation-journal.ts",
+      "sha256": "b8e799eecd0f02bd329925cc8bab6bc1fea96cfa04f753a3a3c4dc622ba753d7"
+    },
+    {
+      "id": "src/main.tsx",
+      "sha256": "5fc9608237889fc7a087c815f4d060549a5f229fa3889067080276a1c527a492"
+    },
+    {
+      "id": "src/ops/OperatorAccess.tsx",
+      "sha256": "c7a3e15a1f34feba76f7a97eacfcf27e4f5b9154bcc06277adb1fd6a913e732f"
+    },
+    {
+      "id": "src/planner/DayPlanScreen.tsx",
+      "sha256": "658dcc8905483099a9f42f9f21f89bf5c2415eace8b929684e3e0377112af47c"
+    },
+    {
+      "id": "src/planner/PlannerScreen.tsx",
+      "sha256": "035c153a10f687a9819cbf019ad70ee8f5008e7edf99f79a612cc1fb43b56417"
+    },
+    {
+      "id": "src/planner/SlotEditSheet.tsx",
+      "sha256": "de726cb57c5de09e612213c56699fbd9eb0aa227e43603a5851dc3ad89a38235"
+    },
+    {
+      "id": "src/planner/api.ts",
+      "sha256": "3fac39aeb6448919254f1475c613ad7335d37697ac5b31b3d2349e2caf9ffda3"
+    },
+    {
+      "id": "src/planner/timeHints.ts",
+      "sha256": "53af7fad1379616c650c52277203eb2206e45da522b0d26aa99f164a7393955c"
+    },
+    {
+      "id": "src/platform/HostBootstrap.tsx",
+      "sha256": "9a5b649da8be357b8355f823c7374b707dba6943e09d0c4769e571807edf6075"
+    },
+    {
+      "id": "src/platform/app-host.css",
+      "sha256": "62470fd203f4aed8b4b5719886dba040526577e09279645a549086a9a611991f"
+    },
+    {
+      "id": "src/platform/host-runtime.ts",
+      "sha256": "ad6d63e0793ce79dad9cac7c4f521abbc798702d8b3a02b0f6c5e50eff7c7c05"
+    },
+    {
+      "id": "src/platform/host.ts",
+      "sha256": "daa29e32c3a338570486b520d34be216d6dd878bc9d5204cdd60009d2fd9200d"
+    },
+    {
+      "id": "src/settings/SettingsScreen.tsx",
+      "sha256": "ea39ab506866f8f2dfe1f4d395d9defb7755b59915da94048096c58f8761046e"
+    },
+    {
+      "id": "src/settings/api.ts",
+      "sha256": "69f2d14bc57fb0559551db4ec3da38899e2f02a9b4e1e6512790769c3441df55"
+    },
+    {
+      "id": "src/styles.css",
+      "sha256": "196ec6d087c396b8f61c328847c29a93d203dc67ffe2e2fa9661f4db4df9aeba"
+    },
+    {
+      "id": "src/telemetry/dictionary.ts",
+      "sha256": "6918d7fb6e472bec35ac85e37ec51aeffafcf9fcbb4e99376966c7f991b18db7"
+    },
+    {
+      "id": "src/ui/components/AppDialog.tsx",
+      "sha256": "fe283c77644f1a191c42722eda8e1bc9d3e56c0dde12e69fe8d03cc83ca1e5d1"
+    },
+    {
+      "id": "src/ui/components/AsyncState.tsx",
+      "sha256": "199bf7b233e9b8686244a3de4b6c4ee4251a8c916320f223930aeaa186b499cb"
+    },
+    {
+      "id": "src/ui/components/FormField.tsx",
+      "sha256": "8cf82c7b31a526f525d89a299e0c45cfd2175e9223bf14312c53fb7ed6d5abf2"
+    },
+    {
+      "id": "src/ui/components/PrivateUiBoundary.tsx",
+      "sha256": "2004ff01abe79f2d060ca17bf5d3648784758e988f1140ec32d1f54a9ff8a9a9"
+    },
+    {
+      "id": "src/ui/components/modal-policy.ts",
+      "sha256": "e70a9270d5c8ff4d37fab60ae11565a8267c033340ca81b6bad8bff33eb06b90"
+    },
+    {
+      "id": "src/ui/index.ts",
+      "sha256": "14936e6ebd74e0a27e56fb52feba1b4904e92261be4bb7ba0879172985690008"
+    },
+    {
+      "id": "src/ui/primitives/Button.tsx",
+      "sha256": "55008d829a53fb389648ad9a619f4bca36a1bea17c189855b58c74bd108af9e7"
+    },
+    {
+      "id": "src/ui/primitives/Input.tsx",
+      "sha256": "143a361c54aa393ee97336c39419b7197dbb291f7490f96d5658f4fa4c4eec39"
+    },
+    {
+      "id": "src/ui/primitives/Skeleton.tsx",
+      "sha256": "b04bd2347003fada796d3d82fa30160c2e45b78e954b7c6e626fc257fd464677"
+    },
+    {
+      "id": "src/ui/primitives/Tabs.tsx",
+      "sha256": "018222a44d38fa634a8532d1532807409f46c3c90789fd2cdad4987edde9ad61"
+    },
+    {
+      "id": "src/ui/primitives/Textarea.tsx",
+      "sha256": "868eaa200987a2f036e8040853d09fb6fe3c614a8fd575582b62155e93d3d89f"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/button/Button.mjs",
+      "sha256": "0591334d51fe9594fa254ca26b3671658ad1864671201bccd51bc54cb52e302a"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/backdrop/DialogBackdrop.mjs",
+      "sha256": "b9db5bc3f6c8d66a5a5d47bb416add8878dc2e495d4b2249bbe739b9c79f215a"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/close/DialogClose.mjs",
+      "sha256": "8a79b58bea5c0bfc788968f0fc103c116ebc5c09c54daf69e57638cd121f3f9b"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/description/DialogDescription.mjs",
+      "sha256": "95dfe80a591eb33922c3a3d876822b6c09d56d7030b15a22dc842bc9f0c9e196"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/popup/DialogPopup.mjs",
+      "sha256": "0eb7fc621ff678a483b6f3c90b51913512c5ffaa82b300465be1bfeb3bf9ee51"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/popup/DialogPopupCssVars.mjs",
+      "sha256": "affcc2fb52502c8543ec79a184148ce69b4315854a5e59155341365800cebd88"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/popup/DialogPopupDataAttributes.mjs",
+      "sha256": "ca2e27b5572acbdfdcff98000cb15575e49e72164bf490a758961e1f8ce4790d"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/portal/DialogPortal.mjs",
+      "sha256": "62feb38c4324aa9a11f74acca06a4881873c60dc40b0a5c6397da613156e27cb"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/portal/DialogPortalContext.mjs",
+      "sha256": "3181cc9c689123f4ab823be2ad25551f5f6f70685cf5cbec7921b5ee3f1c9e67"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/root/DialogRoot.mjs",
+      "sha256": "d031146a2dc83001720b2350a1d183fae0df574eb06c2ae3c298d144d63a3af7"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/root/DialogRootContext.mjs",
+      "sha256": "756fd0915bbb7519f856e622e69a27c2bdfabecf46168fef5aee57db7e6801e7"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/root/useDialogRoot.mjs",
+      "sha256": "bfa6a0ff7482aed1d472372c8f3e396de43c759769eaf5dfacd838eba37ec2ed"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/root/useRenderDialogRoot.mjs",
+      "sha256": "7a75a97e16d06b7fab90e35df0be36612ee2fee3ab1bfe5a2d74da7edc4754fd"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/store/DialogStore.mjs",
+      "sha256": "a4be32dac9be32e84802c46e03bf8020c38b68454518854c3205016c3eb9ee56"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/title/DialogTitle.mjs",
+      "sha256": "b835a8b4c71d1c920e679788d383a226f21740cf961b9a731454ccc1c46d68a0"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/dialog/utils/stateAttributesMapping.mjs",
+      "sha256": "45b2ec52ba5f2b9aeee720627aa04537e81b3965b6713ba0d0756fa803257aa7"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/field/control/FieldControl.mjs",
+      "sha256": "644040adf55a89b89b280d10206d340a0ce4c97a08eefd4b83e0f5521ef8ae89"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/field/control/FieldControlDataAttributes.mjs",
+      "sha256": "f04058d309b29a1d00883ecd974ff532e0d621a009df3afccc83b1b762a3691e"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/components/FloatingFocusManager.mjs",
+      "sha256": "3f0edb189783d807799c0842253545f9813dd375d3d8e3658761ecabbcd5119d"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/components/FloatingPortal.mjs",
+      "sha256": "7b597558aa84b3d1d5069d36dd92a7ed39e85df2ab0116091b1cf249dab58bf1"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/components/FloatingRootStore.mjs",
+      "sha256": "d5f75a29be06f9027b20488f820f702f93cd4c55d75be9bc2b832ab4d9877b92"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/components/FloatingTree.mjs",
+      "sha256": "db94c8551b5776bae8f70f6849211f288239d68ac7ad2fae8bf76579b282e06b"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/hooks/useDismiss.mjs",
+      "sha256": "f1a2bc36a738125dc5755e6c3e05a054536881671453b7fcd6364daed993dfa7"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/hooks/useSyncedFloatingRootContext.mjs",
+      "sha256": "77a64b478254823dccd205e96e516e84dab9ef6781ff234cb6b4d6fa55e192e6"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/utils/composite.mjs",
+      "sha256": "6abfe96818ce875b0a5ead81c1a109a26be7f3c743018aa5d07f03091f1049d1"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/utils/constants.mjs",
+      "sha256": "9ca7d94aa8ce47b00dc6f1241ce222fa433edfb922807091dad5e627401f105b"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/utils/createAttribute.mjs",
+      "sha256": "00f6ccf4b9f44a11c5b21fa1336270e3b079f666e018bbbbaeaed5cc74205629"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/utils/createEventEmitter.mjs",
+      "sha256": "7457ec43a01ae87a75fe957ad5ef56c99af73dfe2480cd635e144e7c770ad2e7"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/utils/element.mjs",
+      "sha256": "18358111983af49adc816ce6f6a0eea21f97660acc9a94174a001192ae5ff276"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/utils/enqueueFocus.mjs",
+      "sha256": "a8ac843e6c4f55a9bd66238c33a493ea398ac9a1307c4ff8f90fdb9681114fc4"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/utils/event.mjs",
+      "sha256": "6e81418cf60b8fa743f63cc591a7dbe1cd0ea5136658eff4611c649d71a8e9da"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/utils/markOthers.mjs",
+      "sha256": "d5cd82b0b4457c26ed927d545d80fa7557461416164869e8a4296c92d8ad222b"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/utils/nodes.mjs",
+      "sha256": "6ed88b61d3e023584af293bb2c0b98a31ae10beb6b81eb703c3770b5dda51d83"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/floating-ui-react/utils/tabbable.mjs",
+      "sha256": "9b951049e33ebae6fda0aabbfd87b354360ca174ec288afa93257a61b8844065"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/input/Input.mjs",
+      "sha256": "510430464202869e25189142ed992d31b1d85bcc50415b212ea024d30fdff5d6"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/TransitionStatusDataAttributes.mjs",
+      "sha256": "47784f474a68c4f93b43f9b11f2ce36180af67242bc63697faa88a50ab2d197e"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/composite/composite.mjs",
+      "sha256": "72d19386f8cae75161c9a94fe45d4914b1e604e92c9b271dce20c35006479865"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/composite/constants.mjs",
+      "sha256": "6aa45a88689529a0e780fc9dc39f17c924cecbadfd18ff9ecdfcdc9478f635e9"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/composite/item/useCompositeItem.mjs",
+      "sha256": "ba0a618836cdf31ef5b070c6bcc9b4e7aa71dd212ce4e8e3b65e1c82e388792f"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/composite/list/CompositeList.mjs",
+      "sha256": "636598395a439742e878e9bdc84d3962d566be5d49af49175e35ef456b97bad7"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/composite/list/CompositeListContext.mjs",
+      "sha256": "d018c0e9c0d790d21de12913e1f936f70fd392660f0ba1723aa4787cd469626a"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/composite/list/useCompositeListItem.mjs",
+      "sha256": "1faffb37a2c21e0af11b58da5c6be254cf3735aefd29951b4ed2f419ccfe2d3b"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/composite/root/CompositeRoot.mjs",
+      "sha256": "4e798b7df14ad96f4564034c86e65bc675cf2884d5c30ba82849396e50517617"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/composite/root/CompositeRootContext.mjs",
+      "sha256": "cd9c4a9d84adfcd036b42d9e8907f74d3de74819f329aef207b2ecc3614fc791"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/composite/root/useCompositeRoot.mjs",
+      "sha256": "9998b8b4369d7c74fb3936e6d3a857d76e8491616f364b919b414f62532af7a9"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/constants.mjs",
+      "sha256": "a0c45238a8a6bea73cdb77884be809dc361132709d7e1420c875459a8fc78063"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/createBaseUIEventDetails.mjs",
+      "sha256": "ba4bdb0dc4830ded2c327fd83172e87195d041cd7616d5d6970e03523c69eb58"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/direction-context/DirectionContext.mjs",
+      "sha256": "aee0d40de100354b1fb6a08d7fb303962cefc4459a4c432330d9a01b7e03d729"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/field-constants/constants.mjs",
+      "sha256": "46781b553a469ac0954a66892c2ce9ae823577bc33c6c16af829e2e8d384e3fe"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/field-register-control/useRegisterFieldControl.mjs",
+      "sha256": "1da79fd278d0ef41a34e9998f707ae96b958ae86eeb18ffe9db15b680668a328"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/field-root-context/FieldRootContext.mjs",
+      "sha256": "499afa26eedbd88670fc814fb68009140ba88ac46a696b4a2b3b08e197a5a7ee"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/form-context/FormContext.mjs",
+      "sha256": "bdb48fddb3f89fd96bcea2f152fa15aefd60a2e6cf1790fc0d57fc4166100fc6"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/getStateAttributesProps.mjs",
+      "sha256": "4f4875695d017fbf7d606ade90331001156b82b2d870dbc05c492f1079741c89"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/labelable-provider/LabelableContext.mjs",
+      "sha256": "45eb8657d1c89cf0323568e1206188f48cd2da33e54009cbadfd4899b621ae3e"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/labelable-provider/useLabelableId.mjs",
+      "sha256": "b35a85570295bb1251b0f8647c24a34d91bae476d3574817245efbb4f29db2bf"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/reason-parts.mjs",
+      "sha256": "d3993b800e7f2579599f34473100b72c36c58d827e09c4b5a3c4ecaa00075ec9"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/stateAttributesMapping.mjs",
+      "sha256": "8e1345c197a950924406906074525b44c3d32d8c20305027e2486012efcde228"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/use-button/useButton.mjs",
+      "sha256": "1c3156a6e86f7f7f79235526f7dc381298b61b84a54e4d23745e46c184f10243"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/useAnimationsFinished.mjs",
+      "sha256": "93c3f5f7a3978eedbbcd5452634b45d6958523598419f8c539084c89ffe8e743"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/useBaseUiId.mjs",
+      "sha256": "aa4cf08c9eb323fae5b83d7d8a0f97701927145889b6430208a1c598d5014a95"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/useOpenChangeComplete.mjs",
+      "sha256": "c7e2ecac88c4e2185f221f8f35344f22ec8d8ed0acfcc977ddf6e17014956f2c"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/useRenderElement.mjs",
+      "sha256": "e860e171c0b5ecb0602f708a34442f44fc354e28ab420dc2d5173632fb9a57d6"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/useTransitionStatus.mjs",
+      "sha256": "c21ddacd0294c4d33d9ba212b016c7bf1eb58d165df5f16e3f76e73619d33395"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/internals/useValueChanged.mjs",
+      "sha256": "1987d62086d97fda4d22833ec574cb680119fad61edb09500c289cf6354426be"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/merge-props/mergeProps.mjs",
+      "sha256": "aaf724d170a81782264b4ecbe174c99f0b3be4ec4da5f4727e8fa42250e07209"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/tabs/list/TabsList.mjs",
+      "sha256": "0009de26abf9bf37cbd9f10484e783e7959ee86b6284a239bed52a67c0a3e342"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/tabs/list/TabsListContext.mjs",
+      "sha256": "55914c31d415a15c9e003e0a6f4ec34e7e96bfc3717b653fa8720a15562649ef"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/tabs/panel/TabsPanel.mjs",
+      "sha256": "a2f09322de0eeff5b241dc0b3153ddae6f5112cfc33827496db6b438c2b4e649"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/tabs/panel/TabsPanelDataAttributes.mjs",
+      "sha256": "8fe89bbc64efdf45bbdd84c14a86dcb5638ecf6595fd98f6405bb6ef9348653b"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/tabs/root/TabsRoot.mjs",
+      "sha256": "905b25a9a90d94e5ff267edf3247a4c4cc91ac9312f4a78f89c015c913549527"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/tabs/root/TabsRootContext.mjs",
+      "sha256": "dbf85975a5e4c7dc5cb2f1e65e8ad374b21784194df53021d5d50270c4527d65"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/tabs/root/TabsRootDataAttributes.mjs",
+      "sha256": "8c3cc62c5a268aa36d740d01cbb4ae3ebdc0fec1c7f691eb7449f8097097b287"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/tabs/root/stateAttributesMapping.mjs",
+      "sha256": "185ab0ad8b90a9cffce03f32ac445fd035ab8a1dce8d5ecc7f2bee8962df5a99"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/tabs/tab/TabsTab.mjs",
+      "sha256": "1fd07774abb739b70f889e446bd23fd200d8a0c5e582fc06c390972eb011d6df"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/close/ToastClose.mjs",
+      "sha256": "e575c32d08bbfdba65f78e6f0eaa331880b18fa260dbb8bc4625dc9d41a08e14"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/createToastManager.mjs",
+      "sha256": "b712fea51662d265acc4d04ad0857973896a9f03e1483e73d62832fc1514b967"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/portal/ToastPortal.mjs",
+      "sha256": "1fbacc6c6f1991748c7f4518ffee7d0f0ff7218ac53ae0f7868531690c190026"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/provider/ToastProvider.mjs",
+      "sha256": "77703949142faba2771f0b72d194f4cde74bd22c554d26a4c817cc57b9f0af4b"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/provider/ToastProviderContext.mjs",
+      "sha256": "6686bcf6d61184d15f3880dc9a945b0ef159163b080305be514d7c3c3c1769d1"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/root/ToastRoot.mjs",
+      "sha256": "1d06d1f324ba2cdcfc582ff7c3a5054c51310acbad81770252217af7eb9ffc9f"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/root/ToastRootContext.mjs",
+      "sha256": "820f7ee1d4a34bf1e701e79865fafd043a6f4d89dd93558f5e53cbbc5c61f9db"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/root/ToastRootCssVars.mjs",
+      "sha256": "88d63604daf5336cd32f2c3724a6c518f7d99ae1343948d97b2017a5437b7660"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/root/ToastRootDataAttributes.mjs",
+      "sha256": "46f48c3a83726881e5b40de6dcaa560763234c27e39f87e38568b787fa22e708"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/store.mjs",
+      "sha256": "3b5d76bdca6d491383f0ddb98896e0a452885e546b175b61d80c00deb480e3a1"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/title/ToastTitle.mjs",
+      "sha256": "1cf3c7d69eb4eee6079b469b4a6000bba846a9958b30573c7cc7a26d51a648af"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/useToastManager.mjs",
+      "sha256": "ced481caac8077b4938026be199fda8d53d9841b06c30b54d05d5df32fd93f35"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/utils/isRenderableNode.mjs",
+      "sha256": "78a84ea1c0951e5972252984c040378a32d6f73001fffad77a173ec76c0acbc5"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/utils/resolvePromiseOptions.mjs",
+      "sha256": "ab3b2771fff6069f10e26b5ed587fd7821e70a3121049ce9e7b089df2ac5e8c6"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/utils/useToastLabelPart.mjs",
+      "sha256": "df8ec8f956dd593bda67fe0dda471d1f853a24e6ac257825fc047dabb687f574"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/viewport/ToastViewport.mjs",
+      "sha256": "06553cc2ec6529b20f3423a35a69ebf5b02c45e3ee9801ca7824078b1bd2551f"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/toast/viewport/ToastViewportCssVars.mjs",
+      "sha256": "02efe9a8e7fcbea12f2b977f583f87bd18f00821a320c29fbb222b0c95363d91"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/CommonPopupDataAttributes.mjs",
+      "sha256": "485e8f72910e3353c409441cbaa984f5cfe0b1194339520464bd91edccb4ef1f"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/CommonTriggerDataAttributes.mjs",
+      "sha256": "a9c94182182a0129c13eea967231e528e71ee81d976e6dfc6565594185642112"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/FloatingPortalLite.mjs",
+      "sha256": "26c758b3a7ddd92a0e5ce13561319a68cc51efb0003706a120c7af47e3bcf8fc"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/FocusGuard.mjs",
+      "sha256": "71008da16b80cecacf2a55c0108e3aa1e2b1cebdac8ede05b8aa6c9cdcad3aac"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/InternalBackdrop.mjs",
+      "sha256": "daf9b107819d5f22500d1091ecfd9dc57aa58b0342c440c582665849f4aceb70"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/dispatchClickWithModifiers.mjs",
+      "sha256": "132a1a4d1ec3dcee42a2028fc684305dbd3364cf9478f50aea894cc91729321a"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/getElementTransform.mjs",
+      "sha256": "1a6f01bb57d68a91585cadc58b152b6c0eb97ffb7fd7bc2d66794eea0ce49b94"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/popupStateMapping.mjs",
+      "sha256": "783e4111944fbe3ecd3711831fe03df8a3540a7e47a1a1d8ffac77429e2b9a8f"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/popups/popupStoreUtils.mjs",
+      "sha256": "4e594c53e4c693c328aa3dc1dd6e84318ef4c1921fc252234b1a345cfc11ddeb"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/popups/popupTriggerMap.mjs",
+      "sha256": "3a2d83e4fad017eeb24823c09ec79ee2375c14daf4c4a94d2152b34f870ef8e9"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/popups/store.mjs",
+      "sha256": "72b5e4577cd648013ebdccfc204338e4c70aa9a29aeaea78c8485066860c2a15"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/resolveClassName.mjs",
+      "sha256": "03eee8826b34c8863e313b62c495c437f3e5596277b3464691f38483462a939e"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/resolveRef.mjs",
+      "sha256": "c78b9726f1b2229e6e24feb50054dbbbe9003c4ca3e9b45cca0a55eebf16df02"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/resolveStyle.mjs",
+      "sha256": "a9d016d80a54ed09949cb9095d3fd6854c9a3bcdd000ab094ac24eab418743d1"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/useFocusableWhenDisabled.mjs",
+      "sha256": "ca9f80a7ae426f6b745d57450c58c55c408d474a61900cc03f4760aa06c5c842"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+react@1.8.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/react/utils/useSwipeDismiss.mjs",
+      "sha256": "22a1cdcaba253c6dfdcdbecdf508955e657d1ad58a04b32badf6e7dc38aef6f2"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/addEventListener.mjs",
+      "sha256": "4ea2879d0a9166b0dae227714676deddd1f1d7dc39a97a5f18dc414cf0ab6455"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/empty.mjs",
+      "sha256": "22158d7dba2fd30d6ef5c95db1ac8be26b3214a27ef5b7af2e90a6d597e17299"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/fastHooks.mjs",
+      "sha256": "da4d849c4700eeb83a1d6b7c325eec2dad7bc2b7c631fc46b5cb618e25593faa"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/formatErrorMessage.mjs",
+      "sha256": "37836b29292936dbce04b3cbcc412b8937f91ca39b03c1cb75b361c6cb3e5df7"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/generateId.mjs",
+      "sha256": "57e6464f393a92c7d3183d3a636b66c9f769388b850f4dcea6dc6a7283e4deb8"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/getReactElementRef.mjs",
+      "sha256": "88f349905b8ff1c2d0704b2c7bc279cb7dc95820c91fb5a0cc308d4ef8446d6c"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/inertValue.mjs",
+      "sha256": "67bd6c54868c292e9a5cf4ec32c80e5b674370511c39ce5c018e729573406bc3"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/isElementDisabled.mjs",
+      "sha256": "90f65e465edc0ffc7be3df66d73956cc15c9a36ddc331f7cfa9046e39dbafd49"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/mergeCleanups.mjs",
+      "sha256": "2fe1111789cd5f521b34683dde1a8ae15893c3d9e1ed2b352c2fd66a60a491fa"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/mergeObjects.mjs",
+      "sha256": "3cda66677f81f516b9301eb3d5a717950be194e6099358a30c18e2f1e5f187de"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/owner.mjs",
+      "sha256": "0eceef9549f291548fef1e0d07df4985149c8ff07566a6e76e1907c089ea22e2"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/platform/engine.mjs",
+      "sha256": "44d516640670a6b2f77074781d80d88403d3c8f413a3a3bb45b0e74d4b39f58d"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/platform/env.mjs",
+      "sha256": "787ae57ca9ae0bf329ec931a0a6c194249ed76aa67c8ad8d2046215a12aea2bc"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/platform/os.mjs",
+      "sha256": "1caeffef50258784bae8e99f11045328723e88ad999cf0164f1bac03b8eb55cc"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/platform/screen-reader.mjs",
+      "sha256": "56c8d1de75383da0ac8545ec8ed982918fa8824c12c7f67bcadd9ff192125f43"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/platform/shared.mjs",
+      "sha256": "bad2035a2206f9515c0945dc3ded1496b996f8095794066dbeb014b41f22bb00"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/reactVersion.mjs",
+      "sha256": "eb874d943f20542eb5847ba29727fa42b8c7c3ecbfc9788b7b09ee2cbc5df1a9"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/safeReact.mjs",
+      "sha256": "8b2eca3c6c65b9c3bd0387968037b79d243b9a70be9fa9c2b8e1a23b9fb9de12"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/shadowDom.mjs",
+      "sha256": "e3ab325ee31567e71fe489377b7273fa136983886eb21e38c9f4a7b5734b8a29"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/store/ReactStore.mjs",
+      "sha256": "98b95d42256898e305859c214072b27943f38572a767c34bcd4bac9af15df741"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/store/Store.mjs",
+      "sha256": "6a86276539c97bbb5a5a7d98179ababaee2b4a3888452af4e35618d7ff016330"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/store/useStore.mjs",
+      "sha256": "99f8ba07f9d7673c35baf204ac69f134c5ae37acd9a1f31c0c56b8d182474b3e"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useAnimationFrame.mjs",
+      "sha256": "9b03cf4e8b36e218b346505f404b6f18d1707115891a896ea90be04ffebe76b3"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useControlled.mjs",
+      "sha256": "b2b36383a2e4c33b8924125bd19be7f9263c303b29121bb1b4321e7cf7cb3347"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useId.mjs",
+      "sha256": "733ecdac5f43c3565d29b4d1037bd2fe95a05ec57010d29bd462ad305433ab60"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useIsoLayoutEffect.mjs",
+      "sha256": "08e03c070ef8fb5b36d312d561d2c7823fff8b98cc7b4ec5f8079128a557642b"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useMergedRefs.mjs",
+      "sha256": "af2bf169f819dad3dd7749dc9dc210837d7c46f81d502ff66068ebe90cc7e241"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useOnMount.mjs",
+      "sha256": "1f5adc191c075ca14546dc67c820fe29e8e976ebdbdd331373057258ad6fb32c"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useRefWithInit.mjs",
+      "sha256": "9a56b296c711e519f44067b53164b404e06ecad1debb0ef7624cd32be6f05e6f"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useScrollLock.mjs",
+      "sha256": "8f0150cbc228d9a3733f455bb24817a521f58ddc477bbaaee6232bc7621bcd0c"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useStableCallback.mjs",
+      "sha256": "5b30b0bd68c60776fa3295a2fdf7be8030061b64894c83913aede21763b87d92"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useTimeout.mjs",
+      "sha256": "a2df474c09994018574ad16007d712225141785d84a98c50b6c38af9004124d5"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/useValueAsRef.mjs",
+      "sha256": "352daa6b8a35d565ad58d9a395c50a5a99ce19b5f9ccb6fdd9280ccccef961b1"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@base-ui+utils@0.4.0_@types+react@19.2.17_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/@base-ui/utils/visuallyHidden.mjs",
+      "sha256": "0e1899f8f6a2e09ee2f49accfd2b2c537c06670a33c4d53535f6a3582990e00d"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@capacitor+app@8.1.1_@capacitor+core@8.5.2/node_modules/@capacitor/app/dist/esm/index.js",
+      "sha256": "6a8b5b04be5b1ccae38e5280da3122ee57b2cbf9f58c594a5f8476159885e00a"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@capacitor+app@8.1.1_@capacitor+core@8.5.2/node_modules/@capacitor/app/dist/esm/web.js",
+      "sha256": "d6b2ccfe0c4b80f87594ad98fcc10aa740e5a303a33a2217fc970e085a8000ee"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@capacitor+browser@8.0.4_@capacitor+core@8.5.2/node_modules/@capacitor/browser/dist/esm/index.js",
+      "sha256": "9eaa51b2382139b6cf24c7c9c438fe936e9bad5ceff6d31178cca8133f87535f"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@capacitor+browser@8.0.4_@capacitor+core@8.5.2/node_modules/@capacitor/browser/dist/esm/web.js",
+      "sha256": "89d26446ac3dc7d438604a8063768d53a4547b5148d33d5e2abccc5241e77a69"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@capacitor+clipboard@8.0.1_@capacitor+core@8.5.2/node_modules/@capacitor/clipboard/dist/esm/index.js",
+      "sha256": "369a3c7c855c542296906a83f7e46cded8d4b1e140a10542af43ec4df63ce54a"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@capacitor+clipboard@8.0.1_@capacitor+core@8.5.2/node_modules/@capacitor/clipboard/dist/esm/web.js",
+      "sha256": "820cecbc19b1a6a2f23836aa46bc1714577055d2f966aeaac7c4620ad6fb269d"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@capacitor+core@8.5.2/node_modules/@capacitor/core/dist/index.js",
+      "sha256": "ff26656120e7613d0718f353f7be460790473d441b44550be847f1acb23fa606"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@capacitor+keyboard@8.0.5_@capacitor+core@8.5.2/node_modules/@capacitor/keyboard/dist/esm/definitions.js",
+      "sha256": "e6fae42a0405f3670021a4d26c24a2b4b32613b9d7360faaa6b3fc246858cb00"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@capacitor+keyboard@8.0.5_@capacitor+core@8.5.2/node_modules/@capacitor/keyboard/dist/esm/index.js",
+      "sha256": "d5aa50bf68aee2fba6c48032149e31796caba637e30d1ed37ca8dc0229a78bf8"
+    },
+    {
+      "id": "../../node_modules/.pnpm/@floating-ui+utils@0.2.12/node_modules/@floating-ui/utils/dist/floating-ui.utils.dom.mjs",
+      "sha256": "b6658b1eac47e2917e6d10ebbeefb9c4ac9a166f0052bed6e08c871ed848b680"
+    },
+    {
+      "id": "../../node_modules/.pnpm/react-dom@19.2.7_react@19.2.7/node_modules/react-dom/cjs/react-dom-client.production.js",
+      "sha256": "9d2de2ee4a588c5d0b8580ff3467f796b8d9bbc45bdc35b257f7d1380e686c56"
+    },
+    {
+      "id": "../../node_modules/.pnpm/react-dom@19.2.7_react@19.2.7/node_modules/react-dom/cjs/react-dom.production.js",
+      "sha256": "288449d34c12dba9cb0ad3d0470d741a30dfb1a6a5df1cf2df6b4c61207180eb"
+    },
+    {
+      "id": "../../node_modules/.pnpm/react-dom@19.2.7_react@19.2.7/node_modules/react-dom/client.js",
+      "sha256": "00e348ab3d6bc2eef908345d0bc4e008c95bcfecec060dfda5c4967953761396"
+    },
+    {
+      "id": "../../node_modules/.pnpm/react-dom@19.2.7_react@19.2.7/node_modules/react-dom/index.js",
+      "sha256": "ba1a3e33489f868371561777607e3ee5091df0f7ea3f1a10f789d6b86e4c1505"
+    },
+    {
+      "id": "../../node_modules/.pnpm/react@19.2.7/node_modules/react/cjs/react-jsx-runtime.production.js",
+      "sha256": "1e46f15002696985e80c61d47aaa30dabb03c954270a690f5f7dfbbacfa9002b"
+    },
+    {
+      "id": "../../node_modules/.pnpm/react@19.2.7/node_modules/react/cjs/react.production.js",
+      "sha256": "66fa8fc8149e02f61dd5f26e3d0ea7bd03bac64a52d15601019f50a61260a115"
+    },
+    {
+      "id": "../../node_modules/.pnpm/react@19.2.7/node_modules/react/index.js",
+      "sha256": "60caffdecbdc5db3bc4ec4e83df9488345ccb271d07533b9210bf5750918d97e"
+    },
+    {
+      "id": "../../node_modules/.pnpm/react@19.2.7/node_modules/react/jsx-runtime.js",
+      "sha256": "b392951a77d0a2e6a6bd017e49d768481ae5b63c4109c6c31f622cf7b2433edc"
+    },
+    {
+      "id": "../../node_modules/.pnpm/scheduler@0.27.0/node_modules/scheduler/cjs/scheduler.production.js",
+      "sha256": "679adff761d31e9426604f80c0e99be44a3e6f4c6834b0218ecf0312a67c171f"
+    },
+    {
+      "id": "../../node_modules/.pnpm/scheduler@0.27.0/node_modules/scheduler/index.js",
+      "sha256": "145965504d60007bc25486ab930b0367867dcd5d579ccd343c148d69349a7cfb"
+    },
+    {
+      "id": "../../node_modules/.pnpm/use-sync-external-store@1.7.0_react@19.2.7/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.production.js",
+      "sha256": "e8c2f1808804d75c9e0ffab8c37329b34f356140275dea0efe1e75684ded14fa"
+    },
+    {
+      "id": "../../node_modules/.pnpm/use-sync-external-store@1.7.0_react@19.2.7/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.production.js",
+      "sha256": "fc76f309604db72c728d7c46cc593c6bba65e3f3d00dd38a1c32032927bb94d8"
+    },
+    {
+      "id": "../../node_modules/.pnpm/use-sync-external-store@1.7.0_react@19.2.7/node_modules/use-sync-external-store/shim/index.js",
+      "sha256": "de571b60495a636e12a24000b78531994a819aba03917e679803c2b482c66a89"
+    },
+    {
+      "id": "../../node_modules/.pnpm/use-sync-external-store@1.7.0_react@19.2.7/node_modules/use-sync-external-store/shim/with-selector.js",
+      "sha256": "08f4e878658941dd77b3d9032d2f0818649dd0a093288e768526090e9f00556f"
+    },
+    {
+      "id": "../../packages/native-auth/src/index.ts",
+      "sha256": "f88c257f558f08372f0a724a605fa398252e73709a2da19ee9f1ed439e21bc2a"
+    }
+  ]
+}

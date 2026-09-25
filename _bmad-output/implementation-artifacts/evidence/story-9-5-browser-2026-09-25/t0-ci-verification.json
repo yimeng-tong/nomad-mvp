@@ -1,0 +1,11 @@
+{
+  "kind": "scoped-environment-ci-proof",
+  "run": 36134210825,
+  "job": 108068273744,
+  "source_revision": "b6aecbf6b9d0257e79712bd8bc119ce52306aac5",
+  "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36134210825/job/108068273744",
+  "result": "passed",
+  "fingerprint": "8f164b23bb44b668f745fe52e150c4b5c645e9208c6b239467b534b0f69a5be8",
+  "product_flows_tested": false,
+  "default_executable_path_note": "browserType.executablePath reports the package default path; Chromium default headless may select its same-revision headless-shell sibling. T1 will explicitly bind executablePath for runner and preflight."
+}

@@ -1,0 +1,48 @@
+{
+  "kind": "local-t1-verification",
+  "recorded_at": "2026-09-25T12:44:43.057449+00:00",
+  "source_revision": "b6aecbf+T1-working-tree",
+  "typecheck_exit_code": 0,
+  "product_build_exit_code": 0,
+  "lint_exit_code": 0,
+  "lint_selected_files": 41,
+  "isolated_product_bootstrap": {
+    "chromium": "passed",
+    "firefox": "passed",
+    "webkit": "not-run-locally-host-libraries-missing"
+  },
+  "isolation_red": {
+    "exit_code": 1,
+    "original_passed": 5,
+    "new_failed": 2
+  },
+  "isolation_green": {
+    "exit_code": 0,
+    "passed": 7
+  },
+  "native_sync_verify_exit_code": 0,
+  "native_device_evidence": false,
+  "full_product_journeys_tested": false,
+  "files": {
+    ".github/workflows/ci.yml": "383957888864a08f5c9fe3854d7f829edfb16fb8c3ad86bc691dd0a6236d68bd",
+    "apps/mobile/playwright.config.ts": "d3ab40e6aa848e9e51f76b84d5d435c4acfb587e97a33bcba7f6aba4cd07364b",
+    "apps/mobile/tsconfig.e2e.json": "1187f4e1ed2a6c46429b424523fccefbd12b8eeccd7a13f04682946c6f4e0e6c",
+    "apps/mobile/e2e/flows/bootstrap.spec.ts": "6b25c4f2bd65c873141f43d72643149100416ca1070d9ec333609c1e9de05511",
+    "apps/mobile/scripts/serve-browser-product.mjs": "1dd584513df5c1e4f51af5f2a4564d15ecf047ae2ce088addfdafe80fd673efb",
+    "apps/mobile/scripts/browser-environment.mjs": "4225cb44fe971e4fc4e78237b742501bb6ddcefa7a2f040711e363c1cf04c9a5",
+    "apps/mobile/scripts/check-workbench-isolation.mjs": "4a2f4c5b03b4c7faa809766d2c862e3d1af23059039849e9f5ca6891e15ff4f3",
+    "apps/mobile/scripts/check-workbench-isolation.test.mjs": "6a1c40a4d9de676dc9edeadb80329b1761ebbf84b71803cc22a11a5f8cf15811",
+    "apps/mobile/package.json": "1afc8cac329e40caa5a5a50ab838dfc104e46ef663d6d38fc49263768ef1f356",
+    "apps/mobile/vite.config.ts": "bab52a83a0a1ad1341884618f748784a0a1e1b1b78fcddbf5fdb303b103e0371",
+    "eslint.config.mjs": "691be6b872320fb854d3a6aaa857ff6041f80a6dbe5de0e7b306195b29b67e6e",
+    "pnpm-lock.yaml": "003ccce865b0adf03ed8451185d19ca3613d904023ff792f4d84bc633f18676d"
+  },
+  "mobile_regression": {
+    "passed": 242,
+    "exit_code": 0
+  },
+  "native_config_regression": {
+    "passed": 5,
+    "exit_code": 0
+  }
+}

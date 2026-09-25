@@ -9,3 +9,7 @@
 本地Firefox155/WebKit26.6已下载到/tmp/nomad-story-9-5-browsers，Chromium复用9.4同revision。现时本机Firefox报告profile不可见，WebKit缺gtk4/gstreamer等共享库，不能把下载成功当运行；canonical CI仍按独立镜像验证。
 
 第二次T0容器run36133619687已通过环境/字体读取及Chromium启动，Firefox因container默认root但GitHub挂载home属于pwuser而拒绝运行。仅将容器运行用户设为镜像已有pwuser，保持HOME变量及宿主目录不变。下一取真实三引擎结果，不跳过Firefox。本机Firefox的同一空白启动在工具权限对照下通过，说明原profile错误属于受限执行边界；功能测试仍必须使用受控profile/loopback替身。
+
+T0固定容器预检实际通过：CI36134210825/job108068273744，Node22.22.1/pnpm11.7.0，Chromium153.0.8010.12/Firefox155/WebKit26.6。原环境JSON和scoped job证明已封存，仅证明资源启动，不是App流程。T0已勾选，下一T1独立runner/类型覆盖/新E2E资源隔离。为精确绑定运行路径，T1将对preflight和runner显式传包内executablePath，避免Chromium默认headless-shell与executablePath展示不同。
+
+T1已接独立Playwright三项目、专用TSProgram、Vitest e2e排除和实际dist受控静态server。入口server先复用既有产品隔离checker拒绝过期/污染build；HTTP只在本轮loopback，外网与未知请求阻断。当前B00真实App服务不可用首屏在本地Chromium/Firefox通过，仍不是完整登录/业务流程，WebKit待同镜像CI。新E2E/Playwright/helper隔离反例先在旧checker失败（原5通过、新2失败），扩展后7组通过；native sync/verify、产品实际图谱和41文件lint及e2e typecheck通过。T1要等三引擎同一入口实测后勾选。

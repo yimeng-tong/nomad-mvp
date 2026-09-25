@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const mobileRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
-const forbidden = /(?:^|\/)(?:workbench|\.storybook|storybook[^/]*|@storybook[^/]*|msw(?:@[^/]*)?|msw-storybook-addon[^/]*|@vitest[^/]*|vitest[^/]*)(?:\/|$)|mockServiceWorker|\.stories\./i;
+const forbidden = /(?:^|\/)(?:workbench|e2e|\.browser-results|\.storybook|storybook[^/]*|@storybook[^/]*|msw(?:@[^/]*)?|msw-storybook-addon[^/]*|@vitest[^/]*|vitest[^/]*|@playwright[^/]*|playwright(?:-core)?(?:@[^/]*)?)(?:\/|$)|mockServiceWorker|\.stories\.|nomad-e2e-|(?:^|\/)scripts\/(?:browser-environment|serve-browser-product|browser-mutations|check-browser-[^/]+)\./i;
 export function inventory(directory, prefix = '') {
   return Object.fromEntries(readdirSync(join(directory, prefix), { withFileTypes: true }).flatMap((entry) => {
     const name = prefix ? `${prefix}/${entry.name}` : entry.name;
@@ -38,7 +38,7 @@ export function checkIsolation({ mobile = mobileRoot, native = true } = {}) {
     assert.ok(!forbidden.test(name), `Tool resource in product: ${name}`);
     if (/\.(?:html|js|css|json)$/.test(name)) {
       const source = readFileSync(resolve(mobile, 'dist', name), 'utf8');
-      assert.doesNotMatch(source, /mockServiceWorker|WORKBENCH_|workbench-synthetic|msw-storybook-addon|STORYBOOK_DISABLE_TELEMETRY/, `Workbench bytes in product: ${name}`);
+      assert.doesNotMatch(source, /mockServiceWorker|WORKBENCH_|workbench-synthetic|msw-storybook-addon|STORYBOOK_DISABLE_TELEMETRY|NOMAD_E2E_|NOMAD_BROWSER_TEST/, `Test bytes in product: ${name}`);
     }
   }
   for (const name of Object.keys(inventory(resolve(mobile, 'public')))) assert.ok(!forbidden.test(name), `Tool resource in product public: ${name}`);

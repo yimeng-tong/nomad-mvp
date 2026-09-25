@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { after, test } from 'node:test';
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -80,4 +81,31 @@ test('rejects a changed entry and same-named tampered output even if both native
   targets.forEach((file) => writeFileSync(file, 'console.log("unrelated build");'));
   try { assert.throws(() => checkIsolation({ mobile: copy }), /Product output bytes/); }
   finally { targets.forEach((file, index) => writeFileSync(file, contents[index])); }
+});
+
+test('rejects E2E fixtures, Playwright and browser helpers in the actual product graph', () => {
+  const path = join(copy, '.workbench-results/product-graph.json');
+  const original = readFileSync(path, 'utf8');
+  for (const id of ['e2e/fixtures/api.ts', 'node_modules/playwright/test.mjs', 'scripts/browser-environment.mjs']) {
+    const graph = JSON.parse(original);
+    graph.modules.push({ id, sha256: null });
+    writeFileSync(path, JSON.stringify(graph));
+    try { assert.throws(() => checkIsolation({ mobile: copy }), /Tool module/); }
+    finally { writeFileSync(path, original); }
+  }
+});
+
+test('rejects copied E2E helper resources even when the output manifest and native copies agree', () => {
+  const graphPath = join(copy, '.workbench-results/product-graph.json');
+  const original = readFileSync(graphPath, 'utf8');
+  for (const name of ['nomad-e2e-helper.js', 'ordinary-name.json']) {
+    const content = name.endsWith('.js') ? '/* synthetic E2E helper */' : '{"NOMAD_E2E_FIXTURE":true}';
+    const graph = JSON.parse(original);
+    graph.outputs[name] = createHash('sha256').update(content).digest('hex');
+    writeFileSync(graphPath, JSON.stringify(graph));
+    const targets = ['dist', 'android/app/src/main/assets/public', 'ios/App/App/public'].map((dir) => join(copy, dir, name));
+    targets.forEach((path) => writeFileSync(path, content));
+    try { assert.throws(() => checkIsolation({ mobile: copy }), /Tool resource|Workbench bytes|Test bytes/); }
+    finally { targets.forEach((path) => rmSync(path)); writeFileSync(graphPath, original); }
+  }
 });

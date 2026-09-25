@@ -40,6 +40,8 @@ export default [
     },
   },
   { files: ['apps/mobile/src/**/*.{ts,tsx}'], languageOptions: { parserOptions: { project: ['./apps/mobile/tsconfig.json'] } } },
+  { files: ['apps/mobile/playwright.config.ts', 'apps/mobile/e2e/**/*.ts'], languageOptions: { globals: globals.node,
+    parserOptions: { project: ['./apps/mobile/tsconfig.e2e.json'] } } },
   {
     files: ['apps/mobile/src/**/*.{ts,tsx,js,jsx}', 'apps/mobile/workbench/**/*.{ts,tsx,js,jsx}', 'apps/mobile/.storybook/preview.tsx', 'apps/mobile/.storybook/vitest.setup.ts'],
     languageOptions: { globals: globals.browser },

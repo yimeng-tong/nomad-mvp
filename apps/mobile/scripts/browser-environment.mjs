@@ -43,11 +43,11 @@ function configFiles(directory) {
 const fontconfig = Object.fromEntries(configFiles('/etc/fonts').sort(([a], [b]) => a.localeCompare(b)));
 const browsers = {};
 for (const [name, type] of Object.entries({ chromium, firefox, webkit })) {
-  const browser = await type.launch({ headless: true });
+  const browser = await type.launch({ headless: true, executablePath: type.executablePath() });
   try {
     const locked = metadata.browsers.find((entry) => entry.name === name);
     assert.equal(browser.version(), locked.browserVersion, `${name} runtime must match the lock`);
-    browsers[name] = { version: browser.version(), revision: locked.revision, executable: type.executablePath() };
+    browsers[name] = { version: browser.version(), revision: locked.revision, executable: type.executablePath(), launchMode: 'headless-explicit-package-executable' };
   } finally {
     await browser.close();
   }

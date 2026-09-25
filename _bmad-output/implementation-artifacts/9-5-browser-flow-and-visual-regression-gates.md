@@ -106,10 +106,10 @@ So that 组件迁移前后可以核对实际行为并防止未经审阅的变化
 
 ## Tasks / Subtasks
 
-- [ ] T0 冻结本Story执行与旧页面基线（AC1–6；FR1、FR18、FR52；NFR3、NFR8、NFR25；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
-  - [ ] 读取CURRENT/Sprint/9.4的ui-delivery与完整CI，确认当前唯一writer、实际HEAD/dirty内容/lock/config摘要。保留9.4原证据；本Story两条件从not-started独立推进。
-  - [ ] 固定Playwright1.63.0及对应三引擎revision、Linux/amd64镜像digest、Node22.22.1/pnpm11.7.0；记录实际版本/路径/OS和中文字体文件、fontconfig摘要。镜像默认Node24必须覆盖，不能仅写配置即算验证。
-  - [ ] 拍摄和检查前区分当前可用界面与已批准目标：不把旧BYOK等历史入口截图升级为新产品合同；不修改原型/源GWT，不使用远期归档草稿为ready合同。
+- [x] T0 冻结本Story执行与旧页面基线（AC1–6；FR1、FR18、FR52；NFR3、NFR8、NFR25；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
+  - [x] 读取CURRENT/Sprint/9.4的ui-delivery与完整CI，确认当前唯一writer、实际HEAD/dirty内容/lock/config摘要。保留9.4原证据；本Story两条件从not-started独立推进。
+  - [x] 固定Playwright1.63.0及对应三引擎revision、Linux/amd64镜像digest、Node22.22.1/pnpm11.7.0；记录实际版本/路径/OS和中文字体文件、fontconfig摘要。镜像默认Node24必须覆盖，不能仅写配置即算验证。
+  - [x] 拍摄和检查前区分当前可用界面与已批准目标：不把旧BYOK等历史入口截图升级为新产品合同；不修改原型/源GWT，不使用远期归档草稿为ready合同。
 
 - [ ] T1 接入隔离三引擎runner与类型检查（AC1/5/6；CODE-QUALITY-01、UI-BROWSER-01、ui-quality-tooling）
   - [ ] 复用现有playwright/test；新增playwright.config.ts、e2e目录和tsconfig.e2e.json，三个项目明确Chromium/Firefox/WebKit。实际运行全部必需项目，缺浏览器/库直接失败；不得skip/零用例通过。
@@ -226,3 +226,24 @@ Codex当前会话；两项独立只读研究，随后fresh-context合同VS。
 - .gitignore
 - CURRENT.md、_bmad-output/project-context.md、sprint-status.yaml、capacitor-task-monitor-state.json（implementation-artifacts下的同名文件）
 - story-9-5-execution-decisions-2026-09-25.md、story-9-5-dev-progress-2026-09-25.md与evidence/story-9-5-browser-2026-09-25/development-baseline.json（implementation-artifacts下）
+
+### T0实际结果
+
+固定noble/amd64镜像在CI36134210825的环境job108068273744实际通过：Node22.22.1/pnpm11.7.0、Chromium153.0.8010.12/Firefox155.0/WebKit26.6及字体/配置hash已下载封存。只有环境预检，尚无产品流程/截图门禁；API返回的默认executable路径与Chromium默认headless-shell差别在t0-ci-verification.json明确记录，T1将显式指定一致launcher。
+
+### T1当前新增与修改
+
+- `.github/workflows/ci.yml`
+- `apps/mobile/playwright.config.ts`
+- `apps/mobile/tsconfig.e2e.json`
+- `apps/mobile/e2e/flows/bootstrap.spec.ts`
+- `apps/mobile/scripts/serve-browser-product.mjs`
+- `apps/mobile/scripts/browser-environment.mjs`
+- `apps/mobile/scripts/check-workbench-isolation.mjs`
+- `apps/mobile/scripts/check-workbench-isolation.test.mjs`
+- `apps/mobile/package.json`
+- `apps/mobile/vite.config.ts`
+- `eslint.config.mjs`
+- `pnpm-lock.yaml`
+
+产品不可用首屏仅本地两引擎通过，等待canonical三引擎；隔离红/绿和类型/构建证据见evidence/story-9-5-browser-2026-09-25/t1-local-validation.json。

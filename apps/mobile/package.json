@@ -16,7 +16,9 @@
     "build:storybook": "STORYBOOK_DISABLE_TELEMETRY=1 storybook build --disable-telemetry",
     "typecheck:workbench": "tsc -p tsconfig.workbench.json --noEmit",
     "test:workbench": "STORYBOOK_DISABLE_TELEMETRY=1 vitest run --config vitest.storybook.config.ts",
-    "test:workbench:network": "vitest run --config vitest.workbench-node.config.ts"
+    "test:workbench:network": "vitest run --config vitest.workbench-node.config.ts",
+    "typecheck:browser": "tsc -p tsconfig.e2e.json --noEmit",
+    "test:browser": "playwright test --config playwright.config.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.5.2",

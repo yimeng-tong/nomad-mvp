@@ -9,7 +9,7 @@ export default defineConfig({
   envDir: process.env.NOMAD_RECORD_PRODUCT_GRAPH === '1' ? false : undefined,
   build: { target: WEB_BUILD_TARGETS, cssTarget: CSS_BUILD_TARGETS },
   test: {
-    exclude: [...configDefaults.exclude, 'scripts/**/*.test.mjs', 'workbench/**'],
+    exclude: [...configDefaults.exclude, 'scripts/**/*.test.mjs', 'workbench/**', 'e2e/**'],
     environment: 'jsdom',
     setupFiles: ['./src/setupTests.ts'],
     globals: true,

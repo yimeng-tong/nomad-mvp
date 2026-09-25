@@ -49,3 +49,9 @@
 最终Edge复核返回[]；无新增未处理发现。
 
 第七轮CI36127674906在工作台、持久认证、mobile和旧Home/Planner/Settings均通过后，synthetic导入因fixture server没有启用新持久worker而503；保护逻辑本身正确。只在显式CI fixture启动步骤设置worker enabled/非恢复隔离；本地实际PG+Redis完整synthetic通过。其后SSE旧探针对合法持久快照重复multimodal误判，改为非空且所有子阶段均为multimodal，全部原必需state仍检查；真实SSE与实际脚本HTTP正反例（重复通过、无/错子阶段、缺geo失败）通过。仅为该脚本补@types/eventsource1.1.15开发声明及原any边界类型，运行时依赖未变化。Edge只读复核[]，失败记录保留于legacy-ci-probes.json。
+
+最终验收层只读审计：6组AC与正反例无额外阻断；当时46个摘要均匹配，后续旧SSE窄修补后最终48个摘要再由主任务逐项核验匹配。旧lint-result.json保留1dee5bd历史比较点，新增lint-result-final.json绑定f0f8d7b/8ca552c比较、37个实际源文件、0诊断，不混称最终远端CI。
+
+实际下载旧CI36120947834的artifact发现只有storybook-static/index.json，隐藏的.workbench-results被upload-artifact默认排除；此前只能证明本地产物生成，不能声称CI包已包含完整资源清单。已在精确两项上传路径内开启include-hidden-files，并把完全无产物设为error；只涉及合成验证结果目录，不扩大到env/工作区。最终需从新提交CI实际下载核验成员与hash后封存。官方依据：https://github.com/actions/upload-artifact/tree/v4#uploading-hidden-files 。
+
+上传配置窄修补经Edge独立只读复核，返回[]；R15保留未勾选直到实际新artifact下载核验完成。

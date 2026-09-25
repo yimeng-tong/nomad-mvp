@@ -160,6 +160,8 @@ So that 我无需真实账号或外部请求就能审阅改动并及时发现回
 
 ### Review Findings
 
+- [ ] [Review][Patch] R15 明确上传隐藏工作台结果目录并下载核验反例日志/截图/完整资源清单，避免只有索引的artifact被当成完整证据 [ci.yml]
+
 - [x] [Review][Patch] R14 Redis关闭钩子在请求排空后直接disconnect，避免等待无响应QUIT；真实Redis正常/暂停回复与自然退出反例通过，Edge复核无残项 [idempotency-redis.ts / redis-lifecycle-probe.ts]
 
 - [x] [Review][Patch] R1 cleanup promise复用并串行化场景切换 [scenario.ts]

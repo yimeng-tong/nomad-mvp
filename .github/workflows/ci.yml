@@ -104,7 +104,8 @@ jobs:
           path: |
             apps/mobile/.workbench-results/
             apps/mobile/storybook-static/index.json
-          if-no-files-found: warn
+          include-hidden-files: true
+          if-no-files-found: error
 
       - name: Apply Prisma migrations to isolated CI database
         run: pnpm -F nomad-prisma run migrate:deploy

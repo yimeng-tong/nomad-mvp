@@ -9,3 +9,9 @@
 新发现与处理：pnpm11需pnpm_config_store_dir（npm_config不会传递）；默认执行环境缺nspr/nss/asound及CJK，已仅在/tmp解压Ubuntu包并通过LD_LIBRARY_PATH/FONTCONFIG_FILE使用。共享Vite cache导致临时副本导入路径污染，专用工作台/反例cache已隔离；浏览器反例改为Vite内存转换，完全不改工作区源文件。初始testName筛选未命中时曾全跳过，控制用例要求非零真实通过，修正中文名称后通过。
 
 剩余：从实际提交做干净frozen安装，执行完整相关回归并收取真实远端CI；独立三层CR/必要修复；File List、逐AC闭环、两条件ui_delivery_evidence与review/done状态。全部之前不标完成，其他Story条件保持。原生/Provider/生产恢复不由本Story关闭。
+
+## 独立CR修补与第二次CI候选
+
+三层审阅13项已修复复核，实际计数更新为18场景、网络9、16故障＋2控制、lint6组和资源5组。cleanup Promise/workerEpoch、scope绑定与fetch静态旁路/Accept保护、普通Node负例、输出bytes与native产物、移动宽度及JSX/Node globals均补齐。Storybook addon会覆盖默认cacheDir，增加post config hook保证实际使用独立cache；对应受控静态目录明确列入白名单，任意programmatic fetch仍不能绕过。
+
+1dee5bd的干净clone冻结安装/全build/工作台17全部通过；最初Prisma只读cache utime失败以同版本已存在引擎路径显式引用解决，未改系统cache。首轮远端CI36115340403在反例输出ANSI计数报错，真实所选组件通过；已修复并用CI=true/FORCE_COLOR=1复验。下一收取修补commit全CI与最终证据。

@@ -9,7 +9,12 @@ export default defineConfig({
   envDir: false,
   envPrefix: 'NOMAD_WORKBENCH_PUBLIC_',
   publicDir: '.storybook/public',
-  plugins: [...workbenchMutation(), storybookTest({ configDir: fileURLToPath(new URL('./.storybook', import.meta.url)), storybookScript: 'pnpm storybook --ci' })],
+  plugins: [...workbenchMutation(), storybookTest({ configDir: fileURLToPath(new URL('./.storybook', import.meta.url)), storybookScript: 'pnpm storybook --ci' }), {
+    name: 'nomad-final-workbench-cache',
+    enforce: 'post',
+    // addon-vitest supplies its own cache in a config hook, so override after that hook.
+    config: () => ({ cacheDir: `.storybook-cache/browser-${process.env.NOMAD_WORKBENCH_MUTATION || 'normal'}` }),
+  }],
   test: {
     name: 'workbench',
     setupFiles: ['./.storybook/vitest.setup.ts'],
@@ -18,7 +23,7 @@ export default defineConfig({
       enabled: true,
       headless: true,
       provider: playwright({ contextOptions: { locale: 'zh-CN', timezoneId: 'Asia/Shanghai', reducedMotion: 'reduce' } }),
-      instances: [{ browser: 'chromium', viewport: { width: 900, height: 900 } }],
+      instances: [{ browser: 'chromium', viewport: { width: 390, height: 844 } }],
     },
   },
 });

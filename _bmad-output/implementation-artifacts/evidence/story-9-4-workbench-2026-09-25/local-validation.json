@@ -1,23 +1,23 @@
 {
   "kind": "local-story-verification",
   "story_id": "9.4",
-  "recorded_at": "2026-09-25T08:51:06.499772+00:00",
-  "source_revision": "abac3df+story-9.4-working-tree",
+  "recorded_at": "2026-09-25T09:29:01.406581+00:00",
+  "source_revision": "1dee5bd+review-fixes",
   "checks": {
     "workbench_typecheck": {
       "exit_code": 0
     },
     "workbench_network": {
       "exit_code": 0,
-      "passed": 8
+      "passed": 9
     },
     "workbench_browser": {
       "exit_code": 0,
-      "passed": 17
+      "passed": 18
     },
     "workbench_counterexamples": {
       "exit_code": 0,
-      "expected_failures": 10,
+      "expected_failures": 16,
       "positive_controls": 2
     },
     "lint": {
@@ -26,7 +26,7 @@
     },
     "lint_counterexamples": {
       "exit_code": 0,
-      "groups": 5
+      "groups": 6
     },
     "workspace_build": {
       "exit_code": 0
@@ -61,7 +61,7 @@
     },
     "resource_counterexamples": {
       "exit_code": 0,
-      "groups": 4
+      "groups": 5
     },
     "runtime": {
       "exit_code": 0,
@@ -75,7 +75,30 @@
       "passed": 82
     }
   },
-  "remote_ci": "not-yet-run",
-  "independent_review": "not-yet-run",
-  "remaining": "Clean frozen install, remote CI, independent review/fixes and final closure evidence."
+  "remote_ci": {
+    "initialRun": 36115340403,
+    "commit": "1dee5bdc0ceafa63e15d7d0076fb4a124560abbd",
+    "conclusion": "failure",
+    "failure": "ANSI escape sequences broke positive-test-count text matching; actual selected component tests passed. Fixed with node:util stripVTControlCharacters. Rerun pending.",
+    "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36115340403"
+  },
+  "independent_review": {
+    "layers": 3,
+    "uniqueFindings": 13,
+    "phase": "all-13-fixed-and-rechecked",
+    "additionalCiFix": "Strip ANSI before positive-control matching",
+    "postReviewHardening": "Node start hook records/removes MSW bypass Accept header before dispatch; Node has no static passthrough."
+  },
+  "remaining": "Final commit CI and final scoped closure evidence.",
+  "clean_install": {
+    "commit": "1dee5bdc0ceafa63e15d7d0076fb4a124560abbd",
+    "installExitCode": 0,
+    "installFlags": "--frozen-lockfile --strict-peer-dependencies",
+    "puppeteerDownload": "skipped during install; locked Playwright runtime installed separately",
+    "initialBuildFailure": "Prisma attempted utime on read-only home cache; no source failure",
+    "buildExitCode": 0,
+    "workbenchExitCode": 0,
+    "workbenchTests": 17,
+    "engineSource": "Existing verified Prisma 5.22 engine paths passed explicitly; no DB connection"
+  }
 }

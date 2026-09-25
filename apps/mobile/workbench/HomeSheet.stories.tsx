@@ -5,7 +5,7 @@ import { expect, waitFor, within } from 'storybook/test';
 import { HomeSheet } from '../src/home/HomeSheet';
 import type { components } from 'nomad-types/src/api-types';
 import { TextScale } from './TextScale';
-import { activeScenario } from './scenario';
+import { activeScenario, sceneFetch } from './scenario';
 
 function SheetExample({ largeText = false, state = 'normal' }: { largeText?: boolean; state?: 'normal' | 'empty' | 'partial' | 'unknown' | 'long' }) {
   const [open, setOpen] = useState(false);
@@ -14,7 +14,7 @@ function SheetExample({ largeText = false, state = 'normal' }: { largeText?: boo
   useEffect(() => {
     if (state !== 'partial') return;
     const signal = activeScenario().controller.signal;
-    fetch(`${location.origin}/ingest/workbench-job`, { signal })
+    sceneFetch(activeScenario(), '/ingest/workbench-job', { signal })
       .then(async (response) => { if (!response.ok) throw new Error('WORKBENCH_PARTIAL_FAILED'); return await response.json() as components['schemas']['IngestSnapshot']; })
       .then((snapshot) => { if (!signal.aborted) setPartial(snapshot); }, () => { if (!signal.aborted) setError(true); });
   }, [state]);

@@ -66,6 +66,48 @@
       "sentinelLeaked": false
     },
     {
+      "label": "passthrough request is blocked",
+      "mutation": "passthrough",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "static-looking raw fetch is blocked",
+      "mutation": "staticFetch",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "stopped mocking still registered is blocked",
+      "mutation": "stopped",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "mocking stop during registration lookup is fenced",
+      "mutation": "stoppedDuringLookup",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "raw fetch after cleanup is recorded",
+      "mutation": "rawAfterClose",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "late raw URL cannot adopt a new scene",
+      "mutation": "rawPrevious",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
       "label": "real captcha rejected before render",
       "mutation": "provider",
       "exitCode": 1,

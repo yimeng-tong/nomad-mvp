@@ -12,9 +12,9 @@ export function scenarioName(value: unknown): ScenarioName {
   return found;
 }
 
-export function denyUndeclared(origin: string, ledger: () => NetworkLedger) {
+export function denyUndeclared(origin: string, ledger: () => NetworkLedger, allowToolAssets = true) {
   return http.all('*', ({ request }) => {
-    if (isToolAsset(request, origin)) return passthrough();
+    if (allowToolAssets && isToolAsset(request, origin)) return passthrough();
     ledger().record(request, 'UNDECLARED_REQUEST');
     return HttpResponse.json({ error_code: 'WORKBENCH_NETWORK_BLOCKED', error_message: 'Undeclared synthetic request', retriable: false }, { status: 500 });
   });
@@ -30,6 +30,11 @@ export function pause(milliseconds: number, signal: AbortSignal): Promise<void> 
   });
 }
 
+export function waitForCancellation(signal: AbortSignal): Promise<void> {
+  if (signal.aborted) return Promise.resolve();
+  return new Promise((resolve) => { signal.addEventListener('abort', () => resolve(), { once: true }); });
+}
+
 export function createHandlers(origin: string, scenario: ScenarioName, signal: AbortSignal, config: components['schemas']['AuthConfigResponse'] = authConfig) {
   assertFixtureConfig(config);
   let configCalls = 0;
@@ -37,8 +42,10 @@ export function createHandlers(origin: string, scenario: ScenarioName, signal: A
   return [
     http.get(`${origin}/auth/config`, async () => {
       configCalls++;
-      if (scenario === 'loading') await pause(60000, signal);
-      if (scenario === 'timeout') { await pause(120, signal); return HttpResponse.error(); }
+      if (scenario === 'loading' || scenario === 'timeout') {
+        await waitForCancellation(signal);
+        return HttpResponse.error();
+      }
       if (scenario === 'reconnect' && configCalls === 1) return HttpResponse.json(blocked, { status: 503 });
       if (scenario === 'empty') return HttpResponse.json({ ...config, enabled_methods: [] });
       const methods = scenario === 'long' ? [{ ...config.enabled_methods[0], label: '手机号登录 · 合成的超长中文说明用于检查窄屏与放大文字换行' }] : config.enabled_methods;

@@ -6,6 +6,8 @@ describe('strict workbench network policy', () => {
   it('permits only explicit local tool assets', () => {
     expect(isToolAsset(new Request(`${origin}/@vite/client`), origin)).toBe(true);
     expect(isToolAsset(new Request(`${origin}/assets/preview-123.js`), origin)).toBe(true);
+    expect(isToolAsset(new Request(`${origin}/.storybook-cache/browser-normal/deps/runtime.js?v=123456ab`), origin)).toBe(true);
+    expect(isToolAsset(new Request(`${origin}/assets/customer.json?private=value`), origin)).toBe(false);
     for (const url of [`${origin}/auth/config`, `${origin}/private.js`, 'https://vendor.invalid/assets/a.js']) {
       expect(isToolAsset(new Request(url), origin)).toBe(false);
     }

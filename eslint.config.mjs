@@ -10,10 +10,10 @@ export default [
   { ignores: ['**/node_modules/**', '**/dist/**', '**/storybook-static/**', '**/.workbench-results/**'] },
   {
     files: ['**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}'],
-    languageOptions: { globals: globals.node },
     rules: { ...js.configs.recommended.rules },
     linterOptions: { noInlineConfig: true, reportUnusedDisableDirectives: 'error' },
   },
+  { files: ['**/*.{mjs,cjs}', 'scripts/**/*.{js,ts,mts,cts}', 'apps/server/**/*.{js,ts}', 'apps/mobile/scripts/**/*.{js,ts}', 'apps/mobile/*.config.ts', 'apps/mobile/.storybook/main.ts', 'apps/mobile/.storybook/vite.config.ts'], languageOptions: { globals: globals.node } },
   {
     files: ['**/*.{ts,tsx,mts,cts}'],
     languageOptions: {
@@ -36,10 +36,19 @@ export default [
   {
     files: ['apps/mobile/**/*.{ts,tsx}'],
     languageOptions: {
-      globals: { ...globals.browser, ...globals.node },
       parserOptions: { project: ['./apps/mobile/tsconfig.workbench.json', './apps/mobile/tsconfig.json'] },
     },
   },
+  { files: ['apps/mobile/src/**/*.{ts,tsx}'], languageOptions: { parserOptions: { project: ['./apps/mobile/tsconfig.json'] } } },
+  {
+    files: ['apps/mobile/src/**/*.{ts,tsx,js,jsx}', 'apps/mobile/workbench/**/*.{ts,tsx,js,jsx}', 'apps/mobile/.storybook/preview.tsx', 'apps/mobile/.storybook/vitest.setup.ts'],
+    languageOptions: { globals: globals.browser },
+    rules: {
+      'no-restricted-globals': ['error', 'Buffer', 'process', 'global', '__dirname', '__filename', 'module', 'require', 'exports', 'setImmediate', 'clearImmediate'],
+      'no-restricted-properties': ['error', { object: 'globalThis', property: 'process' }, { object: 'globalThis', property: 'Buffer' }],
+    },
+  },
+  { files: ['**/*.jsx'], languageOptions: { globals: globals.browser, parserOptions: { ecmaFeatures: { jsx: true } } } },
   {
     files: ['**/*.{jsx,tsx}'],
     plugins: { 'react-hooks': hooks, 'jsx-a11y': a11y },

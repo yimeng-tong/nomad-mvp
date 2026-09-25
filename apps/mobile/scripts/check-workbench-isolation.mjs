@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { readFileSync, readdirSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -31,7 +31,8 @@ export function checkIsolation({ mobile = mobileRoot, native = true } = {}) {
   const worker = resolve(mobile, '.storybook/public/mockServiceWorker.js');
   assert.equal(hash(readFileSync(worker)), hash(readFileSync(resolve(mobile, 'node_modules/msw/lib/mockServiceWorker.js'))), 'Workbench worker must match the locked package');
   const web = inventory(resolve(mobile, 'dist'));
-  for (const name of graph.outputs) assert.ok(Object.hasOwn(web, name), `Missing bundled product output: ${name}`);
+  assert.ok(graph.outputs && !Array.isArray(graph.outputs), 'Product graph needs emitted output digests');
+  assert.deepEqual(web, graph.outputs, 'Product output bytes do not match the recorded module graph');
   assert.ok(web['index.html'], 'Product index missing');
   for (const [name] of Object.entries(web)) {
     assert.ok(!forbidden.test(name), `Tool resource in product: ${name}`);
@@ -59,5 +60,7 @@ export function checkIsolation({ mobile = mobileRoot, native = true } = {}) {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const result = checkIsolation({ native: !process.argv.includes('--web-only') });
+  mkdirSync(resolve(mobileRoot, '.workbench-results'), { recursive: true });
+  writeFileSync(resolve(mobileRoot, '.workbench-results/product-isolation.json'), JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify(result, null, 2));
 }

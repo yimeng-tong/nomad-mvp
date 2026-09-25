@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { stripVTControlCharacters } from 'node:util';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, join, resolve } from 'node:path';
@@ -13,7 +14,7 @@ const run = (label, mutation, pattern, expected, success = false) => {
     env: { ...process.env, STORYBOOK_DISABLE_TELEMETRY: '1', NOMAD_WORKBENCH_MUTATION: mutation },
   });
   assert.equal(result.error, undefined, `${label}: runner did not finish`);
-  const output = result.stdout + result.stderr;
+  const output = stripVTControlCharacters(result.stdout + result.stderr);
   assert.ok(!output.includes(sentinel), `${label}: private sentinel reached captured output`);
   mkdirSync(join(mobile, '.workbench-results'), { recursive: true });
   writeFileSync(join(mobile, '.workbench-results', `counterexample-${label.replaceAll(' ', '-')}.log`), output);
@@ -33,6 +34,12 @@ run('axe unnamed control defect', 'axe', '空', /button-name|accessible name|acc
 run('business catch cannot hide undeclared API', 'undeclared', '正常 · 键盘', /WORKBENCH_NETWORK_VIOLATION/);
 run('late previous scene cannot pass the next ledger', 'late', '正常 · 键盘', /LATE_PREVIOUS_SCENE/);
 run('worker loss blocks API before dispatch', 'workerLost', '正常 · 键盘', /WORKER_LOST/);
+run('passthrough request is blocked', 'passthrough', '正常 · 键盘', /PASSTHROUGH_FORBIDDEN/);
+run('static-looking raw fetch is blocked', 'staticFetch', '正常 · 键盘', /UNSCOPED_OR_UNDECLARED_REQUEST/);
+run('stopped mocking still registered is blocked', 'stopped', '正常 · 键盘', /WORKER_NOT_READY/);
+run('mocking stop during registration lookup is fenced', 'stoppedDuringLookup', '正常 · 键盘', /WORKER_NOT_READY/);
+run('raw fetch after cleanup is recorded', 'rawAfterClose', '正常 · 键盘', /LATE_REQUEST/);
+run('late raw URL cannot adopt a new scene', 'rawPrevious', '正常 · 键盘', /UNSCOPED_OR_UNDECLARED_REQUEST/);
 run('real captcha rejected before render', 'provider', '正常 · 真实字段', /WORKBENCH_REAL_PROVIDER_REJECTED/);
 run('worker startup failure blocks rendering', 'workerMissing', '正常 · 真实字段', /WORKBENCH_WORKER_START_FAILED/);
 run('repaired workbench', '', '正常 · 键盘|403 · 文字错误|正常 · 真实字段', /passed/, true);

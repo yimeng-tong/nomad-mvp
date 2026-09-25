@@ -51,6 +51,25 @@ test('actual CI gate fails on Promise, void Promise, conditional Hook and unname
   rmSync(join(fixture, probe));
 });
 
+test('browser globals reject Node-only APIs and valid JSX reaches accessibility rules', () => {
+  for (const expression of ['Buffer.from("x")', 'process.exit(1)', 'globalThis.process.exit(1)']) {
+    write(probe, `export function Probe() { ${expression}; return null; }`);
+    const rejected = run();
+    assert.equal(rejected.status, 1);
+    assert.ok(rejected.report.failures.some((item) => ['no-restricted-globals', 'no-restricted-properties'].includes(item.ruleId)));
+  }
+  rmSync(join(fixture, probe));
+  const jsx = 'apps/mobile/src/quality-jsx-probe.jsx';
+  try {
+    write(jsx, 'export function Probe() { return <input aria-label="字段" />; }');
+    const clean = run(); assert.equal(clean.status, 0, clean.stdout + clean.stderr);
+    write(jsx, 'export function Probe() { return <input />; }');
+    const rejected = run(); assert.equal(rejected.status, 1);
+    assert.ok(rejected.report.failures.some((item) => item.ruleId === 'jsx-a11y/control-has-associated-label'));
+    assert.ok(rejected.report.failures.every((item) => item.ruleId !== 'CONFIG_OR_PARSE'));
+  } finally { rmSync(join(fixture, jsx), { force: true }); }
+});
+
 test('new, changed inherited and renamed source files enter the cohort', () => {
   const inherited = 'apps/mobile/src/quality-inherited.ts';
   write(inherited, 'export const initial = 1;\n');

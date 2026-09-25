@@ -46,6 +46,7 @@ export const Forbidden: Story = { name: '403 · 文字错误', parameters: { wor
 export const Timeout: Story = { name: '超时 · 可重试', parameters: { workbenchScenario: 'timeout' }, play: async ({ canvas }) => {
   await expect(await canvas.findByText('登录配置加载失败，请检查网络后重试')).toBeVisible();
   await expect(canvas.getByRole('button', { name: '重试' })).toBeEnabled();
+  await expect(activeScenario().timeouts).toBe(1);
 } };
 export const Reconnect: Story = { name: '重连 · 明确重试', parameters: { workbenchScenario: 'reconnect' }, play: async ({ canvas, userEvent }) => {
   await userEvent.click(await canvas.findByRole('button', { name: '重试' }));

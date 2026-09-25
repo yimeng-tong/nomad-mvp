@@ -2490,10 +2490,12 @@ CI 清单逐一标注现有认证/ingest probes、home-dock/auth/journal/telemet
 
 ### 场景与限制
 
-17个当前组件场景覆盖HomeSheet键盘/焦点/卸载、empty/partial/长中文/200%实际字号/reduced-motion/合成身份未知，Login正常/空/loading/403/超时/重连/验证码禁用原因/长中文/200%字段。200%对实际computed font逐项加倍，固定px字段也被检查；不等于系统字号/VoiceOver/TalkBack验收。验证reduced-motion场景时系统/浏览器需启用减少动效；CI provider显式启用。HomeSheet只负责弹层边界，网络content是类型化合成子内容，不冒充HomeImportDock恢复。
+18个当前组件场景（含场景清理并发）覆盖HomeSheet键盘/焦点/卸载、empty/partial/长中文/200%实际字号/reduced-motion/合成身份未知，Login正常/空/loading/403/超时/重连/验证码禁用原因/长中文/200%字段。200%对实际computed font逐项加倍，固定px字段也被检查；不等于系统字号/VoiceOver/TalkBack验收。验证reduced-motion场景时系统/浏览器需启用减少动效；CI provider显式启用。HomeSheet只负责弹层边界，网络content是类型化合成子内容，不冒充HomeImportDock恢复。
 
-工作台配置/场景和测试各有独立cacheDir，避免与产品jsdom或反例互相污染。MSW worker字节与锁包一致；只在.storybook/public并等到激活。未知/外部请求在fetch守卫或MSW兜底失败，收尾账本使业务catch仍失败；迟到的旧client同时污染当前账本并失败。场景只清自己的timer、请求、合成身份和工作台origin的device标识，不访问产品IDB或注销其他origin的worker。
+工作台配置/场景和测试各有独立cacheDir（browser用post config hook防addon覆盖），避免与产品jsdom或反例互相污染。MSW worker字节与锁包一致；只在.storybook/public并等到激活。未知/外部请求在fetch守卫或MSW兜底失败，收尾账本使业务catch仍失败；迟到的旧client同时污染当前账本并失败。场景只清自己的timer、请求、合成身份和工作台origin的device标识，不访问产品IDB或注销其他origin的worker。
 
 本次实际证据入口：`_bmad-output/implementation-artifacts/evidence/story-9-4-workbench-2026-09-25/`。真实CI与独立CR完成前9.4继续in-progress。
+
+审阅修补：API仅在工作台使用随机场景前缀，原/auth等生成合同路径保留；plain fetch不能借用下一场景，静态资源旁路不适用于programmatic fetch。finish Promise复用、切换串行化；worker.stop与异步lookup用epoch围栏。loading保持等待至取消，timeout通过受控abort模拟并核对取消计数，不宣称产品新增超时策略。Node使用同一finish强制校验ledger，预期违例为普通断言；MSW Accept旁路被记录/清除，Node无静态passthrough。产物绑定writeBundle实际bytes；390px运行与截图探针验证横向溢出和动作可达。
 
 ---

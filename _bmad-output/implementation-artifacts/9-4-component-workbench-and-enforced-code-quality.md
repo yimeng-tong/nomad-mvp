@@ -158,6 +158,22 @@ So that 我无需真实账号或外部请求就能审阅改动并及时发现回
   - [ ] ui_delivery_evidence满足当前checker格式，CODE-QUALITY-01与UI-WORKBENCH-01均由本Story实际verified，不能以not-applicable关闭自身首交付；其他Story条件不变。
   - [ ] 更新File List、开发进度、实际CI证据和CURRENT/Sprint的获准窗口内状态，运行pnpm run ci:handoff；如改守卫再跑对应回归。准备完成不计作工具实现或Story done。
 
+### Review Findings
+
+- [x] [Review][Patch] R1 cleanup promise复用并串行化场景切换 [scenario.ts]
+- [x] [Review][Patch] R2 晚到raw fetch必须记录且不能采用下一场景scope [scenario.ts]
+- [x] [Review][Patch] R3 worker注册与当前client mocking激活分开校验 [scenario.ts]
+- [x] [Review][Patch] R4 静态资源放行不能成为programmatic fetch旁路 [network-policy.ts]
+- [x] [Review][Patch] R5 模块图绑定最终产物bytes并拒绝同名篡改 [product-build-proof.ts / check-workbench-isolation.mjs]
+- [x] [Review][Patch] R6 超时用真实取消边界而非延迟网络错误模拟 [handlers.ts / scenario.ts]
+- [x] [Review][Patch] R7 loading场景保持等待直到显式取消 [handlers.ts]
+- [x] [Review][Patch] R8 大字号与长中文在窄屏运行并检查溢出/动作可达 [vitest.storybook.config.ts / runtime probe]
+- [x] [Review][Patch] R9 JSX文件启用正确解析器选项并验证规则命中 [eslint.config.mjs]
+- [x] [Review][Patch] R10 native完整资源摘要写入实际CI产物 [check-workbench-isolation.mjs]
+- [x] [Review][Patch] R11 阻断Accept msw/passthrough绕过 [scenario.ts]
+- [x] [Review][Patch] R12 Node共享清理无条件校验ledger [handlers.test.ts]
+- [x] [Review][Patch] R13 按用途分开Node/browser globals与TS项目 [eslint.config.mjs]
+
 ## Dev Notes
 
 ### 开始前应知道的事实与范围
@@ -366,3 +382,7 @@ Codex（当前会话）；准备包含独立工具研究、仓库上下文分析
 - `tsconfig.lint.json`
 
 本地实际结果见evidence/story-9-4-workbench-2026-09-25/local-validation.json。10个旧lint诊断均以窄改修复，未保留例外；类型规则、组件故障、网络失效与资源污染反例已运行。任务复选框在干净安装、CI与CR最终复核后逐项收口，当前不预标done。
+
+### 2026-09-25审阅修补
+
+13项独立审阅发现已修复并由三层复核关闭，另补CI的ANSI正常控制解析修复。工作台18场景/网络9/16故障与2控制、lint6组、产物5组通过；scope地址只在工作台适配层，不更改生产transport。当前仍等待新提交真实CI后关闭T6/T7与Story。新增File List：workbench/Lifecycle.stories.tsx、workbench/node-scenario.ts及story-9-4-code-review-2026-09-25.md（目录沿前述清单）。

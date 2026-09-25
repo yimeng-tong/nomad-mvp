@@ -9,8 +9,9 @@ import '../workbench/workbench.css';
 const loadMsw = mswLoader(startWorker);
 const preview: Preview = {
   loaders: [async (context) => {
-    const scene = await beginScenario(context.id);
-    context.parameters.msw = { handlers: createHandlers(location.origin, scenarioName(context.parameters.workbenchScenario), scene.controller.signal) };
+    const name = scenarioName(context.parameters.workbenchScenario);
+    const scene = await beginScenario(context.id, name === 'timeout' ? 120 : undefined);
+    context.parameters.msw = { handlers: createHandlers(scene.baseUrl, name, scene.controller.signal) };
     return loadMsw(context);
   }],
   beforeEach: () => {

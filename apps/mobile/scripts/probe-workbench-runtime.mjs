@@ -73,6 +73,13 @@ try {
   ]) {
     await page.goto(`${workbench.origin}/iframe.html?id=${id}&viewMode=story`);
     await page.getByText(ready).waitFor();
+    assert.ok(await page.evaluate(() => globalThis.document.documentElement.scrollWidth <= globalThis.innerWidth), `${name}: horizontal overflow at mobile width`);
+    for (const button of await page.getByRole('button').all()) {
+      if (!await button.isVisible()) continue;
+      await button.scrollIntoViewIfNeeded();
+      const box = await button.boundingBox();
+      assert.ok(box && box.x >= 0 && box.x + box.width <= 391 && box.height > 0, `${name}: clipped action`);
+    }
     const fonts = await page.locator('[data-workbench-font-base]').evaluateAll((nodes) => nodes.map((node) => ({ base: Number(node.dataset.workbenchFontBase), actual: parseFloat(globalThis.getComputedStyle(node).fontSize) })));
     if (name === 'login-large-text') assert.ok(fonts.length > 0 && fonts.every((f) => f.actual === f.base * 2));
     await page.screenshot({ path: resolve(output, `${name}.png`), fullPage: true });

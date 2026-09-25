@@ -29,7 +29,7 @@ stop_after_story_reason: removed-by-explicit-user-direction-2026-09-25
 epics_source: _bmad-output/planning-artifacts/epics.md
 migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
 migration_report: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.md
-next_story_to_prepare: 9-3-shared-ui-components-and-safe-app-sheet
+next_story_to_prepare: 1-8-owner-import-records-and-versioned-deduplication
 development_status:
   epic-1: in-progress
   1-0-production-login-and-multi-device-sessions: in-progress
@@ -110,7 +110,7 @@ development_status:
   epic-9: in-progress
   9-1-capacitor-app-installation-and-host-foundation: in-progress
   9-2-android-apk-and-ios-testflight-delivery: backlog
-  9-3-shared-ui-components-and-safe-app-sheet: backlog
+  9-3-shared-ui-components-and-safe-app-sheet: ready-for-dev
   9-4-component-workbench-and-enforced-code-quality: done
   9-5-browser-flow-and-visual-regression-gates: done
   9-6-identity-scoped-server-read-queries: backlog
@@ -648,28 +648,28 @@ active_workstreams:
     contract: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md
     evidence: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
   near_term_execution:
-    story: 9-5-browser-flow-and-visual-regression-gates
+    story: 9-3-shared-ui-components-and-safe-app-sheet
     thread_id: 01a0d78a-3692-78b1-aee5-76268a743925
     host_id: local
     environment: current-saved-project
     status: active
-    working_branch: codex/story-9-5-browser-gates
+    working_branch: codex/story-9-3-shared-ui
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.4/9.5已done；下一仅准备9.3 CS/VS，同任务唯一writer，真实门槛和3.1暂停保持
+    scope: 9.4/9.5已done；9.3准备及独立VS通过，按当前合同进入DS/CR；同任务唯一writer，真实门槛和3.1暂停保持
 previous_preparation:
-  story: 9-4-component-workbench-and-enforced-code-quality
-  status: complete
-  evidence: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
-  authorization: _bmad-output/implementation-artifacts/story-9-4-preparation-decisions-2026-09-25.md
-  implementation_started: true
-  execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
-current_preparation:
   story: 9-5-browser-flow-and-visual-regression-gates
   status: complete
   evidence: _bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates-validation.md
   authorization: _bmad-output/implementation-artifacts/story-9-5-preparation-decisions-2026-09-25.md
   implementation_started: true
+  execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
+current_preparation:
+  story: 9-3-shared-ui-components-and-safe-app-sheet
+  status: complete
+  evidence: _bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet-validation.md
+  authorization: _bmad-output/implementation-artifacts/story-9-3-preparation-decisions-2026-09-26.md
+  implementation_started: false
   execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_boundary_override: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md

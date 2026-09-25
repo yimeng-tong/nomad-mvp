@@ -1,0 +1,40 @@
+{
+  "kind": "story-preparation-validation",
+  "story_id": "9.3",
+  "recorded_at": "2026-09-25T17:07:23.658Z",
+  "source_contract_sha256": "1068161ce8180a56148f85f34f668ba8d5451ff2d4dd6c818fad26bbbf68e323",
+  "baseline": "775b132f64bf0d6831150d95a6f9192e814f39ce",
+  "result": "passed",
+  "checks": [
+    {
+      "name": "exact-narrative-requirements-dependency-and-32-GWT-lines",
+      "result": "passed"
+    },
+    {
+      "name": "source-contract-sha256",
+      "result": "passed"
+    },
+    {
+      "name": "independent-contract-VS-with-correction-recheck",
+      "result": "passed"
+    },
+    {
+      "name": "independent-plan-VS-with-two-clarification-recheck",
+      "result": "passed"
+    },
+    {
+      "name": "ci-handoff-ready-state",
+      "result": "passed",
+      "counts": {
+        "stories": 67,
+        "gwt": 1089,
+        "done": 9,
+        "inProgress": 5,
+        "ready": 1,
+        "backlog": 52
+      }
+    }
+  ],
+  "implementation_started": false,
+  "runtime_acceptance_executed": false
+}

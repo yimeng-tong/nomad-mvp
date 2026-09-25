@@ -110,3 +110,8 @@ Planner流暂停时断开，身份重新确认后同job/cursor恢复；旧事件
 ## 2026-09-26 共享UI迁移受影响回归
 
 9.3在实际Login/Home/退出入口迁移共享UI，本Story受影响范围及原auth6/真实PG-SSE-IDB6回放见story-9-3-integration-impact-2026-09-26.md。当前aeadc1e完整CI36184294356通过，129产品场景/33视觉和6三引擎组件补证、265移动+5配置保持；原controller/journal/cursor与历史证据未重写。9.3四项UI条件只在9.3范围verified，本Story状态及自身条件没有自动关闭；真实供应商/归因/设备/生产恢复仍按原合同验收。
+
+
+## 2026-09-26 T9/WL-AUTH本地实现已核验
+
+WL-AUTH公共窗口/统计、实际App浏览器采集、CLI重算与失败保留已完成；实际发现的验证码错误/会话失效混淆按code修复，不自动重发，输入保留。9项三层CR修补复核关闭，0b9585e完整CI36192075867两个job成功；997文件/30ZIP、6份数据重算和641源码比对通过。当前详细记录是story-1-0-auth-measurement-progress-2026-09-26.md及同名acceptance。原广义认证/SDK/设备/生产恢复责任不因这次本地测量关闭，1.0与METRICS-01继续in-progress。

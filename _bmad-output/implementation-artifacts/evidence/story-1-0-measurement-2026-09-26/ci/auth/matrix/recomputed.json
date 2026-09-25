@@ -1,0 +1,2711 @@
+{
+  "overall": {
+    "manifest": {
+      "measurementVersion": "nomad.auth.v1",
+      "workload": "WL-AUTH",
+      "mode": "fixture",
+      "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+      "scenarioPlan": [
+        {
+          "scenario": "login",
+          "count": 3
+        },
+        {
+          "scenario": "send-rejected",
+          "count": 1
+        },
+        {
+          "scenario": "send-unknown",
+          "count": 1
+        },
+        {
+          "scenario": "verify-rejected",
+          "count": 1
+        },
+        {
+          "scenario": "restore",
+          "count": 1
+        },
+        {
+          "scenario": "invalid-session",
+          "count": 1
+        },
+        {
+          "scenario": "authority-unavailable",
+          "count": 1
+        },
+        {
+          "scenario": "logout",
+          "count": 1
+        },
+        {
+          "scenario": "logout-recovery",
+          "count": 1
+        },
+        {
+          "scenario": "missing-terminal",
+          "count": 1
+        }
+      ],
+      "plannedLogicalRequests": 12,
+      "windowStartMs": 787.5,
+      "windowEndMs": 2364,
+      "deadlineMs": 60000,
+      "fixtureVersion": "auth-ui-v1",
+      "sampling": 1,
+      "concurrency": 1,
+      "retryPolicy": "explicit-only",
+      "cacheMode": "one-browser-app-remount"
+    },
+    "measurementVersion": "nomad.auth.v1",
+    "workload": "WL-AUTH",
+    "mode": "fixture",
+    "quantileMethod": "nearest-rank-ceil-p-times-n",
+    "coverage": {
+      "plannedLogicalRequests": 12,
+      "rawSamples": 12,
+      "observedLogicalRequests": 12,
+      "missingLogicalRequests": 0,
+      "extraLogicalRequests": 0,
+      "invalidSamples": 0,
+      "duplicateSamples": 0,
+      "conflictingSamples": 0,
+      "unplannedScenario": 0,
+      "invalidClock": 0,
+      "outsideWindow": 0,
+      "invalidTiming": 0
+    },
+    "outcomes": {
+      "success": 6,
+      "rejected": 3,
+      "unknown": 1,
+      "unavailable": 1,
+      "unfinished": 1
+    },
+    "apiRequests": 35,
+    "originalLogoutRecoveries": 1,
+    "unfinished": [
+      {
+        "logicalId": "6bf9f88d-647d-4826-91b0-aca741b04bd6",
+        "outcome": "unfinished",
+        "waitedMs": 358.19999999995343
+      },
+      {
+        "logicalId": "b500f696-67cd-4b19-9760-412890ec5c58",
+        "outcome": "unknown",
+        "waitedMs": 25.5
+      }
+    ],
+    "metrics": {
+      "successElapsedMs": {
+        "n": 6,
+        "p50": 51.90000000002328,
+        "p95": 116
+      },
+      "observedTerminalMs": {
+        "n": 10,
+        "p50": 30.900000000023283,
+        "p95": 116
+      }
+    },
+    "phases": {
+      "otp-send": {
+        "plannedCases": 7,
+        "observedCases": 7,
+        "attempts": 7,
+        "retryAttempts": 0,
+        "unfinished": 0,
+        "outcomes": {
+          "success": 5,
+          "rejected": 1,
+          "unknown": 1,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "responseMs": {
+          "n": 7,
+          "p50": 2.5,
+          "p95": 4
+        },
+        "successMs": {
+          "n": 5,
+          "p50": 2.5,
+          "p95": 3.099999999976717
+        },
+        "notObservedCases": 0,
+        "unexpectedCases": 0
+      },
+      "proof-verify": {
+        "plannedCases": 5,
+        "observedCases": 5,
+        "attempts": 5,
+        "retryAttempts": 0,
+        "unfinished": 1,
+        "outcomes": {
+          "success": 3,
+          "rejected": 1,
+          "unknown": 0,
+          "unavailable": 0,
+          "unfinished": 1
+        },
+        "responseMs": {
+          "n": 4,
+          "p50": 2.5,
+          "p95": 4.199999999953434
+        },
+        "successMs": {
+          "n": 3,
+          "p50": 3.099999999976717,
+          "p95": 4.199999999953434
+        },
+        "notObservedCases": 0,
+        "unexpectedCases": 0
+      },
+      "identity-read": {
+        "plannedCases": 8,
+        "observedCases": 8,
+        "attempts": 8,
+        "retryAttempts": 0,
+        "unfinished": 0,
+        "outcomes": {
+          "success": 4,
+          "rejected": 3,
+          "unknown": 0,
+          "unavailable": 1,
+          "unfinished": 0
+        },
+        "responseMs": {
+          "n": 8,
+          "p50": 2.700000000069849,
+          "p95": 6.099999999976717
+        },
+        "successMs": {
+          "n": 4,
+          "p50": 1.8000000000465661,
+          "p95": 2.700000000069849
+        },
+        "notObservedCases": 0,
+        "unexpectedCases": 0
+      },
+      "protected-home": {
+        "plannedCases": 8,
+        "observedCases": 8,
+        "attempts": 8,
+        "retryAttempts": 0,
+        "unfinished": 1,
+        "outcomes": {
+          "success": 4,
+          "rejected": 2,
+          "unknown": 0,
+          "unavailable": 1,
+          "unfinished": 1
+        },
+        "responseMs": {
+          "n": 7,
+          "p50": 29.600000000093132,
+          "p95": 55.79999999993015
+        },
+        "successMs": {
+          "n": 4,
+          "p50": 30.900000000023283,
+          "p95": 55.79999999993015
+        },
+        "notObservedCases": 0,
+        "unexpectedCases": 0
+      },
+      "logout": {
+        "plannedCases": 2,
+        "observedCases": 2,
+        "attempts": 3,
+        "retryAttempts": 1,
+        "unfinished": 0,
+        "outcomes": {
+          "success": 2,
+          "rejected": 0,
+          "unknown": 1,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "responseMs": {
+          "n": 3,
+          "p50": 2.400000000023283,
+          "p95": 2.5
+        },
+        "successMs": {
+          "n": 2,
+          "p50": 2,
+          "p95": 2.5
+        },
+        "notObservedCases": 0,
+        "unexpectedCases": 0
+      },
+      "logout-recovery": {
+        "plannedCases": 1,
+        "observedCases": 1,
+        "attempts": 1,
+        "retryAttempts": 0,
+        "unfinished": 0,
+        "outcomes": {
+          "success": 1,
+          "rejected": 0,
+          "unknown": 0,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "responseMs": {
+          "n": 1,
+          "p50": 25.100000000093132,
+          "p95": 25.100000000093132
+        },
+        "successMs": {
+          "n": 1,
+          "p50": 25.100000000093132,
+          "p95": 25.100000000093132
+        },
+        "notObservedCases": 0,
+        "unexpectedCases": 0
+      }
+    },
+    "cost": {
+      "amount": null,
+      "currency": null,
+      "reason": "not-measured"
+    },
+    "providerExecution": {
+      "n": 0,
+      "p50": null,
+      "p95": null,
+      "reason": "client-observation-is-not-provider-execution"
+    },
+    "notes": [
+      "OTP send success is not authentication.",
+      "HTTP proof acceptance is separate from current identity and protected UI.",
+      "Unknown and unfinished cases stay outside success latency.",
+      "Input mode does not certify staging, provider, device or production acceptance."
+    ]
+  },
+  "scenarios": [
+    {
+      "scenario": "login",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.auth.v1",
+          "workload": "WL-AUTH",
+          "mode": "fixture",
+          "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+          "scenarioPlan": [
+            {
+              "scenario": "login",
+              "count": 3
+            }
+          ],
+          "plannedLogicalRequests": 3,
+          "windowStartMs": 787.5,
+          "windowEndMs": 2364,
+          "deadlineMs": 60000,
+          "fixtureVersion": "auth-ui-v1",
+          "sampling": 1,
+          "concurrency": 1,
+          "retryPolicy": "explicit-only",
+          "cacheMode": "one-browser-app-remount"
+        },
+        "measurementVersion": "nomad.auth.v1",
+        "workload": "WL-AUTH",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 3,
+          "rawSamples": 3,
+          "observedLogicalRequests": 3,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "outsideWindow": 0,
+          "invalidTiming": 0
+        },
+        "outcomes": {
+          "success": 3,
+          "rejected": 0,
+          "unknown": 0,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "apiRequests": 15,
+        "originalLogoutRecoveries": 0,
+        "unfinished": [],
+        "metrics": {
+          "successElapsedMs": {
+            "n": 3,
+            "p50": 90,
+            "p95": 116
+          },
+          "observedTerminalMs": {
+            "n": 3,
+            "p50": 90,
+            "p95": 116
+          }
+        },
+        "phases": {
+          "otp-send": {
+            "plannedCases": 3,
+            "observedCases": 3,
+            "attempts": 3,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 3,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 3,
+              "p50": 2.5,
+              "p95": 2.8999999999068677
+            },
+            "successMs": {
+              "n": 3,
+              "p50": 2.5,
+              "p95": 2.8999999999068677
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "proof-verify": {
+            "plannedCases": 3,
+            "observedCases": 3,
+            "attempts": 3,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 3,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 3,
+              "p50": 3.099999999976717,
+              "p95": 4.199999999953434
+            },
+            "successMs": {
+              "n": 3,
+              "p50": 3.099999999976717,
+              "p95": 4.199999999953434
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "identity-read": {
+            "plannedCases": 3,
+            "observedCases": 3,
+            "attempts": 3,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 3,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 3,
+              "p50": 1.8000000000465661,
+              "p95": 2.099999999976717
+            },
+            "successMs": {
+              "n": 3,
+              "p50": 1.8000000000465661,
+              "p95": 2.099999999976717
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "protected-home": {
+            "plannedCases": 3,
+            "observedCases": 3,
+            "attempts": 3,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 3,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 3,
+              "p50": 38.10000000009313,
+              "p95": 55.79999999993015
+            },
+            "successMs": {
+              "n": 3,
+              "p50": 38.10000000009313,
+              "p95": 55.79999999993015
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout-recovery": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "providerExecution": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "client-observation-is-not-provider-execution"
+        },
+        "notes": [
+          "OTP send success is not authentication.",
+          "HTTP proof acceptance is separate from current identity and protected UI.",
+          "Unknown and unfinished cases stay outside success latency.",
+          "Input mode does not certify staging, provider, device or production acceptance."
+        ]
+      }
+    },
+    {
+      "scenario": "send-rejected",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.auth.v1",
+          "workload": "WL-AUTH",
+          "mode": "fixture",
+          "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+          "scenarioPlan": [
+            {
+              "scenario": "send-rejected",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 787.5,
+          "windowEndMs": 2364,
+          "deadlineMs": 60000,
+          "fixtureVersion": "auth-ui-v1",
+          "sampling": 1,
+          "concurrency": 1,
+          "retryPolicy": "explicit-only",
+          "cacheMode": "one-browser-app-remount"
+        },
+        "measurementVersion": "nomad.auth.v1",
+        "workload": "WL-AUTH",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "outsideWindow": 0,
+          "invalidTiming": 0
+        },
+        "outcomes": {
+          "success": 0,
+          "rejected": 1,
+          "unknown": 0,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "apiRequests": 1,
+        "originalLogoutRecoveries": 0,
+        "unfinished": [],
+        "metrics": {
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "observedTerminalMs": {
+            "n": 1,
+            "p50": 27.300000000046566,
+            "p95": 27.300000000046566
+          }
+        },
+        "phases": {
+          "otp-send": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 1,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 4,
+              "p95": 4
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "proof-verify": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "identity-read": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "protected-home": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout-recovery": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "providerExecution": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "client-observation-is-not-provider-execution"
+        },
+        "notes": [
+          "OTP send success is not authentication.",
+          "HTTP proof acceptance is separate from current identity and protected UI.",
+          "Unknown and unfinished cases stay outside success latency.",
+          "Input mode does not certify staging, provider, device or production acceptance."
+        ]
+      }
+    },
+    {
+      "scenario": "send-unknown",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.auth.v1",
+          "workload": "WL-AUTH",
+          "mode": "fixture",
+          "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+          "scenarioPlan": [
+            {
+              "scenario": "send-unknown",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 787.5,
+          "windowEndMs": 2364,
+          "deadlineMs": 60000,
+          "fixtureVersion": "auth-ui-v1",
+          "sampling": 1,
+          "concurrency": 1,
+          "retryPolicy": "explicit-only",
+          "cacheMode": "one-browser-app-remount"
+        },
+        "measurementVersion": "nomad.auth.v1",
+        "workload": "WL-AUTH",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "outsideWindow": 0,
+          "invalidTiming": 0
+        },
+        "outcomes": {
+          "success": 0,
+          "rejected": 0,
+          "unknown": 1,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "apiRequests": 1,
+        "originalLogoutRecoveries": 0,
+        "unfinished": [
+          {
+            "logicalId": "b500f696-67cd-4b19-9760-412890ec5c58",
+            "outcome": "unknown",
+            "waitedMs": 25.5
+          }
+        ],
+        "metrics": {
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "observedTerminalMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "phases": {
+          "otp-send": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 1,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 2.300000000046566,
+              "p95": 2.300000000046566
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "proof-verify": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "identity-read": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "protected-home": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout-recovery": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "providerExecution": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "client-observation-is-not-provider-execution"
+        },
+        "notes": [
+          "OTP send success is not authentication.",
+          "HTTP proof acceptance is separate from current identity and protected UI.",
+          "Unknown and unfinished cases stay outside success latency.",
+          "Input mode does not certify staging, provider, device or production acceptance."
+        ]
+      }
+    },
+    {
+      "scenario": "verify-rejected",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.auth.v1",
+          "workload": "WL-AUTH",
+          "mode": "fixture",
+          "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+          "scenarioPlan": [
+            {
+              "scenario": "verify-rejected",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 787.5,
+          "windowEndMs": 2364,
+          "deadlineMs": 60000,
+          "fixtureVersion": "auth-ui-v1",
+          "sampling": 1,
+          "concurrency": 1,
+          "retryPolicy": "explicit-only",
+          "cacheMode": "one-browser-app-remount"
+        },
+        "measurementVersion": "nomad.auth.v1",
+        "workload": "WL-AUTH",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "outsideWindow": 0,
+          "invalidTiming": 0
+        },
+        "outcomes": {
+          "success": 0,
+          "rejected": 1,
+          "unknown": 0,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "apiRequests": 2,
+        "originalLogoutRecoveries": 0,
+        "unfinished": [],
+        "metrics": {
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "observedTerminalMs": {
+            "n": 1,
+            "p50": 82.40000000002328,
+            "p95": 82.40000000002328
+          }
+        },
+        "phases": {
+          "otp-send": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 1,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 3.099999999976717,
+              "p95": 3.099999999976717
+            },
+            "successMs": {
+              "n": 1,
+              "p50": 3.099999999976717,
+              "p95": 3.099999999976717
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "proof-verify": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 1,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 2.400000000023283,
+              "p95": 2.400000000023283
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "identity-read": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "protected-home": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 1,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 26.800000000046566,
+              "p95": 26.800000000046566
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout-recovery": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "providerExecution": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "client-observation-is-not-provider-execution"
+        },
+        "notes": [
+          "OTP send success is not authentication.",
+          "HTTP proof acceptance is separate from current identity and protected UI.",
+          "Unknown and unfinished cases stay outside success latency.",
+          "Input mode does not certify staging, provider, device or production acceptance."
+        ]
+      }
+    },
+    {
+      "scenario": "restore",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.auth.v1",
+          "workload": "WL-AUTH",
+          "mode": "fixture",
+          "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+          "scenarioPlan": [
+            {
+              "scenario": "restore",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 787.5,
+          "windowEndMs": 2364,
+          "deadlineMs": 60000,
+          "fixtureVersion": "auth-ui-v1",
+          "sampling": 1,
+          "concurrency": 1,
+          "retryPolicy": "explicit-only",
+          "cacheMode": "one-browser-app-remount"
+        },
+        "measurementVersion": "nomad.auth.v1",
+        "workload": "WL-AUTH",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "outsideWindow": 0,
+          "invalidTiming": 0
+        },
+        "outcomes": {
+          "success": 1,
+          "rejected": 0,
+          "unknown": 0,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "apiRequests": 3,
+        "originalLogoutRecoveries": 0,
+        "unfinished": [],
+        "metrics": {
+          "successElapsedMs": {
+            "n": 1,
+            "p50": 30.900000000023283,
+            "p95": 30.900000000023283
+          },
+          "observedTerminalMs": {
+            "n": 1,
+            "p50": 30.900000000023283,
+            "p95": 30.900000000023283
+          }
+        },
+        "phases": {
+          "otp-send": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "proof-verify": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "identity-read": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 1,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 2.700000000069849,
+              "p95": 2.700000000069849
+            },
+            "successMs": {
+              "n": 1,
+              "p50": 2.700000000069849,
+              "p95": 2.700000000069849
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "protected-home": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 1,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 30.900000000023283,
+              "p95": 30.900000000023283
+            },
+            "successMs": {
+              "n": 1,
+              "p50": 30.900000000023283,
+              "p95": 30.900000000023283
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout-recovery": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "providerExecution": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "client-observation-is-not-provider-execution"
+        },
+        "notes": [
+          "OTP send success is not authentication.",
+          "HTTP proof acceptance is separate from current identity and protected UI.",
+          "Unknown and unfinished cases stay outside success latency.",
+          "Input mode does not certify staging, provider, device or production acceptance."
+        ]
+      }
+    },
+    {
+      "scenario": "invalid-session",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.auth.v1",
+          "workload": "WL-AUTH",
+          "mode": "fixture",
+          "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+          "scenarioPlan": [
+            {
+              "scenario": "invalid-session",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 787.5,
+          "windowEndMs": 2364,
+          "deadlineMs": 60000,
+          "fixtureVersion": "auth-ui-v1",
+          "sampling": 1,
+          "concurrency": 1,
+          "retryPolicy": "explicit-only",
+          "cacheMode": "one-browser-app-remount"
+        },
+        "measurementVersion": "nomad.auth.v1",
+        "workload": "WL-AUTH",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "outsideWindow": 0,
+          "invalidTiming": 0
+        },
+        "outcomes": {
+          "success": 0,
+          "rejected": 1,
+          "unknown": 0,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "apiRequests": 2,
+        "originalLogoutRecoveries": 0,
+        "unfinished": [],
+        "metrics": {
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "observedTerminalMs": {
+            "n": 1,
+            "p50": 27.699999999953434,
+            "p95": 27.699999999953434
+          }
+        },
+        "phases": {
+          "otp-send": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "proof-verify": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "identity-read": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 1,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 4.300000000046566,
+              "p95": 4.300000000046566
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "protected-home": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 1,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 27.599999999976717,
+              "p95": 27.599999999976717
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout-recovery": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "providerExecution": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "client-observation-is-not-provider-execution"
+        },
+        "notes": [
+          "OTP send success is not authentication.",
+          "HTTP proof acceptance is separate from current identity and protected UI.",
+          "Unknown and unfinished cases stay outside success latency.",
+          "Input mode does not certify staging, provider, device or production acceptance."
+        ]
+      }
+    },
+    {
+      "scenario": "authority-unavailable",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.auth.v1",
+          "workload": "WL-AUTH",
+          "mode": "fixture",
+          "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+          "scenarioPlan": [
+            {
+              "scenario": "authority-unavailable",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 787.5,
+          "windowEndMs": 2364,
+          "deadlineMs": 60000,
+          "fixtureVersion": "auth-ui-v1",
+          "sampling": 1,
+          "concurrency": 1,
+          "retryPolicy": "explicit-only",
+          "cacheMode": "one-browser-app-remount"
+        },
+        "measurementVersion": "nomad.auth.v1",
+        "workload": "WL-AUTH",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "outsideWindow": 0,
+          "invalidTiming": 0
+        },
+        "outcomes": {
+          "success": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "unavailable": 1,
+          "unfinished": 0
+        },
+        "apiRequests": 2,
+        "originalLogoutRecoveries": 0,
+        "unfinished": [],
+        "metrics": {
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "observedTerminalMs": {
+            "n": 1,
+            "p50": 27.400000000023283,
+            "p95": 27.400000000023283
+          }
+        },
+        "phases": {
+          "otp-send": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "proof-verify": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "identity-read": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 1,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 4.400000000023283,
+              "p95": 4.400000000023283
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "protected-home": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 1,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 27.400000000023283,
+              "p95": 27.400000000023283
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout-recovery": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "providerExecution": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "client-observation-is-not-provider-execution"
+        },
+        "notes": [
+          "OTP send success is not authentication.",
+          "HTTP proof acceptance is separate from current identity and protected UI.",
+          "Unknown and unfinished cases stay outside success latency.",
+          "Input mode does not certify staging, provider, device or production acceptance."
+        ]
+      }
+    },
+    {
+      "scenario": "logout",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.auth.v1",
+          "workload": "WL-AUTH",
+          "mode": "fixture",
+          "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+          "scenarioPlan": [
+            {
+              "scenario": "logout",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 787.5,
+          "windowEndMs": 2364,
+          "deadlineMs": 60000,
+          "fixtureVersion": "auth-ui-v1",
+          "sampling": 1,
+          "concurrency": 1,
+          "retryPolicy": "explicit-only",
+          "cacheMode": "one-browser-app-remount"
+        },
+        "measurementVersion": "nomad.auth.v1",
+        "workload": "WL-AUTH",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "outsideWindow": 0,
+          "invalidTiming": 0
+        },
+        "outcomes": {
+          "success": 1,
+          "rejected": 0,
+          "unknown": 0,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "apiRequests": 3,
+        "originalLogoutRecoveries": 0,
+        "unfinished": [],
+        "metrics": {
+          "successElapsedMs": {
+            "n": 1,
+            "p50": 28.199999999953434,
+            "p95": 28.199999999953434
+          },
+          "observedTerminalMs": {
+            "n": 1,
+            "p50": 28.199999999953434,
+            "p95": 28.199999999953434
+          }
+        },
+        "phases": {
+          "otp-send": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "proof-verify": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "identity-read": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 1,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 6.099999999976717,
+              "p95": 6.099999999976717
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "protected-home": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 1,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 2.5,
+              "p95": 2.5
+            },
+            "successMs": {
+              "n": 1,
+              "p50": 2.5,
+              "p95": 2.5
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout-recovery": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "providerExecution": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "client-observation-is-not-provider-execution"
+        },
+        "notes": [
+          "OTP send success is not authentication.",
+          "HTTP proof acceptance is separate from current identity and protected UI.",
+          "Unknown and unfinished cases stay outside success latency.",
+          "Input mode does not certify staging, provider, device or production acceptance."
+        ]
+      }
+    },
+    {
+      "scenario": "logout-recovery",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.auth.v1",
+          "workload": "WL-AUTH",
+          "mode": "fixture",
+          "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+          "scenarioPlan": [
+            {
+              "scenario": "logout-recovery",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 787.5,
+          "windowEndMs": 2364,
+          "deadlineMs": 60000,
+          "fixtureVersion": "auth-ui-v1",
+          "sampling": 1,
+          "concurrency": 1,
+          "retryPolicy": "explicit-only",
+          "cacheMode": "one-browser-app-remount"
+        },
+        "measurementVersion": "nomad.auth.v1",
+        "workload": "WL-AUTH",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "outsideWindow": 0,
+          "invalidTiming": 0
+        },
+        "outcomes": {
+          "success": 1,
+          "rejected": 0,
+          "unknown": 0,
+          "unavailable": 0,
+          "unfinished": 0
+        },
+        "apiRequests": 4,
+        "originalLogoutRecoveries": 1,
+        "unfinished": [],
+        "metrics": {
+          "successElapsedMs": {
+            "n": 1,
+            "p50": 51.90000000002328,
+            "p95": 51.90000000002328
+          },
+          "observedTerminalMs": {
+            "n": 1,
+            "p50": 51.90000000002328,
+            "p95": 51.90000000002328
+          }
+        },
+        "phases": {
+          "otp-send": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "proof-verify": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "identity-read": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 1,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 3.5,
+              "p95": 3.5
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "protected-home": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 2,
+            "retryAttempts": 1,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 1,
+              "rejected": 0,
+              "unknown": 1,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 2,
+              "p50": 2,
+              "p95": 2.400000000023283
+            },
+            "successMs": {
+              "n": 1,
+              "p50": 2,
+              "p95": 2
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout-recovery": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 1,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 25.100000000093132,
+              "p95": 25.100000000093132
+            },
+            "successMs": {
+              "n": 1,
+              "p50": 25.100000000093132,
+              "p95": 25.100000000093132
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "providerExecution": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "client-observation-is-not-provider-execution"
+        },
+        "notes": [
+          "OTP send success is not authentication.",
+          "HTTP proof acceptance is separate from current identity and protected UI.",
+          "Unknown and unfinished cases stay outside success latency.",
+          "Input mode does not certify staging, provider, device or production acceptance."
+        ]
+      }
+    },
+    {
+      "scenario": "missing-terminal",
+      "report": {
+        "manifest": {
+          "measurementVersion": "nomad.auth.v1",
+          "workload": "WL-AUTH",
+          "mode": "fixture",
+          "clockId": "76c94e2a-ac98-4c9d-b2c7-21d7804c225f",
+          "scenarioPlan": [
+            {
+              "scenario": "missing-terminal",
+              "count": 1
+            }
+          ],
+          "plannedLogicalRequests": 1,
+          "windowStartMs": 787.5,
+          "windowEndMs": 2364,
+          "deadlineMs": 60000,
+          "fixtureVersion": "auth-ui-v1",
+          "sampling": 1,
+          "concurrency": 1,
+          "retryPolicy": "explicit-only",
+          "cacheMode": "one-browser-app-remount"
+        },
+        "measurementVersion": "nomad.auth.v1",
+        "workload": "WL-AUTH",
+        "mode": "fixture",
+        "quantileMethod": "nearest-rank-ceil-p-times-n",
+        "coverage": {
+          "plannedLogicalRequests": 1,
+          "rawSamples": 1,
+          "observedLogicalRequests": 1,
+          "missingLogicalRequests": 0,
+          "extraLogicalRequests": 0,
+          "invalidSamples": 0,
+          "duplicateSamples": 0,
+          "conflictingSamples": 0,
+          "unplannedScenario": 0,
+          "invalidClock": 0,
+          "outsideWindow": 0,
+          "invalidTiming": 0
+        },
+        "outcomes": {
+          "success": 0,
+          "rejected": 0,
+          "unknown": 0,
+          "unavailable": 0,
+          "unfinished": 1
+        },
+        "apiRequests": 2,
+        "originalLogoutRecoveries": 0,
+        "unfinished": [
+          {
+            "logicalId": "6bf9f88d-647d-4826-91b0-aca741b04bd6",
+            "outcome": "unfinished",
+            "waitedMs": 358.19999999995343
+          }
+        ],
+        "metrics": {
+          "successElapsedMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          },
+          "observedTerminalMs": {
+            "n": 0,
+            "p50": null,
+            "p95": null
+          }
+        },
+        "phases": {
+          "otp-send": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 1,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 1,
+              "p50": 2.5,
+              "p95": 2.5
+            },
+            "successMs": {
+              "n": 1,
+              "p50": 2.5,
+              "p95": 2.5
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "proof-verify": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 1,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 1
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "identity-read": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "protected-home": {
+            "plannedCases": 1,
+            "observedCases": 1,
+            "attempts": 1,
+            "retryAttempts": 0,
+            "unfinished": 1,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 1
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          },
+          "logout-recovery": {
+            "plannedCases": 0,
+            "observedCases": 0,
+            "attempts": 0,
+            "retryAttempts": 0,
+            "unfinished": 0,
+            "outcomes": {
+              "success": 0,
+              "rejected": 0,
+              "unknown": 0,
+              "unavailable": 0,
+              "unfinished": 0
+            },
+            "responseMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "successMs": {
+              "n": 0,
+              "p50": null,
+              "p95": null
+            },
+            "notObservedCases": 0,
+            "unexpectedCases": 0
+          }
+        },
+        "cost": {
+          "amount": null,
+          "currency": null,
+          "reason": "not-measured"
+        },
+        "providerExecution": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "reason": "client-observation-is-not-provider-execution"
+        },
+        "notes": [
+          "OTP send success is not authentication.",
+          "HTTP proof acceptance is separate from current identity and protected UI.",
+          "Unknown and unfinished cases stay outside success latency.",
+          "Input mode does not certify staging, provider, device or production acceptance."
+        ]
+      }
+    }
+  ]
+}

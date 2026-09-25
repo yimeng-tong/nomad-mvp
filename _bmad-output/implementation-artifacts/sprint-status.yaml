@@ -173,9 +173,11 @@ condition_progress:
       - _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
     METRICS-01:
       state: in-progress
-      summary: WL-AUTH本地manifest/实际App替身采集/报告已实现，三层9项修补与本地正反例通过；等待当前提交完整CI，真实服务基线/目标未关闭。
+      summary: WL-AUTH本地manifest/实际App替身采集/报告及9项CR修补已通过0b9585e完整CI；997文件/30ZIP和641源码比对核验。仅本地实现分支完成，真实服务/费用/目标未关闭。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-0-auth-measurement-progress-2026-09-26.md
+      - _bmad-output/implementation-artifacts/story-1-0-auth-measurement-acceptance-2026-09-26.md
+      - _bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci-verification.json
     METRICS-02:
       state: not-started
       summary: 已纳入1.0实施合同；本轮只完成准备，未运行该工程条件。
@@ -702,7 +704,7 @@ active_workstreams:
     working_branch: codex/story-1-0-auth-measurements
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.3本地gate已verified、T9仍open；接续1.0独立T9/WL-AUTH测量。第三方/许可SDK真实资源保持未完成；唯一writer与3.1暂停不变
+    scope: 9.3本地gate已verified、T9仍open；1.0独立WL-AUTH本地实现/当前CI已核验，接续1.6规范输入事件。真实资源/SDK门槛、唯一writer与3.1暂停不变
 previous_preparation:
   story: 9-5-browser-flow-and-visual-regression-gates
   status: complete

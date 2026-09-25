@@ -1,0 +1,11 @@
+{
+  "kind": "auth-measurement-run-status",
+  "runId": "e299b780-fdeb-4b3f-ba51-d5ddbbf052da",
+  "profile": "matrix",
+  "testFault": "",
+  "status": "failed",
+  "failure": {
+    "code": "AUTH_MEASUREMENT_SETUP_FAILED"
+  },
+  "captureAvailable": false
+}

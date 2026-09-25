@@ -484,7 +484,7 @@ GPT-6 Astra（当前任务配置）；create-story阶段使用两个独立分析
 
 ### Completion Notes List
 
-- 2026-09-26：1.0 T9独立WL-AUTH本地代码/反例与9项三层CR修补已复核；T7验证码错误提示补齐，真实provider/SDK/native仍未关闭。当前提交完整CI待验证，证据见story-1-0-auth-measurement-progress-2026-09-26.md。
+- 2026-09-26：1.0 T9独立WL-AUTH本地代码/反例与9项三层CR修补已复核；T7验证码错误提示补齐，真实provider/SDK/native仍未关闭。当前提交0b9585e完整CI36192075867及独立产物复核通过，证据见story-1-0-auth-measurement-progress-2026-09-26.md。
 
 - Ultimate context engine analysis completed - comprehensive developer guide created.
 - 创建完整实施合同；业务任务尚未实施，生产证据尚待对应授权与验收。
@@ -622,3 +622,49 @@ GPT-6 Astra（当前任务配置）；create-story阶段使用两个独立分析
 - `scripts/measurements/tsconfig.json`
 
 本地结果与源指纹见story-1-0-auth-measurement-progress-2026-09-26.md及evidence/story-1-0-measurement-2026-09-26/preflight.json；原baseline、GWT与整Story状态保留。
+
+### T9当前CI证据追加
+
+- 2026-09-26：0b9585e完整CI及997实际下载文件核验，641源码比对/6数据重算通过；本地T9实现分支完成，METRICS-01真实服务分支与全部原关闭条件保持in-progress。
+
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/cutoff/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/cutoff/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/cutoff/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/between-cases/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/between-cases/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/between-cases/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/hidden-home/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/hidden-home/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/hidden-home/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/integrity-failure/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/integrity-failure/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/integrity-failure/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/owned-port-stalled-body/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/source-read-failure/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/source-read-failure/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/source-read-failure/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/guards/verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/matrix/recomputed.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/matrix/report.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/matrix/run-status.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/auth/matrix/samples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/downloaded-suite-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/environment.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/extra-chromium-v06.png`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/flow-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/lint-result.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/network-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/product-isolation.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/shared-ui-matrix.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/suite-verification.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/validation-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/workbench-counterexamples.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/ci/workbench-runtime.json`
+- `_bmad-output/implementation-artifacts/evidence/story-1-0-measurement-2026-09-26/downloaded-artifacts.json`
+- `_bmad-output/implementation-artifacts/story-1-0-auth-measurement-acceptance-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/story-1-0-auth-measurement-code-review-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/story-1-0-auth-measurement-progress-2026-09-26.md`
+- `_bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md`
+- `_bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md`
+- `_bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md`

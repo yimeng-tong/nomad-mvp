@@ -145,3 +145,8 @@ bmad-code-review三层在1215行后端差异上独立检查。5项可修问题�
 ## 2026-09-26 共享UI迁移受影响回归
 
 9.3在实际Login/Home/退出入口迁移共享UI，本Story受影响范围及原auth6/真实PG-SSE-IDB6回放见story-9-3-integration-impact-2026-09-26.md。当前aeadc1e完整CI36184294356通过，129产品场景/33视觉和6三引擎组件补证、265移动+5配置保持；原controller/journal/cursor与历史证据未重写。9.3四项UI条件只在9.3范围verified，本Story状态及自身条件没有自动关闭；真实供应商/归因/设备/生产恢复仍按原合同验收。
+
+
+## 2026-09-26 测量公共合同兼容核对
+
+1.0 WL-AUTH将MeasurementWindow与nearest-rank提取为公共实现，1.6保留原report字段/算法。13项旧统计测试、15项原浏览器fixture及当前代码重算一致；相应新证据在story-1-0-measurement-2026-09-26/import-compatibility，未覆盖9月19历史报告或把新fixture计作真实服务目标。后续T6仍需规范事件/许可/SDK及查询接线，Noop和SDK关闭残留门槛继续存在。

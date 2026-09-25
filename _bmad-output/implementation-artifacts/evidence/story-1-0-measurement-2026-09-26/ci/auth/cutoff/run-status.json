@@ -1,0 +1,9 @@
+{
+  "kind": "auth-measurement-run-status",
+  "runId": "968bdcf1-7573-4af1-9350-e292209f5b2b",
+  "profile": "deadline-cutoff",
+  "testFault": "",
+  "status": "passed",
+  "failure": null,
+  "captureAvailable": true
+}

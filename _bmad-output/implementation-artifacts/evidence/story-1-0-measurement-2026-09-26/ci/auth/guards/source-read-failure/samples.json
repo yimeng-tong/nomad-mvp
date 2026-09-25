@@ -1,0 +1,429 @@
+{
+  "manifest": {
+    "measurementVersion": "nomad.auth.v1",
+    "workload": "WL-AUTH",
+    "mode": "fixture",
+    "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+    "scenarioPlan": [
+      {
+        "scenario": "login",
+        "count": 3
+      },
+      {
+        "scenario": "send-rejected",
+        "count": 1
+      },
+      {
+        "scenario": "send-unknown",
+        "count": 1
+      },
+      {
+        "scenario": "verify-rejected",
+        "count": 1
+      },
+      {
+        "scenario": "restore",
+        "count": 1
+      },
+      {
+        "scenario": "invalid-session",
+        "count": 1
+      },
+      {
+        "scenario": "authority-unavailable",
+        "count": 1
+      },
+      {
+        "scenario": "logout",
+        "count": 1
+      },
+      {
+        "scenario": "logout-recovery",
+        "count": 1
+      },
+      {
+        "scenario": "missing-terminal",
+        "count": 1
+      }
+    ],
+    "plannedLogicalRequests": 12,
+    "windowStartMs": 650.5,
+    "windowEndMs": 2248,
+    "deadlineMs": 60000,
+    "fixtureVersion": "auth-ui-v1",
+    "sampling": 1,
+    "concurrency": 1,
+    "retryPolicy": "explicit-only",
+    "cacheMode": "one-browser-app-remount"
+  },
+  "samples": [
+    {
+      "logicalId": "c2ccb894-f6d0-41af-93af-0250a1b90c29",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "login",
+      "outcome": "success",
+      "startedMs": 652.1999999999534,
+      "observedUntilMs": 771.5,
+      "apiRequests": 5,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "otp-send",
+          "attempt": 1,
+          "startedMs": 663.3999999999069,
+          "endedMs": 665.6999999999534,
+          "outcome": "success"
+        },
+        {
+          "phase": "protected-home",
+          "attempt": 1,
+          "startedMs": 712.6999999999534,
+          "endedMs": 771.5,
+          "outcome": "success"
+        },
+        {
+          "phase": "proof-verify",
+          "attempt": 1,
+          "startedMs": 722.0999999999767,
+          "endedMs": 725.6999999999534,
+          "outcome": "success"
+        },
+        {
+          "phase": "identity-read",
+          "attempt": 1,
+          "startedMs": 725.8999999999069,
+          "endedMs": 727.6999999999534,
+          "outcome": "success"
+        }
+      ]
+    },
+    {
+      "logicalId": "bb704ef1-e147-4122-a109-8c76e4044402",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "login",
+      "outcome": "success",
+      "startedMs": 853.1999999999534,
+      "observedUntilMs": 940.3999999999069,
+      "apiRequests": 5,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "otp-send",
+          "attempt": 1,
+          "startedMs": 857.5,
+          "endedMs": 859.8999999999069,
+          "outcome": "success"
+        },
+        {
+          "phase": "protected-home",
+          "attempt": 1,
+          "startedMs": 907.0999999999767,
+          "endedMs": 940.3999999999069,
+          "outcome": "success"
+        },
+        {
+          "phase": "proof-verify",
+          "attempt": 1,
+          "startedMs": 910.6999999999534,
+          "endedMs": 913.0999999999767,
+          "outcome": "success"
+        },
+        {
+          "phase": "identity-read",
+          "attempt": 1,
+          "startedMs": 913.5,
+          "endedMs": 915.1999999999534,
+          "outcome": "success"
+        }
+      ]
+    },
+    {
+      "logicalId": "f6da5f5c-9c73-4881-a04d-09aa38d1a800",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "login",
+      "outcome": "success",
+      "startedMs": 1022.5,
+      "observedUntilMs": 1108.3999999999069,
+      "apiRequests": 5,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "otp-send",
+          "attempt": 1,
+          "startedMs": 1025.2999999999302,
+          "endedMs": 1027.5999999999767,
+          "outcome": "success"
+        },
+        {
+          "phase": "protected-home",
+          "attempt": 1,
+          "startedMs": 1075.1999999999534,
+          "endedMs": 1108.3999999999069,
+          "outcome": "success"
+        },
+        {
+          "phase": "proof-verify",
+          "attempt": 1,
+          "startedMs": 1078.5999999999767,
+          "endedMs": 1081.3999999999069,
+          "outcome": "success"
+        },
+        {
+          "phase": "identity-read",
+          "attempt": 1,
+          "startedMs": 1081.3999999999069,
+          "endedMs": 1085,
+          "outcome": "success"
+        }
+      ]
+    },
+    {
+      "logicalId": "84e0e7de-17e5-4871-aa61-2011dbafd0a2",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "send-rejected",
+      "outcome": "rejected",
+      "startedMs": 1189.2999999999302,
+      "observedUntilMs": 1215.3999999999069,
+      "apiRequests": 1,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "otp-send",
+          "attempt": 1,
+          "startedMs": 1192.0999999999767,
+          "endedMs": 1194.8999999999069,
+          "outcome": "rejected"
+        }
+      ]
+    },
+    {
+      "logicalId": "38731d2b-6e56-4173-b32c-547bd2c31283",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "send-unknown",
+      "outcome": "unknown",
+      "startedMs": 1292.1999999999534,
+      "observedUntilMs": 1320.6999999999534,
+      "apiRequests": 1,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "otp-send",
+          "attempt": 1,
+          "startedMs": 1295.5,
+          "endedMs": 1300.3999999999069,
+          "outcome": "unknown"
+        }
+      ]
+    },
+    {
+      "logicalId": "6e7c6cb3-6b63-4860-93a2-e5083d79a8c7",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "verify-rejected",
+      "outcome": "rejected",
+      "startedMs": 1402.1999999999534,
+      "observedUntilMs": 1487,
+      "apiRequests": 2,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "otp-send",
+          "attempt": 1,
+          "startedMs": 1404.8999999999069,
+          "endedMs": 1409.3999999999069,
+          "outcome": "success"
+        },
+        {
+          "phase": "protected-home",
+          "attempt": 1,
+          "startedMs": 1460.7999999999302,
+          "endedMs": 1487,
+          "outcome": "rejected"
+        },
+        {
+          "phase": "proof-verify",
+          "attempt": 1,
+          "startedMs": 1463.8999999999069,
+          "endedMs": 1466.5,
+          "outcome": "rejected"
+        }
+      ]
+    },
+    {
+      "logicalId": "c78cf1b3-27b9-465b-b278-a7f83adfd27d",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "restore",
+      "outcome": "success",
+      "startedMs": 1488.0999999999767,
+      "observedUntilMs": 1519,
+      "apiRequests": 3,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "protected-home",
+          "attempt": 1,
+          "startedMs": 1488.0999999999767,
+          "endedMs": 1519,
+          "outcome": "success"
+        },
+        {
+          "phase": "identity-read",
+          "attempt": 1,
+          "startedMs": 1490.7999999999302,
+          "endedMs": 1494,
+          "outcome": "success"
+        }
+      ]
+    },
+    {
+      "logicalId": "f851e601-9000-4054-80a0-49a742d38d24",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "invalid-session",
+      "outcome": "rejected",
+      "startedMs": 1520.5,
+      "observedUntilMs": 1549.3999999999069,
+      "apiRequests": 2,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "protected-home",
+          "attempt": 1,
+          "startedMs": 1520.5,
+          "endedMs": 1549.3999999999069,
+          "outcome": "rejected"
+        },
+        {
+          "phase": "identity-read",
+          "attempt": 1,
+          "startedMs": 1523.5,
+          "endedMs": 1525.6999999999534,
+          "outcome": "rejected"
+        }
+      ]
+    },
+    {
+      "logicalId": "ffa676a2-d77e-4f2c-8037-da3fbbe0d0aa",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "authority-unavailable",
+      "outcome": "unavailable",
+      "startedMs": 1550.3999999999069,
+      "observedUntilMs": 1576,
+      "apiRequests": 2,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "protected-home",
+          "attempt": 1,
+          "startedMs": 1550.3999999999069,
+          "endedMs": 1576,
+          "outcome": "unavailable"
+        },
+        {
+          "phase": "identity-read",
+          "attempt": 1,
+          "startedMs": 1552.6999999999534,
+          "endedMs": 1555.2999999999302,
+          "outcome": "unavailable"
+        }
+      ]
+    },
+    {
+      "logicalId": "4c9be798-8848-49be-bbc7-5cd5768e8d3b",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "logout",
+      "outcome": "success",
+      "startedMs": 1666.5,
+      "observedUntilMs": 1695.2999999999302,
+      "apiRequests": 3,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "logout",
+          "attempt": 1,
+          "startedMs": 1672.5,
+          "endedMs": 1675,
+          "outcome": "success"
+        },
+        {
+          "phase": "identity-read",
+          "attempt": 1,
+          "startedMs": 1676.7999999999302,
+          "endedMs": 1680.5999999999767,
+          "outcome": "rejected"
+        }
+      ]
+    },
+    {
+      "logicalId": "9c2bc735-4f25-410d-adbc-6f20626b9ab8",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "logout-recovery",
+      "outcome": "success",
+      "startedMs": 1761.5999999999767,
+      "observedUntilMs": 1814.5,
+      "apiRequests": 4,
+      "recoveredOriginalOperation": true,
+      "phases": [
+        {
+          "phase": "logout",
+          "attempt": 1,
+          "startedMs": 1765.7999999999302,
+          "endedMs": 1768.2999999999302,
+          "outcome": "unknown"
+        },
+        {
+          "phase": "logout-recovery",
+          "attempt": 1,
+          "startedMs": 1788.3999999999069,
+          "endedMs": 1814.5,
+          "outcome": "success"
+        },
+        {
+          "phase": "logout",
+          "attempt": 2,
+          "startedMs": 1791.2999999999302,
+          "endedMs": 1793.5999999999767,
+          "outcome": "success"
+        },
+        {
+          "phase": "identity-read",
+          "attempt": 1,
+          "startedMs": 1795.5,
+          "endedMs": 1798.8999999999069,
+          "outcome": "rejected"
+        }
+      ]
+    },
+    {
+      "logicalId": "62fab2c6-a6d6-4615-a351-baefe83c3e79",
+      "clockId": "91244050-0e44-4e9f-877e-3b8a8314f07b",
+      "scenario": "missing-terminal",
+      "outcome": "unfinished",
+      "startedMs": 1890.0999999999767,
+      "observedUntilMs": 2247.1999999999534,
+      "apiRequests": 2,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "otp-send",
+          "attempt": 1,
+          "startedMs": 1894.3999999999069,
+          "endedMs": 1896.6999999999534,
+          "outcome": "success"
+        },
+        {
+          "phase": "protected-home",
+          "attempt": 1,
+          "startedMs": 1941.1999999999534,
+          "endedMs": null,
+          "outcome": "unfinished"
+        },
+        {
+          "phase": "proof-verify",
+          "attempt": 1,
+          "startedMs": 1944.6999999999534,
+          "endedMs": null,
+          "outcome": "unfinished"
+        }
+      ]
+    }
+  ]
+}

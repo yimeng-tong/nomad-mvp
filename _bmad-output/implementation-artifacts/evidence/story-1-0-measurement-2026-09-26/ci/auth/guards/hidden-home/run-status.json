@@ -1,0 +1,13 @@
+{
+  "kind": "auth-measurement-run-status",
+  "runId": "5e555457-db46-42e5-b656-1d363db3a811",
+  "profile": "matrix",
+  "testFault": "hidden-home",
+  "status": "failed",
+  "failure": {
+    "code": "AUTH_MEASUREMENT_SCENARIO_FAILED",
+    "scenario": "login",
+    "step": "verify"
+  },
+  "captureAvailable": true
+}

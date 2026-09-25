@@ -1,6 +1,6 @@
 # WL-AUTH独立切片三层审阅
 
-Status: patches-rechecked-current-ci-pending
+Status: local-slice-verified-real-gates-open
 Baseline: dd2a9700109425d2e80751e3ab4bf419c230af0f
 Scope: Story1.0 T9/METRICS-01本地测量与T7/AC12验证码错误提示修复；整Story仍in-progress
 
@@ -24,3 +24,8 @@ Scope: Story1.0 T9/METRICS-01本地测量与T7/AC12验证码错误提示修复�
 ## 修补与定向复核
 
 AM1–AM8已分别获原审阅者关闭；Blind复核新增AM9也已修补并关闭，无剩余问题。原源码时钟单测2、认证统计/CLI15及旧导入统计13共30通过；全mobile266+5配置、99 typed lint/零例外和6lint门禁反例通过。五个实际进程故障回放通过：占用端口悬空body约1.4秒拒绝，跨场景截止/隐藏首页各保留1样本，完整性失败/实际ENOENT各保留12，均failed且当前代码重算一致。正常12和截止1/11样本预验保留其当时hash，最后AM9只改runner失败保留；等待当前提交完整CI重新验证最终全部源。
+
+
+## 最终CI
+
+提交0b9585e的CI36192075867两个job成功；997下载文件/30ZIP核验、6份认证数据重算与641源码摘要匹配，由独立Acceptance再次复核。9项修补无残项；完整产品/工作台/PG链和测量正反例通过。仅关闭本地代码/测量分支，1.0整Story与真实资源门槛不变。验收与证据见story-1-0-auth-measurement-acceptance-2026-09-26.md。

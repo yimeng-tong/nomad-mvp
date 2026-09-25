@@ -20,6 +20,8 @@ backend_environment: homelab-vm104
 
 9.4/9.5均done；9.3本地UI切片已通过独立CR及aeadc1e完整CI36184294356（129产品/33视觉、6三引擎组件、32工作台、88 typed lint、970下载文件核验）。四项UI条件和local gate已verified，9.3仍in-progress，T9/APP-HOST-01真实设备未关闭。当前9done/6in-progress/52backlog；进入下表第5步，先完成在制Story受影响集成并推进仍可独立编码的部分，再临近开发时准备1.8，不批量准备。其他真实条件与3.1暂停保持。
 
+1.0独立WL-AUTH本地切片已通过0b9585e完整CI36192075867与997文件/30ZIP、641源码比对；1.0整张及真实指标仍in-progress。继续第5步1.6规范输入事件接线，SDK/许可/真实查询和第三方登录资源保持单列未完成。详见story-1-0-auth-measurement-acceptance-2026-09-26.md。
+
 下方9月25日交接时的数量、ready与Git状态属于历史快照；当前CURRENT/Sprint及本段决定现时派发。执行顺序和资源边界继续有效。
 
 ## 2026-09-25执行决定（保留）

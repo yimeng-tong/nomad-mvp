@@ -1,0 +1,80 @@
+{
+  "manifest": {
+    "measurementVersion": "nomad.auth.v1",
+    "workload": "WL-AUTH",
+    "mode": "fixture",
+    "clockId": "751f4cfa-0a9a-4c15-9bb4-d885cce5f6f6",
+    "scenarioPlan": [
+      {
+        "scenario": "login",
+        "count": 3
+      },
+      {
+        "scenario": "send-rejected",
+        "count": 1
+      },
+      {
+        "scenario": "send-unknown",
+        "count": 1
+      },
+      {
+        "scenario": "verify-rejected",
+        "count": 1
+      },
+      {
+        "scenario": "restore",
+        "count": 1
+      },
+      {
+        "scenario": "invalid-session",
+        "count": 1
+      },
+      {
+        "scenario": "authority-unavailable",
+        "count": 1
+      },
+      {
+        "scenario": "logout",
+        "count": 1
+      },
+      {
+        "scenario": "logout-recovery",
+        "count": 1
+      },
+      {
+        "scenario": "missing-terminal",
+        "count": 1
+      }
+    ],
+    "plannedLogicalRequests": 12,
+    "windowStartMs": 618.1999999999534,
+    "windowEndMs": 868.1999999999534,
+    "deadlineMs": 250,
+    "fixtureVersion": "auth-ui-v1",
+    "sampling": 1,
+    "concurrency": 1,
+    "retryPolicy": "explicit-only",
+    "cacheMode": "one-browser-app-remount"
+  },
+  "samples": [
+    {
+      "logicalId": "38027b02-9d43-43e1-a0e4-f82da7ea7c01",
+      "clockId": "751f4cfa-0a9a-4c15-9bb4-d885cce5f6f6",
+      "scenario": "login",
+      "outcome": "unfinished",
+      "startedMs": 619.7999999999302,
+      "observedUntilMs": 868.1999999999534,
+      "apiRequests": 1,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "otp-send",
+          "attempt": 1,
+          "startedMs": 631.2999999999302,
+          "endedMs": null,
+          "outcome": "unfinished"
+        }
+      ]
+    }
+  ]
+}

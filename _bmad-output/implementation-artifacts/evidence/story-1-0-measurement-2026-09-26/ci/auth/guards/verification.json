@@ -1,0 +1,51 @@
+{
+  "kind": "actual-auth-measurement-counterexamples",
+  "sourceSha256": {
+    "scripts/measurements/check-auth-guards.mts": "2345598a00866f8eddc3dabe194ba655b3f26166c30ea133f16ac8b38246f3cd",
+    "scripts/measurements/run-auth.mts": "44a880b826385f5d231ac4322fae30cc4cde4d9b8299aabff5a52f857fe9a966",
+    "apps/mobile/scripts/auth-measurement-harness.tsx": "661d333a62da7787cc474aa63b05ccc510b40c66f5f04dcb0df63759b20fd43b",
+    "packages/types/src/auth-measurements.ts": "207dc72002be36df8a71ace7f98a8c3d3feb0f32dab90720fbcae7c190fc129f",
+    "packages/types/src/measurement-common.ts": "960e4f11cb21feb0eeddba9176f45c9deed6c0e497a0f2494bac34c5fef80dad"
+  },
+  "results": [
+    {
+      "fault": "owned-port-stalled-body",
+      "exitCode": 1,
+      "bodyStarted": true,
+      "elapsedMs": 691.957275,
+      "result": "rejected-within-bound"
+    },
+    {
+      "fault": "between-cases",
+      "exitCode": 1,
+      "retainedSamples": 1,
+      "missing": 11,
+      "result": "failed-run-retained-and-recomputed",
+      "elapsedMs": 7014.948956
+    },
+    {
+      "fault": "hidden-home",
+      "exitCode": 1,
+      "retainedSamples": 1,
+      "missing": 11,
+      "result": "failed-run-retained-and-recomputed",
+      "elapsedMs": 6872.923493
+    },
+    {
+      "fault": "integrity-failure",
+      "exitCode": 1,
+      "retainedSamples": 12,
+      "missing": 0,
+      "result": "failed-run-retained-and-recomputed",
+      "elapsedMs": 3401.6997979999996
+    },
+    {
+      "fault": "source-read-failure",
+      "exitCode": 1,
+      "retainedSamples": 12,
+      "missing": 0,
+      "result": "failed-run-retained-and-recomputed",
+      "elapsedMs": 3393.1469289999986
+    }
+  ]
+}

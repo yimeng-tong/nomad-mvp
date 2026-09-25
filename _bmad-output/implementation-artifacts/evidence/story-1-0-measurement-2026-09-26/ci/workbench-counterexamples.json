@@ -1,0 +1,132 @@
+{
+  "kind": "actual-component-counterexamples",
+  "mutations": "in-memory Vite transform only; no source writes",
+  "results": [
+    {
+      "label": "unaltered workbench",
+      "mutation": "",
+      "exitCode": 0,
+      "expectedOutcome": "passed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "focus-return defect",
+      "mutation": "focus",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "keyboard-close defect",
+      "mutation": "keyboard",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "field-error association defect",
+      "mutation": "association",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "missing textual error defect",
+      "mutation": "text",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "axe unnamed control defect",
+      "mutation": "axe",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "business catch cannot hide undeclared API",
+      "mutation": "undeclared",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "late previous scene cannot pass the next ledger",
+      "mutation": "late",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "worker loss blocks API before dispatch",
+      "mutation": "workerLost",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "passthrough request is blocked",
+      "mutation": "passthrough",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "static-looking raw fetch is blocked",
+      "mutation": "staticFetch",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "stopped mocking still registered is blocked",
+      "mutation": "stopped",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "mocking stop during registration lookup is fenced",
+      "mutation": "stoppedDuringLookup",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "raw fetch after cleanup is recorded",
+      "mutation": "rawAfterClose",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "late raw URL cannot adopt a new scene",
+      "mutation": "rawPrevious",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "real captcha rejected before render",
+      "mutation": "provider",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "worker startup failure blocks rendering",
+      "mutation": "workerMissing",
+      "exitCode": 1,
+      "expectedOutcome": "failed",
+      "sentinelLeaked": false
+    },
+    {
+      "label": "repaired workbench",
+      "mutation": "",
+      "exitCode": 0,
+      "expectedOutcome": "passed",
+      "sentinelLeaked": false
+    }
+  ]
+}

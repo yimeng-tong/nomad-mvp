@@ -1,6 +1,6 @@
 # Story1.0 WL-AUTH独立测量切片
 
-Status: in-progress
+Status: local-slice-verified-real-gates-open
 Resume baseline: dd2a9700109425d2e80751e3ab4bf419c230af0f
 Branch: codex/story-1-0-auth-measurements
 Source contract: 1b2306196fb9b9ebc1284e3404004112349d7a0a352a1622bebf5a7188f77c4b
@@ -23,3 +23,10 @@ Source contract: 1b2306196fb9b9ebc1284e3404004112349d7a0a352a1622bebf5a7188f77c4
 正常R6为12/12：6成功、3拒绝、1未知、1不可用、1未结束，15实际HTTP写尝试；截止R2为1未结束/11缺失/1写入。它们在AM9前生成，源码摘要保留，最终提交CI将重跑整个当前版本，不将旧预验冒充最终源码。当前实际故障G2在AM9后验证，源码不可读仍保留12样本与可重算failed报告。旧导入15样本及重算相同证明统计兼容，不改旧报告。
 
 操作说明docs/ops/auth-measurements.md，验收资料evidence/story-1-0-measurement-2026-09-26/。1.0/METRICS-01保持in-progress，T9真实验证/费用/目标及T8/第三方/双端未关闭，当前进入绑定提交的完整CI核验。
+
+
+## 当前提交完整CI与产物核验
+
+0b9585ec4df4190562d20e932c5f994a5bbfe03c完整CI36192075867两个job成功，997实际下载文件/30ZIP CRC通过。独立Acceptance重算6份dataset，641源码SHA比对该commit全部匹配。最终matrix12/0missing/35API/15写入，cutoff1unfinished/11missing/1写入；5故障均目标拒绝，4份已采样失败报告保留并可重算，源码ENOENT明确false/null。CI重新执行所有当前源码，已替代前面的“等待CI”执行点；旧预验/失败不覆盖。
+
+本地测量实现分支完成；1.0、METRICS-01及真实provider/staging/费用/SDK/双端条件仍in-progress。当前验收见story-1-0-auth-measurement-acceptance-2026-09-26.md。沿近期计划继续1.6 T6规范输入事件接线，复用现有许可/字典与controller/journal，不宣称默认Noop已接通真实SDK，不重问已提出资源。

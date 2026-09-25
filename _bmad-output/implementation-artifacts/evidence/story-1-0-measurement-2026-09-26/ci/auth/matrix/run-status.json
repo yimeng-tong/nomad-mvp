@@ -1,0 +1,9 @@
+{
+  "kind": "auth-measurement-run-status",
+  "runId": "2eddf967-c6df-41a4-a9e5-488d4a2959ca",
+  "profile": "matrix",
+  "testFault": "",
+  "status": "passed",
+  "failure": null,
+  "captureAvailable": true
+}

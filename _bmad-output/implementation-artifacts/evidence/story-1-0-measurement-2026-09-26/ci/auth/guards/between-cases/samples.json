@@ -1,0 +1,101 @@
+{
+  "manifest": {
+    "measurementVersion": "nomad.auth.v1",
+    "workload": "WL-AUTH",
+    "mode": "fixture",
+    "clockId": "62193822-5884-4998-b27d-4b5eb077a616",
+    "scenarioPlan": [
+      {
+        "scenario": "login",
+        "count": 3
+      },
+      {
+        "scenario": "send-rejected",
+        "count": 1
+      },
+      {
+        "scenario": "send-unknown",
+        "count": 1
+      },
+      {
+        "scenario": "verify-rejected",
+        "count": 1
+      },
+      {
+        "scenario": "restore",
+        "count": 1
+      },
+      {
+        "scenario": "invalid-session",
+        "count": 1
+      },
+      {
+        "scenario": "authority-unavailable",
+        "count": 1
+      },
+      {
+        "scenario": "logout",
+        "count": 1
+      },
+      {
+        "scenario": "logout-recovery",
+        "count": 1
+      },
+      {
+        "scenario": "missing-terminal",
+        "count": 1
+      }
+    ],
+    "plannedLogicalRequests": 12,
+    "windowStartMs": 602,
+    "windowEndMs": 5602,
+    "deadlineMs": 5000,
+    "fixtureVersion": "auth-ui-v1",
+    "sampling": 1,
+    "concurrency": 1,
+    "retryPolicy": "explicit-only",
+    "cacheMode": "one-browser-app-remount"
+  },
+  "samples": [
+    {
+      "logicalId": "59272ad1-b5f6-4045-b563-ec55d4e6fba3",
+      "clockId": "62193822-5884-4998-b27d-4b5eb077a616",
+      "scenario": "login",
+      "outcome": "success",
+      "startedMs": 603.4000000000233,
+      "observedUntilMs": 728.5999999999767,
+      "apiRequests": 5,
+      "recoveredOriginalOperation": null,
+      "phases": [
+        {
+          "phase": "otp-send",
+          "attempt": 1,
+          "startedMs": 615.7999999999302,
+          "endedMs": 618.2999999999302,
+          "outcome": "success"
+        },
+        {
+          "phase": "protected-home",
+          "attempt": 1,
+          "startedMs": 667.0999999999767,
+          "endedMs": 728.5999999999767,
+          "outcome": "success"
+        },
+        {
+          "phase": "proof-verify",
+          "attempt": 1,
+          "startedMs": 675.5,
+          "endedMs": 678.1999999999534,
+          "outcome": "success"
+        },
+        {
+          "phase": "identity-read",
+          "attempt": 1,
+          "startedMs": 678.4000000000233,
+          "endedMs": 681.1999999999534,
+          "outcome": "success"
+        }
+      ]
+    }
+  ]
+}

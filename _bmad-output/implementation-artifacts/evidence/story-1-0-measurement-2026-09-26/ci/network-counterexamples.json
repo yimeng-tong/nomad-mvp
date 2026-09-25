@@ -1,0 +1,47 @@
+{
+  "kind": "actual-browser-network-guard-counterexamples",
+  "results": [
+    {
+      "probe": "control",
+      "runId": "network-control-808020be-421c-42bb-a6e8-c560b5a69ddc",
+      "exitCode": 0,
+      "expectedFailure": null
+    },
+    {
+      "probe": "unknown",
+      "runId": "network-unknown-74180a50-9c68-4318-bd0e-f60b439a264a",
+      "exitCode": 1,
+      "expectedFailure": "NOMAD_E2E_UNDECLARED_REQUEST"
+    },
+    {
+      "probe": "static",
+      "runId": "network-static-be14b424-ffaa-4557-adda-80ac38877aa3",
+      "exitCode": 1,
+      "expectedFailure": "NOMAD_E2E_UNDECLARED_REQUEST"
+    },
+    {
+      "probe": "external",
+      "runId": "network-external-35dcfdc3-7470-4439-86b3-dc8a1bfda6a3",
+      "exitCode": 1,
+      "expectedFailure": "NOMAD_E2E_EXTERNAL_REQUEST"
+    },
+    {
+      "probe": "retired",
+      "runId": "network-retired-a5d85675-a4e0-441d-8a84-cc0a5b1c7bf7",
+      "exitCode": 1,
+      "expectedFailure": "NOMAD_E2E_LATE_REQUEST"
+    },
+    {
+      "probe": "websocket",
+      "runId": "network-websocket-70379800-f327-49dc-bda9-03e292d91380",
+      "exitCode": 1,
+      "expectedFailure": "NOMAD_E2E_WEBSOCKET_FORBIDDEN"
+    },
+    {
+      "probe": "control",
+      "runId": "network-control-d30ebd31-e810-46bd-8f9f-d6fda5704d2b",
+      "exitCode": 0,
+      "expectedFailure": null
+    }
+  ]
+}

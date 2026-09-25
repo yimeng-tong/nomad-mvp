@@ -7,3 +7,5 @@
 首次T0容器CI36133102037在Node/pnpm/OS前置通过后，脚本直接resolve传递依赖playwright-core而失败；pnpm干净布局不会把传递包当直接依赖暴露。已改从playwright自身package上下文解析其core依赖，本地精确元数据解析和lint通过，不增加依赖。原失败保留；新提交继续取真实容器font/engine证明。
 
 本地Firefox155/WebKit26.6已下载到/tmp/nomad-story-9-5-browsers，Chromium复用9.4同revision。现时本机Firefox报告profile不可见，WebKit缺gtk4/gstreamer等共享库，不能把下载成功当运行；canonical CI仍按独立镜像验证。
+
+第二次T0容器run36133619687已通过环境/字体读取及Chromium启动，Firefox因container默认root但GitHub挂载home属于pwuser而拒绝运行。仅将容器运行用户设为镜像已有pwuser，保持HOME变量及宿主目录不变。下一取真实三引擎结果，不跳过Firefox。本机Firefox的同一空白启动在工具权限对照下通过，说明原profile错误属于受限执行边界；功能测试仍必须使用受控profile/loopback替身。

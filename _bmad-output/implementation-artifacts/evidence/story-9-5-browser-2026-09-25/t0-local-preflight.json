@@ -15,8 +15,15 @@
       "environment_job": "failure",
       "reason": "Direct resolve of transitive playwright-core is invalid in clean pnpm layout. Resolve from playwright package context.",
       "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36133102037"
+    },
+    {
+      "run": 36133619687,
+      "source_revision": "9e61e6534a04c613961d91ca54ee58bf5ddf5b7d",
+      "environment_job": "failure",
+      "reason": "Firefox refuses root in pwuser-owned GitHub temporary home. Run container as existing pwuser; do not overwrite HOME.",
+      "url": "https://github.com/yimeng-tong/nomad-mvp/actions/runs/36133619687"
     }
   ],
-  "local_firefox": "downloaded; launch failed: profile folder unavailable",
+  "local_firefox": "155.0 blank launch/close passed in authorized permission comparison; restricted execution profile fails",
   "local_webkit": "downloaded; host libraries missing"
 }

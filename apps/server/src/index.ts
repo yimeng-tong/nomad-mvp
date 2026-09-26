@@ -1,6 +1,7 @@
 import { AuthConfigurationError, readAuthRuntimeConfig } from './auth/runtime-config.js';
 import { AuthRuntimeBoundaryError, assertAuthRuntimeImplemented } from './auth/runtime-boundary.js';
 import { AuthFault } from './auth/errors.js';
+import { resolveServerBindHost } from './server-bind-host.js';
 
 try {
   // Validate before importing modules that can construct network clients or workers.
@@ -11,7 +12,7 @@ try {
   const { buildApplication } = await import('./application.js');
   const app = await buildApplication(config, service);
   const port = Number(process.env.PORT || 3000);
-  await app.listen({ port, host: ['local', 'test'].includes(config.mode) ? '127.0.0.1' : '0.0.0.0' });
+  await app.listen({ port, host: resolveServerBindHost(config.mode, process.env.NOMAD_API_BIND_HOST) });
 } catch (error: unknown) {
   const safe = error instanceof AuthConfigurationError ? { code: error.code, issues: error.issues }
     : error instanceof AuthRuntimeBoundaryError || error instanceof AuthFault ? { code: error.code }

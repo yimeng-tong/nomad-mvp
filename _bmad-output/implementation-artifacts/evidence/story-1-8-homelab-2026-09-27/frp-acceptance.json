@@ -1,0 +1,57 @@
+{
+  "kind": "story-1-8-nomad-frp-private-tunnel-acceptance",
+  "recordedAtUtc": "2026-09-26T18:05:21Z",
+  "scope": "running VM104 and existing Alibaba Cloud host; private tunnel only",
+  "software": {
+    "frpVersion": "0.65.0",
+    "officialLinuxAmd64ArchiveSha256Matched": true,
+    "officialLinuxAmd64ArchiveSha256": "52ced8c5fdf772f48a9909da4c10c7568c061861946ac9af7a86eeaf14b7e6d5"
+  },
+  "server": {
+    "host": "47.101.189.96",
+    "unit": "nomad-frps.service",
+    "enabledAndActive": true,
+    "configurationVerifiedAsServiceUser": true,
+    "controlPort": 7001,
+    "proxyListener": "172.17.0.1:25245",
+    "allowedProxyPorts": [25245],
+    "transportTlsForced": true,
+    "dedicatedTokenInRestrictedFile": true,
+    "dedicatedPrivateCaKeyRemainsOnServer": true,
+    "serverCertificateExpiresUtc": "2027-09-26T17:55:08Z"
+  },
+  "client": {
+    "host": "VM104",
+    "unit": "nomad-frpc.service",
+    "enabledAndActive": true,
+    "configurationVerifiedAsServiceUser": true,
+    "localTarget": "127.0.0.1:43104",
+    "serverCertificateValidatedWithDedicatedCaAndName": "nomad-frps.yinianyunqi.top",
+    "proxyRegistrationSucceeded": true,
+    "separateInvalidTokenLoginRejected": true,
+    "tokenAndCaFileSha256MatchedServerWithoutPrintingContents": true
+  },
+  "networkChecks": {
+    "vm104ToCloudControl7001Reachable": true,
+    "cloudPrivateHealthHttpStatus": 200,
+    "npmContainerPrivateHealthHttpStatus": 200,
+    "cloudPrivateAnonymousImportRecordsHttpStatus": 401,
+    "publicIpDirectProxy25245HttpStatus": 0,
+    "publicIpDirectProxy25245Result": "timeout",
+    "clientRestartTunnelRecovered": true,
+    "serverRestartTunnelRecovered": true
+  },
+  "oldRoutePreserved": {
+    "dockerFrps7000StillRunning": true,
+    "openListProxy25244ConfigChanged": false,
+    "cloudYinianyunqiTopNpmHostChanged": false
+  },
+  "notYetVerified": [
+    "public Nomad DNS and publicly trusted HTTPS virtual host",
+    "production web Origin/Cookie and native API audience",
+    "public reverse-proxy auth, CORS, CSRF and SSE behavior",
+    "physical Android and iOS device behavior"
+  ],
+  "secretValuesIncluded": false,
+  "userDataValuesIncluded": false
+}

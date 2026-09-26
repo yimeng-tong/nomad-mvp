@@ -79,6 +79,8 @@ Mac可直接curl --fail http://localhost:43104/health。使用Windows OpenSSH建
 
 用户确认曾使用frp。2026-09-27只读复核发现阿里云上海`47.101.189.96`运行Docker frps，控制端口7000；现有`cloud.yinianyunqi.top`经Nginx Proxy Manager指向内侧25244，历史代理`alist_tcp`最后成功注册于8月1日。当前frps无在线客户端/代理，homelab侧客户端未定位；homelab目录46份Markdown没有frp记载，运行中的PVE、CT105/106、VM104/107/108/190未发现frpc。CT105的一条`autossh`反向控制隧道不是frp。完整脱敏盘点见[FRP调查](frp-investigation-2026-09-27.md)。旧计划`nomad-test.yinianyunqi.top`在VM104解析失败，不能当当前可用地址。现有frps是单一共享token，新Nomad客户端不应复制旧OpenList凭据；优先另建隔离frps实例/端口与公开HTTPS入口，仍须实测TLS、精确Origin/Cookie、反代/SSE与原生API audience。
 
+随后按用户指示，在运行中的VM104安装`nomad-frpc.service`，阿里云新增独立`nomad-frps.service`，未复制旧OpenList令牌。客户端以专用私有CA校验FRPS证书，出站连接`47.101.189.96:7001`，新代理仅监听云端网桥`172.17.0.1:25245`并转发VM104本机`127.0.0.1:43104`。私有健康200、匿名导入记录401、NPM容器内健康200、两端各自重启后复连均实测；公网直连25245超时。旧Docker FRPS 7000、25244和`cloud.yinianyunqi.top`均保留。证据与回滚见[Nomad FRP运行手册](../../ops/homelab-frp/README.md)。公网Nomad域名、受信HTTPS虚拟主机、正式Origin/Cookie/API audience及SSE/原生实机仍开放；此通道不直接供手机App使用。
+
 2026-09-27：AliDNS DNS-01已为**对象存储**`objects.yinianyunqi.top`签发公开可信证书，VM104经内网8333验证证书与签名S3读写；证书每日自动续期，无需入站80/443。此域名只服务私有对象存储，**不**代表App API的公开HTTPS、原生登录Origin/audience或双端实机已可用。API若采用高端口HTTPS，还需独立核验域名解析、路由/端口映射、Nginx及认证配置，不能把对象存储证书直接算作API验收。
 
 同日也只读核对了一个备选公网高端口路径：homelab历史外部验收记录`24443/TCP`曾转发到CT105 `192.168.31.3:443`，当前CT105仍运行Nginx；本轮未复测公网DNAT。这与阿里云frp无关。优先方案是在阿里云现有frps上为Nomad建立独立代理/HTTPS虚拟主机；若它不适用，才重新评估CT105备选。VM104当前只监听`127.0.0.1:43104`，两种公网API路径均未部署。AX3000管理SSH当前只提供旧`ssh-rsa`主机算法且主机密钥与已保存记录不符；本轮没有绕过身份核验或改路由器。

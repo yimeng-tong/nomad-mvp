@@ -314,11 +314,13 @@ condition_progress:
   1-8-owner-import-records-and-versioned-deduplication:
     OPS-01:
       state: in-progress
-      summary: 限VM104/108同PVE homelab：PG加密全量+15分钟WAL归档及独立socket指定时点恢复通过，恢复实例已停、源健康；审查修复PITR通过报告停止顺序。异机容灾、历史key保管、真实负载RPO和新停止失败实演仍开放。
+      summary: 限VM104/108同PVE homelab：PG加密全量+15分钟WAL归档及独立socket指定时点恢复通过，恢复实例已停、源健康；审查修复PITR通过报告停止顺序。VM104专用frpc至阿里云独立frps私有隧道已实测健康/撤权及重连，但公网HTTPS/正式认证未配。异机容灾、历史key保管、真实负载RPO和新停止失败实演仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/review-acceptance.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/frp-acceptance.json
       - ops/postgres/README.md
+      - ops/homelab-frp/README.md
     DB-CHANGE-01:
       state: in-progress
       summary: 6348743完整CI主隔离PG29项含下载期间删除撤权、旧record升级七项及checksum/目标结构守卫审计通过；VM104源两迁移/隔离副本九迁移checksum匹配，旧staging17 job仍需owner权威且未迁移/回填。development九迁移；全库diff、实际旧库写入及整Story仍开放。
@@ -822,7 +824,7 @@ active_workstreams:
     working_branch: codex/story-1-8-import-records
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。1.8已完成同宿主homelab对象TLS/分桶、共享PG全量+WAL/PITR局部及旧库隔离只读审计，17个旧job均待owner证据；XHS实采/原生API HTTPS/双端真机、异机灾备与3.1暂停不变
+    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。1.8已完成同宿主homelab对象TLS/分桶、共享PG全量+WAL/PITR局部、旧库隔离只读审计及VM104→阿里云专用FRP私有隧道，17个旧job均待owner证据；XHS实采/公网原生API HTTPS与正式认证/双端真机、异机灾备与3.1暂停不变
 previous_preparation:
   story: 9-3-shared-ui-components-and-safe-app-sheet
   status: complete

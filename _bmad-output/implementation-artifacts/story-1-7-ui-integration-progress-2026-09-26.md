@@ -12,3 +12,5 @@ Scope: 近期计划第5步的1.7/9.1受影响集成，仅本地浏览器/恢复�
 已按当前AppSheet/PrivateUiBoundary改为等待`.home-body`的受保护祖先同时`inert`/`aria-hidden`，退出Sheet后验证两者恢复；探针报告还固定自身及共享UI源码共16文件SHA。实际Chrome127完成两个浏览器进程/22检查：多链接/partial/FIFO、Settings往返保留草稿、Sheet覆盖11秒不完成窗口、同job重试、未知受理只读核对、已确认外链去重、原operation丢ACK后跨进程恢复、换owner不读取旧回执。3张当前截图和完整报告见`evidence/story-1-7-ui-integration-2026-09-26/`；HTTP/SSE/Clipboard/身份均为明确替身，真实供应商调用0、真实native设备未验证。
 
 新增CI步骤`ci:durable-home-browser`及单独产物，脚本在本地实际执行通过；typed lint与handoff通过。当前只证明UI迁移影响的Web/IDB回归，1.7 T5原生bridge/C07、T6真机交互、T8生产恢复/指标和9.1宿主实机仍开放，不据此标Story完成。下一步推送分支并核验CI独立运行和产物源码指纹。上段“下一步将探针断言改为…”为修复前记录，以本段为当前进度。
+
+`2719998`已推送，CI`36222862831`两job成功；新增双进程报告与仓库本地报告SHA相同，16源码匹配。五ZIP共1003文件CRC无误，三引擎129 expected/33视觉/313源码匹配，1.6输入遥测108源码复验通过。当前精确结论和局限见`story-1-7-ui-integration-acceptance-2026-09-26.md`；上段CI待核验是执行过程记录，以本段为当前结论。

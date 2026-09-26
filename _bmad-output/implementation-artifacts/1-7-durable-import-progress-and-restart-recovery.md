@@ -344,6 +344,8 @@ GPT-6 Astra（当前任务配置）。
 - _bmad-output/implementation-artifacts/story-1-7-ui-integration-progress-2026-09-26.md
 - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/report.json
 - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/validation.json
+- _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/ci-verification.json
+- _bmad-output/implementation-artifacts/story-1-7-ui-integration-acceptance-2026-09-26.md
 - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/mobile-queue-partial-completion.png
 - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/desktop-queue-reconciled.png
 - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/mobile-recovered-original-operations.png
@@ -486,3 +488,5 @@ T0–T3勾选只表示规定实现和隔离验证完成；T8生产PITR/RPO与有
 ### 共享 UI 迁移后的双进程恢复回归（2026-09-26）
 
 现有`home-dock-browser-probe.mjs`原本只检查迁移前`.home-body.inert`，与9.3外层`.nomad-page`的保护位置不符；已改为验证实际受保护祖先及Sheet退出后的恢复，并将探针/共享组件加入源码指纹。当前App+IDB双进程22项隔离回归通过，包含11秒Sheet覆盖不消耗FIFO窗口、原operation丢ACK后重启核对、不自动重POST和跨owner隔离。CI独立步骤与产物已接线，当前先以本地证据记录，待CI后再评估本Story的CODE-QUALITY-01/UI-BROWSER-01局部状态。详见`story-1-7-ui-integration-progress-2026-09-26.md`；真实PG/原生/生产恢复与1.7整张仍in-progress。
+
+最终`2719998`完整CI`36222862831`两job成功，五ZIP/1003文件CRC、新恢复报告16源码与三引擎313源码匹配；精确核验见`story-1-7-ui-integration-acceptance-2026-09-26.md`。仅CODE-QUALITY-01/UI-BROWSER-01在本Story本地切片范围verified，不勾选原生T5/C07、生产T8或整张Story。

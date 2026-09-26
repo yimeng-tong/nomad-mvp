@@ -1,0 +1,115 @@
+{
+  "kind": "story-1-7-shared-ui-recovery-ci-verification",
+  "runId": "36222862831",
+  "headSha": "271999834bafe0a0c61774beba50ee1883ee40da",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "build-and-test",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Canonical browser environment and product entry",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "nomad-browser-environment-271999834bafe0a0c61774beba50ee1883ee40da",
+      "artifactId": 10899801972,
+      "archiveBytes": 40473183,
+      "archiveSha256": "dde3df960acf88dbcef32ba2018d55f9e5ba4e2649be4ac2caaa37a6bb5a5f69",
+      "crcCheckedFiles": 944,
+      "crcFailure": null
+    },
+    {
+      "name": "nomad-durable-home-271999834bafe0a0c61774beba50ee1883ee40da",
+      "artifactId": 10899449056,
+      "archiveBytes": 224182,
+      "archiveSha256": "4271de7344b075e53cba24e6149aa8676da3f58121616e11cf1b7d1e2fa6e13f",
+      "crcCheckedFiles": 4,
+      "crcFailure": null
+    },
+    {
+      "name": "nomad-input-telemetry-271999834bafe0a0c61774beba50ee1883ee40da",
+      "artifactId": 10899444045,
+      "archiveBytes": 55478,
+      "archiveSha256": "3bc4b65255dd94401c79a819819f2ec2938d615a27a1af27309a0f334c6b63a7",
+      "crcCheckedFiles": 2,
+      "crcFailure": null
+    },
+    {
+      "name": "nomad-workbench-271999834bafe0a0c61774beba50ee1883ee40da",
+      "artifactId": 10898869754,
+      "archiveBytes": 207191,
+      "archiveSha256": "9673c77607c40d60770e0afc577557154e65c888c7265d22b2824061d0393667",
+      "crcCheckedFiles": 26,
+      "crcFailure": null
+    },
+    {
+      "name": "nomad-auth-measurement-271999834bafe0a0c61774beba50ee1883ee40da",
+      "artifactId": 10898774854,
+      "archiveBytes": 71909,
+      "archiveSha256": "dca96c7e9ba833688b0be0be2207ff537b27a109dcf69dfe201452426f69ff34",
+      "crcCheckedFiles": 27,
+      "crcFailure": null
+    }
+  ],
+  "durableHome": {
+    "reportSha256": "0f0ca30a319702ad4fe49274c28fa3e30282443274f42ba32586c642d165112f",
+    "identicalToRepositoryLocalReport": true,
+    "browser": "Chrome/127.0.6533.88",
+    "browserProcesses": 2,
+    "sourceFilesMatched": 16,
+    "checks": [
+      "explicit-paste-only",
+      "clipboard-denial-keeps-input",
+      "downward-drag-collapse",
+      "ordered-batch-acceptance",
+      "editable-draft",
+      "settings-navigation-draft-retained",
+      "true-partial-copy",
+      "safe-result-sheet",
+      "sheet-focus-escape",
+      "shared-ui-owner-mask-and-restoration",
+      "covered-sheet-eleven-seconds-does-not-complete-presentation",
+      "same-job-retry",
+      "fifo-completion-and-distinct-announcement",
+      "unknown-command-recovery-without-repost",
+      "44px-targets",
+      "no-horizontal-overflow",
+      "reduced-motion",
+      "confirmed-deep-input-persisted",
+      "lost-ack-recovers-original-command-after-browser-restart",
+      "confirmed-link-replay-does-not-resubmit",
+      "changed-owner-does-not-read-old-commands",
+      "owned-server-and-unchanged-source"
+    ],
+    "controllerJournalIntegrationVerified": true,
+    "explicitHttpAndSseFixtures": true,
+    "realAuthenticationVerified": false,
+    "nativeDeviceVerified": false,
+    "realProviderCalls": 0
+  },
+  "browserSuite": {
+    "runId": "cfe8dea5-8d54-451a-830b-daf2d3665ecf",
+    "sourceFilesMatched": 313,
+    "projects": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "expected": 129,
+    "unexpected": 0,
+    "flaky": 0,
+    "visualScenarios": 33
+  },
+  "inputTelemetryRegression": {
+    "sourceFilesMatched": 108,
+    "result": "passed"
+  },
+  "scope": "isolated actual App/IndexedDB and explicit fixture HTTP/SSE/identity; no native C07, real provider or production backup proof"
+}

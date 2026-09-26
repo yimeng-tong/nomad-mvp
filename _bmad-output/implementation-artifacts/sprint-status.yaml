@@ -290,6 +290,7 @@ condition_progress:
       - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
       - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
       - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/ci-verification.json
     APP-HOST-01:
       state: in-progress
       summary: 双端sync、Android243tasks/14s及APK资产匹配为旧局部证据；共享UI迁移后Web双进程恢复/FIFO/Sheet遮蔽回归通过，native实机C07与iOS编译未验收。
@@ -297,16 +298,19 @@ condition_progress:
       - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
       - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
       - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/ci-verification.json
     CODE-QUALITY-01:
-      state: in-progress
-      summary: 本轮共享UI恢复探针已通过本地typed lint；当前分支完整CI与本Story适用范围的独立验收仍待核验。
+      state: verified
+      summary: 限本Story共享UI恢复局部切片：2719998完整CI两job、typed lint/构建/移动及五ZIP源码核验通过；原生/生产与整张Story另列。
       evidence:
-      - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/validation.json
+      - _bmad-output/implementation-artifacts/story-1-7-ui-integration-acceptance-2026-09-26.md
+      - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/ci-verification.json
     UI-BROWSER-01:
-      state: in-progress
-      summary: 当前App/IDB双进程22项恢复/FIFO/遮蔽/owner Web回归已通过，本分支CI探针及三引擎产物待独立复验，原生另列。
+      state: verified
+      summary: 限本Story本地Web门禁：当前App/IDB双进程22项恢复/FIFO/遮蔽/owner与CI三引擎129场景/33视觉均通过；原生C07/真实服务仍开放。
       evidence:
-      - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/validation.json
+      - _bmad-output/implementation-artifacts/story-1-7-ui-integration-acceptance-2026-09-26.md
+      - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/ci-verification.json
   9-1-capacitor-app-installation-and-host-foundation:
     DB-CHANGE-01:
       state: not-applicable
@@ -721,7 +725,7 @@ active_workstreams:
     working_branch: codex/story-1-7-ui-integration
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH与1.6规范输入事件分别完成独立CI及本地切片验收。当前唯一writer核对1.7/9.1共享UI迁移后的恢复/返回回归；真实资源/SDK门槛与3.1暂停不变
+    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。9.1正式协议/真机仍开放；临近实施准备1.8，真实资源/SDK门槛与3.1暂停不变
 previous_preparation:
   story: 9-5-browser-flow-and-visual-regression-gates
   status: complete

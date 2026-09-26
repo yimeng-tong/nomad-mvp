@@ -28,6 +28,8 @@ backend_environment: homelab-vm104
 
 1.7共享UI迁移后的真实App+IDB双进程恢复/返回Web回归已在本地通过22项/16源码匹配，修正的是旧探针对私有遮蔽位置的过时断言，新增CI步骤及独立产物待推送复验；真实原生C07/9.1设备仍开放。见story-1-7-ui-integration-progress-2026-09-26.md。
 
+该回归已由`2719998`推送，CI`36222862831`两job成功；五ZIP/1003文件CRC、双进程报告16源码与三引擎313源码匹配。本Story的CODE-QUALITY-01/UI-BROWSER-01仅本地切片verified；原生C07、生产PITR/RPO/目标和9.1正式协议/真机仍open。下一待准备合同1.8按原顺序临近实施才CS/VS，详见story-1-7-ui-integration-acceptance-2026-09-26.md。
+
 下方9月25日交接时的数量、ready与Git状态属于历史快照；当前CURRENT/Sprint及本段决定现时派发。执行顺序和资源边界继续有效。
 
 ## 2026-09-25执行决定（保留）

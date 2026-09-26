@@ -1,0 +1,24 @@
+{
+  "kind": "story-1-8-event-projection-local-validation",
+  "recordedAt": "2026-09-26T07:21:17.469550+00:00",
+  "priorHead": "4110c7eb901ac654322ded1030077b4122940d2d",
+  "branch": "codex/story-1-8-import-records",
+  "sourceSha256": {
+    "apps/server/src/ingest/event-log.ts": "1e802e176dd920baf18c4ec6203a1e12bcd561de2fcfec883721d647eb8a33f7",
+    "apps/server/src/ingest/import-record-schema.ts": "5d6686433a7a5999c957d0bad5a9bdb017d300cbf59bb159c346f4a5318042e0",
+    "apps/server/src/routes/ingest.ts": "486864f5697391bd49433a6bd9c3ff9bdc5d349718f94c243fc2799bef01a1d0",
+    "apps/server/scripts/import-record-schema-probe.ts": "23d732a846cc3ab006f283c58e33dbbea863715a1b84f2ef717c08be00721de9"
+  },
+  "checks": {
+    "serverBuild": "passed",
+    "typedLint": {
+      "selectedFiles": 124,
+      "failures": 0,
+      "retiredExceptions": 0
+    },
+    "fixtureIngestProbe": "passed",
+    "handoff": "passed",
+    "isolatedPostgresqlRecordEventProjection": "pending-ci"
+  },
+  "scope": "Record state/title/result relationship is written in the same event transaction; no new record acceptance or real data migration implemented; CI actual PG counterexample remains pending"
+}

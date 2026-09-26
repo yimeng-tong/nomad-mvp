@@ -317,10 +317,12 @@ condition_progress:
       summary: Story已进入本地/隔离开发；生产备份、PITR及恢复目标无本Story证据。
     DB-CHANGE-01:
       state: in-progress
-      summary: 加法ImportRecord/owner复合FK迁移已写，Prisma schema/类型生成/构建通过；隔离PG迁移与并发约束CI待运行，旧数据冲突审计和生产恢复均未完成。
+      summary: 4110c7e完整CI中隔离PG加法迁移与五项唯一/回滚/跨owner/密文探针通过；本轮event事务投影/启动预检待新CI，旧数据冲突审计和生产恢复仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/event-projection-validation.json
     METRICS-01:
       state: not-started
     METRICS-02:

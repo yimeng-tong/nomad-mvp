@@ -13,6 +13,7 @@ import { AuthFault } from '../auth/errors.js';
 import { getPrisma } from '../db/prisma.js';
 import { resolveIngestExecutionPolicy } from '../ingest/execution-policy.js';
 import { createIngestWorker,type IngestWorker } from '../ingest/worker.js';
+import { assertImportRecordSchema } from '../ingest/import-record-schema.js';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
 const workers=new WeakMap<FastifyInstance,IngestWorker>();
@@ -61,7 +62,7 @@ async function stream(req: FastifyRequest,reply:FastifyReply,jobId:string,regist
     if (!await sender.send({event:'ingest',data:JSON.stringify(event)})) {close();return;}
     version=event.state_version;
   }
-  await read(); if(!closed){timer=setInterval(()=>void read(),1000);timer.unref();}
+  await read(); if(!closed){timer=setInterval(()=>{read().catch(close);},1000);timer.unref();}
 }
 const retryBody=z.object({operation_id:z.string().uuid(),expected_attempt:z.number().int().positive(),expected_state_version:z.number().int().nonnegative()}).strict();
 export default fp(async(app)=>{
@@ -70,7 +71,7 @@ export default fp(async(app)=>{
   const policy=resolveIngestExecutionPolicy(process.env),db=getPrisma();
   const canDispatch=()=>{assertIngestCapability();if(db&&!policy.enabled)throw new AuthFault('INGEST_EXECUTION_UNAVAILABLE',503,true);};
   const dispatch=(jobId:string)=>{if(db)workers.get(app)?.wake();else startIngestPipeline(jobId);};
-  app.addHook('onReady',async()=>{await assertIngestSchema();if(db&&policy.enabled){assertIngestCapability();const worker=createIngestWorker(db,policy,code=>app.log.warn({code},'ingest worker operation failed'));workers.set(app,worker);worker.start();}});
+  app.addHook('onReady',async()=>{await assertIngestSchema();if(db)await assertImportRecordSchema(db);if(db&&policy.enabled){assertIngestCapability();const worker=createIngestWorker(db,policy,code=>app.log.warn({code},'ingest worker operation failed'));workers.set(app,worker);worker.start();}});
   app.addHook('onClose',()=>stopIngestWorker(app));
   app.post('/ingest/xhs',{preHandler:authGuard},async(req,reply)=>safe(reply,async()=>{
     const parsed=IngestXhsBody.safeParse(req.body); if(!parsed.success)throw new AuthFault('INGEST_PARAMS_INVALID',400);

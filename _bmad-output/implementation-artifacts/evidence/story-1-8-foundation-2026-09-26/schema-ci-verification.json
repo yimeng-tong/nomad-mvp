@@ -1,0 +1,34 @@
+{
+  "kind": "story-1-8-additive-schema-ci-verification",
+  "runId": "36225948368",
+  "headSha": "4110c7eb901ac654322ded1030077b4122940d2d",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": {
+    "build-and-test": "success",
+    "Canonical browser environment and product entry": "success"
+  },
+  "schemaArtifact": {
+    "id": 10901315729,
+    "zipBytes": 451,
+    "zipSha256": "5e0d01a3c603f90653095e0e485319b14e25b4d6be53885c82bbae737c2602c3",
+    "crcCheckedFiles": 1,
+    "crcFailure": null,
+    "reportSha256": "4fcd302379ca77789bc2eeae0cdbb9cba042334599ad806f24e710506816dc7b"
+  },
+  "isolatedPostgresql": {
+    "kind": "story-1-8-isolated-postgresql-schema-probe",
+    "headSha": "4110c7eb901ac654322ded1030077b4122940d2d",
+    "checks": [
+      "concurrent-owner-normalized-url-unique-and-losing-job-rolled-back",
+      "same-url-independent-record-for-second-owner",
+      "record-job-composite-owner-foreign-key",
+      "inspiration-record-composite-owner-foreign-key",
+      "accepted-record-status-pending-title-and-sealed-original"
+    ],
+    "completed": true,
+    "realProviderCalls": 0,
+    "databaseScope": "guarded-isolated-synthetic-only"
+  },
+  "scope": "Additive migration and five synthetic owner/transaction/privacy constraints only; no acceptance integration, existing-data backfill, live service, device, production key or recovery proof"
+}

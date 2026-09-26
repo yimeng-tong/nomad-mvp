@@ -255,6 +255,7 @@ Codex；本次执行 bmad-create-story，仅建立开发上下文。
 - T1局部：`xhs-import-v1`纯规则与明确原URL的Home→journal传递已实现并通过本地测试；服务端仍无ImportRecord/URL保护持久化，T1和整张Story保持未勾选。
 - T1保护预备：独立原URL AES-GCM keyring封装与owner/record绑定测试通过；未接入持久受理，也未获得或保存真实密钥，T1继续未勾选。
 - T1结构草案：加法ImportRecord/owner复合FK与隔离PG探针已写，schema验证/构建通过；真实PG探针、旧数据冲突与受理事务未通过前不勾T1/DB-CHANGE-01。
+- `4110c7e`完整CI及五项隔离PG约束探针已验证结构切片；本轮事件同事务状态/标题/结果投影与启动预检尚待新提交CI，生产/回填/受理仍开放。
 
 ### File List
 
@@ -279,3 +280,8 @@ Codex；本次执行 bmad-create-story，仅建立开发上下文。
 - packages/prisma/migrations/20260926000100_story_1_8_import_record_foundation/migration.sql
 - apps/server/scripts/import-record-schema-probe.ts
 - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-validation.json
+- _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-ci-verification.json
+- apps/server/src/ingest/event-log.ts
+- apps/server/src/ingest/import-record-schema.ts
+- apps/server/src/routes/ingest.ts
+- _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/event-projection-validation.json

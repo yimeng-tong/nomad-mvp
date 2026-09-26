@@ -60,7 +60,7 @@ recovery_ui_integration_acceptance: _bmad-output/implementation-artifacts/story-
 
 ## 当前继续执行（2026-09-26）
 
-9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的1.0独立WL-AUTH本地切片通过完整CI36192075867；真实staging/费用/目标仍待验收。1.6规范输入事件`d02d0b0`通过CI36221667847，四ZIP/999文件与108/313源码匹配，证据见input_telemetry_acceptance；SDK/许可/归因/设备及整张1.6仍开放。1.7共享UI恢复`2719998`通过完整CI36222862831两job与五ZIP/1003文件CRC：当前App/IDB双进程22项及三引擎129场景，详见recovery_ui_integration_acceptance。1.7原生C07/生产恢复与9.1正式协议/双端实机仍开放。当前`codex/story-1-8-import-records`经源11GWT/10条件/义务独立准备，Sprint及Story为in-progress。T0完成，T1纯URL规则/原链接Home→journal及独立AES-GCM本地切片通过；加法ImportRecord schema/migration已编译，隔离PG CI待验，服务端record受理/旧URL过渡仍未交付。真实短链/生产密钥/真机仍开放，3.1暂停。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
+9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的1.0独立WL-AUTH本地切片通过完整CI36192075867；真实staging/费用/目标仍待验收。1.6规范输入事件`d02d0b0`通过CI36221667847，四ZIP/999文件与108/313源码匹配，证据见input_telemetry_acceptance；SDK/许可/归因/设备及整张1.6仍开放。1.7共享UI恢复`2719998`通过完整CI36222862831两job与五ZIP/1003文件CRC：当前App/IDB双进程22项及三引擎129场景，详见recovery_ui_integration_acceptance。1.7原生C07/生产恢复与9.1正式协议/双端实机仍开放。当前`codex/story-1-8-import-records`经源11GWT/10条件/义务独立准备，Sprint及Story为in-progress。T0完成，T1纯URL规则/原链接Home→journal、独立AES-GCM及加法ImportRecord结构推进；`4110c7e`完整CI36225948368两job和隔离PG五项约束探针通过。其后事件同事务投影/启动预检仍待新CI，服务端record受理/旧URL过渡未交付。真实短链/生产密钥/真机仍开放，3.1暂停。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
 
 Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不提前准备1.9。
 

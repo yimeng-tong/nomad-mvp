@@ -99,6 +99,17 @@ export async function appendSnapshotEvent(tx: Prisma.TransactionClient, before: 
   if (changed.count !== 1) throw new AuthFault(lease ? 'INGEST_LEASE_LOST' : 'INGEST_STATE_CHANGED',409);
   await tx.ingestEventRecord.create({data:{jobId:before.id,seq,kind,attempt:event.attempt,stateVersion:event.state_version,
     stage:event.state,subStage:event.sub_stage ?? null,traceId:event.trace_id,occurredAt,snapshotJson:event.snapshot as Prisma.InputJsonValue}});
+  // A record's visible state is a projection of the same committed job fact.
+  // Legacy jobs without an ImportRecord are preserved until audited backfill.
+  const projected = await tx.importRecord.updateMany({ where: { jobId: before.id, userId: before.userId },
+    data: { status: event.snapshot.state, sourceTitle: event.snapshot.source_title,
+      updatedAt: new Date(event.snapshot.updated_at) } });
+  if (projected.count && event.snapshot.result) {
+    const record = await tx.importRecord.findFirstOrThrow({ where: { jobId: before.id, userId: before.userId }, select: { id: true } });
+    const linked = await tx.inspiration.updateMany({ where: { id: event.snapshot.result.inspiration_id,
+      jobId: before.id, userId: before.userId }, data: { importRecordId: record.id } });
+    if (linked.count !== 1) throw new AuthFault('INGEST_RESULT_UNAVAILABLE', 503, true);
+  }
   return {event,row:await tx.ingestJob.findUniqueOrThrow({where:{id:before.id}})};
 }
 

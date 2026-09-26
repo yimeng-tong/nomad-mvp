@@ -317,7 +317,7 @@ condition_progress:
       summary: Story已进入本地/隔离开发；生产备份、PITR及恢复目标无本Story证据。
     DB-CHANGE-01:
       state: in-progress
-      summary: a59b66b完整CI主隔离PG25项含SSE删除栅栏与旧record升级七项通过；工作树另备跨owner共享POI/Asset引用第26项待CI。生产旧库审计/回填、真实对象生命周期、PITR与整Story仍开放。
+      summary: 921183a完整CI主隔离PG26项含SSE删除栅栏、跨owner共享POI/Asset行引用与旧record升级七项通过；生产旧库审计/回填、真实对象生命周期、PITR与整Story仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-validation.json
@@ -339,6 +339,7 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/sse-deletion-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/shared-reference-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/sse-deletion-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/shared-reference-ci-verification.json
     METRICS-01:
       state: not-started
     METRICS-02:
@@ -349,7 +350,7 @@ condition_progress:
       state: not-started
     CODE-QUALITY-01:
       state: in-progress
-      summary: a59b66b完整CI两job通过，含产品删除/Dock与SSE栅栏；工作树共享引用第26项仅本地TypeScript/lint通过，整Story仍待验。
+      summary: 921183a完整CI两job通过，含产品删除/Dock、SSE栅栏和共享引用第26项合成反例；整Story及真实资源条件仍待验。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/validation.json
@@ -368,6 +369,7 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-ui-first-ci-failure.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/sse-deletion-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/shared-reference-ci-verification.json
     UI-COMPONENT-01:
       state: in-progress
       summary: Home私有Sheet二次确认删除、204后Library/Dock清理及未知结果提示已在a59b66b完整CI通过三引擎B34；原生与整Story状态仍待验。

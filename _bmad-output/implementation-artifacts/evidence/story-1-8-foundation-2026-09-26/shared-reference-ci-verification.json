@@ -1,0 +1,41 @@
+{
+  "kind": "story-1-8-shared-reference-ci-verification",
+  "sourceRevision": "921183aa13955b2822424d26b594cf1b7007cc7a",
+  "workflowRun": "36235012301",
+  "workflowConclusion": "success",
+  "jobs": {
+    "Canonical browser environment and product entry": "success",
+    "build-and-test": "success"
+  },
+  "isolatedPostgresql": {
+    "artifactId": "10904415627",
+    "extractedReportSha256": "46534ac698032d8fd6b14d412d90a5e64498dfd08d25008d13851053aa4f130b",
+    "headShaMatchesWorkflow": true,
+    "checks": 26,
+    "lastCheck": "one-owner-deletion-keeps-other-owner-shared-poi-and-asset-reference",
+    "completed": true,
+    "realProviderCalls": 0
+  },
+  "oldRowUpgrade": {
+    "artifactId": "10904445311",
+    "extractedReportSha256": "e0b1ef0675728f76927ae42d666431ad0f0b4de5feb7acb92d99ab33dddc5e62",
+    "headShaMatchesWorkflow": true,
+    "checks": 7,
+    "completed": true,
+    "failureStage": null,
+    "realProviderCalls": 0
+  },
+  "browser": {
+    "artifactId": "10903423446",
+    "runId": "732ca119-8fd0-432c-aa9d-6c485bbecdda",
+    "sourceRevisionMatchesWorkflow": true,
+    "requiredCases": 138,
+    "visualArtifacts": 33,
+    "reportSha256": "32807d4df6d05a926db7c870689434caaf0d594768abcf727c0dbc0f0fcae96d",
+    "sourceManifestSha256": "5bc8a23e0c796af6554cbfcc26a40f46d4b0c618cc5f046de0e55da0e56efdca",
+    "compiledProductVerified": true,
+    "offlineVerification": "passed",
+    "nativeDeviceAcceptance": false
+  },
+  "scope": "A guarded synthetic PostgreSQL database preserved the second owner's Inspiration, CanonicalPOI and Asset row when the first owner's import record was tombstoned. This is row-level reference evidence, not a real object-store ACL, byte-read, reference-count or physical cleanup test. Existing data, production backup/PITR, external provider and native devices were not exercised."
+}

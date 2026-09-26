@@ -76,6 +76,8 @@ recovery_ui_integration_acceptance: _bmad-output/implementation-artifacts/story-
 
 `a59b66b`完整CI36234249586两job通过：隔离PG25项包含删除前/后SSE写入栅栏，分阶段升级七项；下载报告HEAD/提取文件SHA一致。浏览器归档离线核验三引擎138/138及33视觉/产品源码绑定通过，见`sse-deletion-ci-verification.json`。工作树只增加两个owner共享CanonicalPOI与媒体键的合成引用反例，脚本独立TypeScript与lint通过，26项PG尚待下一CI。真实对象桶访问/物理清理、旧库只读审计/回填、生产密钥/PITR、真实短链及双端原生仍开放；1.8未done，1.9未准备，3.1暂停。
 
+`921183a`完整CI36235012301两job通过；主隔离PG26项含跨owner共享POI/Asset行引用隔离，分阶段旧record升级七项，下载报告HEAD/提取文件SHA一致。浏览器归档离线核验三引擎138/138、33视觉与产品源码绑定，见`shared-reference-ci-verification.json`。这只证明合成PG行级引用，不证明真实对象桶ACL/引用计数/物理清理。1.8仍in-progress，生产旧库审计/回填、真实短链/采集、密钥/PITR、双端原生与运营门槛未关闭；1.9不提前准备，3.1仍暂停。
+
 Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不提前准备1.9。
 
 ## 当前执行交接（2026-09-25）

@@ -47,3 +47,5 @@ T1数据库结构草案：在现有1.7迁移后新增加法`ImportRecord`表与�
 `a59b66b`已提交推送并在跑完整CI；其隔离PG探针25项尚未完成。后续工作树只扩充T4共享引用隔离反例：在新合成PG中两个owner引用同一CanonicalPOI及同一媒体对象键，删除A后核验B的Inspiration、POI与Asset行仍存且可读，预期探针26项。脚本独立TypeScript检查、typed lint及diff检查通过，实际PG待下一CI；不把相同对象键的行级检查当成真实对象存储访问、引用计数或物理清理。证据`shared-reference-local-validation.json`。
 
 `a59b66b`完整CI`36234249586`现已两job通过。主隔离PG25项含当前owner SSE帧/控制可发、删除后排队帧/控制不可发，旧record分阶段升级七项；下载报告HEAD/提取文件SHA一致。浏览器归档离线校验三引擎138/138、33视觉、产品构建与源码绑定通过，详见`sse-deletion-ci-verification.json`。这验证合成库与浏览器场景，不验证真实对象存储、生产PITR或原生设备。工作树共享POI/Asset引用第26项仍待下一CI。
+
+`921183a`完整CI`36235012301`两job通过。主隔离PG26项最终反例让两个owner引用同一CanonicalPOI与媒体对象键，删除A后B的Inspiration、POI、Asset行与Library读取均保持有效；旧record分阶段升级七项仍通过。下载报告HEAD/提取文件SHA与浏览器三引擎138项/33视觉产品归档离线核验一致，见`shared-reference-ci-verification.json`。此结果只界定合成行级引用；真实COS对象ACL、引用计数、物理清理、旧库只读审计/回填、生产密钥/PITR、真实短链与双端设备继续是独立缺口，Story/T1–T5保持未勾选。

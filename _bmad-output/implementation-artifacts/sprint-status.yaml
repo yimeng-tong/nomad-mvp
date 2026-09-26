@@ -313,13 +313,17 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/ci-verification.json
   1-8-owner-import-records-and-versioned-deduplication:
     OPS-01:
-      state: not-started
-      summary: Story已进入本地/隔离开发；生产备份、PITR及恢复目标无本Story证据。
+      state: in-progress
+      summary: 限VM104/108同PVE homelab：现有PG加密全量+15分钟WAL归档及独立socket指定时点恢复通过；异机容灾、历史key保管、真实负载RPO和删除抑制仍开放。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/validation.json
+      - ops/postgres/README.md
     DB-CHANGE-01:
       state: in-progress
-      summary: 921183a完整CI主隔离PG26项含SSE删除栅栏、跨owner共享POI/Asset行引用与旧record升级七项通过；生产旧库审计/回填、真实对象生命周期、PITR与整Story仍开放。
+      summary: 4b7e47c完整CI主隔离PG28项及旧record升级七项通过；VM104旧staging17 job的九迁移隔离副本只读审计无URL碰撞但17项owner权威未证，原库未迁移/回填。development九迁移；实际旧库写入及整Story仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/event-projection-validation.json
@@ -350,9 +354,10 @@ condition_progress:
       state: not-started
     CODE-QUALITY-01:
       state: in-progress
-      summary: 921183a完整CI两job通过，含产品删除/Dock、SSE栅栏和共享引用第26项合成反例；整Story及真实资源条件仍待验。
+      summary: 4b7e47c完整CI两job通过，含Asset owner/deletion第27/28项、API类型/typed lint和Node对象适配器局部；真实Provider/原生及整Story仍开放，首次a058c68 lint失败保留。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/encryption-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
@@ -814,7 +819,7 @@ active_workstreams:
     working_branch: codex/story-1-8-import-records
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。1.8合同即时准备并独立复核后开始本地/隔离开发；9.1正式协议/真机、真实资源/SDK门槛与3.1暂停不变
+    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。1.8已完成同宿主homelab对象TLS/分桶、共享PG全量+WAL/PITR局部及旧库隔离只读审计，17个旧job均待owner证据；XHS实采/原生API HTTPS/双端真机、异机灾备与3.1暂停不变
 previous_preparation:
   story: 9-3-shared-ui-components-and-safe-app-sheet
   status: complete

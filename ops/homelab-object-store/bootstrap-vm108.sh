@@ -12,7 +12,9 @@ echo 'd327aa9fc73bfa7861fe3be4a4e9ebb7  /tmp/seaweedfs-4.47-linux_amd64.tar.gz' 
 id nomad-objects >/dev/null 2>&1 || useradd --system --home /nonexistent --shell /usr/sbin/nologin nomad-objects
 install -o root -g root -m 0755 /tmp/weed /usr/local/bin/weed
 install -d -o nomad-objects -g nomad-objects -m 0700 /srv/nomad-object-store
-install -d -o root -g nomad-objects -m 0750 /etc/nomad-object-store
+# The cert deploy identity needs traverse-only access to its TLS subtree,
+# never group read access to the S3 configuration in this directory.
+install -d -o root -g nomad-objects -m 0751 /etc/nomad-object-store
 
 python3 - <<'PY'
 import grp

@@ -1,6 +1,6 @@
 ---
 project: nomad-mvp
-updated: '2026-09-26'
+updated: '2026-09-27'
 current_epic: 1
 last_completed_story: 9-5-browser-flow-and-visual-regression-gates
 current_story: 1-8-owner-import-records-and-versioned-deduplication
@@ -59,6 +59,8 @@ recovery_ui_integration_acceptance: _bmad-output/implementation-artifacts/story-
 # Nomad Current Handoff
 
 ## 当前继续执行（2026-09-26）
+
+2026-09-27最新：Story1.8仍in-progress、3.1仍paused、1.9未准备。`4b7e47c`完整CI`36254458183`两job通过，隔离PG28项含私有Asset跨owner/删除前置拦截、旧record升级七项；先前`a058c68`因三个异步测试未await而在typed lint失败，失败记录保留。VM108私有S3以`objects.yinianyunqi.top:8333`经AliDNS DNS-01公开可信证书提供内网HTTPS，不依赖入站80/443；证书自动续期、分桶凭据、签名读写/拒绝、重启和实机重启后探针均通过。VM104共享PG现用独立备份桶的加密pgBackRest全量+15分钟WAL归档，合成数据库指定时点恢复在独立私有socket实例通过（目标仅marker1，源marker1/2），原staging未迁移。旧staging17个job的版本匹配隔离副本只读审计无URL碰撞，但17个均需owner证据，禁止自动回填。development已部署`4b7e47c`、九迁移/本机健康/匿名Asset401与Node真实S3合成字节探针通过。证据`evidence/story-1-8-homelab-2026-09-27/validation.json`。对象数据/备份仍同PVE宿主，真实XHS短链及媒体采集、owner逐条认定、公开API HTTPS/正式认证、实测RPO与双端真机仍开放；不把单机PITR或合成对象当整张Story完成。
 
 9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的1.0独立WL-AUTH本地切片通过完整CI36192075867；真实staging/费用/目标仍待验收。1.6规范输入事件`d02d0b0`通过CI36221667847，四ZIP/999文件与108/313源码匹配，证据见input_telemetry_acceptance；SDK/许可/归因/设备及整张1.6仍开放。1.7共享UI恢复`2719998`通过完整CI36222862831两job与五ZIP/1003文件CRC：当前App/IDB双进程22项及三引擎129场景，详见recovery_ui_integration_acceptance。1.7原生C07/生产恢复与9.1正式协议/双端实机仍开放。当前`codex/story-1-8-import-records`经源11GWT/10条件/义务独立准备，Sprint及Story为in-progress。T0完成；`4110c7e`完整CI36225948368五项加法PG约束、`40a72e3`完整CI36226573986八项事件投影通过。`a6362d3`的十三项实际受理PG探针通过，但整轮CI36227255902因旧非XHS历史job被新规则过早拒绝而失败，失败记录保留。`d82f681`已接入旧hash优先检索、受保护owner列表/详情与Home共享UI；其CI36228607706浏览器job三引擎135/135与B32/B33六项通过，但整轮因工作台九个新增场景失败，PG十六项未运行。工作树修复严格网络声明、场景卸载读取及Home重复提示；本地构建、lint、289移动测试/5原生配置、10网络策略及工作台静态构建通过，待新完整CI。旧数据审计/回填、删除、真实短链、生产密钥/PITR、真机仍开放，3.1暂停。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
 

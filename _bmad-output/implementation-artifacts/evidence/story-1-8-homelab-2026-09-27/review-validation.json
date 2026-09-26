@@ -1,0 +1,39 @@
+{
+  "kind": "story-1-8-homelab-review-followup",
+  "sourceBeforeReview": "4b7e47c32c592b34515b60d26985c755be766374",
+  "reviewLayers": ["blind", "edge", "acceptance"],
+  "mergedPatchFindings": 9,
+  "decisionNeeded": 0,
+  "liveChecks": {
+    "vm108CertificateAccountCannotReadS3Configuration": true,
+    "vm108CertificateAccountCanReadDeployedCertificate": true,
+    "vm108ObjectStoreAndNginxActiveAfterPermissionFix": true,
+    "multilineSyntheticSshKeyRejectedBeforeAuthorizedKeysChange": true,
+    "vm104RestrictedCertificateRedeployUnchangedPassed": true,
+    "vm104SignedHttpsSyntheticProbePassedAfterPermissionFix": true,
+    "vm108CrossBucketGetHeadListDeletePutDeniedBothDirections": true,
+    "vm108OwnBucketSyntheticObjectsPreserved": true,
+    "vm104SourceAndCopyMigrationChecksumsMatched": true,
+    "vm104CopyTargetedStory18SchemaGuardsMatched": true,
+    "vm104SourceAndCopyCountsUnchanged": true,
+    "fullDatamodelDiffVerified": false,
+    "vm104RestoredClusterStoppedAndSourceActive": true
+  },
+  "localChecks": {
+    "workspaceBuildPassed": true,
+    "typedLintPassed": true,
+    "targetedServerTestsPassed": 4,
+    "postgresOpsUnitTestsPassed": 7,
+    "handoffPassed": true,
+    "syntaxChecksPassed": true
+  },
+  "pendingAtThisSnapshot": [
+    "committed-source CI for the concurrent deletion probe and strengthened audit",
+    "VM104 Node adapter changed-byte integrity probe after exact-commit deployment"
+  ],
+  "originalStagingMigrated": false,
+  "automaticLegacyBackfillAllowed": false,
+  "realProviderOrPhysicalDeviceEvidence": false,
+  "secretValuesIncluded": false,
+  "userDataValuesIncluded": false
+}

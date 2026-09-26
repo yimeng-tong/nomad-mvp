@@ -79,6 +79,8 @@ Mac可直接curl --fail http://localhost:43104/health。使用Windows OpenSSH建
 
 用户确认曾使用frp，具体主机/配置位置仍在核实。本轮VM104与105/106未发现frpc；旧计划nomad-test.yinianyunqi.top在VM104解析失败，不能当当前可用地址。收到实际入口后复用现有frp，核验TLS、精确Origin/Cookie、反代/SSE与原生API audience，再单独记录真正的HTTPS验收。
 
+2026-09-27：AliDNS DNS-01已为**对象存储**`objects.yinianyunqi.top`签发公开可信证书，VM104经内网8333验证证书与签名S3读写；证书每日自动续期，无需入站80/443。此域名只服务私有对象存储，**不**代表App API的公开HTTPS、原生登录Origin/audience或双端实机已可用。API若采用高端口HTTPS，还需独立核验域名解析、路由/端口映射、Nginx及认证配置，不能把对象存储证书直接算作API验收。
+
 SSH隧道只供桌面开发。iPhone/Android真机不能把自己的localhost当Mac，也不放宽原生HTTPS校验。原生构建使用已核验的HTTPS后端及原有CAP_*配置；缺实际入口时C07/真实认证等对应切片保持未验收，组件工作不被整体阻塞。
 
 ## 受控开发发布

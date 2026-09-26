@@ -30,14 +30,17 @@ def main() -> None:
     names = sorted(path.name for path in MIGRATIONS.iterdir() if (path / 'migration.sql').is_file())
     if len(names) != 9 or not all(re.fullmatch(r'[0-9]{14}_[a-z0-9_]+', name) for name in names):
         raise RuntimeError('unexpected migration set')
-    applied = query(TARGET, 'SELECT migration_name FROM _prisma_migrations WHERE finished_at IS NOT NULL ORDER BY migration_name')
-    if applied != names[:2]:
+    expected = {name: hashlib.sha256((MIGRATIONS / name / 'migration.sql').read_bytes()).hexdigest()
+                for name in names}
+    applied = query(TARGET, "SELECT migration_name || ':' || checksum FROM _prisma_migrations "
+                    'WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL ORDER BY migration_name')
+    if applied != [f'{name}:{expected[name]}' for name in names[:2]]:
         raise RuntimeError('legacy migration prefix mismatch')
     completed = []
     with (ROOT / 'migration.log').open('xb') as log:
         for name in names[2:]:
             file = MIGRATIONS / name / 'migration.sql'
-            checksum = hashlib.sha256(file.read_bytes()).hexdigest()
+            checksum = expected[name]
             subprocess.run(['psql', '-X', '-v', 'ON_ERROR_STOP=1', '-d', TARGET,
                             '-f', str(file)], stdout=log, stderr=log, check=True, timeout=120)
             migration_id = str(uuid.uuid4())
@@ -45,8 +48,9 @@ def main() -> None:
                    f"VALUES ('{migration_id}','{checksum}',CURRENT_TIMESTAMP,'{name}',NULL,1)")
             query(TARGET, sql)
             completed.append(name)
-    final = query(TARGET, 'SELECT migration_name FROM _prisma_migrations WHERE finished_at IS NOT NULL ORDER BY migration_name')
-    if final != names:
+    final = query(TARGET, "SELECT migration_name || ':' || checksum FROM _prisma_migrations "
+                  'WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL ORDER BY migration_name')
+    if final != [f'{name}:{expected[name]}' for name in names]:
         raise RuntimeError('final migration set mismatch')
     copy_counts = {table: int(query(TARGET, f'SELECT count(*) FROM "{table}"')[0])
                    for table in ('User', 'IngestJob', 'Inspiration', 'ImportRecord')}
@@ -58,7 +62,7 @@ def main() -> None:
               'committedMigrationCount': len(names), 'newlyAppliedMigrationCount': len(completed),
               'copyCounts': copy_counts, 'sourceCounts': source_counts,
               'sourceCountsUnchanged': source_counts == clone['sourceCounts'],
-              'sourceMigrated': False, 'copyVersionMatched': True,
+              'sourceMigrated': False, 'copyMigrationChecksumsMatched': True,
               'privateLog': str(ROOT / 'migration.log')}
     (ROOT / 'migration-verified.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, sort_keys=True))

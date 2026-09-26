@@ -347,7 +347,20 @@ try {
   await assert.rejects(readOwnerAsset(ownerA, otherAsset.id),
     (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_ASSET_NOT_FOUND');
   checks.push('asset-byte-read-denies-foreign-owner-before-object-key-access');
+  let enteredDownload!: () => void;
+  let releaseDownload!: (media: { bytes: Buffer; contentType: string }) => void;
+  const downloadStarted = new Promise<void>((resolve) => { enteredDownload = resolve; });
+  const delayedMedia = new Promise<{ bytes: Buffer; contentType: string }>((resolve) => { releaseDownload = resolve; });
+  const pendingRead = readOwnerAsset(ownerA, ownerAsset.id, async () => {
+    enteredDownload();
+    return delayedMedia;
+  });
+  await downloadStarted;
   await deleteImportRecord(ownerA, winner.recordId);
+  releaseDownload({ bytes: Buffer.from('synthetic-only'), contentType: 'image/png' });
+  await assert.rejects(pendingRead,
+    (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_ASSET_NOT_FOUND');
+  checks.push('concurrent-deletion-during-media-fetch-revokes-bytes-before-response');
   assert.ok((await db.inspiration.findUniqueOrThrow({ where: { id: inspirationId } })).deletedAt);
   assert.ok(!(await listLibraryInspirationsForUser(ownerA)).some((item) => item.id === inspirationId));
   await assert.rejects(readOwnerAsset(ownerA, ownerAsset.id),
@@ -366,9 +379,9 @@ try {
 } finally {
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, JSON.stringify({ kind: 'story-1-8-isolated-postgresql-schema-probe',
-    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 28,
+    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 29,
     realProviderCalls: 0, databaseScope: 'guarded-isolated-synthetic-only' }, null, 2) + '\n');
   await db.$disconnect();
 }
 
-assert.equal(checks.length, 28);
+assert.equal(checks.length, 29);

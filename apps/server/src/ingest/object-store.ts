@@ -4,7 +4,7 @@ import { AuthFault } from '../auth/errors.js';
 
 const maxObjectBytes = 32 * 1024 * 1024;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
-const objectKeyPattern = /^[a-zA-Z0-9][a-zA-Z0-9/_\-.]{0,511}$/u;
+const storedKeyPattern = /^owners\/([0-9a-f-]{36})\/ingest\/([0-9a-f-]{36})\/([0-9a-f]{64})\.(jpg|png|webp|gif|avif|mp4|webm)$/u;
 const mediaTypes = new Map([
   ['image/jpeg', 'jpg'], ['image/png', 'png'], ['image/webp', 'webp'],
   ['image/gif', 'gif'], ['image/avif', 'avif'], ['video/mp4', 'mp4'],
@@ -58,7 +58,8 @@ export async function putMediaBytes(input: { ownerId: string; jobId: string; byt
 
 /** Caller must qualify the current owner and active Asset row before passing its key. */
 export async function getMediaBytes(cosKey: string): Promise<{ bytes: Buffer; contentType: string }> {
-  if (!objectKeyPattern.test(cosKey) || cosKey.includes('..'))
+  const key = storedKeyPattern.exec(cosKey);
+  if (!key || !uuidPattern.test(key[1]!) || !uuidPattern.test(key[2]!))
     throw new AuthFault('MEDIA_OBJECT_UNAVAILABLE', 503, true);
   const settings = config();
   const s3 = client(settings);
@@ -76,7 +77,11 @@ export async function getMediaBytes(cosKey: string): Promise<{ bytes: Buffer; co
       chunks.push(Buffer.from(chunk));
     }
     if (total !== response.ContentLength) throw new AuthFault('MEDIA_OBJECT_UNAVAILABLE', 503, true);
-    return { bytes: Buffer.concat(chunks, total), contentType: response.ContentType };
+    const bytes = Buffer.concat(chunks, total);
+    if (createHash('sha256').update(bytes).digest('hex') !== key[3]
+        || mediaTypes.get(response.ContentType) !== key[4])
+      throw new AuthFault('MEDIA_OBJECT_UNAVAILABLE', 503, true);
+    return { bytes, contentType: response.ContentType };
   } catch { throw new AuthFault('MEDIA_OBJECT_UNAVAILABLE', 503, true); }
   finally { s3.destroy(); }
 }

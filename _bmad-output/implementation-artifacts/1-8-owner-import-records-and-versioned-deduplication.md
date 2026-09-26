@@ -175,6 +175,18 @@ App 宿主补充：NFR25; AR23-AR24; UX-DR36。
   - [ ] 对下表每组源 GWT给出对应实现/测试和真实未测门槛；执行相关正反例及独立代码审阅。保留失败和资源阻断，不用占位、skip或旧版本产物记通过。
   - [ ] condition_progress仅按本 Story的现有证据推进；verified/not-applicable都附范围、摘要和现存路径。状态变更后运行 pnpm run ci:handoff；变更守卫才运行其回归，不为状态迁移弱化守卫。
 
+### Review Findings (2026-09-27)
+
+- [ ] [Review][Patch] 媒体下载期间删除可先完成并泄出旧字节；下载后重核owner、活动Inspiration与对象键，隔离PG补并发负例。[apps/server/src/ingest/asset-read.ts]
+- [ ] [Review][Patch] 媒体S3慢读持有数据库事务；远程读取移出事务，仅短事务做前后资格确认。[apps/server/src/ingest/asset-read.ts]
+- [ ] [Review][Patch] 证书部署账号经组权限可读取S3管理员配置；移除组并给父目录仅遍历权限，实机验证。[ops/homelab-object-store/install-cert-receiver-vm108.sh]
+- [ ] [Review][Patch] 多行SSH公钥可注入第二条无限制authorized_keys记录；输入单行校验必须先于安装器修改。[ops/homelab-object-store/install-cert-receiver-vm108.sh]
+- [ ] [Review][Patch] S3分桶只测跨桶写/列表，缺双方已知对象GET/HEAD/DELETE负例；补独立合成探针。[ops/homelab-object-store/s3-cross-bucket-probe.py]
+- [ ] [Review][Patch] 旧库副本只按迁移名称称版本匹配；补源/副本全部checksum和本Story目标结构守卫，明确未做全库datamodel diff。[ops/pve-staging/story18-verify-copy.py]
+- [ ] [Review][Patch] PITR验收在停止恢复实例前写通过报告且忽略停止失败；先确认停止再写报告。[ops/postgres/pitr-verify-vm104.py]
+- [ ] [Review][Patch] pgBackRest启用时中途`pg_conftool`失败可能跳过配置回滚；首次配置修改前进入回滚分支。[ops/postgres/enable-pgbackrest-main-vm104.py]
+- [ ] [Review][Patch] 对象读取仅核类型与长度，未核内容哈希；以owner/job/hash键核验返回字节及类型后缀。[apps/server/src/ingest/object-store.ts]
+
 ## Dev Notes
 
 ### 交付边界与依赖
@@ -260,6 +272,7 @@ Codex；本次执行 bmad-create-story，仅建立开发上下文。
 - 当前T1/T2/T3局部：新受理事务、密文原URL、owner列表/详情、Home共享记录区域及复制/身份遮蔽已实现；删除、旧数据迁移、真实短链/设备/生产密钥/恢复和完整浏览器证据尚未通过，开发任务与整张Story保持未勾选。
 - T4局部历史：`d55efe6`服务端作废/重提已通过隔离PG23项和旧record分阶段升级七项的完整CI；其后产品确认删除、Dock回执/claim撤权及Library选中项清理先经本地测试，再提交`0ffc3e0`。该轮CI因B34覆盖合同遗漏失败，见保留的失败证据；完整修复结果见下一条。
 - T4续证：`a59b66b`完整CI两job通过，产品删除/Dock及三引擎B34纳入138例，隔离PG25项覆盖SSE排队帧/控制删除栅栏。`921183a`完整CI再通过第26项跨owner共享POI/Asset行引用反例；真实对象桶、旧库审计/回填、生产PITR、短链和原生设备仍开放，不把T4或整张Story标done。
+- 2026-09-27同宿主实证：`4b7e47c`完整CI两job通过，主隔离PG28项加私有Asset跨owner/作废前置拦截；VM108私有S3公开可信TLS/DNS-01、分桶权限、签名字节与重启通过，VM104 Node对象适配器合成PNG Put/Get后清理通过。现有`rehostMedia`仍合成键、真实XHS采集/共享对象物理清理未完成。旧staging17 job在九迁移匹配隔离副本只读审计，17项全需owner证据，原库未迁移且未自动回填。VM104主PG的加密全量+WAL在独立私有socket指定时点恢复合成marker1/2→1通过，但异机灾备/正式RPO/历史key保管仍开放。详见`evidence/story-1-8-homelab-2026-09-27/validation.json`；T1–T5、T90/T91/T92和Story仍不勾选。
 
 ### File List
 
@@ -311,3 +324,29 @@ Codex；本次执行 bmad-create-story，仅建立开发上下文。
 - apps/mobile/workbench/fixtures.ts
 - apps/mobile/workbench/handlers.ts
 - docs/ops/import-record-url-protection.md
+- _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/validation.json
+- apps/server/src/ingest/object-store.ts
+- apps/server/src/ingest/object-store.test.ts
+- apps/server/src/ingest/asset-read.ts
+- apps/server/scripts/object-store-homelab-probe.ts
+- ops/homelab-object-store/README.md
+- ops/homelab-object-store/bootstrap-vm108.sh
+- ops/homelab-object-store/acme-dns-vm104.py
+- ops/homelab-object-store/deploy-cert-vm104.py
+- ops/homelab-object-store/receive-cert-vm108.py
+- ops/homelab-object-store/enable-tls-vm108.sh
+- ops/homelab-object-store/fix-mini-s3-port-vm108.sh
+- ops/homelab-object-store/install-cert-receiver-vm108.sh
+- ops/homelab-object-store/install-renewal-vm104.sh
+- ops/homelab-object-store/install-pg-backup-bucket-vm108.py
+- ops/homelab-object-store/s3-probe.py
+- ops/homelab-object-store/s3-probe-vm104.py
+- ops/pve-staging/story18-clone-staging.py
+- ops/pve-staging/story18-migrate-copy.py
+- ops/postgres/README.md
+- ops/postgres/install-pgbackrest-vm104.py
+- ops/postgres/enable-pgbackrest-main-vm104.py
+- ops/postgres/install-pgbackrest-timers-vm104.sh
+- ops/postgres/pitr-marker-vm104.py
+- ops/postgres/pitr-restore-vm104.py
+- ops/postgres/pitr-verify-vm104.py

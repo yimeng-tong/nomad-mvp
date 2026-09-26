@@ -84,6 +84,7 @@ export class PrismaPlannerSourceRepository implements PlannerSourceRepository {
         LIMIT 1
       ) membership ON TRUE
       WHERE inspiration."userId" = ${dbUserIdFor(userId)}::uuid
+        AND inspiration.deleted_at IS NULL
         AND inspiration.id::text IN (${Prisma.join(itemIds)})
     `);
     return rows.map(
@@ -243,6 +244,7 @@ export class PrismaPlannerSourceRepository implements PlannerSourceRepository {
       FROM "InspirationEvidence" evidence
       JOIN "Inspiration" inspiration ON inspiration.id = evidence.inspiration_id
       WHERE inspiration."userId" = ${dbUserIdFor(userId)}::uuid
+        AND inspiration.deleted_at IS NULL
         AND evidence.inspiration_id::text IN (${Prisma.join(itemIds)})
       ORDER BY evidence.inspiration_id,
                CASE evidence.quality

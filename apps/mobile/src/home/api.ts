@@ -31,6 +31,7 @@ export type HomeApiClient = {
   getCandidates: (inspirationId: string) => Promise<LibraryCandidatesResponse>;
   getImportRecords?: (input?: { limit?: number; cursor?: string }, signal?: AbortSignal) => Promise<LibraryImportRecordsResponse>;
   getImportRecordDetail?: (recordId: string, signal?: AbortSignal) => Promise<LibraryImportRecordDetail>;
+  deleteImportRecord?: (recordId: string, signal?: AbortSignal) => Promise<void>;
   parseInput: (request: HomeInputParseRequest) => Promise<HomeInputParseResponse>;
   startIngest: (request: IngestXhsRequest) => Promise<IngestStartResponse>;
   getIngestResult?: (jobId: string) => Promise<LibraryInspirationItem>;
@@ -101,6 +102,7 @@ export function createHomeApiClient(baseUrl: string = getApiBaseUrl() as string)
       return bound<LibraryImportRecordsResponse>(`/library/import-records${suffix ? `?${suffix}` : ''}`, { signal });
     },
     getImportRecordDetail: (id, signal) => bound<LibraryImportRecordDetail>(`/library/import-records/${encodeURIComponent(id)}`, { signal }),
+    deleteImportRecord: (id, signal) => bound<void>(`/library/import-records/${encodeURIComponent(id)}`, { method: 'DELETE', signal }),
     parseInput: (body) => requestJson<HomeInputParseResponse>(baseUrl, '/home/input/parse', { method: 'POST', body: JSON.stringify(body) }),
     startIngest: (body) => requestJson<IngestStartResponse>(baseUrl, '/ingest/xhs', { method: 'POST', body: JSON.stringify(body) }),
     getIngestResult: (id) => bound<LibraryInspirationItem>(`/ingest/${encodeURIComponent(id)}/result`),

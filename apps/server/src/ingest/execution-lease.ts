@@ -22,7 +22,7 @@ export async function claimIngestExecution(db:PrismaClient,workerId:string,polic
   for (;;) {
   const candidates:Array<{id:string;userId:string;auth_version:number}>=await tx.$queryRaw`
     SELECT j.id,j."userId",j.auth_version FROM "IngestJob" j JOIN "User" u ON u.id=j."userId"
-    WHERE j.execution_pending AND j.status NOT IN ('done','failed') AND j.event_stream_id IS NOT NULL
+    WHERE j.deleted_at IS NULL AND j.execution_pending AND j.status NOT IN ('done','failed') AND j.event_stream_id IS NOT NULL
       AND u.auth_state='active' AND u.auth_version=j.auth_version
       AND (j.next_execution_at IS NULL OR j.next_execution_at<=clock_timestamp())
       AND (j.lease_expires_at IS NULL OR j.lease_expires_at<=clock_timestamp())
@@ -37,7 +37,7 @@ export async function claimIngestExecution(db:PrismaClient,workerId:string,polic
    if(!locked.length)continue;
    const changed=await tx.$queryRaw<Array<{id:string}>>`UPDATE "IngestJob" SET lease_owner=${workerId}::uuid,
      lease_fence=lease_fence+1,execution_failure_count=least(execution_failure_count+1,5),lease_expires_at=clock_timestamp()+${policy.leaseMs}*interval '1 millisecond'
-     WHERE id=${candidate.id}::uuid AND "userId"=${candidate.userId}::uuid AND auth_version=${candidate.auth_version}
+     WHERE id=${candidate.id}::uuid AND "userId"=${candidate.userId}::uuid AND deleted_at IS NULL AND auth_version=${candidate.auth_version}
        AND execution_pending AND status NOT IN ('done','failed') AND event_stream_id IS NOT NULL
        AND lease_fence<9223372036854775807
        AND (next_execution_at IS NULL OR next_execution_at<=clock_timestamp())
@@ -63,7 +63,7 @@ export async function lockIngestLease(tx:Prisma.TransactionClient,token:IngestLe
 /** Reuse at the mutating SQL statement, so time spent after validation cannot extend authority. */
 export function ingestLeasePredicate(token:IngestLease):Prisma.Sql {
  validToken(token);
- return Prisma.sql`id=${token.jobId}::uuid AND "userId"=${token.ownerId}::uuid
+ return Prisma.sql`id=${token.jobId}::uuid AND "userId"=${token.ownerId}::uuid AND deleted_at IS NULL
   AND auth_version=${token.authVersion} AND retry_count=${token.attempt-1} AND execution_pending
   AND status NOT IN ('done','failed') AND lease_owner=${token.workerId}::uuid AND lease_fence=${token.fence}
   AND lease_expires_at>clock_timestamp()`;
@@ -87,12 +87,13 @@ export async function releaseIngestLease(db:PrismaClient,token:IngestLease,delay
 export async function markIngestPending(tx:Prisma.TransactionClient,jobId:string){
  transactionOnly(tx);
  const row=await tx.ingestJob.findUniqueOrThrow({where:{id:jobId}});
+ if(row.deletedAt)throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
  if(row.authVersion===null||!row.eventStreamId)throw new AuthFault('INGEST_EXECUTION_UNAVAILABLE',503);
  await lockQualifiedOwner(tx,row.userId,row.authVersion);
  if(row.executionPending)return row;
  if(row.status!=='created')throw new AuthFault('INGEST_EXECUTION_UNAVAILABLE',503);
  if(row.leaseOwner!==null||row.leaseExpiresAt!==null)throw new AuthFault('INGEST_EXECUTION_UNAVAILABLE',503);
- const result=await tx.ingestJob.updateMany({where:{id:jobId,stateVersion:row.stateVersion,lastEventSeq:row.lastEventSeq,status:'created',executionPending:false,leaseOwner:null},
+ const result=await tx.ingestJob.updateMany({where:{id:jobId,deletedAt:null,stateVersion:row.stateVersion,lastEventSeq:row.lastEventSeq,status:'created',executionPending:false,leaseOwner:null},
   data:{executionPending:true,nextExecutionAt:null,leaseOwner:null,leaseExpiresAt:null,checkpointJson:Prisma.DbNull,checkpointVersion:0,executionFailureCount:0}});
  if(result.count!==1)throw new AuthFault('INGEST_STATE_CHANGED',409);
  return tx.ingestJob.findUniqueOrThrow({where:{id:jobId}});

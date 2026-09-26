@@ -29,5 +29,13 @@ await test('import record reads require an owner and expose neutral missing resp
     assert.equal(absent.statusCode, 404);
     assert.equal((absent.json() as { error_code?: string }).error_code, 'LIBRARY_IMPORT_RECORD_NOT_FOUND');
     assert.equal(absent.headers['cache-control'], 'no-store');
+    assert.equal((await app.inject({ method: 'DELETE', url: `/library/import-records/${randomUUID()}` })).statusCode, 401);
+    const missingDelete = await app.inject({ method: 'DELETE', url: `/library/import-records/${randomUUID()}`, headers });
+    assert.equal(missingDelete.statusCode, 404);
+    assert.equal((missingDelete.json() as { error_code?: string }).error_code, 'LIBRARY_IMPORT_RECORD_NOT_FOUND');
+    assert.equal(missingDelete.headers['cache-control'], 'no-store');
+    const malformedDelete = await app.inject({ method: 'DELETE', url: '/library/import-records/not-a-uuid', headers });
+    assert.equal(malformedDelete.statusCode, 404);
+    assert.equal((malformedDelete.json() as { error_code?: string }).error_code, 'LIBRARY_IMPORT_RECORD_NOT_FOUND');
   } finally { await app.close(); }
 });

@@ -60,6 +60,7 @@ export function buildDurableIngestEvent(input: { jobId: string; streamId: string
 /** The caller supplies an already locked/qualified row and an interactive transaction. No notifications occur here. */
 export async function appendSnapshotEvent(tx: Prisma.TransactionClient, before: Row, proposed: IngestSnapshot, kind: EventKind = 'fact', lease?: IngestLease) {
   if (typeof (tx as unknown as { $transaction?: unknown }).$transaction !== 'undefined') throw invalid();
+  if (before.deletedAt) throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
   if (kind === 'fact' && before.authVersion === null && !fixtureAuth()) throw new AuthFault('AUTH_LEGACY_OWNER_UNVERIFIED',403);
   await lockQualifiedOwner(tx,before.userId,kind === 'fact' ? before.authVersion ?? undefined : undefined);
   if (before.lastEventSeq >= MAX_INGEST_SEQ || before.lastEventSeq < 0n || proposed.state_version < before.stateVersion
@@ -90,8 +91,8 @@ export async function appendSnapshotEvent(tx: Prisma.TransactionClient, before: 
     lease_owner=CASE WHEN ${terminal} THEN NULL ELSE lease_owner END,
     lease_expires_at=CASE WHEN ${terminal} THEN NULL ELSE lease_expires_at END,
     next_execution_at=CASE WHEN ${terminal} THEN NULL ELSE next_execution_at END
-    WHERE ${ingestLeasePredicate(lease)} AND state_version=${before.stateVersion} AND last_event_seq=${before.lastEventSeq}
-      AND event_stream_id IS NOT DISTINCT FROM ${before.eventStreamId}::uuid`)} : await tx.ingestJob.updateMany({where:{id:before.id,userId:before.userId,stateVersion:before.stateVersion,
+    WHERE ${ingestLeasePredicate(lease)} AND deleted_at IS NULL AND state_version=${before.stateVersion} AND last_event_seq=${before.lastEventSeq}
+      AND event_stream_id IS NOT DISTINCT FROM ${before.eventStreamId}::uuid`)} : await tx.ingestJob.updateMany({where:{id:before.id,userId:before.userId,deletedAt:null,stateVersion:before.stateVersion,
     lastEventSeq:before.lastEventSeq,eventStreamId:before.eventStreamId},data:{eventStreamId:streamId,lastEventSeq:seq,
       ...(['done','failed'].includes(event.snapshot.state) ? {executionPending:false,leaseOwner:null,leaseExpiresAt:null,nextExecutionAt:null} : {}),
       status:event.snapshot.state,retryCount:event.snapshot.attempt-1,stateVersion:event.snapshot.state_version,
@@ -101,13 +102,13 @@ export async function appendSnapshotEvent(tx: Prisma.TransactionClient, before: 
     stage:event.state,subStage:event.sub_stage ?? null,traceId:event.trace_id,occurredAt,snapshotJson:event.snapshot as Prisma.InputJsonValue}});
   // A record's visible state is a projection of the same committed job fact.
   // Legacy jobs without an ImportRecord are preserved until audited backfill.
-  const projected = await tx.importRecord.updateMany({ where: { jobId: before.id, userId: before.userId },
+  const projected = await tx.importRecord.updateMany({ where: { jobId: before.id, userId: before.userId, deletedAt: null },
     data: { status: event.snapshot.state, sourceTitle: event.snapshot.source_title,
       updatedAt: new Date(event.snapshot.updated_at) } });
   if (projected.count && event.snapshot.result) {
-    const record = await tx.importRecord.findFirstOrThrow({ where: { jobId: before.id, userId: before.userId }, select: { id: true } });
+    const record = await tx.importRecord.findFirstOrThrow({ where: { jobId: before.id, userId: before.userId, deletedAt: null }, select: { id: true } });
     const linked = await tx.inspiration.updateMany({ where: { id: event.snapshot.result.inspiration_id,
-      jobId: before.id, userId: before.userId }, data: { importRecordId: record.id } });
+      jobId: before.id, userId: before.userId, deletedAt: null }, data: { importRecordId: record.id } });
     if (linked.count !== 1) throw new AuthFault('INGEST_RESULT_UNAVAILABLE', 503, true);
   }
   return {event,row:await tx.ingestJob.findUniqueOrThrow({where:{id:before.id}})};

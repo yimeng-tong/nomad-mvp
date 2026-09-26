@@ -23,7 +23,7 @@ async function withHead<T>(userId:string,jobId:string,read:(tx:Prisma.Transactio
   const ownerId=dbOwnerId(userId),id=jobId.replace(/^ing_/,'');
   return db.$transaction(async tx=>{
     await lockQualifiedOwner(tx,ownerId);
-    const rows=await tx.$queryRaw<Array<{id:string}>>`SELECT id FROM "IngestJob" WHERE id=${id}::uuid AND "userId"=${ownerId}::uuid FOR SHARE`;
+    const rows=await tx.$queryRaw<Array<{id:string}>>`SELECT id FROM "IngestJob" WHERE id=${id}::uuid AND "userId"=${ownerId}::uuid AND deleted_at IS NULL FOR SHARE`;
     if(!rows.length)throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
     const head=await tx.ingestJob.findUniqueOrThrow({where:{id},select:{id:true,eventStreamId:true,lastEventSeq:true,replayFloorSeq:true,status:true,retryCount:true,stateVersion:true}});
     if(!head.eventStreamId||head.lastEventSeq<1n)throw unavailable();

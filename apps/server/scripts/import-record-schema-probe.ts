@@ -7,10 +7,15 @@ import { normalizeImportSourceUrl } from '../src/ingest/url-normalization-policy
 import { normalizeXhsUrl } from '../src/ingest/link-parser.js';
 import { loadImportUrlKeyring, openImportOriginalUrl, sealImportOriginalUrl, type ProtectedImportUrl } from '../src/ingest/import-url-protection.js';
 import { appendSnapshotEvent } from '../src/ingest/event-log.js';
-import { acceptIngestCommand, readIngestCommand } from '../src/ingest/store.js';
+import { acceptIngestCommand, getIngestResult, getIngestSnapshot, listLibraryInspirationsForUser,
+  readIngestCommand, retryIngestCommand } from '../src/ingest/store.js';
 import { advanceSnapshot, initialSnapshot } from '../src/ingest/job-state.js';
 import { assertImportRecordSchema } from '../src/ingest/import-record-schema.js';
 import { getImportRecordDetail, listImportRecords } from '../src/ingest/import-record-read.js';
+import { deleteImportRecord } from '../src/ingest/import-record-delete.js';
+import { lockIngestLease } from '../src/ingest/execution-lease.js';
+import { readIngestRecovery } from '../src/ingest/event-replay.js';
+import { PrismaPlannerSourceRepository } from '../src/planner/source.js';
 import { AuthFault } from '../src/auth/errors.js';
 
 const connection = process.env.DATABASE_URL;
@@ -233,7 +238,7 @@ try {
   await db.$executeRawUnsafe(`CREATE FUNCTION "ImportRecord_probe_unique_once"() RETURNS trigger LANGUAGE plpgsql AS $$
     BEGIN
       IF nextval('"ImportRecord_probe_unique_once"') = 1 THEN
-        RAISE EXCEPTION 'synthetic unique race' USING ERRCODE = '23505', CONSTRAINT = 'ImportRecord_userId_normalized_url_key';
+        RAISE EXCEPTION 'synthetic unique race' USING ERRCODE = '23505', CONSTRAINT = 'ImportRecord_userId_active_normalized_url_key';
       END IF;
       RETURN NEW;
     END $$`);
@@ -252,12 +257,70 @@ try {
     await db.$executeRawUnsafe('DROP FUNCTION "ImportRecord_probe_unique_once"()');
     await db.$executeRawUnsafe('DROP SEQUENCE "ImportRecord_probe_unique_once"');
   }
+
+  await assert.rejects(deleteImportRecord(ownerB, actual.id),
+    (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_IMPORT_RECORD_NOT_FOUND');
+  await assert.rejects(deleteImportRecord(ownerA, randomUUID()),
+    (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_IMPORT_RECORD_NOT_FOUND');
+  assert.equal((await db.importRecord.findUniqueOrThrow({ where: { id: actual.id } })).deletedAt, null);
+  checks.push('foreign-and-missing-delete-return-the-same-neutral-response-without-mutation');
+
+  const workerId = randomUUID();
+  await db.ingestJob.update({ where: { id: acceptedJobId }, data: { executionPending: true,
+    leaseOwner: workerId, leaseExpiresAt: new Date(Date.now() + 60_000), leaseFence: 1n } });
+  await deleteImportRecord(ownerA, actual.id);
+  const deletedRecord = await db.importRecord.findUniqueOrThrow({ where: { id: actual.id } });
+  const deletedJob = await db.ingestJob.findUniqueOrThrow({ where: { id: acceptedJobId } });
+  assert.ok(deletedRecord.deletedAt);
+  assert.equal(deletedRecord.activeNormalizedUrl, null);
+  assert.equal(deletedRecord.normalizedUrl, actual.normalizedUrl);
+  assert.ok(deletedJob.deletedAt);
+  assert.equal(deletedJob.executionPending, false);
+  assert.equal(deletedJob.leaseOwner, null);
+  assert.equal(deletedJob.leaseFence, 2n);
+  await assert.rejects(db.$transaction((tx) => lockIngestLease(tx, { jobId: acceptedJobId, ownerId: ownerA,
+    authVersion: 0, attempt: 1, workerId, fence: 1n })),
+  (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_LEASE_LOST');
+  checks.push('delete-tombstones-record-and-job-atomically-and-fences-a-previous-worker-lease');
+
+  assert.ok(!(await listImportRecords(ownerA)).items.some((item) => item.id === actual.id));
+  await assert.rejects(getImportRecordDetail(ownerA, actual.id),
+    (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_IMPORT_RECORD_NOT_FOUND');
+  await assert.rejects(getIngestSnapshot(ownerA, accepted[0]!.job.id),
+    (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_JOB_NOT_FOUND');
+  await assert.rejects(readIngestCommand(ownerA, firstInput.operationId),
+    (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_JOB_NOT_FOUND');
+  await assert.rejects(readIngestRecovery(ownerA, accepted[0]!.job.id),
+    (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_JOB_NOT_FOUND');
+  await assert.rejects(retryIngestCommand({ userId: ownerA, jobId: accepted[0]!.job.id,
+    operationId: randomUUID(), expectedAttempt: 1, expectedVersion: 0, enqueue: false }),
+  (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_JOB_NOT_FOUND');
+  checks.push('deleted-record-detail-job-receipt-recovery-and-retry-are-unavailable');
+
+  const reimported = await acceptIngestCommand(input(rawA));
+  const replacement = await db.importRecord.findFirstOrThrow({ where: { jobId: reimported.job.dbId, userId: ownerA } });
+  assert.equal(reimported.disposition, 'created');
+  assert.notEqual(reimported.job.dbId, acceptedJobId);
+  assert.notEqual(replacement.id, actual.id);
+  assert.equal(replacement.activeNormalizedUrl, actual.normalizedUrl);
+  assert.equal(await db.importRecord.count({ where: { userId: ownerA, normalizedUrl: actual.normalizedUrl } }), 2);
+  assert.notEqual((await db.ingestJob.findUniqueOrThrow({ where: { id: reimported.job.dbId } })).sourceHash, deletedJob.sourceHash);
+  assert.equal((await getImportRecordDetail(ownerB, (await db.importRecord.findFirstOrThrow({ where: { jobId: other.job.dbId } })).id)).ingest_id, other.job.id);
+  checks.push('same-owner-reimport-gets-new-record-and-job-while-second-owner-stays-intact');
+
+  await deleteImportRecord(ownerA, winner.recordId);
+  assert.ok((await db.inspiration.findUniqueOrThrow({ where: { id: inspirationId } })).deletedAt);
+  assert.ok(!(await listLibraryInspirationsForUser(ownerA)).some((item) => item.id === inspirationId));
+  assert.deepEqual(await new PrismaPlannerSourceRepository(db).getInspirations(ownerA, [inspirationId]), []);
+  await assert.rejects(getIngestResult(ownerA, `ing_${winner.jobId}`),
+    (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_JOB_NOT_FOUND');
+  checks.push('linked-inspiration-library-result-and-planner-source-disappear-without-deleting-shared-poi');
 } finally {
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, JSON.stringify({ kind: 'story-1-8-isolated-postgresql-schema-probe',
-    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 18,
+    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 23,
     realProviderCalls: 0, databaseScope: 'guarded-isolated-synthetic-only' }, null, 2) + '\n');
   await db.$disconnect();
 }
 
-assert.equal(checks.length, 18);
+assert.equal(checks.length, 23);

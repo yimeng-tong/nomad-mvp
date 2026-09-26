@@ -153,6 +153,26 @@ paths:
         '403': { $ref: '#/components/responses/Error403' }
         '404': { $ref: '#/components/responses/Error404' }
         '503': { $ref: '#/components/responses/Error503' }
+    delete:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
+      tags: [Library]
+      summary: Revoke one owned import record and its source read paths
+      description: Atomically tombstones the owner record, fences its ingest job and hides the linked inspiration. Returns a neutral missing response for unknown, foreign or already deleted records. Shared POIs and media objects are not deleted by this request.
+      operationId: deleteImportRecord
+      parameters:
+        - in: path
+          name: record_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '204': { description: Owner record revoked; no response body }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '404': { $ref: '#/components/responses/Error404' }
+        '409': { $ref: '#/components/responses/Error409' }
+        '503': { $ref: '#/components/responses/Error503' }
 
   /library/inspirations/{inspiration_id}/candidates:
     get:

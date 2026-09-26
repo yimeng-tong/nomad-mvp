@@ -8,8 +8,8 @@ export async function assertImportRecordSchema(db: PrismaClient): Promise<void> 
     await db.$queryRaw`SELECT deleted_at FROM "IngestJob" LIMIT 0`;
     await db.$queryRaw`SELECT deleted_at FROM "Inspiration" LIMIT 0`;
     const rows = await db.$queryRaw<Array<{ ok: boolean }>>`SELECT (
-      EXISTS(SELECT 1 FROM pg_index i JOIN pg_class c ON c.oid=i.indexrelid
-        WHERE i.indrelid='"ImportRecord"'::regclass AND c.relname='ImportRecord_userId_normalized_url_key' AND i.indisunique)
+      NOT EXISTS(SELECT 1 FROM pg_index i JOIN pg_class c ON c.oid=i.indexrelid
+        WHERE i.indrelid='"ImportRecord"'::regclass AND c.relname='ImportRecord_userId_normalized_url_key')
       AND EXISTS(SELECT 1 FROM pg_index i JOIN pg_class c ON c.oid=i.indexrelid
         WHERE i.indrelid='"ImportRecord"'::regclass AND c.relname='ImportRecord_userId_active_normalized_url_key' AND i.indisunique)
       AND EXISTS(SELECT 1 FROM pg_index i JOIN pg_class c ON c.oid=i.indexrelid

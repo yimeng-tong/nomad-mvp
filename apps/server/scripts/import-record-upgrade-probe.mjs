@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const migrationName = '20260926000200_story_1_8_deletion_lifecycle_foundation';
+const activeUniqueMigrationName = '20260926000300_story_1_8_active_import_record_uniqueness';
 const upgradeDatabase = 'nomad_auth_test_import_upgrade';
 const migrationRoot = fileURLToPath(new URL('../../../packages/prisma/migrations/', import.meta.url));
 const reportPath = process.env.NOMAD_IMPORT_UPGRADE_REPORT || '/tmp/nomad-import-record-upgrade-probe.json';
@@ -75,6 +76,34 @@ try {
         AND c.relname IN ('ImportRecord_userId_normalized_url_key','ImportRecord_userId_active_normalized_url_key');
   `], 'VERIFY_INDEXES'), '2');
   checks.push('old-and-new-owner-unique-indexes-coexist-before-delete-is-enabled');
+
+  psql(upgradeDatabase, ['-f', join(migrationRoot, activeUniqueMigrationName, 'migration.sql')], 'ACTIVE_UNIQUE_MIGRATION');
+  assert.equal(psql(upgradeDatabase, ['-A', '-t', '-c', `
+    SELECT count(*) FROM pg_index i JOIN pg_class c ON c.oid=i.indexrelid
+      WHERE i.indrelid='"ImportRecord"'::regclass AND i.indisunique
+        AND c.relname='ImportRecord_userId_active_normalized_url_key';
+  `], 'VERIFY_ACTIVE_INDEX'), '1');
+  assert.equal(psql(upgradeDatabase, ['-A', '-t', '-c', `
+    SELECT count(*) FROM pg_class WHERE relname='ImportRecord_userId_normalized_url_key';
+  `], 'VERIFY_OLD_INDEX_RELEASED'), '0');
+  checks.push('active-only-index-replaces-old-key-after-preflight-without-rewriting-identity');
+
+  psql(upgradeDatabase, ['-c', `
+    UPDATE "ImportRecord" SET deleted_at=NOW(), active_normalized_url=NULL
+      WHERE id='10000000-0000-4000-8000-000000000203';
+    INSERT INTO "IngestJob" (id, "userId", source_type, source_hash, auth_version)
+      VALUES ('10000000-0000-4000-8000-000000000204', '10000000-0000-4000-8000-000000000201', 'xhs', 'synthetic-reimport-source-hash', 0);
+    INSERT INTO "ImportRecord" (id, "userId", job_id, normalized_url, active_normalized_url, normalization_version, original_url_protected)
+      VALUES ('10000000-0000-4000-8000-000000000205', '10000000-0000-4000-8000-000000000201',
+        '10000000-0000-4000-8000-000000000204', 'https://www.xiaohongshu.com/explore/synthetic-upgrade',
+        'https://www.xiaohongshu.com/explore/synthetic-upgrade', 'xhs-import-v1',
+        '{"version":"1","key_id":"synthetic","iv":"synthetic","tag":"synthetic","ciphertext":"synthetic"}'::jsonb);
+  `], 'VERIFY_TOMBSTONE_AND_REIMPORT');
+  assert.equal(psql(upgradeDatabase, ['-A', '-t', '-c', `
+    SELECT count(*) FROM "ImportRecord" WHERE "userId"='10000000-0000-4000-8000-000000000201'
+      AND normalized_url='https://www.xiaohongshu.com/explore/synthetic-upgrade';
+  `], 'VERIFY_TWO_VERSIONED_ROWS'), '2');
+  checks.push('tombstone-retains-immutable-url-while-a-new-owner-record-uses-released-active-key');
 } catch (error) {
   failure = error instanceof Error ? error.message : 'IMPORT_UPGRADE_UNKNOWN_FAILURE';
 } finally {
@@ -84,7 +113,7 @@ try {
   }
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, JSON.stringify({ kind: 'story-1-8-isolated-upgrade-probe',
-    headSha: process.env.GITHUB_SHA || null, checks, completed: failure === null && checks.length === 5,
+    headSha: process.env.GITHUB_SHA || null, checks, completed: failure === null && checks.length === 7,
     failureStage: failure, databaseScope: 'guarded-separate-synthetic-only', realProviderCalls: 0 }, null, 2) + '\n');
 }
 if (failure) throw new Error(failure);

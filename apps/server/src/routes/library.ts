@@ -2,6 +2,7 @@ import fp from 'fastify-plugin';
 import { authGuard } from '../plugins/auth.js';
 import { listLibraryCandidatesForUser, listLibraryCitiesForUser, listLibraryInspirationsForUser } from '../ingest/store.js';
 import { getImportRecordDetail, listImportRecords } from '../ingest/import-record-read.js';
+import { deleteImportRecord } from '../ingest/import-record-delete.js';
 import { getPrisma } from '../db/prisma.js';
 import { AuthFault } from '../auth/errors.js';
 import type { FastifyReply, FastifyRequest } from 'fastify';
@@ -59,5 +60,11 @@ export default fp(async (app) => {
   app.get<{ Params: { recordId: string } }>('/library/import-records/:recordId', { preHandler: authGuard }, async (req, reply) => safeRead(reply, async () => {
     reply.header('Cache-Control', 'no-store');
     return getImportRecordDetail(req.user!.id, req.params.recordId);
+  }));
+
+  app.delete<{ Params: { recordId: string } }>('/library/import-records/:recordId', { preHandler: authGuard }, async (req, reply) => safeRead(reply, async () => {
+    reply.header('Cache-Control', 'no-store');
+    await deleteImportRecord(req.user!.id, req.params.recordId);
+    return reply.code(204).send();
   }));
 });

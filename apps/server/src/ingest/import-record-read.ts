@@ -8,7 +8,7 @@ const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}
 const cursorPattern = /^[A-Za-z0-9_-]{1,256}$/u;
 const recordSelect = {
   id: true, jobId: true, status: true, sourceTitle: true, createdAt: true, updatedAt: true,
-  inspirations: { take: 1, select: { id: true, locateStatus: true,
+  inspirations: { where: { deletedAt: null }, take: 1, select: { id: true, locateStatus: true,
     poi: { select: { name: true, address: true } }, _count: { select: { assets: true } } } },
 } as const;
 type RecordRow = Prisma.ImportRecordGetPayload<{ select: typeof recordSelect }>;
@@ -61,7 +61,7 @@ export async function listImportRecords(userId: string, input: { limit?: string;
   }
   const rows = await authAuthority(() => db.$transaction(async (tx) => {
     await lockQualifiedOwner(tx, ownerId);
-    return tx.importRecord.findMany({ where: { userId: ownerId,
+    return tx.importRecord.findMany({ where: { userId: ownerId, deletedAt: null,
       ...(cursor ? { OR: [{ createdAt: { lt: new Date(cursor.t) } },
         { createdAt: new Date(cursor.t), id: { lt: cursor.id } }] } : {}) },
     select: recordSelect, orderBy: [{ createdAt: 'desc' }, { id: 'desc' }], take: limit + 1 });
@@ -78,15 +78,15 @@ export async function getImportRecordDetail(userId: string, recordId: string) {
     if (!fixtureAuth()) throw new AuthFault('AUTH_AUTHORITY_UNAVAILABLE', 503, true);
     throw new AuthFault('LIBRARY_IMPORT_RECORD_NOT_FOUND', 404);
   }
-  const row = await authAuthority(() => db.$transaction(async (tx) => {
+  return authAuthority(() => db.$transaction(async (tx) => {
     await lockQualifiedOwner(tx, ownerId);
-    return tx.importRecord.findFirst({ where: { id: recordId, userId: ownerId },
+    const row = await tx.importRecord.findFirst({ where: { id: recordId, userId: ownerId, deletedAt: null },
       select: { ...recordSelect, originalUrlProtected: true } });
+    if (!row) throw new AuthFault('LIBRARY_IMPORT_RECORD_NOT_FOUND', 404);
+    let originalUrl: string;
+    try { originalUrl = openImportOriginalUrl(row.originalUrlProtected as unknown as ProtectedImportUrl,
+      { ownerId, recordId: row.id }, loadImportUrlKeyring(process.env)); }
+    catch { throw new AuthFault('INGEST_URL_PROTECTION_UNAVAILABLE', 503, true); }
+    return { ...publicRecord(row), original_url: originalUrl };
   }));
-  if (!row) throw new AuthFault('LIBRARY_IMPORT_RECORD_NOT_FOUND', 404);
-  let originalUrl: string;
-  try { originalUrl = openImportOriginalUrl(row.originalUrlProtected as unknown as ProtectedImportUrl,
-    { ownerId, recordId: row.id }, loadImportUrlKeyring(process.env)); }
-  catch { throw new AuthFault('INGEST_URL_PROTECTION_UNAVAILABLE', 503, true); }
-  return { ...publicRecord(row), original_url: originalUrl };
 }

@@ -1,0 +1,19 @@
+{
+  "kind": "story-1-8-deletion-server-local-validation",
+  "priorHead": "c6fd134910cd3fe6ed2bc0db63c3257c1206f43f",
+  "change": "Release only the old ImportRecord unique index after an active-key preflight. Add owner-qualified tombstone DELETE that fences the job, hides linked inspirations, blocks new source reads and permits a fresh same-owner record/job on reimport.",
+  "checks": {
+    "prismaSchemaValidate": "passed-with-synthetic-nonconnecting-DATABASE_URL",
+    "prismaSchemaDiff": "only-the-old-unique-index-drop; handwritten migration adds-active-key-preflight",
+    "openapiTypesGenerated": "passed",
+    "workspaceBuild": "passed",
+    "fullTypedLint": "passed",
+    "fixtureHttpRouteTest": 1,
+    "plannerRepositoryTests": 12,
+    "mobileTypecheck": "passed",
+    "diffWhitespace": "passed",
+    "isolatedOldRowUpgrade": "7-pending-next-CI",
+    "isolatedPostgresqlDeletion": "23-pending-next-CI"
+  },
+  "limits": "No local PostgreSQL service was used. The server tombstones private rows but retains encrypted original and immutable normalized URL for audit. There is no product delete control or durable Dock cache revocation yet; storage-object cleanup, actual concurrent delete/admit races, production/PITR and native devices remain open."
+}

@@ -35,6 +35,11 @@ export interface paths {
      * @description Decrypts the selected original URL only after current owner qualification; no ingest state transition occurs.
      */
     get: operations["getImportRecordDetail"];
+    /**
+     * Revoke one owned import record and its source read paths
+     * @description Atomically tombstones the owner record, fences its ingest job and hides the linked inspiration. Returns a neutral missing response for unknown, foreign or already deleted records. Shared POIs and media objects are not deleted by this request.
+     */
+    delete: operations["deleteImportRecord"];
   };
   "/library/inspirations/{inspiration_id}/candidates": {
     /** List sanitized pending-location candidates for an inspiration */
@@ -1551,6 +1556,28 @@ export interface operations {
       401: components["responses"]["Error401"];
       403: components["responses"]["Error403"];
       404: components["responses"]["Error404"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  /**
+   * Revoke one owned import record and its source read paths
+   * @description Atomically tombstones the owner record, fences its ingest job and hides the linked inspiration. Returns a neutral missing response for unknown, foreign or already deleted records. Shared POIs and media objects are not deleted by this request.
+   */
+  deleteImportRecord: {
+    parameters: {
+      path: {
+        record_id: string;
+      };
+    };
+    responses: {
+      /** @description Owner record revoked; no response body */
+      204: {
+        content: never;
+      };
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      404: components["responses"]["Error404"];
+      409: components["responses"]["Error409"];
       503: components["responses"]["Error503"];
     };
   };

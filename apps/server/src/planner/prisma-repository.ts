@@ -3,7 +3,6 @@ import { Prisma, type PrismaClient } from '@prisma/client';
 import { getPrisma } from '../db/prisma.js';
 import { dbUserIdFor } from '../ingest/store.js';
 import { fixtureAuth, lockJobOwner, lockQualifiedOwner } from '../auth/owner.js';
-import { AuthFault } from '../auth/errors.js';
 import {
   PlannerExecutionLeaseLost,
   PlannerRepositoryConflict,
@@ -1241,7 +1240,8 @@ export class PrismaPlannerRepository implements PlannerRepository {
             ${slot.start_local}, ${slot.end_local}, ${timezone},
             ${slot.type}::"SlotType", ${slot.origin}::"SlotOrigin", ${slot.title ?? null},
             (SELECT id FROM "CanonicalPOI" WHERE id::text = ${slot.poi?.poi_id ?? ''} LIMIT 1),
-            (SELECT id FROM "Inspiration" WHERE id::text = ${slot.inspiration_id ?? ''} LIMIT 1),
+            (SELECT id FROM "Inspiration" WHERE id::text = ${slot.inspiration_id ?? ''}
+              AND deleted_at IS NULL AND "userId"=(SELECT "userId" FROM "Plan" WHERE id=${planId}::uuid) LIMIT 1),
             ${JSON.stringify({ api_slot_id: slot.slot_id })}::jsonb,
             ${JSON.stringify({ warning_codes: slot.warning_codes ?? [] })}::jsonb,
             'none'::"Conflict", NOW(), NOW()
@@ -1258,7 +1258,8 @@ export class PrismaPlannerRepository implements PlannerRepository {
             VALUES (
               ${randomUUID()}::uuid, ${planId}::uuid, ${versionId}::uuid,
               ${constraint.item_id},
-              (SELECT id FROM "Inspiration" WHERE id::text = ${slot.inspiration_id ?? ''} LIMIT 1),
+              (SELECT id FROM "Inspiration" WHERE id::text = ${slot.inspiration_id ?? ''}
+                AND deleted_at IS NULL AND "userId"=(SELECT "userId" FROM "Plan" WHERE id=${planId}::uuid) LIMIT 1),
               (SELECT id FROM "CanonicalPOI" WHERE id::text = ${constraint.poi_id ?? ''} LIMIT 1),
               ${constraint.date ? new Date(`${constraint.date}T00:00:00.000Z`) : null},
               ${constraint.start_local ?? null}, ${constraint.end_local ?? null},
@@ -1295,7 +1296,8 @@ export class PrismaPlannerRepository implements PlannerRepository {
         VALUES (
           ${randomUUID()}::uuid, ${planId}::uuid, ${versionId}::uuid,
           ${candidate.item_id},
-          (SELECT id FROM "Inspiration" WHERE id::text = ${candidate.item_id} LIMIT 1),
+          (SELECT id FROM "Inspiration" WHERE id::text = ${candidate.item_id}
+            AND deleted_at IS NULL AND "userId"=(SELECT "userId" FROM "Plan" WHERE id=${planId}::uuid) LIMIT 1),
           (SELECT id FROM "CanonicalPOI" WHERE id::text = ${candidate.poi?.poi_id ?? ''} LIMIT 1),
           ${candidate.status}, ${candidate.source}, ${JSON.stringify(candidate.poi ?? {})}::jsonb,
           ${candidate.reason}, ${candidate.quality ?? null}::"QualityGrade",
@@ -1328,7 +1330,8 @@ export class PrismaPlannerRepository implements PlannerRepository {
         VALUES (
           ${randomUUID()}::uuid, ${planId}::uuid, ${versionId}::uuid,
           ${unresolved.item_id},
-          (SELECT id FROM "Inspiration" WHERE id::text = ${unresolved.item_id} LIMIT 1),
+          (SELECT id FROM "Inspiration" WHERE id::text = ${unresolved.item_id}
+            AND deleted_at IS NULL AND "userId"=(SELECT "userId" FROM "Plan" WHERE id=${planId}::uuid) LIMIT 1),
           (SELECT id FROM "CanonicalPOI" WHERE id::text = ${unresolved.poi_id ?? ''} LIMIT 1),
           ${unresolved.reason_code}::"UnresolvedReason", ${unresolved.message}, NOW()
         )

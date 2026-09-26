@@ -1,0 +1,33 @@
+{
+  "kind": "story-1-8-deletion-schema-ci-verification",
+  "sourceRevision": "c6fd134910cd3fe6ed2bc0db63c3257c1206f43f",
+  "workflowRun": "36231375405",
+  "workflowConclusion": "success",
+  "jobs": {
+    "Canonical browser environment and product entry": "success",
+    "build-and-test": "success"
+  },
+  "isolatedPostgresql": {
+    "artifactId": "10901584629",
+    "zipSha256": "40ee78a7aa689b9245c35272c7f1218d629ab5172921b25cdea8c3a316a7a32a",
+    "zipEntries": 1,
+    "zipCrc": "all-passed",
+    "headShaMatchesWorkflow": true,
+    "checks": 18,
+    "completed": true,
+    "realProviderCalls": 0
+  },
+  "oldRowUpgrade": {
+    "artifactId": "10901464745",
+    "zipSha256": "7f550adb97b28a9dd8e3f05c61eb4f10105eef34401421b6eb64c113d89cd9b3",
+    "zipEntries": 1,
+    "zipCrc": "all-passed",
+    "headShaMatchesWorkflow": true,
+    "checks": 5,
+    "completed": true,
+    "failureStage": null,
+    "databaseScope": "guarded-separate-synthetic-only",
+    "realProviderCalls": 0
+  },
+  "scope": "The additive deletion-lifecycle columns and active URL index passed fresh and prior-row synthetic PostgreSQL checks. The old unique index remained in this revision; no delete API, real data migration, production backup/PITR, native device or object cleanup was validated."
+}

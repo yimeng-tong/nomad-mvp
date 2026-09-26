@@ -68,6 +68,8 @@ recovery_ui_integration_acceptance: _bmad-output/implementation-artifacts/story-
 
 更新：`aed0885`完整CI36230649027两job通过，隔离PG十七项含合成23505回滚/新事务恢复；证据见`unique-conflict-ci-verification.json`。工作树现只准备T4加法生命周期结构和独立旧record升级探针，旧唯一索引与受保护URL约束保留，尚无删除API或重提语义；本地schema/build/lint通过，升级PG/十八项探针待下一轮CI。继续保持Story1.8 in-progress与3.1 paused，生产数据、备份、真实短链和原生门槛未关闭。
 
+最新已提交`c6fd134`完整CI36231375405两job通过，主隔离PG十八项、独立旧record升级五项HEAD/CRC一致；证据`deletion-schema-ci-verification.json`。工作树现接T4服务端作废与重提局部：预检后释放旧唯一索引，owner DELETE事务栅栏job并隐藏来源，新受理沿活动键生成新record/job；OpenAPI/类型/读路径/Planner已改，PG23项与升级七项待下一CI。本地schema/build/lint和路由/Planner定向测试通过。移动删除控件、Dock缓存撤权、活跃SSE/对象生命周期、真实库审计/PITR与设备仍开放，Story1.8继续in-progress、不准备1.9，3.1仍暂停。
+
 Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不提前准备1.9。
 
 ## 当前执行交接（2026-09-25）

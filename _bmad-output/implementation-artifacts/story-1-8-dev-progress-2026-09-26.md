@@ -33,3 +33,7 @@ T1数据库结构草案：在现有1.7迁移后新增加法`ImportRecord`表与�
 `aed0885`已通过完整CI`36230649027`两job。隔离PG新增SQLSTATE23505回滚/新事务恢复检查使探针达十七项，1文件ZIP CRC/HEAD/零真实Provider调用核对通过，详见`unique-conflict-ci-verification.json`。这验证合成唯一异常路径，不等于真实旁路写入竞争或生产库审计。
 
 下一局部切片先为T4准备加法数据库结构，尚不开放删除：ImportRecord新增活动URL键与作废时间，IngestJob/Inspiration新增作废时间；旧唯一键和受保护URL必填仍保留。新迁移回填旧record的活动键并加第二个owner唯一索引；新写同步填入两个键，启动预检要求新列/索引/约束。独立CI升级探针将先在新合成PG库应用此前七个迁移并插入旧record，再应用本迁移核验保留与回填。本地Prisma validate在提供非连接合成URL后通过、workspace build/定向typed lint通过；初次validate仅因未配置DATABASE_URL失败，未连接任何数据库。见`deletion-schema-local-validation.json`及`docs/ops/import-record-url-protection.md`。下一轮隔离PG十八项及升级探针未运行；删除API、旧唯一键释放、worker/SSE/Planner撤权及对象生命周期仍全部开放。
+
+`c6fd134`完整CI`36231375405`两job通过；主隔离PG十八项与独立旧record升级五项均从产物核对HEAD、完整、CRC，详见`deletion-schema-ci-verification.json`。该提交仍保留旧唯一键且没有删除入口。
+
+随后工作树进入T4服务端局部：第二迁移在活动键/唯一索引预检通过后才删除旧`(userId,normalizedUrl)`索引，旧record原URL与policy版本不重写；owner DELETE同事务作废record/job/关联Inspiration、撤销pending/lease并增长fence。受理按活动键查找，删除后新record/job若碰旧sourceHash改用独立派生hash；新读回、回执、重试、恢复、Library与Planner来源排除已删项，跨owner/未知给中性404。OpenAPI/生成类型已同步，隔离PG探针增至23项并将独立升级探针扩至七项。当前仅本地Prisma schema/build/OpenAPI/typed lint、fixture路由1项与Planner12项通过，见`deletion-server-local-validation.json`；真实PG执行和完整CI待新提交。产品删除控件、Dock持久缓存撤权、活跃SSE残帧、对象清理和实际生产备份仍开放，不把服务端逻辑作产品完整删除验收。

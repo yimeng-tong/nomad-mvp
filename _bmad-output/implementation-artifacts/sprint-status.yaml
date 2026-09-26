@@ -317,7 +317,7 @@ condition_progress:
       summary: Story已进入本地/隔离开发；生产备份、PITR及恢复目标无本Story证据。
     DB-CHANGE-01:
       state: in-progress
-      summary: aed0885完整CI隔离PG十七项含P2002合成回滚/新事务恢复通过。T4加法作废字段与活动URL键本地schema/build通过，旧record升级及十八项PG待下一CI；删除未开放，旧数据审计/生产恢复仍待验。
+      summary: c6fd134完整CI主隔离PG十八项与独立旧record升级五项通过。后续旧唯一索引释放/owner作废与重提服务端代码本地构建通过，PG23项及升级七项待CI；生产旧数据审计、PITR与完整删除仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-validation.json
@@ -333,6 +333,8 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/unique-conflict-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/unique-conflict-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-schema-local-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-schema-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-server-local-validation.json
     METRICS-01:
       state: not-started
     METRICS-02:
@@ -343,7 +345,7 @@ condition_progress:
       state: not-started
     CODE-QUALITY-01:
       state: in-progress
-      summary: 限1.8当前受理/读取/UI切片：aed0885完整CI两job通过；后续T4加法schema/迁移/探针本地validate、build和定向lint通过，待下一CI及整Story其余代码。
+      summary: 限1.8已提交切片c6fd134完整CI两job通过；后续T4作废/重提服务端代码本地Prisma/schema/OpenAPI/构建、typed lint及路由/Planner定向测试通过，待下一CI与产品UI/整Story。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/validation.json
@@ -356,6 +358,8 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/unique-conflict-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/unique-conflict-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-schema-local-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-schema-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-server-local-validation.json
     UI-COMPONENT-01:
       state: in-progress
       summary: Home灵感页共享Button/AsyncState/私有Sheet记录区域、owner遮蔽/复制失败单测与c031147三引擎B32/B33通过；原生与删除状态待验。

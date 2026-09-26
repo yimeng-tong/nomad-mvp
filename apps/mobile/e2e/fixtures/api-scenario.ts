@@ -226,6 +226,7 @@ export class ApiScenario {
     const declared = method === 'GET' && ['/api/library/cities', '/api/library/inspirations', '/api/library/import-records', '/api/user-key',
       '/api/library/inspirations/fixture-A/candidates', '/api/library/inspirations/fixture-B/candidates'].includes(path)
       || method === 'GET' && !!recordDetail
+      || method === 'DELETE' && !!recordDetail
       || method === 'POST' && ['/api/logout', '/api/home/input/parse', '/api/ingest/xhs'].includes(path)
       || method === 'GET' && !!command && this.commands.has(command[1])
       || !!job && !!match && (method === 'GET' && match[2] !== 'retry' || method === 'POST' && match[2] === 'retry');
@@ -263,6 +264,12 @@ export class ApiScenario {
       if (!owned) { await this.json(route, fault('LIBRARY_IMPORT_RECORD_NOT_FOUND'), 404); return; }
       const detail: Schema['LibraryImportRecordDetail'] = { ...this.importRecord(owner), original_url: `https://xhslink.com/synthetic-${owner}#copied` };
       await this.json(route, detail); return;
+    }
+    if (method === 'DELETE' && recordDetail) {
+      const owned = this.importRecords === 'sample' && recordDetail[1] === this.importRecord(owner).id;
+      if (!owned) { await this.json(route, fault('LIBRARY_IMPORT_RECORD_NOT_FOUND'), 404); return; }
+      this.importRecords = 'empty';
+      await route.fulfill({ status: 204, headers: { 'Cache-Control': 'no-store' }, body: '' }); return;
     }
     if (method === 'GET' && path === `/api/library/inspirations/fixture-${owner}/candidates`) {
       await this.json(route, { candidates: [{ candidate_id: `candidate-${owner}`, name: `${owner}的合成候选`, address: '合成地址，仅用于界面测试' }] } satisfies Schema['LibraryCandidatesResponse']); return;

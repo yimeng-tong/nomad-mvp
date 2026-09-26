@@ -2,7 +2,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { ImportDockController } from './dock-controller';
 import { commitIdentity, markChecking } from '../auth/session-context';
 import { AuthApiError } from '../auth/api';
-import type { HomeApiClient, IngestAcceptedResponse, IngestSnapshot } from './api';
+import type { HomeApiClient, IngestAcceptedResponse, IngestSnapshot, IngestXhsRequest } from './api';
 import { createJournalFixture } from './journal.test-support';
 import { JournalError } from './operation-journal';
 
@@ -21,7 +21,7 @@ function fixture() {
       const links = text.split(/\s+/).map((url) => { const position = text.indexOf(url, offset); offset = position + url.length; return { url, position }; });
       return { type: 'xhs_link' as const, original_text: text, links, link_occurrences: links, unrecognized: [] };
     }),
-    startIngest: vi.fn(async (request) => ack(request.operation_id!)),
+    startIngest: vi.fn(async (request: IngestXhsRequest) => ack(request.operation_id!)),
     getIngestCommand: vi.fn(), getIngestSnapshot: vi.fn(async (id) => snapshot(id)), retryIngest: vi.fn(),
   };
   const journal = createJournalFixture();
@@ -56,6 +56,54 @@ it('recovers an unknown acceptance using the original command without posting a 
   expect(api.getIngestCommand).toHaveBeenCalledWith(operationId);
   expect(api.startIngest).toHaveBeenCalledTimes(1);
   expect(controller.getSnapshot().entries[0].jobId).toBe('existing-job');
+});
+
+it('a confirmed deletion clears the job and local receipt without erasing an unrelated draft', async () => {
+  const { api, controller, journal } = fixture(); controllers.push(controller);
+  const jobId = `ing_${crypto.randomUUID()}`;
+  vi.mocked(api.startIngest).mockImplementation(async (request) => ack(request.operation_id!, jobId));
+  const inputId = 'a'.repeat(64);
+  controller.adoptInput({ id: inputId, text: 'https://xhslink.com/a', ownerId: 'owner-a', channel: null, clickId: null, expiresAt: Date.now() + 100000 });
+  await controller.submit();
+  await vi.waitFor(() => expect(controller.getSnapshot().entries[0]?.jobId).toBe(jobId));
+  expect(await journal.claimed(inputId)).toBe(true);
+  controller.setInput('保留的其他旅行想法');
+  expect(await controller.forgetDeletedJob(jobId)).toBe(true);
+  expect(controller.getSnapshot().entries).toHaveLength(0);
+  expect(controller.getSnapshot().input).toBe('保留的其他旅行想法');
+  expect(await journal.list({ ownerId: 'owner-a', valid: () => true })).toHaveLength(0);
+  expect(await journal.claimed(inputId)).toBe(false);
+});
+
+it('a neutral missing job on reconciliation removes its stale local receipt', async () => {
+  const { api, controller, journal } = fixture(); controllers.push(controller);
+  const jobId = `ing_${crypto.randomUUID()}`;
+  vi.mocked(api.startIngest).mockImplementation(async (request) => ack(request.operation_id!, jobId));
+  controller.setInput('https://xhslink.com/a'); await controller.submit();
+  await vi.waitFor(() => expect(controller.getSnapshot().entries[0]?.jobId).toBe(jobId));
+  vi.mocked(api.getIngestSnapshot!).mockRejectedValue(new AuthApiError('not found', { status: 404, code: 'INGEST_JOB_NOT_FOUND' }));
+  await controller.reconcile();
+  expect(controller.getSnapshot().entries).toHaveLength(0);
+  expect(await journal.list({ ownerId: 'owner-a', valid: () => true })).toHaveLength(0);
+});
+
+it('disposes the watched job and ignores a frame queued before confirmed deletion', async () => {
+  const { api, controller } = fixture(); controllers.push(controller);
+  const jobId = `ing_${crypto.randomUUID()}`, stop = vi.fn();
+  let lateFrame!: (value: IngestSnapshot) => boolean, lateError!: () => void;
+  vi.mocked(api.startIngest).mockImplementation(async (request) => ack(request.operation_id!, jobId));
+  api.watchIngest = vi.fn((_id: string, receive: (value: IngestSnapshot) => boolean, failed: () => void) => {
+    lateFrame = receive; lateError = failed; return stop;
+  });
+  controller.setVisible(true);
+  controller.setInput('https://xhslink.com/a'); await controller.submit();
+  await vi.waitFor(() => expect(api.watchIngest).toHaveBeenCalledTimes(1));
+  expect(await controller.forgetDeletedJob(jobId)).toBe(true);
+  expect(stop).toHaveBeenCalledTimes(1);
+  expect(lateFrame(snapshot(jobId, 'fetching', 2))).toBe(false);
+  lateError();
+  expect(controller.getSnapshot().entries).toHaveLength(0);
+  expect(controller.getSnapshot().presenting).toBeNull();
 });
 
 it('retains an uncertain retry identity and reconciles the same operation before another request', async () => {
@@ -95,9 +143,9 @@ it('a known capability rejection is not an accepted or unknown job', async () =>
   controller.setInput('https://xhslink.com/a'); await controller.submit();
   await vi.waitFor(() => expect(controller.getSnapshot().entries[0].acceptance).toBe('rejected'));
   expect(controller.getSnapshot().entries[0].jobId).toBeUndefined();
-  controller.setInput('保留新草稿'); controller.restoreEntry(controller.getSnapshot().entries[0].id);
+  controller.setInput('保留新草稿'); await controller.restoreEntry(controller.getSnapshot().entries[0].id);
   expect(controller.getSnapshot().input).toBe('保留新草稿\nhttps://xhslink.com/a');
-  controller.setInput('https://xhslink.com/abc'); controller.restoreEntry(controller.getSnapshot().entries[0].id);
+  controller.setInput('https://xhslink.com/abc'); await controller.restoreEntry(controller.getSnapshot().entries[0].id);
   expect(controller.getSnapshot().input).toBe('https://xhslink.com/abc\nhttps://xhslink.com/a');
   expect(api.startIngest).toHaveBeenCalledTimes(1);
 });
@@ -105,7 +153,7 @@ it('a known capability rejection is not an accepted or unknown job', async () =>
 it('uses one stream at a time, disposes it off Home, and bounds failed-stream recovery', async () => {
   const { api, controller } = fixture(); controllers.push(controller);
   const stop = vi.fn(); let fail!: () => void;
-  api.watchIngest = vi.fn((_id, _snapshot, onError) => { fail = onError; return stop; });
+  api.watchIngest = vi.fn((_id: string, _snapshot: (value: IngestSnapshot) => boolean, onError: () => void) => { fail = onError; return stop; });
   controller.setInput('https://xhslink.com/a https://xhslink.com/b'); await controller.submit();
   await vi.waitFor(() => expect(controller.getSnapshot().entries.every((entry) => entry.acceptance === 'accepted')).toBe(true));
   controller.setVisible(true); await controller.reconcile();
@@ -119,7 +167,7 @@ it('uses one stream at a time, disposes it off Home, and bounds failed-stream re
 it('an earlier failed event cannot stop a stream after a newer retry snapshot', async () => {
   const { api, controller } = fixture(); controllers.push(controller);
   let event!: (value: IngestSnapshot) => boolean;
-  api.watchIngest = vi.fn((_id, receive) => { event = receive; return vi.fn(); });
+  api.watchIngest = vi.fn((_id: string, receive: (value: IngestSnapshot) => boolean) => { event = receive; return vi.fn(); });
   controller.setInput('https://xhslink.com/a'); await controller.submit();
   await vi.waitFor(() => expect(controller.getSnapshot().entries[0].jobId).toBeTruthy());
   const id = controller.getSnapshot().entries[0].jobId!;
@@ -376,7 +424,7 @@ it('a throwing subscription preserves authoritative acceptance and uses bounded 
 it('disposes a synchronously terminal stream and ignores its later callbacks', async () => {
   const { api, controller } = fixture(); controllers.push(controller);
   const stop = vi.fn(); let staleError!: () => void; let staleFrame!: (value: IngestSnapshot) => boolean;
-  api.watchIngest = vi.fn((id, receive, failed) => { staleError = failed; staleFrame = receive; receive(snapshot(id, 'failed', 2)); return stop; });
+  api.watchIngest = vi.fn((id: string, receive: (value: IngestSnapshot) => boolean, failed: () => void) => { staleError = failed; staleFrame = receive; receive(snapshot(id, 'failed', 2)); return stop; });
   await controller.restore(); controller.setVisible(true); await controller.reconcile();
   controller.setInput('https://xhslink.com/sync-terminal'); await controller.submit();
   await vi.waitFor(() => expect(stop).toHaveBeenCalledTimes(1));
@@ -412,7 +460,7 @@ it('rebases a checkpoint saved by another tab after hiding, even when recovery s
  const job='ing_11111111-1111-4111-8111-111111111111',old='i1:22222222-2222-4222-8222-222222222222:101',fresh='i1:33333333-3333-4333-8333-333333333333:11';
  let saved={revision:crypto.randomUUID(),cursor:old,snapshot:{...snapshot(job,'parsing',100),head_cursor:old},observedDoneAttempt:0};
  journal.readCheckpoint=vi.fn(async()=>({value:saved,revision:saved.revision,corrupt:false}));
- api.getIngestRecovery=vi.fn(async(_id,input)=>({mode:'replay' as const,ingest_id:job,cursor:input.cursor!,head_cursor:saved.cursor,head_seq:saved.cursor.split(':')[2],replay_floor:'0'}));
+  api.getIngestRecovery=vi.fn(async(_id: string,input: { mode: 'replay' | 'resync'; cursor?: string })=>({mode:'replay' as const,ingest_id:job,cursor:input.cursor!,head_cursor:saved.cursor,head_seq:saved.cursor.split(':')[2],replay_floor:'0'}));
  api.watchDurableIngest=vi.fn(()=>vi.fn());vi.mocked(api.startIngest).mockImplementation(async r=>({...ack(r.operation_id!,job),snapshot:saved.snapshot}));vi.mocked(api.getIngestSnapshot!).mockImplementation(async()=>saved.snapshot);
  controller.setInput('https://xhslink.com/generation');await controller.submit();await vi.waitFor(()=>expect(controller.getSnapshot().entries[0].acceptance).toBe('accepted'));controller.setVisible(true);
  await vi.waitFor(()=>expect(api.watchDurableIngest).toHaveBeenCalledTimes(1));controller.setVisible(false);

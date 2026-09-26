@@ -59,6 +59,16 @@ function queueCompletion(state:DockState,incoming:Snapshot):DockState {
 }
 
 export function setDockVisibility(state: DockState, visible: boolean): DockState { return state.visible === visible ? state : { ...state, visible }; }
+/** A server-confirmed owner deletion must also remove queued presentation facts. */
+export function removeDeletedJob(state: DockState, jobId: string): DockState {
+  const entries = state.entries.filter((entry) => entry.jobId !== jobId);
+  const ids = new Set(entries.map((entry) => entry.id));
+  const batches = state.batches.map((batch) => ({ ...batch, entries: batch.entries.filter((entry) => ids.has(entry.id)) }))
+    .filter((batch) => batch.entries.length > 0 || batch.unrecognized.length > 0);
+  const queue = [state.presenting, ...state.completions].filter((entry): entry is Completion => !!entry && entry.jobId !== jobId);
+  return { ...state, entries, batches, presenting: queue[0] ?? null, completions: queue.slice(1),
+    seen: state.seen.filter((key) => !key.startsWith(`${jobId}:`)) };
+}
 export function elapseVisible(state: DockState, milliseconds: number): DockState {
   if (!state.visible || !state.presenting || !Number.isFinite(milliseconds) || milliseconds <= 0) return state;
   const left = state.presenting.remainingMs - milliseconds;

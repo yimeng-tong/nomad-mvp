@@ -48,7 +48,7 @@ preparation_validation: _bmad-output/implementation-artifacts/1-8-owner-import-r
 
 Status: in-progress
 
-当前合同已通过独立准备复核，处于已授权本地/隔离开发。ImportRecord、去重与 Home 灵感页记录区已有局部实现，删除/重新导入、旧数据回填、真实短链和原生验收未完成；完整进度见开发记录。源 Requirements 的 NFR3 与当前 delivery 绑定的 NFR8 均须满足，二者不可相互替代。11组源 GWT 与补充合同如下，实际 Tasks 和关闭证据继续保持 owner、设备和真实 PostgreSQL 门槛。
+当前合同已通过独立准备复核，处于已授权本地/隔离开发。ImportRecord、去重、Home 灵感页记录区与删除/重提均已有局部实现和隔离证据；旧数据回填、真实短链、生产对象生命周期和原生验收未完成，整张仍为in-progress。完整进度见开发记录。源 Requirements 的 NFR3 与当前 delivery 绑定的 NFR8 均须满足，二者不可相互替代。11组源 GWT 与补充合同如下，实际 Tasks 和关闭证据继续保持 owner、设备和真实 PostgreSQL 门槛。
 
 ## Story 与源验收合同
 
@@ -258,6 +258,7 @@ Codex；本次执行 bmad-create-story，仅建立开发上下文。
 - `4110c7e`完整CI及五项隔离PG约束探针已验证结构切片；本轮事件同事务状态/标题/结果投影与启动预检尚待新提交CI，生产/回填/受理仍开放。
 - `40a72e3`完整CI及八项隔离PG事件投影探针已通过；`a6362d3`十三项实际受理PG切片通过但整轮CI因旧非XHS历史job兼容失败，完整失败记录已保留。当前修复先查旧source hash，再对新受理执行版本化URL规则；下一轮CI待验。
 - 当前T1/T2/T3局部：新受理事务、密文原URL、owner列表/详情、Home共享记录区域及复制/身份遮蔽已实现；删除、旧数据迁移、真实短链/设备/生产密钥/恢复和完整浏览器证据尚未通过，开发任务与整张Story保持未勾选。
+- T4局部：`d55efe6`服务端作废/重提已通过隔离PG23项和旧record分阶段升级七项的完整CI；当前工作树的产品确认删除、Dock回执/claim撤权及Library选中项清理仅有本地移动295项与Chromium B34，尚待提交后完整CI。旧库审计/回填、活跃SSE残帧、实际共享对象生命周期、生产密钥/PITR及原生设备继续开放，T1–T5不据此勾选。
 
 ### File List
 

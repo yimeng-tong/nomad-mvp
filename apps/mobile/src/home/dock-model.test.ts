@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { addBatch, acceptEntry, applySnapshot, rebaseJobSnapshot, emptyDock, elapseVisible, setDockVisibility } from './dock-model';
+import { addBatch, acceptEntry, applySnapshot, rebaseJobSnapshot, removeDeletedJob, emptyDock, elapseVisible, setDockVisibility } from './dock-model';
 import type { components } from 'nomad-types/src/api-types';
 type Snapshot=components['schemas']['IngestSnapshot'];
 const snapshot=(id:string,version:number,state:Snapshot['state']='created'):Snapshot=>({ingest_id:id,attempt:1,state_version:version,state,source_title:'来源',partial:false,retriable:false,updated_at:'2026-09-19T00:00:00Z',result:state==='done'?{inspiration_id:id,asset_count:1,city_name:null,locate_status:'pending'}:null,stored_count:state==='done'?1:null,actions:{retry:false,view:state==='done'}});
@@ -47,4 +47,18 @@ it('authoritative generation resync retains the current FIFO remainder and unrel
  expect(state.completions).toHaveLength(1);expect(state.completions[0].jobId).toBe('job-b');
  state=rebaseJobSnapshot(state,snapshot('job-a',0,'fetching'),0);expect(state.presenting?.jobId).toBe('job-b');
  state=applySnapshot(state,snapshot('job-a',2,'done'));expect(state.completions[0].jobId).toBe('job-a');
+});
+it('server-confirmed deletion removes every duplicate entry and completion without disturbing other jobs',()=>{
+ let state=addBatch(emptyDock(),{id:'batch',entries:[{id:'a',url:'a'},{id:'b',url:'b'},{id:'c',url:'c'}],unrecognized:[],duplicates:0});
+ state=acceptEntry(state,'a',{disposition:'created',snapshot:snapshot('job-a',0)});
+ state=acceptEntry(state,'b',{disposition:'reused',snapshot:snapshot('job-a',0)});
+ state=acceptEntry(state,'c',{disposition:'created',snapshot:snapshot('job-c',0)});
+ state=applySnapshot(state,snapshot('job-a',1,'done'));
+ state=applySnapshot(state,snapshot('job-c',1,'done'));
+ state=removeDeletedJob(state,'job-a');
+ expect(state.entries.map((entry)=>entry.id)).toEqual(['c']);
+ expect(state.batches[0].entries.map((entry)=>entry.id)).toEqual(['c']);
+ expect(state.presenting?.jobId).toBe('job-c');
+ expect(state.completions).toHaveLength(0);
+ expect(state.seen).toEqual(['job-c:1']);
 });

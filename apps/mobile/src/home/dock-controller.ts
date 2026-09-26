@@ -1,7 +1,7 @@
 import { AuthApiError } from '../auth/api';
 import { getAuthSnapshot, subscribeAuth } from '../auth/session-context';
 import type { HomeApiClient, HomeInputParseResponse, IngestAcceptedResponse, IngestRetryRequest } from './api';
-import { acceptEntry, addBatch, applySnapshot, rebaseJobSnapshot, emptyDock, elapseVisible, setConnection, setDockVisibility, setEntryAcceptance, type DockState } from './dock-model';
+import { acceptEntry, addBatch, applySnapshot, rebaseJobSnapshot, removeDeletedJob, emptyDock, elapseVisible, setConnection, setDockVisibility, setEntryAcceptance, type DockState } from './dock-model';
 import type { ClipboardResult } from './clipboard';
 import { operationJournal, JournalError, type OperationJournal, type JournalOperation, type JournalScope, type StartPayload } from './operation-journal';
 import {watchDurableJob} from './durable-watch';
@@ -54,6 +54,7 @@ export class ImportDockController {
   private watchAfter = 0;
   private inputRevision = 0;
   private records = new Map<string, JournalOperation>();
+  private retiredJobs = new Set<string>();
   private restored = false;
   private restoreFlight?: Promise<void>;
   private refreshRequested = false;
@@ -94,7 +95,7 @@ export class ImportDockController {
     const sync = () => {
       const auth = getAuthSnapshot();
       if (auth.epoch !== this.scope.epoch) {
-        this.deactivate(); this.retries.clear(); this.pendingReceipts.clear(); this.watchOrder.clear(); this.shareTexts.clear(); this.records.clear();this.checkpoints.clear();this.completedHeads.clear();this.watchFailures.clear();this.durableWatchAfter.clear(); this.externalInputs = []; this.parsedBindings = undefined; this.state = empty(); this.invalidated = true;
+        this.deactivate(); this.retries.clear(); this.pendingReceipts.clear(); this.watchOrder.clear(); this.shareTexts.clear(); this.records.clear();this.retiredJobs.clear();this.checkpoints.clear();this.completedHeads.clear();this.watchFailures.clear();this.durableWatchAfter.clear(); this.externalInputs = []; this.parsedBindings = undefined; this.state = empty(); this.invalidated = true;
         for (const listener of this.listeners) listener(); return;
       }
       this.setVisible(this.wantedVisible);
@@ -179,8 +180,9 @@ export class ImportDockController {
       try {
         const rows = await this.journal.list(this.journalScope(activity));
         if (!this.current(activity)) return;
-        this.installRecords(rows); this.restored = true;
-        void this.restoreCheckpoints(rows,activity).catch(()=>{if(this.current(activity))this.update({notice:'本机进度暂时无法读取，正在确认原任务。'});});
+        const visibleRows = rows.filter((row) => !row.jobId || !this.retiredJobs.has(row.jobId));
+        this.installRecords(visibleRows); this.restored = true;
+        void this.restoreCheckpoints(visibleRows,activity).catch(()=>{if(this.current(activity))this.update({notice:'本机进度暂时无法读取，正在确认原任务。'});});
         // The local read is the preparation barrier. Network reconciliation proceeds independently.
         this.runBackground(() => this.reconcile());
       } catch { if (this.current(activity)) this.update({ journalError: true, notice: '暂时无法读取本机导入记录，输入仍保留。' }); }
@@ -270,6 +272,23 @@ export class ImportDockController {
   }
   setExpanded(expanded: boolean) { this.update({ expanded }); }
   setNotice(notice: string | null) { this.update({ notice }); }
+  async forgetDeletedJob(jobId: string): Promise<boolean> {
+    if (!this.usable() || !/^ing_[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(jobId)) return false;
+    const activity = getAuthSnapshot().activity;
+    this.retiredJobs.add(jobId);
+    if (this.watchedId === jobId) this.closeWatch();
+    const removed = this.state.entries.filter((entry) => entry.jobId === jobId).map((entry) => entry.id);
+    for (const [operationId, row] of this.records) if (row.jobId === jobId) this.records.delete(operationId);
+    for (const [operationId, receipt] of this.pendingReceipts) if (receipt.jobId === jobId) this.pendingReceipts.delete(operationId);
+    for (const id of removed) { this.retries.delete(id); this.shareTexts.delete(id); }
+    this.checkpoints.delete(jobId); this.completedHeads.delete(jobId); this.watchFailures.delete(jobId);
+    this.durableWatchAfter.delete(jobId); this.watchOrder.delete(jobId);
+    this.update({ ...removeDeletedJob(this.state, jobId),
+      busy: this.state.busy.filter((id) => !removed.includes(id)),
+      uncertainRetries: this.state.uncertainRetries.filter((id) => !removed.includes(id)) });
+    try { await this.journal.discardJob(this.journalScope(activity), jobId); return this.current(activity); }
+    catch { if (this.current(activity)) this.update({ notice: '记录已删除，但本机旧进度暂时无法清理；请稍后重新打开应用确认。' }); return false; }
+  }
   clearParsed() { this.parsedBindings = undefined; this.update({ parsed: null }); }
   async restoreEntry(id: string) {
     if (!this.usable()) return;
@@ -372,6 +391,7 @@ export class ImportDockController {
     const knownJob = this.records.get(retry?.request.operation_id ?? id)?.jobId;
     if (!['created', 'reused', 'retried'].includes(receipt.disposition) || receipt.operation_id !== (retry?.request.operation_id ?? id) || !receipt.snapshot || receipt.ingest_id !== receipt.snapshot.ingest_id
       || retry && receipt.ingest_id !== retry.jobId || knownJob && receipt.ingest_id !== knownJob) throw new Error('INGEST_RECEIPT_INVALID');
+    if (this.retiredJobs.has(receipt.ingest_id)) return;
     const operationId = retry?.request.operation_id ?? id;
     const pending = this.pendingReceipts.get(operationId) ?? {jobId:receipt.ingest_id,disposition:receipt.disposition,completionEligible:!(receipt.disposition==='reused'&&receipt.snapshot.state==='done')};
     this.pendingReceipts.set(operationId,pending);
@@ -494,7 +514,11 @@ export class ImportDockController {
           if (!this.current(activity)) return;
           if (snapshot.ingest_id !== id) throw new Error('INGEST_SNAPSHOT_INVALID');
           this.update(applySnapshot(this.state, snapshot)); this.update(setConnection(this.state, id, false));
-        } catch { if (this.current(activity)) this.update(setConnection(this.state, id, true)); failed = true; }
+        } catch (error) {
+          if (error instanceof AuthApiError && error.status === 404 && error.code === 'INGEST_JOB_NOT_FOUND')
+            await this.forgetDeletedJob(id);
+          else { if (this.current(activity)) this.update(setConnection(this.state, id, true)); failed = true; }
+        }
       }
       if (this.current(activity) && this.state.visible) this.ensureWatch();
     } finally {

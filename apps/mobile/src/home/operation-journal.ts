@@ -19,6 +19,7 @@ export interface OperationJournal extends IngestCheckpointJournal {
   payload(scope: JournalScope, operationId: string): Promise<StartPayload | RetryPayload | null>;
   mark(scope: JournalScope, operationId: string, phase: JournalOperation['phase'], jobId?: string,receipt?:{disposition:'created'|'reused'|'retried';completionEligible:boolean}): Promise<void>;
   noteDone(scope: JournalScope, jobId: string, attempt: number): Promise<void>;
+  discardJob(scope: JournalScope, jobId: string): Promise<void>;
   claimed(inputId: string): Promise<boolean>;
   close(): void;
 }
@@ -99,9 +100,11 @@ export function createOperationJournal(name = 'nomad-input-operations-v1', clock
     });
   }
   async function key(scope: JournalScope, create = true): Promise<{key:CryptoKey;id:string}> {
-    const validate = (value: CryptoKey) => {
-      if (!value || value.type !== 'secret' || value.extractable || value.algorithm.name !== 'AES-GCM' || !value.usages.includes('encrypt') || !value.usages.includes('decrypt')) throw new JournalError('JOURNAL_CORRUPT');
-      return value;
+    const validate = (value: unknown): CryptoKey => {
+      if (!value || typeof value !== 'object') throw new JournalError('JOURNAL_CORRUPT');
+      const candidate = value as CryptoKey;
+      if (candidate.type !== 'secret' || candidate.extractable || candidate.algorithm?.name !== 'AES-GCM' || !candidate.usages?.includes('encrypt') || !candidate.usages.includes('decrypt')) throw new JournalError('JOURNAL_CORRUPT');
+      return candidate;
     };
     const stored = await transaction<{ key: CryptoKey; expiresAt: number;id?:string } | undefined>(['keys'], 'readonly', scope, (tx, done, run) => {
       const request = tx.objectStore('keys').get(scope.ownerId); request.onsuccess = () => run(() => done(request.result));
@@ -112,13 +115,18 @@ export function createOperationJournal(name = 'nomad-input-operations-v1', clock
       const store = tx.objectStore('keys'), cursor = store.openCursor();
       cursor.onsuccess = () => run(() => {
         const entry = cursor.result;
-        if (entry) { if (Number.isFinite(entry.value.expiresAt) && entry.value.expiresAt <= clock()) entry.delete(); entry.continue(); return; }
+        if (entry) {
+          const value = entry.value as { expiresAt?: unknown };
+          if (typeof value.expiresAt === 'number' && Number.isFinite(value.expiresAt) && value.expiresAt <= clock()) entry.delete();
+          entry.continue(); return;
+        }
         const request = store.get(scope.ownerId);
         request.onsuccess = () => run(() => {
-          const value = request.result ? validate(request.result.key) : fresh;
+          const stored = request.result as { key?: unknown; id?: unknown } | undefined;
+          const value = stored ? validate(stored.key) : fresh;
           const count = store.count(); count.onsuccess = () => run(() => {
-            if (!request.result && count.result >= capacity) throw new JournalError('JOURNAL_CAPACITY');
-            const id=typeof request.result?.id==='string'&&idPattern.test(request.result.id)?request.result.id:crypto.randomUUID();
+            if (!stored && count.result >= capacity) throw new JournalError('JOURNAL_CAPACITY');
+            const id=typeof stored?.id==='string'&&idPattern.test(stored.id)?stored.id:crypto.randomUUID();
             store.put({ ownerId: scope.ownerId, key: value, id, expiresAt: clock() + retention }); done({key:value,id});
           });
         });
@@ -148,9 +156,9 @@ export function createOperationJournal(name = 'nomad-input-operations-v1', clock
       request.onsuccess = () => run(() => {
         const cursor = request.result;
         if (!cursor) { scan(index + 1); return; }
-        const row = cursor.value;
-        if (Number.isFinite(row.expiresAt) && row.expiresAt <= clock()) cursor.delete();
-        else if (stores[index] === 'operations' && row.payload && Number.isFinite(row.payloadExpiresAt) && row.payloadExpiresAt <= clock()) cursor.update({ ...row, payload: null });
+        const row = cursor.value as { expiresAt?: unknown; payload?: unknown; payloadExpiresAt?: unknown };
+        if (typeof row.expiresAt === 'number' && Number.isFinite(row.expiresAt) && row.expiresAt <= clock()) cursor.delete();
+        else if (stores[index] === 'operations' && row.payload && typeof row.payloadExpiresAt === 'number' && Number.isFinite(row.payloadExpiresAt) && row.payloadExpiresAt <= clock()) cursor.update({ ...row, payload: null });
         cursor.continue();
       });
     };
@@ -269,7 +277,38 @@ export function createOperationJournal(name = 'nomad-input-operations-v1', clock
       return transaction<void>(['operations','checkpoints'], 'readwrite', scope, (tx, done, run) => {
         readRows(tx, 'jobId', jobId, (rows) => {
           for (const row of rows) if (row.ownerId === scope.ownerId) { checkRecord(row, scope.ownerId); tx.objectStore('operations').put({ ...row, observedDoneAttempt: Math.max(row.observedDoneAttempt ?? 0, attempt) }); }
-          const store=tx.objectStore('checkpoints'),request=store.get([scope.ownerId,jobId]);request.onsuccess=()=>run(()=>{if(request.result)store.put({...request.result,observedDoneAttempt:Math.max(request.result.observedDoneAttempt??0,attempt)});done();});
+          const store=tx.objectStore('checkpoints'),request=store.get([scope.ownerId,jobId]);request.onsuccess=()=>run(()=>{
+            const existing = request.result as ({ observedDoneAttempt?: number } & Record<string, unknown>) | undefined;
+            if(existing) store.put({...existing,observedDoneAttempt:Math.max(existing.observedDoneAttempt??0,attempt)});
+            done();
+          });
+        }, run);
+      });
+    },
+    async discardJob(scope, jobId) {
+      guard(scope);
+      if (!/^ing_[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(jobId))
+        throw new JournalError('JOURNAL_CORRUPT');
+      return transaction<void>(['operations','checkpoints','claims'], 'readwrite', scope, (tx, done, run) => {
+        readRows(tx, 'jobId', jobId, (rows) => {
+          const operations = tx.objectStore('operations');
+          const affectedBatches = new Set<string>();
+          for (const row of rows) if (row.ownerId === scope.ownerId) {
+            checkRecord(row, scope.ownerId);
+            operations.delete(row.operationId);
+            affectedBatches.add(row.batchId);
+          }
+          tx.objectStore('checkpoints').delete([scope.ownerId, jobId]);
+          // A claim names the whole batch, not one operation. A partial deletion makes
+          // replay of that batch invalid, so release its external input bindings too.
+          const cursor = tx.objectStore('claims').openCursor();
+          cursor.onsuccess = () => run(() => {
+            const claim = cursor.result;
+            if (!claim) { done(); return; }
+            const value = claim.value as Partial<InputClaim>;
+            if (value.ownerId === scope.ownerId && value.batchId && affectedBatches.has(value.batchId)) claim.delete();
+            claim.continue();
+          });
         }, run);
       });
     },
@@ -283,7 +322,7 @@ export function createOperationJournal(name = 'nomad-input-operations-v1', clock
         });
       });
     },
-    close() { void opening?.then((db) => db.close()).catch(() => {}); connection = undefined; opening = undefined; },
+    close() { if (opening) void opening.then((db) => db.close()).catch(() => {}); connection = undefined; opening = undefined; },
   };
 }
 

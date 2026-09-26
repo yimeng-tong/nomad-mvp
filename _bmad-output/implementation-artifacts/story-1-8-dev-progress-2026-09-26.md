@@ -37,3 +37,7 @@ T1数据库结构草案：在现有1.7迁移后新增加法`ImportRecord`表与�
 `c6fd134`完整CI`36231375405`两job通过；主隔离PG十八项与独立旧record升级五项均从产物核对HEAD、完整、CRC，详见`deletion-schema-ci-verification.json`。该提交仍保留旧唯一键且没有删除入口。
 
 随后工作树进入T4服务端局部：第二迁移在活动键/唯一索引预检通过后才删除旧`(userId,normalizedUrl)`索引，旧record原URL与policy版本不重写；owner DELETE同事务作废record/job/关联Inspiration、撤销pending/lease并增长fence。受理按活动键查找，删除后新record/job若碰旧sourceHash改用独立派生hash；新读回、回执、重试、恢复、Library与Planner来源排除已删项，跨owner/未知给中性404。OpenAPI/生成类型已同步，隔离PG探针增至23项并将独立升级探针扩至七项。当前仅本地Prisma schema/build/OpenAPI/typed lint、fixture路由1项与Planner12项通过，见`deletion-server-local-validation.json`；真实PG执行和完整CI待新提交。产品删除控件、Dock持久缓存撤权、活跃SSE残帧、对象清理和实际生产备份仍开放，不把服务端逻辑作产品完整删除验收。
+
+`d55efe6`现已通过完整CI`36232326277`两job。隔离PG23项含跨owner中性404、worker lease栅栏、回执/重试/Planner撤权及同owner重提；独立旧record库按阶段升级七项含旧唯一键释放、原字段不变及作废后新活动键。两个产物提取后的HEAD与SHA-256核对一致，详见`deletion-server-ci-verification.json`。这不是既有库迁移、真实媒体对象清理或生产PITR证据。
+
+当前工作树补产品删除流程：Home私有详情中二次确认，204后才撤下记录并刷新；网络结果不明保持未确认提示。成功删除同步清除相关Library/规划已选项，Dock停止所看流、移除重复job进度/FIFO并在严格IndexedDB事务删除本owner操作、checkpoint和批次外部输入claim；跨owner输入/草稿不清。404对账亦去除本机陈旧job，身份改变时取消/遮蔽迟到删除回执，迟到流帧被丢弃。当前本地移动Vitest297项+原生配置5项、12文件typed lint、类型与实际产品构建及Chromium B32/B33/B34三项通过，证据`deletion-ui-local-validation.json`。完整提交CI三引擎、真实IDB写失败后的重启遮蔽、跨进程活跃SSE残帧、对象引用/物理清理、旧库只读审计/回填、生产密钥/PITR、真实短链及双端设备仍开放；Story和T1–T5均保持in-progress。

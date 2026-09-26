@@ -1,0 +1,30 @@
+{
+  "kind": "story-1-8-deletion-server-ci-verification",
+  "sourceRevision": "d55efe6f6309b28084fd3c566d76c841ab0fa907",
+  "workflowRun": "36232326277",
+  "workflowConclusion": "success",
+  "jobs": {
+    "Canonical browser environment and product entry": "success",
+    "build-and-test": "success"
+  },
+  "isolatedPostgresql": {
+    "artifactId": "10902907267",
+    "extractedReportSha256": "26b1b632fbe758ed25341c7275f72d137cb380d2d4440bfa1ce0f4e00763aacb",
+    "headShaMatchesWorkflow": true,
+    "checks": 23,
+    "completed": true,
+    "databaseScope": "guarded-isolated-synthetic-only",
+    "realProviderCalls": 0
+  },
+  "oldRowUpgrade": {
+    "artifactId": "10903466064",
+    "extractedReportSha256": "ddd57f9ad7375935fadb93742eb4320e92c5154a8feb0124b041fc4ef10dfc13",
+    "headShaMatchesWorkflow": true,
+    "checks": 7,
+    "completed": true,
+    "failureStage": null,
+    "databaseScope": "guarded-separate-synthetic-only",
+    "realProviderCalls": 0
+  },
+  "scope": "The committed server deletion/reimport and two-stage migration passed isolated PostgreSQL, browser, workbench, mobile and workspace CI. Reports were extracted from the named workflow artifacts and their file hashes and HEAD checked. No existing database, real media object, external provider, production backup/PITR or native device was exercised."
+}

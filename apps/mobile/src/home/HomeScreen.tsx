@@ -93,6 +93,7 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
   const [loading, setLoading] = useState(true);
   const [readError, setReadError] = useState<string | null>(null);
   const [readInterrupted, setReadInterrupted] = useState(false);
+  const refreshSerial = useRef(0);
   const unknownInput = dock.parsed?.type === 'unknown' ? dock.parsed.original_text : null;
   const [candidateTarget, setCandidateTarget] = useState<LibraryInspirationItem | null>(null);
   const [candidates, setCandidates] = useState<LibraryCandidate[]>([]);
@@ -123,7 +124,8 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
   const refresh = useCallback(async () => {
     const scope = getAuthSnapshot();
     if (scope.phase !== 'authenticated') return;
-    const current = () => getAuthSnapshot().phase === 'authenticated' && getAuthSnapshot().epoch === scope.epoch && getAuthSnapshot().activity === scope.activity;
+    const serial = ++refreshSerial.current;
+    const current = () => getAuthSnapshot().phase === 'authenticated' && getAuthSnapshot().epoch === scope.epoch && getAuthSnapshot().activity === scope.activity && refreshSerial.current === serial;
     setLoading(true); setReadError(null); setReadInterrupted(false);
     try {
       const [cityResponse, inspirationResponse] = await Promise.all([client.getCities(), client.getInspirations(filtersForLibrary(libraryFilter))]);
@@ -391,7 +393,21 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
                 </section>
               ) : null}
             </div>
-            {client.getImportRecords && client.getImportRecordDetail ? <ImportRecordsSection client={client} /> : null}
+            {client.getImportRecords && client.getImportRecordDetail ? <ImportRecordsSection client={client} onDeleted={async (item) => {
+              const scope = getAuthSnapshot();
+              const cleared = await controller.forgetDeletedJob(item.ingest_id);
+              const now = getAuthSnapshot();
+              if (now.phase !== 'authenticated' || now.epoch !== scope.epoch || now.activity !== scope.activity) return cleared;
+              refreshSerial.current++;
+              if (item.inspiration_id) {
+                setInspirations((before) => before.filter((entry) => entry.id !== item.inspiration_id));
+                setSelectedItems((before) => before.filter((entry) => entry.id !== item.inspiration_id));
+                if (candidateTarget?.id === item.inspiration_id) closeCandidates();
+                if (result?.id === item.inspiration_id) closeResult();
+              }
+              await refresh();
+              return cleared;
+            }} /> : null}
           </TabsContent>
         ) : (
           <TabsContent value="plan" className="plan-panel" render={<section aria-label="规划入口" />}>

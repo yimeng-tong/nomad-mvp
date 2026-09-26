@@ -1,0 +1,19 @@
+{
+  "kind": "story-1-8-deletion-ui-local-validation",
+  "sourceState": "uncommitted-after-d55efe6f6309b28084fd3c566d76c841ab0fa907",
+  "mobileVitest": { "files": 39, "passed": 297 },
+  "nativeConfigProof": { "passed": 5, "actualDevices": 0 },
+  "typedLint": "12 changed source and test files passed",
+  "mobileTypecheck": "passed",
+  "browserTypecheck": "passed",
+  "actualProductBuild": "passed-with-product-graph",
+  "browser": {
+    "runId": "ea17fd29-9a11-4084-ad29-e8a7449f1010",
+    "engine": "chromium",
+    "scenarios": 3,
+    "unexpected": 0,
+    "productGraphHash": "08fde1b596852da7b20ef0a32f4fbc4a679fbdc13be839162a7e606aabc19b5f",
+    "sourceInputs": 318
+  },
+  "scope": "Server-confirmed deletion UI, uncertain-response honesty, owner-change suppression, Home Library selection cleanup and Dock journal/claim cleanup passed local tests. Browser B34 used the actual product entry with an explicit synthetic API, not a real provider. Full committed-source CI, three browser engines, IndexedDB failure recovery, real device and production lifecycle remain open."
+}

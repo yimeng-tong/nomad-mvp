@@ -41,6 +41,13 @@ export function createJournalFixture(): OperationJournal {
     async payload(scope, id) { guard(scope); const row = records.get(id); if (!row || row.ownerId !== scope.ownerId) throw new JournalError('JOURNAL_CORRUPT'); return payloads.has(id) ? structuredClone(payloads.get(id)!) : null; },
     async mark(scope, id, phase, jobId,receipt) { guard(scope); const row = records.get(id); if (!row || row.ownerId !== scope.ownerId) throw new JournalError('JOURNAL_CORRUPT'); if (row.phase === 'accepted' && phase !== 'accepted') return; Object.assign(row, { phase, ...(jobId ? { jobId } : {}), ...(!row.disposition&&receipt?receipt:{}) }); if (phase === 'accepted') payloads.delete(id); },
     async noteDone(scope, jobId, attempt) { guard(scope); for (const row of records.values()) if (row.ownerId === scope.ownerId && row.jobId === jobId) row.observedDoneAttempt = Math.max(row.observedDoneAttempt ?? 0, attempt); },
+    async discardJob(scope, jobId) {
+      guard(scope); const affectedBatches = new Set<string>();
+      for (const row of records.values()) if (row.ownerId === scope.ownerId && row.jobId === jobId) {
+        affectedBatches.add(row.batchId); records.delete(row.operationId); payloads.delete(row.operationId);
+      }
+      for (const [inputId, claim] of claims) if (claim.ownerId === scope.ownerId && affectedBatches.has(claim.batchId)) claims.delete(inputId);
+    },
     async claimed(id) { return claims.has(id); }, close() {},
   };
 }

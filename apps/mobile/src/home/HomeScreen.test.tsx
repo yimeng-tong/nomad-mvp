@@ -21,6 +21,8 @@ import type {
   LibraryCandidatesResponse,
   LibraryCitySummary,
   LibraryInspirationItem,
+  LibraryImportRecordDetail,
+  LibraryImportRecordItem,
 } from './api';
 import type { Analytics } from '../auth/analytics';
 
@@ -139,6 +141,34 @@ describe('HomeScreen', () => {
     expect(screen.getByRole('heading', { name: '待定位' })).toBeInTheDocument();
     expect(await screen.findByText('西湖傍晚散步')).toBeInTheDocument();
     expect(screen.getByText('湖滨咖啡')).toBeInTheDocument();
+  });
+
+  it('removes a deleted import source from Library and the selected planning basket', async () => {
+    const apiClient = createApiClient();
+    const record: LibraryImportRecordItem = {
+      id: '10000000-0000-4000-8000-000000000081', ingest_id: 'ing_10000000-0000-4000-8000-000000000091',
+      status: 'done', title: '西湖傍晚散步', inspiration_id: 'ins-resolved', locate_status: 'resolved', poi_name: '西湖',
+      poi_address: '杭州市西湖区', asset_count: 1, created_at: '2026-09-26T00:00:00Z', updated_at: '2026-09-26T00:00:01Z',
+    };
+    const detail: LibraryImportRecordDetail = { ...record, original_url: 'https://xhslink.com/a' };
+    let deleted = false;
+    apiClient.getImportRecords = vi.fn(async () => ({ items: deleted ? [] : [record], next_cursor: null }));
+    apiClient.getImportRecordDetail = vi.fn(async () => detail);
+    apiClient.deleteImportRecord = vi.fn(async () => { deleted = true; });
+    apiClient.getInspirations = vi.fn<HomeApiClient['getInspirations']>(async () => ({
+      items: deleted ? inspirations.filter((item) => item.id !== record.inspiration_id) : inspirations,
+    }));
+    render(<HomeScreen apiClient={apiClient} analytics={createAnalytics()} />);
+    fireEvent.click(await screen.findByRole('tab', { name: '灵感' }));
+    fireEvent.click(await screen.findByRole('button', { name: /选择 西湖傍晚散步/ }));
+    fireEvent.click(await screen.findByRole('button', { name: '查看西湖傍晚散步的导入记录' }));
+    const dialog = await screen.findByRole('dialog', { name: '导入记录详情' });
+    fireEvent.click(within(dialog).getByRole('button', { name: '删除记录' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: '确认删除' }));
+    await waitFor(() => expect(apiClient.deleteImportRecord).toHaveBeenCalledWith(record.id, expect.any(AbortSignal)));
+    await waitFor(() => expect(screen.queryByRole('button', { name: /选择 西湖傍晚散步/ })).toBeNull());
+    expect(screen.queryByText('已选 1 个灵感')).toBeNull();
+    expect(await screen.findByText('还没有导入记录')).toBeInTheDocument();
   });
 
   it('filters the Library list through city aggregation chips', async () => {

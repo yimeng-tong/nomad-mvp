@@ -75,3 +75,54 @@ it('copies the protected URL only on explicit action and reports clipboard failu
     else Reflect.deleteProperty(navigator, 'clipboard');
   }
 });
+
+it('deletes only after explicit confirmation and clears the visible owner record after the server confirms', async () => {
+  let records = [row];
+  const deleteRecord = vi.fn(async (_id: string, _signal?: AbortSignal) => { records = []; });
+  const onDeleted = vi.fn(async (_item: LibraryImportRecordItem) => true);
+  render(<PrivateUiBoundary><ImportRecordsSection client={client({
+    getImportRecords: async () => ({ items: records, next_cursor: null }), deleteImportRecord: deleteRecord,
+  })} onDeleted={onDeleted} /></PrivateUiBoundary>);
+  fireEvent.click(await screen.findByRole('button', { name: '查看未命名来源的导入记录' }));
+  const dialog = await screen.findByRole('dialog');
+  await within(dialog).findByText(original);
+  fireEvent.click(within(dialog).getByRole('button', { name: '删除记录' }));
+  expect(deleteRecord).not.toHaveBeenCalled();
+  fireEvent.click(within(dialog).getByRole('button', { name: '确认删除' }));
+  await waitFor(() => expect(deleteRecord).toHaveBeenCalledWith(row.id, expect.any(AbortSignal)));
+  await waitFor(() => expect(onDeleted).toHaveBeenCalledWith(detail));
+  expect(await screen.findByText('还没有导入记录')).toBeInTheDocument();
+  expect(screen.queryByRole('dialog')).toBeNull();
+  expect(screen.queryByText(original)).toBeNull();
+});
+
+it('does not claim a deletion succeeded when the response is uncertain', async () => {
+  const onDeleted = vi.fn(async (_item: LibraryImportRecordItem) => true);
+  render(<PrivateUiBoundary><ImportRecordsSection client={client({
+    deleteImportRecord: async () => { throw new TypeError('synthetic lost response'); },
+  })} onDeleted={onDeleted} /></PrivateUiBoundary>);
+  fireEvent.click(await screen.findByRole('button', { name: '查看未命名来源的导入记录' }));
+  const dialog = await screen.findByRole('dialog');
+  fireEvent.click(within(dialog).getByRole('button', { name: '删除记录' }));
+  fireEvent.click(within(dialog).getByRole('button', { name: '确认删除' }));
+  expect(await within(dialog).findByText('删除结果未确认，请刷新记录核对后再试。')).toBeInTheDocument();
+  expect(onDeleted).not.toHaveBeenCalled();
+  expect(screen.queryByText('导入记录已删除')).toBeNull();
+});
+
+it('ignores a deletion receipt that arrives after the owner changes', async () => {
+  let finish!: () => void;
+  const deleteRecord = vi.fn(() => new Promise<void>((resolve) => { finish = resolve; }));
+  const onDeleted = vi.fn(async (_item: LibraryImportRecordItem) => true);
+  render(<PrivateUiBoundary><ImportRecordsSection client={client({ deleteImportRecord: deleteRecord })} onDeleted={onDeleted} /></PrivateUiBoundary>);
+  fireEvent.click(await screen.findByRole('button', { name: '查看未命名来源的导入记录' }));
+  const dialog = await screen.findByRole('dialog');
+  fireEvent.click(within(dialog).getByRole('button', { name: '删除记录' }));
+  fireEvent.click(within(dialog).getByRole('button', { name: '确认删除' }));
+  await waitFor(() => expect(deleteRecord).toHaveBeenCalledTimes(1));
+  act(() => commitIdentity({ ownerId: 'record-owner-b', sessionId: 'record-session-b' }));
+  await act(async () => finish());
+  expect(screen.queryByText(original)).toBeNull();
+  expect(screen.queryByRole('dialog')).toBeNull();
+  expect(onDeleted).not.toHaveBeenCalled();
+});

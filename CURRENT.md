@@ -70,6 +70,8 @@ recovery_ui_integration_acceptance: _bmad-output/implementation-artifacts/story-
 
 最新已提交`c6fd134`完整CI36231375405两job通过，主隔离PG十八项、独立旧record升级五项HEAD/CRC一致；证据`deletion-schema-ci-verification.json`。工作树现接T4服务端作废与重提局部：预检后释放旧唯一索引，owner DELETE事务栅栏job并隐藏来源，新受理沿活动键生成新record/job；OpenAPI/类型/读路径/Planner已改，PG23项与升级七项待下一CI。本地schema/build/lint和路由/Planner定向测试通过。移动删除控件、Dock缓存撤权、活跃SSE/对象生命周期、真实库审计/PITR与设备仍开放，Story1.8继续in-progress、不准备1.9，3.1仍暂停。
 
+更新：`d55efe6`完整CI36232326277两job通过，隔离PG23项及分阶段旧record升级七项产物HEAD与提取文件SHA一致，证据`deletion-server-ci-verification.json`。工作树新增移动端二次确认删除、成功后Library/已选规划项与Dock回执/外部输入claim撤权；丢失删除响应保持未确认，owner切换遮蔽迟到回执。本地297移动用例+5原生配置、12文件typed lint、真实产品Chromium B32–B34三项及类型/构建通过，见`deletion-ui-local-validation.json`；此工作树仍待提交后完整CI三引擎。活跃SSE残帧、共享对象实际生命周期、旧库只读审计/回填、生产密钥/PITR、真实短链和原生双端仍开放，1.8维持in-progress，3.1暂停。
+
 Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不提前准备1.9。
 
 ## 当前执行交接（2026-09-25）

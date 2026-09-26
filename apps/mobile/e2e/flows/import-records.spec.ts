@@ -40,3 +40,21 @@ test('B33 a delayed original URL response cannot cross an owner change', async (
   await expect(page.getByRole('dialog')).toHaveCount(0);
   expect(api.count('POST', '/api/ingest/xhs')).toBe(0);
 });
+
+test('B34 deletion requires confirmation and removes the owner source after a server receipt', async ({ page, api }) => {
+  api.identity = 'A'; api.importRecords = 'sample';
+  const path = `/api/library/import-records/${ownerARecord}`;
+  await page.goto('/'); await page.getByRole('tab', { name: '灵感', exact: true }).click();
+  await page.getByRole('button', { name: '查看A的合成来源的导入记录' }).click();
+  const sheet = page.getByRole('dialog', { name: '导入记录详情' });
+  await expect(sheet.getByText(ownerAOriginal)).toBeVisible();
+  await sheet.getByRole('button', { name: '删除记录' }).click();
+  expect(api.count('DELETE', path)).toBe(0);
+  await sheet.getByRole('button', { name: '确认删除' }).click();
+  await expect.poll(() => api.count('DELETE', path)).toBe(1);
+  await expect(sheet).toHaveCount(0);
+  await expect(page.getByText('还没有导入记录')).toBeVisible();
+  await expect(page.getByText(ownerAOriginal)).toHaveCount(0);
+  await expect(page.getByText('A的合成来源')).toHaveCount(0);
+  expect(api.count('POST', '/api/ingest/xhs')).toBe(0);
+});

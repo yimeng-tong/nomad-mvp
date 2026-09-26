@@ -215,12 +215,39 @@ try {
   assert.equal(retained.job.snapshot?.result?.inspiration_id, unsupportedResultId);
   assert.equal(await db.importRecord.count({ where: { jobId: unsupportedJobId } }), 0);
   checks.push('unsupported-pre-upgrade-source-recovers-owned-job-and-result-before-new-policy');
+
+  // Simulate a unique-index rejection after the pre-insert lookup.
+  // A sequence survives the losing transaction's rollback, so only the first
+  // INSERT raises a genuine PostgreSQL 23505 and the fresh attempt can proceed.
+  await db.$executeRawUnsafe('CREATE SEQUENCE "ImportRecord_probe_unique_once"');
+  await db.$executeRawUnsafe(`CREATE FUNCTION "ImportRecord_probe_unique_once"() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN
+      IF nextval('"ImportRecord_probe_unique_once"') = 1 THEN
+        RAISE EXCEPTION 'synthetic unique race' USING ERRCODE = '23505', CONSTRAINT = 'ImportRecord_userId_normalized_url_key';
+      END IF;
+      RETURN NEW;
+    END $$`);
+  await db.$executeRawUnsafe('CREATE TRIGGER "ImportRecord_probe_unique_once" BEFORE INSERT ON "ImportRecord" FOR EACH ROW EXECUTE FUNCTION "ImportRecord_probe_unique_once"()');
+  try {
+    const raced = input(`https://www.xiaohongshu.com/explore/${randomUUID()}`);
+    const acceptedAfterRetry = await acceptIngestCommand(raced);
+    assert.equal(acceptedAfterRetry.disposition, 'created');
+    assert.equal(await db.ingestJob.count({ where: { id: acceptedAfterRetry.job.dbId, userId: ownerA } }), 1);
+    assert.equal(await db.importRecord.count({ where: { jobId: acceptedAfterRetry.job.dbId, userId: ownerA } }), 1);
+    assert.equal(await db.ingestCommand.count({ where: { userId: ownerA, operationId: raced.operationId } }), 1);
+    assert.equal(await db.ingestEventRecord.count({ where: { jobId: acceptedAfterRetry.job.dbId } }), 1);
+    checks.push('unique-constraint-abort-retries-in-fresh-transaction-with-one-committed-job-record-event-and-command');
+  } finally {
+    await db.$executeRawUnsafe('DROP TRIGGER "ImportRecord_probe_unique_once" ON "ImportRecord"');
+    await db.$executeRawUnsafe('DROP FUNCTION "ImportRecord_probe_unique_once"()');
+    await db.$executeRawUnsafe('DROP SEQUENCE "ImportRecord_probe_unique_once"');
+  }
 } finally {
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, JSON.stringify({ kind: 'story-1-8-isolated-postgresql-schema-probe',
-    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 16,
+    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 17,
     realProviderCalls: 0, databaseScope: 'guarded-isolated-synthetic-only' }, null, 2) + '\n');
   await db.$disconnect();
 }
 
-assert.equal(checks.length, 16);
+assert.equal(checks.length, 17);

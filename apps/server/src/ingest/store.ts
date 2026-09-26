@@ -160,7 +160,7 @@ export async function acceptIngestCommand(input: { userId: string; sourceUrl: st
     return { job, disposition, shouldRun: !existingId };
   });
   let decision: ImportUrlDecision | undefined;
-  const accepted = await authAuthority(() => db.$transaction(async (tx) => {
+  const commitAcceptance = () => db.$transaction(async (tx) => {
     const authVersion = await qualifyAcceptance(tx, input.userId, ownerId);
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`ingest-command:${ownerId}:${input.operationId}`},0))`;
     const old = await tx.ingestCommand.findUnique({ where: { userId_operationId: { userId: ownerId, operationId: input.operationId } } });
@@ -205,7 +205,22 @@ export async function acceptIngestCommand(input: { userId: string; sourceUrl: st
     await tx.ingestCommand.create({ data: { userId: ownerId, operationId: input.operationId, kind: 'start', requestHash: hash,
       jobId: row.id, attempt: row.retryCount + 1, disposition } });
     return { row, normalizedUrl: decision?.normalizedUrl, disposition, shouldRun: !priorJob };
-  }));
+  });
+  const accepted = await authAuthority(async () => {
+    // An out-of-band writer may win a database unique constraint after our lookup.
+    // PostgreSQL aborts that transaction; a fresh one can read the committed winner.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try { return await commitAcceptance(); }
+      catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+          if (attempt === 0) continue;
+          throw new AuthFault('INGEST_NORMALIZATION_CONFLICT', 409);
+        }
+        throw error;
+      }
+    }
+    throw new AuthFault('INGEST_NORMALIZATION_CONFLICT', 409);
+  });
   return { job: hydrateJobFromDb(accepted.row, { ...input, sourceUrl: accepted.normalizedUrl ?? input.sourceUrl }), disposition: accepted.disposition, shouldRun: accepted.shouldRun };
 }
 export async function createOrGetIngestJob(input: { userId: string; sourceUrl: string; traceId: string; warning?: IngestWarning }) {

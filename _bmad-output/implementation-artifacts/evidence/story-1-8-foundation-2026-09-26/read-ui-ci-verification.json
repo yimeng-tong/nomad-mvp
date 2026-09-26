@@ -1,0 +1,56 @@
+{
+  "kind": "story-1-8-read-ui-complete-ci-verification",
+  "sourceRevision": "c0311478f6af09c90ad09632aaef8fb91daf94f6",
+  "workflowRun": "36229930650",
+  "workflowConclusion": "success",
+  "jobs": {
+    "Canonical browser environment and product entry": "success",
+    "build-and-test": "success"
+  },
+  "isolatedPostgresql": {
+    "artifactId": "10902193323",
+    "zipSha256": "a48c94b8ed9d4bcb43734a046f65592bcc08473f385feaf235f2a562bda569bd",
+    "zipEntries": 1,
+    "zipCrc": "all-passed",
+    "headShaMatchesWorkflow": true,
+    "checks": 16,
+    "completed": true,
+    "realProviderCalls": 0,
+    "databaseScope": "guarded-isolated-synthetic-only",
+    "coverage": "Additive schema, owner composite foreign keys, concurrent canonical uniqueness, atomic acceptance/event/command, key failure, owner-only list/detail, keyset pagination and old job replay."
+  },
+  "workbench": {
+    "artifactId": "10902148479",
+    "zipSha256": "06b4a758af34f7e4847abe4fb23529e33d4e283c484ec63d92119292529d1404",
+    "zipEntries": 26,
+    "zipCrc": "all-passed",
+    "browserTests": 41,
+    "newImportRecordScenarios": 9,
+    "networkNodeTests": 10,
+    "counterexamples": 18,
+    "counterexampleExpectedOutcomes": "2 passed controls and 16 failed mutations",
+    "sentinelLeaks": 0,
+    "runtimeViolations": 0,
+    "runtimeErrors": 0
+  },
+  "canonicalBrowser": {
+    "artifactId": "10901888903",
+    "downloadedZipBytes": 40461248,
+    "zipSha256": "cf06b9fd32545dd5b09e7d9ebd011fafdbb62834b1c885e4b79103126742a0b1",
+    "zipEntries": 944,
+    "zipCrc": "all-passed",
+    "sourceRevisionMatchesWorkflow": true,
+    "requiredCases": 135,
+    "expected": 135,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0,
+    "visualFiles": 33,
+    "newB32B33": "both-passed-in-chromium-firefox-webkit-six-checks",
+    "compiledProductVerified": true,
+    "reportHash": "0215abac5ffa4531a2a987cfbaf78ac2dec3a622ab2de35f89371d62a6012093",
+    "sourceManifestHash": "a66393cbe8deca4c27ce31ed0469c30a18b6fdb3bbdf55818df8f53f817f9a7f"
+  },
+  "otherChecks": "Full workspace build, typed lint, generated types, native config/resource sync, authentication/ingest/planner and 289 mobile tests passed in the successful workflow.",
+  "scope": "This validates the c031147 owner acceptance/read/Home UI slice only. The later unique-conflict retry code is not in this source revision. No real provider, shared or production database, production key/backup, deletion, actual native device or TestFlight acceptance."
+}

@@ -25,3 +25,7 @@ T1数据库结构草案：在现有1.7迁移后新增加法`ImportRecord`表与�
 修复后本地workspace build、typed lint零失败、移动Vitest289项/原生配置5项、工作台类型/网络Node十项/静态构建、handoff及diff检查通过，见`read-ui-workbench-repair-local-validation.json`；本机无Playwright可执行文件，九项工作台浏览器交互与十六项隔离PG仍待CI。
 
 `eb23521`的CI`36229356143`再次是部分成功、整轮失败：浏览器job三引擎135/135、B32/B33六项及33视觉/944项ZIP CRC通过；工作台40/41通过，仅Normal场景在详情仍处loading时立即查找原URL失败，PG步骤仍未运行。证据`read-ui-second-ci-verification.json`。断言现改为等待详情内容；本地把Chromium及所需共享库临时放在`/tmp`运行，首次Vite依赖重优化导致重载，未改源码重跑后工作台6文件41/41实际浏览器通过，见`workbench-final-local-validation.json`。下一步仍需同一源码完整CI与隔离PG十六项。
+
+`c031147`现已通过完整CI`36229930650`两job。产物逐个核对：隔离PG十六项（含真实并发唯一、owner读、旧回执、事务受理）1文件CRC/HEAD一致；工作台41/41、网络Node十项、18组正反例和产品隔离26文件CRC通过；三引擎135/135、B32/B33六项、33视觉/944文件CRC及源码manifest一致。移动289及其余门禁在同一成功工作流通过。详见`read-ui-ci-verification.json`。这只验证当前受理/读取/Home UI局部实现，不包括删除、真实短链、旧数据回填、生产密钥/备份或真机。
+
+后续工作树新增Prisma唯一冲突的一次新事务恢复：P2002先回滚，再按owner/规范URL重读已提交结果；重复冲突转为中性409。隔离PG探针增加一次真实SQLSTATE23505触发与回滚后唯一job/record/event/command检查，待下一轮CI才可证明；本地server build、定向typed lint/路由测试通过，见`unique-conflict-local-validation.json`。该合成触发不等于实际旁路写入竞争或旧数据审计，T2仍in-progress。

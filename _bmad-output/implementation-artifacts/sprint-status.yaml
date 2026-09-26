@@ -317,7 +317,7 @@ condition_progress:
       summary: Story已进入本地/隔离开发；生产备份、PITR及恢复目标无本Story证据。
     DB-CHANGE-01:
       state: in-progress
-      summary: 4110c7e与40a72e3完整CI中隔离PG加法迁移五项、事件投影八项通过。a6362d3受理PG十三项切片通过但整轮CI失败；d82f681及eb23521均在工作台步骤失败，十六项PG未运行。工作台本地Chromium41/41后待新CI，旧数据审计/生产恢复待验。
+      summary: c031147完整CI隔离PG十六项实际迁移/owner唯一/受理/读回/旧兼容通过；后续P2002新事务恢复及第十七项合成PG探针待CI。旧数据冲突审计/回填、生产密钥/备份及生产恢复仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-validation.json
@@ -329,6 +329,8 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-first-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-second-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/workbench-final-local-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/unique-conflict-local-validation.json
     METRICS-01:
       state: not-started
     METRICS-02:
@@ -339,7 +341,7 @@ condition_progress:
       state: not-started
     CODE-QUALITY-01:
       state: in-progress
-      summary: 限1.8当前受理/读取/UI切片：本地完整构建、typed lint零失败、服务端及289移动测试通过；eb23521工作台40/41，等待详情断言修复后本地Chromium41/41，完整CI及整Story未关闭。
+      summary: 限1.8当前受理/读取/UI切片：c031147完整CI构建、typed lint、41工作台、289移动及三引擎通过；后续唯一冲突代码只通过本地build/lint，整Story仍未关闭。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/validation.json
@@ -348,26 +350,31 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-first-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-second-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/workbench-final-local-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/unique-conflict-local-validation.json
     UI-COMPONENT-01:
       state: in-progress
-      summary: Home灵感页新增共享Button/AsyncState/私有Sheet记录区域，owner变更遮蔽和复制失败单测通过；完整浏览器、原生和删除状态待验。
+      summary: Home灵感页共享Button/AsyncState/私有Sheet记录区域、owner遮蔽/复制失败单测与c031147三引擎B32/B33通过；原生与删除状态待验。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-ci-verification.json
     UI-WORKBENCH-01:
       state: in-progress
-      summary: d82f681九场景因路由/卸载失败；eb23521修复后40/41，Normal仅详情loading断言过早。已修补并在本地Chromium实际跑通41/41，仍待新完整CI与整Story其余状态。
+      summary: c031147完整CI工作台41/41含本Story九场景、网络Node十项及18正反例通过；后续删除/重试状态与整Story仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-first-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-second-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/workbench-final-local-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-ci-verification.json
     UI-BROWSER-01:
       state: in-progress
-      summary: eb23521独立浏览器job三引擎135/135、B32/B33六项及33视觉通过，ZIP CRC与源码一致；整轮CI因工作台失败，当前仅测试断言修补待新完整CI。
+      summary: c031147完整CI三引擎135/135、B32/B33六项及33视觉通过，ZIP CRC/源码manifest一致；后续删除/重试与原生仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-first-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-second-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-ci-verification.json
   9-1-capacitor-app-installation-and-host-foundation:
     DB-CHANGE-01:
       state: not-applicable

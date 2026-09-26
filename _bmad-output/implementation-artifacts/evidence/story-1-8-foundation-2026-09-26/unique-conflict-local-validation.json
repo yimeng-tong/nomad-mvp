@@ -1,0 +1,14 @@
+{
+  "kind": "story-1-8-unique-conflict-local-validation",
+  "priorHead": "c0311478f6af09c90ad09632aaef8fb91daf94f6",
+  "change": "On a Prisma P2002 acceptance conflict, roll back and retry once in a new transaction so the committed owner record can be read; classify a repeated unique conflict as a neutral normalization conflict.",
+  "isolatedPostgresqlProbeChange": "A synthetic trigger raises one real SQLSTATE 23505 on ImportRecord insertion. The probe then checks one committed job, record, initial event and command after transaction retry. This proves rollback/retry; a genuine out-of-band winning writer remains untested.",
+  "checks": {
+    "serverBuild": "passed",
+    "targetedTypedLint": "passed",
+    "targetedRouteTest": 1,
+    "diffWhitespace": "passed",
+    "isolatedPostgresqlChecks": "17-pending-next-CI"
+  },
+  "scope": "Local compilation and test-contract preparation only. c031147 CI did not include this change; production database conflict and old-data migration remain open."
+}

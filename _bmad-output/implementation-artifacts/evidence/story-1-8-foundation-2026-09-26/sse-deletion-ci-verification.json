@@ -1,0 +1,42 @@
+{
+  "kind": "story-1-8-sse-deletion-ci-verification",
+  "sourceRevision": "a59b66b9d45761e99d2db309b032bba906e42e30",
+  "workflowRun": "36234249586",
+  "workflowConclusion": "success",
+  "jobs": {
+    "Canonical browser environment and product entry": "success",
+    "build-and-test": "success"
+  },
+  "isolatedPostgresql": {
+    "artifactId": "10903637381",
+    "extractedReportSha256": "ae264d59ea910ccd21b7c60c4327c3f9c3f765626cb454690439d2f5699b083e",
+    "headShaMatchesWorkflow": true,
+    "checks": 25,
+    "completed": true,
+    "realProviderCalls": 0
+  },
+  "oldRowUpgrade": {
+    "artifactId": "10903627345",
+    "extractedReportSha256": "8551d9321408d01ffd410d2a1e156a67341956903a29d1af35506de00a10ebe8",
+    "headShaMatchesWorkflow": true,
+    "checks": 7,
+    "completed": true,
+    "failureStage": null,
+    "realProviderCalls": 0
+  },
+  "mobileVitest": { "files": 39, "passed": 297 },
+  "workbench": { "files": 6, "passed": 41 },
+  "browser": {
+    "artifactId": "10902913285",
+    "runId": "915158f3-428a-4b1d-93c1-707af3645eab",
+    "sourceRevisionMatchesWorkflow": true,
+    "requiredCases": 138,
+    "visualArtifacts": 33,
+    "reportSha256": "bced012752d6667020dc1988d0d655eebe6e6fd28512eb2ea7f7bb0ba1606c79",
+    "sourceManifestSha256": "f55047328946b031c83acaea3be62cab920e729f3dcdcee3ec01f19afaa0e01c",
+    "compiledProductVerified": true,
+    "offlineVerification": "passed",
+    "nativeDeviceAcceptance": false
+  },
+  "scope": "Committed deletion UI, Dock cleanup, B34 matrix and queued SSE event/control write fence passed the full synthetic workflow. The downloaded PG reports and browser archive were checked against the workflow SHA. Production data, actual media storage, PITR, real short-link resolution and native devices were not exercised."
+}

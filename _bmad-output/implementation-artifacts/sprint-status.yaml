@@ -317,7 +317,7 @@ condition_progress:
       summary: Story已进入本地/隔离开发；生产备份、PITR及恢复目标无本Story证据。
     DB-CHANGE-01:
       state: in-progress
-      summary: d55efe6完整CI主隔离PG23项与独立旧record升级七项通过，覆盖旧唯一键释放、owner作废、worker栅栏与重提；生产旧数据审计/回填、共享对象生命周期、PITR与整Story仍开放。
+      summary: a59b66b完整CI主隔离PG25项含SSE删除栅栏与旧record升级七项通过；工作树另备跨owner共享POI/Asset引用第26项待CI。生产旧库审计/回填、真实对象生命周期、PITR与整Story仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-validation.json
@@ -336,6 +336,9 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-schema-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-server-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-server-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/sse-deletion-local-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/shared-reference-local-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/sse-deletion-ci-verification.json
     METRICS-01:
       state: not-started
     METRICS-02:
@@ -346,7 +349,7 @@ condition_progress:
       state: not-started
     CODE-QUALITY-01:
       state: in-progress
-      summary: 限1.8服务端切片d55efe6完整CI通过；产品删除/Dock切片0ffc3e0的build-and-test job成功、三引擎138例通过但固定浏览器矩阵漏B34使整轮失败，下一CI与整Story仍待验。
+      summary: a59b66b完整CI两job通过，含产品删除/Dock与SSE栅栏；工作树共享引用第26项仅本地TypeScript/lint通过，整Story仍待验。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/validation.json
@@ -364,25 +367,28 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-server-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-ui-first-ci-failure.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/sse-deletion-ci-verification.json
     UI-COMPONENT-01:
       state: in-progress
-      summary: Home私有Sheet新增二次确认删除、204后Library/Dock清理及未知结果诚实提示；本地单测/Chromium B34通过，三引擎完整CI与原生仍待验。
+      summary: Home私有Sheet二次确认删除、204后Library/Dock清理及未知结果提示已在a59b66b完整CI通过三引擎B34；原生与整Story状态仍待验。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-ui-local-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/sse-deletion-ci-verification.json
     UI-WORKBENCH-01:
       state: in-progress
-      summary: c031147完整CI工作台41/41含本Story九场景、网络Node十项及18正反例通过；后续删除/重试状态与整Story仍开放。
+      summary: a59b66b完整CI再次通过现有工作台41项及网络/反例门禁；删除确认专门工作台场景与整Story仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-first-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-second-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/workbench-final-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/sse-deletion-ci-verification.json
     UI-BROWSER-01:
       state: in-progress
-      summary: 0ffc3e0 CI浏览器实际三引擎138/138通过，但固定覆盖合同未纳B34使整job失败；下载产物离线复现，工作树已补合同，待下一完整CI与原生验收。
+      summary: a59b66b完整CI三引擎138/138含B34及33视觉、下载产物离线核验通过；本Story其他删除/重试设备门槛仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-first-ci-verification.json
@@ -391,6 +397,7 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/sse-deletion-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/deletion-ui-first-ci-failure.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/sse-deletion-ci-verification.json
   9-1-capacitor-app-installation-and-host-foundation:
     DB-CHANGE-01:
       state: not-applicable

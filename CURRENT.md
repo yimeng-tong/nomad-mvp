@@ -74,6 +74,8 @@ recovery_ui_integration_acceptance: _bmad-output/implementation-artifacts/story-
 
 `0ffc3e0`已提交推送，CI36233616834的浏览器实际交互三引擎138/138通过，但固定覆盖合同尚未列B34，导致浏览器job在`NOMAD_E2E_REQUIRED_MATRIX`失败；build-and-test成功，整轮仍失败，下载产物离线复验及失败证据见`deletion-ui-first-ci-failure.json`。工作树已将B34纳入合同，并在服务端每次发送排队SSE事件/重同步控制前持有owner/job读锁复核，防止删除提交后残帧外发；隔离PG探针待新CI执行。本地server build、三文件typed lint、handoff及82项回归通过。旧库审计/回填、真实对象/PITR、短链和设备仍开放，1.8与3.1状态不变。
 
+`a59b66b`完整CI36234249586两job通过：隔离PG25项包含删除前/后SSE写入栅栏，分阶段升级七项；下载报告HEAD/提取文件SHA一致。浏览器归档离线核验三引擎138/138及33视觉/产品源码绑定通过，见`sse-deletion-ci-verification.json`。工作树只增加两个owner共享CanonicalPOI与媒体键的合成引用反例，脚本独立TypeScript与lint通过，26项PG尚待下一CI。真实对象桶访问/物理清理、旧库只读审计/回填、生产密钥/PITR、真实短链及双端原生仍开放；1.8未done，1.9未准备，3.1暂停。
+
 Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不提前准备1.9。
 
 ## 当前执行交接（2026-09-25）

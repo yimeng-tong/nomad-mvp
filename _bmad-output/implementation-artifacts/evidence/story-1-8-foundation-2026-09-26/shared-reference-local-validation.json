@@ -1,0 +1,9 @@
+{
+  "kind": "story-1-8-shared-reference-local-validation",
+  "sourceState": "uncommitted-after-a59b66b9d45761e99d2db309b032bba906e42e30",
+  "probeTypecheck": "passed-with-server-node-types",
+  "typedLint": "passed",
+  "diffCheck": "passed",
+  "isolatedPostgresql": "26-check probe prepared but not yet run",
+  "scope": "The pending synthetic PostgreSQL check gives two owners the same CanonicalPOI and media object key. Deleting one owner must hide only that owner's Inspiration while the other owner's active Inspiration, POI and Asset row remain. It does not verify physical object access, reference counting or cleanup in a real bucket."
+}

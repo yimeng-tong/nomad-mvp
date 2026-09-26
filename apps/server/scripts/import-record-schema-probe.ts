@@ -269,7 +269,7 @@ try {
   const queuedPage = await readIngestReplayPage(ownerA, accepted[0]!.job.id);
   assert.equal(queuedPage.mode, 'replay');
   const queuedEvent = queuedPage.mode === 'replay' ? queuedPage.events[0] : undefined;
-  assert.ok(queuedEvent);
+  if (!queuedEvent) throw new Error('Expected a committed replay event before deletion');
   const queuedControl = { kind: 'resync' as const, ingest_id: accepted[0]!.job.id,
     cursor: queuedEvent.cursor, attempt: queuedEvent.attempt, state_version: queuedEvent.state_version };
   let liveFrameSent = 0;
@@ -329,6 +329,16 @@ try {
   assert.equal((await getImportRecordDetail(ownerB, (await db.importRecord.findFirstOrThrow({ where: { jobId: other.job.dbId } })).id)).ingest_id, other.job.id);
   checks.push('same-owner-reimport-gets-new-record-and-job-while-second-owner-stays-intact');
 
+  const sharedCity = await db.city.create({ data: { name: `synthetic-shared-${randomUUID()}`, tz: 'Asia/Shanghai' } });
+  const sharedPoi = await db.canonicalPOI.create({ data: { cityId: sharedCity.id, name: 'Synthetic shared POI' } });
+  const sharedObjectKey = `synthetic/shared-${randomUUID()}`;
+  await db.inspiration.update({ where: { id: inspirationId }, data: { cityId: sharedCity.id, poiId: sharedPoi.id, locateStatus: 'resolved' } });
+  await db.asset.create({ data: { inspirationId, kind: 'image', cosKey: sharedObjectKey } });
+  const otherRecord = await db.importRecord.findFirstOrThrow({ where: { jobId: other.job.dbId, userId: ownerB } });
+  const otherInspiration = await db.inspiration.create({ data: { userId: ownerB, jobId: other.job.dbId,
+    importRecordId: otherRecord.id, cityId: sharedCity.id, poiId: sharedPoi.id, locateStatus: 'resolved',
+    sourceHash: createHash('sha256').update(randomUUID()).digest('hex'), tags: [], title: 'Other owner source',
+    assets: { create: [{ kind: 'image', cosKey: sharedObjectKey }] } } });
   await deleteImportRecord(ownerA, winner.recordId);
   assert.ok((await db.inspiration.findUniqueOrThrow({ where: { id: inspirationId } })).deletedAt);
   assert.ok(!(await listLibraryInspirationsForUser(ownerA)).some((item) => item.id === inspirationId));
@@ -336,12 +346,18 @@ try {
   await assert.rejects(getIngestResult(ownerA, `ing_${winner.jobId}`),
     (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_JOB_NOT_FOUND');
   checks.push('linked-inspiration-library-result-and-planner-source-disappear-without-deleting-shared-poi');
+  assert.equal((await db.canonicalPOI.findUniqueOrThrow({ where: { id: sharedPoi.id } })).id, sharedPoi.id);
+  assert.equal((await db.inspiration.findUniqueOrThrow({ where: { id: otherInspiration.id } })).deletedAt, null);
+  assert.equal(await db.asset.count({ where: { inspirationId: otherInspiration.id, cosKey: sharedObjectKey } }), 1);
+  assert.ok((await listLibraryInspirationsForUser(ownerB)).some((item) => item.id === otherInspiration.id));
+  assert.ok(!(await listLibraryInspirationsForUser(ownerA)).some((item) => item.id === inspirationId));
+  checks.push('one-owner-deletion-keeps-other-owner-shared-poi-and-asset-reference');
 } finally {
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, JSON.stringify({ kind: 'story-1-8-isolated-postgresql-schema-probe',
-    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 25,
+    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 26,
     realProviderCalls: 0, databaseScope: 'guarded-isolated-synthetic-only' }, null, 2) + '\n');
   await db.$disconnect();
 }
 
-assert.equal(checks.length, 25);
+assert.equal(checks.length, 26);

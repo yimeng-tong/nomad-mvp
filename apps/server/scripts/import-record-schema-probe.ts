@@ -37,7 +37,7 @@ async function createRecord(ownerId: string, normalizedUrl: string) {
     await tx.ingestJob.create({ data: { id: jobId, userId: ownerId, authVersion: 0, sourceType: 'xhs',
       sourceHash: createHash('sha256').update(`${ownerId}:${jobId}`).digest('hex'), sourceUrl: null } });
     await tx.importRecord.create({ data: { id: recordId, userId: ownerId, jobId,
-      normalizedUrl, normalizationVersion: decision.policyVersion,
+      normalizedUrl, activeNormalizedUrl: normalizedUrl, normalizationVersion: decision.policyVersion,
       originalUrlProtected: protectedUrl as unknown as Prisma.InputJsonValue } });
   });
   return { jobId, recordId };
@@ -73,6 +73,7 @@ try {
   const wrongOwnerRecord = await Promise.allSettled([db.importRecord.create({ data: {
     id: wrongOwnerRecordId, userId: ownerB, jobId: winner.jobId,
     normalizedUrl: `${decision.normalizedUrl}?other=1`, normalizationVersion: decision.policyVersion,
+    activeNormalizedUrl: `${decision.normalizedUrl}?other=1`,
     originalUrlProtected: sealImportOriginalUrl({ ownerId: ownerB, recordId: wrongOwnerRecordId, originalUrl }, keyring) as unknown as Prisma.InputJsonValue,
   } })]);
   expectPrismaCode(wrongOwnerRecord[0]!, 'P2003');
@@ -131,6 +132,8 @@ try {
   const acceptedJobId = accepted[0]!.job.dbId;
   const actual = await db.importRecord.findFirstOrThrow({ where: { userId: ownerA, jobId: acceptedJobId } });
   assert.equal(actual.normalizedUrl, normalizeImportSourceUrl(rawA).normalizedUrl);
+  assert.equal(actual.activeNormalizedUrl, actual.normalizedUrl);
+  assert.equal(actual.deletedAt, null);
   assert.equal(actual.normalizationVersion, decision.policyVersion);
   assert.equal(actual.sourceTitle, null);
   assert.ok(!JSON.stringify(actual.originalUrlProtected).includes('utm_source'));
@@ -138,9 +141,16 @@ try {
     { ownerId: ownerA, recordId: actual.id }, loadImportUrlKeyring(process.env));
   assert.ok([rawA, rawB].includes(opened));
   assert.equal((await db.ingestJob.findUniqueOrThrow({ where: { id: acceptedJobId } })).sourceUrl, null);
+  assert.equal((await db.ingestJob.findUniqueOrThrow({ where: { id: acceptedJobId } })).deletedAt, null);
   assert.equal(await db.ingestEventRecord.count({ where: { jobId: acceptedJobId } }), 1);
   assert.equal(await db.ingestCommand.count({ where: { jobId: acceptedJobId } }), 2);
   checks.push('actual-acceptance-atomically-commits-sealed-original-record-job-event-and-command');
+
+  await assert.rejects(db.importRecord.update({
+    where: { id: actual.id }, data: { activeNormalizedUrl: decision.normalizedUrl },
+  }));
+  assert.equal((await db.importRecord.findUniqueOrThrow({ where: { id: actual.id } })).activeNormalizedUrl, actual.normalizedUrl);
+  checks.push('staged-active-normalized-url-must-match-immutable-identity');
 
   const priorKeyring = process.env.IMPORT_URL_KEYRING_JSON;
   delete process.env.IMPORT_URL_KEYRING_JSON;
@@ -245,9 +255,9 @@ try {
 } finally {
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, JSON.stringify({ kind: 'story-1-8-isolated-postgresql-schema-probe',
-    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 17,
+    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 18,
     realProviderCalls: 0, databaseScope: 'guarded-isolated-synthetic-only' }, null, 2) + '\n');
   await db.$disconnect();
 }
 
-assert.equal(checks.length, 17);
+assert.equal(checks.length, 18);

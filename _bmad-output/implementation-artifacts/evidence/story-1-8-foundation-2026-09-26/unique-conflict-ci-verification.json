@@ -1,0 +1,23 @@
+{
+  "kind": "story-1-8-unique-conflict-ci-verification",
+  "sourceRevision": "aed0885328ecc9c721b2ac8e9520380942701a68",
+  "workflowRun": "36230649027",
+  "workflowConclusion": "success",
+  "jobs": {
+    "Canonical browser environment and product entry": "success",
+    "build-and-test": "success"
+  },
+  "isolatedPostgresql": {
+    "artifactId": "10901923399",
+    "zipSha256": "b5cfc71cf843a0e25de30b1b860e1df0303e0657ce4828aa9b314661a3572ea0",
+    "zipEntries": 1,
+    "zipCrc": "all-passed",
+    "headShaMatchesWorkflow": true,
+    "checks": 17,
+    "completed": true,
+    "newCheck": "unique-constraint-abort-retries-in-fresh-transaction-with-one-committed-job-record-event-and-command",
+    "realProviderCalls": 0,
+    "databaseScope": "guarded-isolated-synthetic-only"
+  },
+  "scope": "Full CI passed for the P2002 rollback/retry change. The synthetic 23505 trigger verifies fresh-transaction recovery and no partial commit, not a genuine concurrent out-of-band winner, existing production database, deletion or native device."
+}

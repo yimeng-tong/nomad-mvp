@@ -196,7 +196,8 @@ export async function acceptIngestCommand(input: { userId: string; sourceUrl: st
       createdOrExisting = await tx.ingestJob.create({ data: { id, userId: ownerId, authVersion, sourceType: 'xhs', sourceUrl: null,
         sourceHash, traceId: input.traceId, status: 'created', snapshotJson: initialSnapshot(`ing_${id}`) as Prisma.InputJsonValue } });
       await tx.importRecord.create({ data: { id: recordId, userId: ownerId, jobId: id,
-        normalizedUrl: decision.normalizedUrl, normalizationVersion: decision.policyVersion,
+        normalizedUrl: decision.normalizedUrl, activeNormalizedUrl: decision.normalizedUrl,
+        normalizationVersion: decision.policyVersion,
         originalUrlProtected: protectedUrl } });
     }
     let row = priorJob ? await ensureDbEventLog(tx,createdOrExisting) : (await appendSnapshotEvent(tx,createdOrExisting,snapshotFromDb(createdOrExisting))).row;

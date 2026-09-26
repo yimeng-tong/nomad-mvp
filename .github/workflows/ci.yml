@@ -159,6 +159,21 @@ jobs:
       - name: Apply Prisma migrations to isolated CI database
         run: pnpm -F nomad-prisma run migrate:deploy
 
+      - name: Verify prior ImportRecord rows through staged migration in separate PostgreSQL database
+        env:
+          AUTH_TEST_DATABASE_ACK: isolated-synthetic-only
+          NOMAD_IMPORT_UPGRADE_REPORT: apps/server/.import-record-results/upgrade.json
+        run: node apps/server/scripts/import-record-upgrade-probe.mjs
+
+      - name: Preserve staged ImportRecord migration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nomad-import-record-upgrade-${{ github.sha }}
+          path: apps/server/.import-record-results/upgrade.json
+          include-hidden-files: true
+          if-no-files-found: warn
+
       - name: Prepare ephemeral import URL key for isolated CI only
         run: |
           node --input-type=module <<'JS' > "$RUNNER_TEMP/nomad-import-url-keyring.json"

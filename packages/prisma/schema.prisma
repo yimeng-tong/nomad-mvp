@@ -413,6 +413,7 @@ model IngestJob {
   sourceUrl    String?       @map("source_url")
   sourceHash   String        @unique @map("source_hash")
   status       IngestStatus  @default(created)
+  deletedAt    DateTime?     @map("deleted_at") @db.Timestamptz(3)
   retryCount   Int           @default(0) @map("retry_count")
   lastError    String?       @map("last_error_code")
   traceId      String?       @map("trace_id")
@@ -429,15 +430,18 @@ model ImportRecord {
   job                  IngestJob     @relation(fields: [jobId, userId], references: [id, userId], onDelete: Cascade)
   jobId                String        @map("job_id") @db.Uuid
   normalizedUrl        String        @map("normalized_url") @db.VarChar(2048)
+  activeNormalizedUrl  String?       @map("active_normalized_url") @db.VarChar(2048)
   normalizationVersion String        @map("normalization_version") @db.VarChar(48)
   originalUrlProtected Json          @map("original_url_protected")
   sourceTitle          String?       @map("source_title") @db.VarChar(240)
   status               IngestStatus  @default(created)
+  deletedAt            DateTime?     @map("deleted_at") @db.Timestamptz(3)
   createdAt            DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt            DateTime      @default(now()) @map("updated_at") @db.Timestamptz(3)
   inspirations         Inspiration[]
 
   @@unique([userId, normalizedUrl], map: "ImportRecord_userId_normalized_url_key")
+  @@unique([userId, activeNormalizedUrl], map: "ImportRecord_userId_active_normalized_url_key")
   @@unique([jobId, userId], map: "ImportRecord_job_id_userId_key")
   @@unique([id, userId], map: "ImportRecord_id_userId_key")
   @@index([userId, createdAt, id], map: "ImportRecord_owner_created_idx")
@@ -477,6 +481,7 @@ model Inspiration {
   city                City?                    @relation(fields: [cityId], references: [id])
   cityId              String?                  @db.Uuid
   sourceHash          String                   @unique @map("source_hash")
+  deletedAt           DateTime?                @map("deleted_at") @db.Timestamptz(3)
   createdAt           DateTime                 @default(now()) @map("created_at")
   assets              Asset[]
   candidates          LocateCandidate[]

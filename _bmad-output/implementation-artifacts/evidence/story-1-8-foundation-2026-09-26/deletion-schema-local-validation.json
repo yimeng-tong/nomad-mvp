@@ -1,0 +1,19 @@
+{
+  "kind": "story-1-8-deletion-schema-local-validation",
+  "priorHead": "aed0885328ecc9c721b2ac8e9520380942701a68",
+  "change": "Add nullable job/inspiration/record tombstone timestamps and an active normalized URL key while preserving the existing unique URL key and protected envelope. Backfill only the new active key from each existing immutable normalized URL.",
+  "checks": {
+    "prismaSchemaValidate": "passed-with-synthetic-nonconnecting-DATABASE_URL",
+    "prismaSchemaDiff": "matches-additive-columns-and-active-owner-unique-index; handwritten migration additionally backfills and constrains the active key",
+    "workspaceBuild": "passed",
+    "fullTypedLint": "passed-zero-failures",
+    "upgradeProbeNodeSyntax": "passed",
+    "ciWorkflowYamlParse": "passed",
+    "handoff": "passed-9-epics-67-stories-1089-gwt",
+    "diffWhitespace": "passed",
+    "isolatedPriorRowUpgrade": "pending-next-CI",
+    "isolatedPostgresqlConstraints": "18-pending-next-CI"
+  },
+  "localValidationNote": "An initial Prisma validate invocation failed only because DATABASE_URL was unset; it passed with a synthetic localhost URL. No database connection or migration was made locally.",
+  "scope": "Additive, non-serving deletion foundation. This does not enable delete, release the old unique key, fence a worker, hide a tombstone or clear protected URL data. Production preflight, backup/PITR and real-data audit remain open."
+}

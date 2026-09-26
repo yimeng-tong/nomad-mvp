@@ -491,9 +491,12 @@ export interface components {
       /** @enum {string} */
       type: "xhs_link" | "trip_params" | "unknown";
       original_text: string;
+      /** @description Distinct supported links in input order. url is the legacy basic normalized URL; original_url is the exact cleaned single-link input to preserve for owner-only import detail. */
       links?: {
           /** Format: uri */
           url: string;
+          /** Format: uri */
+          original_url?: string;
           position: number;
         }[];
       duplicate_count?: number;

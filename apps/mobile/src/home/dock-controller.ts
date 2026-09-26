@@ -343,7 +343,7 @@ export class ImportDockController {
       if (result.type === 'xhs_link' && links.length) {
         if (bindings.length && !result.link_occurrences) throw new JournalError('JOURNAL_CORRUPT');
         const contributing = bindings.filter((binding) => result.link_occurrences?.some((link) => Number.isSafeInteger(link.position) && link.position >= binding.start && link.position < binding.end)).map((binding) => binding.id);
-        if (await this.prepareInputs(links.map(({ url }) => ({ url })), activity, contributing, result.unrecognized ?? [], result.duplicate_count ?? 0)) {
+        if (await this.prepareInputs(links.map(({ url, original_url }) => ({ url: original_url ?? url })), activity, contributing, result.unrecognized ?? [], result.duplicate_count ?? 0)) {
           if (this.state.input.trim() === text) this.setInput('');
           this.runBackground(() => this.pump());
         }

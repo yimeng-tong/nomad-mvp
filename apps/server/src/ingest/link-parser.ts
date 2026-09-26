@@ -21,13 +21,13 @@ const urlPattern = /https?:\/\/[^\s"'<>]+/gi;
 const trailingPunctuation = /[),.;，。；、）]+$/u;
 const xhsHosts = new Set(['xiaohongshu.com', 'www.xiaohongshu.com', 'xhslink.com', 'www.xhslink.com']);
 
-function cleanUrl(value: string) {
+export function cleanXhsUrl(value: string) {
   return value.trim().replace(trailingPunctuation, '');
 }
 
 export function isXhsUrl(value: string) {
   try {
-    const parsed = new URL(cleanUrl(value));
+    const parsed = new URL(cleanXhsUrl(value));
     const hostname = parsed.hostname.toLowerCase();
     return ['http:', 'https:'].includes(parsed.protocol) && !parsed.username && !parsed.password && !parsed.port
       && (xhsHosts.has(hostname) || hostname.endsWith('.xiaohongshu.com') || hostname.endsWith('.xhslink.com'));
@@ -37,7 +37,7 @@ export function isXhsUrl(value: string) {
 }
 
 export function normalizeXhsUrl(value: string) {
-  const parsed = new URL(cleanUrl(value));
+  const parsed = new URL(cleanXhsUrl(value));
   parsed.hash = '';
   if (parsed.pathname !== '/') parsed.pathname = parsed.pathname.replace(/\/+$/, '');
   return parsed.toString();
@@ -48,7 +48,7 @@ export function parseXhsInput(input: IngestInput): XhsParseResult {
     ...(input.url ? [input.url] : []),
     ...Array.from(input.share_text?.matchAll(urlPattern) ?? [], (match) => match[0]),
   ]
-    .map(cleanUrl)
+    .map(cleanXhsUrl)
     .filter(isXhsUrl)
     .map(normalizeXhsUrl);
 
@@ -79,7 +79,7 @@ export function parseXhsInput(input: IngestInput): XhsParseResult {
 
 
 export type XhsBatch = {
-  links: Array<{ url: string; position: number }>;
+  links: Array<{ url: string; original_url: string; position: number }>;
   link_occurrences: Array<{ url: string; position: number }>;
   unrecognized: Array<{ text: string; reason: 'unsupported_url' | 'not_a_link' }>;
   duplicate_count: number;
@@ -95,12 +95,12 @@ export function parseXhsBatch(text: string): XhsBatch {
   // Some shares join URLs with Chinese punctuation and no spaces.
   for (const match of text.matchAll(/https?:\/\/[^\s"'<>，。；、）]+/gi)) {
     unknown(text.slice(end, match.index), 'not_a_link'); end = match.index + match[0].length;
-    const candidate = cleanUrl(match[0]);
+    const candidate = cleanXhsUrl(match[0]);
     if (!isXhsUrl(candidate)) { unknown(candidate, 'unsupported_url'); continue; }
     const url = normalizeXhsUrl(candidate);
     result.link_occurrences.push({ url, position: match.index });
     if (seen.has(url)) { result.duplicate_count++; continue; }
-    seen.add(url); result.links.push({ url, position: match.index });
+    seen.add(url); result.links.push({ url, original_url: candidate, position: match.index });
   }
   unknown(text.slice(end), 'not_a_link');
   return result;

@@ -24,7 +24,7 @@ backend_environment: homelab-vm104
 
 1.6 T6规范输入/导入事件接线、本地三层CR和Chrome实际App/IDB网络信封已通过；最新本地283移动+5配置、构建/typed lint/handoff通过，长时遮挡修补待追加推送和分支CI复验。完成卡片需视觉视口内未遮挡才计呈现，遮挡超过两秒仍继续等待；重复事件ID跨许可代次仍可能二次投递，真实SDK去重/查询未验证。证据见story-1-6-input-telemetry-progress-2026-09-26.md。第5步在制Story与硬资源门槛继续，3.1暂停不变。
 
-1.6 T6最终修补已由CI36221667847复验，1.7共享UI恢复局部切片由CI36222862831复验；两张Story整张仍开放。1.8在当前分支按源11GWT即时CS并经两份独立只读VS，当前合同ready-for-dev，准备证据见`1-8-owner-import-records-and-versioned-deduplication-validation.md`；第6步仅推进本地/隔离可执行部分，真实短链/生产密钥/设备另列。下一准备指针1.9只表示未来顺序，不提前生成。
+1.6 T6最终修补已由CI36221667847复验，1.7共享UI恢复局部切片由CI36222862831复验；两张Story整张仍开放。1.8在当前分支按源11GWT即时CS并经两份独立只读VS，合同由ready-for-dev转in-progress，准备证据见`1-8-owner-import-records-and-versioned-deduplication-validation.md`；第6步仅推进本地/隔离可执行部分，真实短链/生产密钥/设备另列。下一准备指针1.9只表示未来顺序，不提前生成。
 
 该修补已由`d02d0b0`推送，CI`36221667847`两job成功；四ZIP/999文件CRC、108遥测与313浏览器源码匹配。本轮1.6 CODE-QUALITY-01/UI-BROWSER-01仅在本Story本地切片范围verified；1.6整张及SDK/许可/归因/原生/METRICS门槛仍open。接续第5步1.7/9.1在制集成；详见story-1-6-input-telemetry-acceptance-2026-09-26.md。
 

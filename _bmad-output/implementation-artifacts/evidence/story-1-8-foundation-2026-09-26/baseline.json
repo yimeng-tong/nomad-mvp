@@ -1,0 +1,19 @@
+{
+  "kind": "story-1-8-current-source-baseline",
+  "head": "6163a4fbed33ee58d17d974e702b7c3726814550",
+  "branch": "codex/story-1-8-import-records",
+  "paths": {
+    "docs/api/openapi.yaml": "7abce6bc04d381e74b88a5f1bdc183c65c397e5371366d29fed6606bc306cccf",
+    "packages/types/src/api-types.ts": "35d41fcf8e0e717bfa453409e7767ade08c1b34cbf9bc6128821e79e00b38cb9",
+    "packages/prisma/schema.prisma": "faf082cf96cf68a184b7251267e7c7b698f542e47e05e847eb207be70abb2e53",
+    "apps/server/src/ingest/store.ts": "179b66b691e6b690c84b640997c052301c6f61cf9bc9c55be98f81c37838b5b1",
+    "apps/server/src/ingest/event-log.ts": "7aa4719fb3fcab3fa40066a9170d68500b17a9ed8dbdc32f882431fa3875f084",
+    "apps/server/src/ingest/link-parser.ts": "d49be0fc9c848eede073606ebbfbc6fd6b5155c23eb5e54dd32e7c8b5f30d3dd",
+    "apps/server/src/routes/ingest.ts": "170b83ed9d217dccb258369481dbd2d7acd3b39961e46aa611d381f0b0d4304c",
+    "apps/server/src/routes/library.ts": "a31b5f4e355c9ad837a7bf9653053370466b032c6dd720abe59cf3a902ce9bc9",
+    "apps/mobile/src/home/api.ts": "408d2e9092e83bd3ca8a9433ab65204e25432737aea56b7c95a9a9a6acab1a73",
+    "apps/mobile/src/home/HomeScreen.tsx": "a4eca5dddee690cb2ffc7a83cb6d818b48dca98a4a878efe2160911339a8b29b",
+    "apps/mobile/src/home/HomeImportDock.tsx": "636caa65c592bcfaa6bfe2f8d4e70f91f583d59ce5713af7830c59b6e1bfef65",
+    "apps/mobile/src/home/dock-controller.ts": "c8b14df29c9c9de33d9a1fbc0e4b934116a3b971b4a2f8ad2048653300a5786c"
+  }
+}

@@ -40,7 +40,7 @@ development_status:
   1-5-settings-feedback-and-account-entry-points: done
   1-6-home-multi-link-import-queue-and-honest-status: in-progress
   1-7-durable-import-progress-and-restart-recovery: in-progress
-  1-8-owner-import-records-and-versioned-deduplication: ready-for-dev
+  1-8-owner-import-records-and-versioned-deduplication: in-progress
   1-9-production-image-text-understanding-and-evidence: backlog
   1-10-adaptive-video-understanding-and-local-frame-resampling: backlog
   1-11-amap-poi-verification-branch-disambiguation-and-manual-correction: backlog
@@ -311,6 +311,33 @@ condition_progress:
       evidence:
       - _bmad-output/implementation-artifacts/story-1-7-ui-integration-acceptance-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/ci-verification.json
+  1-8-owner-import-records-and-versioned-deduplication:
+    OPS-01:
+      state: not-started
+      summary: Story已进入本地/隔离开发；生产备份、PITR及恢复目标无本Story证据。
+    DB-CHANGE-01:
+      state: not-started
+      summary: 当前仅合同准备完成，ImportRecord迁移与旧数据冲突审计尚未实施。
+    METRICS-01:
+      state: not-started
+    METRICS-02:
+      state: not-started
+    METRICS-03:
+      state: not-started
+    APP-HOST-01:
+      state: not-started
+    CODE-QUALITY-01:
+      state: in-progress
+      summary: 仅1.8 T1当前纯URL规则/原链接传递局部本地测试、构建及typed lint通过；完整CI、DB/页面与整张Story尚未验收。
+      evidence:
+      - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/validation.json
+    UI-COMPONENT-01:
+      state: not-started
+    UI-WORKBENCH-01:
+      state: not-started
+    UI-BROWSER-01:
+      state: not-started
   9-1-capacitor-app-installation-and-host-foundation:
     DB-CHANGE-01:
       state: not-applicable
@@ -717,15 +744,15 @@ active_workstreams:
     contract: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md
     evidence: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
   near_term_execution:
-    story: 1-7-durable-import-progress-and-restart-recovery
+    story: 1-8-owner-import-records-and-versioned-deduplication
     thread_id: 01a0d78a-3692-78b1-aee5-76268a743925
     host_id: local
     environment: current-saved-project
     status: active
-    working_branch: codex/story-1-7-ui-integration
+    working_branch: codex/story-1-8-import-records
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。1.8当前合同已即时准备并独立复核，待进入本地/隔离开发；9.1正式协议/真机、真实资源/SDK门槛与3.1暂停不变
+    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。1.8合同即时准备并独立复核后开始本地/隔离开发；9.1正式协议/真机、真实资源/SDK门槛与3.1暂停不变
 previous_preparation:
   story: 9-3-shared-ui-components-and-safe-app-sheet
   status: complete
@@ -738,7 +765,7 @@ current_preparation:
   status: complete
   evidence: _bmad-output/implementation-artifacts/1-8-owner-import-records-and-versioned-deduplication-validation.md
   authorization: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
-  implementation_started: false
+  implementation_started: true
   execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_boundary_override: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md

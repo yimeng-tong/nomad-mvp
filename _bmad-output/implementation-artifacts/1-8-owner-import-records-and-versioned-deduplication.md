@@ -40,15 +40,15 @@ engineering_conditions:
 baseline_commit: 69fae8d80a56de1284b5b0504039837b1e53a63d
 prepared: '2026-09-26'
 scope_revision: ui-foundation-2026-09-20
-status: ready-for-dev
+status: in-progress
 preparation_validation: _bmad-output/implementation-artifacts/1-8-owner-import-records-and-versioned-deduplication-validation.md
 ---
 
 # Story 1.8: Owner 导入记录与版本化去重
 
-Status: ready-for-dev
+Status: in-progress
 
-当前合同已通过独立准备复核，可进入已授权开发；ImportRecord、去重和 Library 记录页面尚未实施。源 Requirements 的 NFR3 与当前 delivery 绑定的 NFR8 均须满足，二者不可相互替代。11组源 GWT 与补充合同如下，实际 Tasks 和关闭证据继续保持 owner、设备和真实 PostgreSQL 门槛。
+当前合同已通过独立准备复核，正进入已授权本地/隔离开发；ImportRecord、去重和 Library 记录页面尚未实施。源 Requirements 的 NFR3 与当前 delivery 绑定的 NFR8 均须满足，二者不可相互替代。11组源 GWT 与补充合同如下，实际 Tasks 和关闭证据继续保持 owner、设备和真实 PostgreSQL 门槛。
 
 ## Story 与源验收合同
 
@@ -125,9 +125,9 @@ App 宿主补充：NFR25; AR23-AR24; UX-DR36。
 
 ## Tasks / Subtasks
 
-- [ ] T0 核对当前合同与现有实现（全部源 GWT）
-  - [ ] CURRENT/Sprint已明确移除旧1.7后停止边界；本Story按当前preparation_order即时准备，3.1仍paused。核对1.0 owner资格、1.6 operation/未知回执与1.7 event/lease现有源码和未关闭的真实门槛，不把上游整张未done误当本地实施禁止，也不把旧合同当完成证明。
-  - [ ] 完整读取下述UPDATE文件及现行schema/migration；保存开发基线和当前URL/受理/回执行为。先维护`docs/api/openapi.yaml`并生成类型，复用已有鉴权、operation、cursor与worker，不新增内存权威、第二个调度器或前端猜测去重。
+- [x] T0 核对当前合同与现有实现（全部源 GWT）
+  - [x] CURRENT/Sprint已明确移除旧1.7后停止边界；本Story按当前preparation_order即时准备，3.1仍paused。核对1.0 owner资格、1.6 operation/未知回执与1.7 event/lease现有源码和未关闭的真实门槛，不把上游整张未done误当本地实施禁止，也不把旧合同当完成证明。
+  - [x] 完整读取下述UPDATE文件及现行schema/migration；保存开发基线和当前URL/受理/回执行为。先维护`docs/api/openapi.yaml`并生成类型，复用已有鉴权、operation、cursor与worker，不新增内存权威、第二个调度器或前端猜测去重。
 
 - [ ] T1 建立版本化规范化与ImportRecord数据合同（源场景1、2、5；FR5/FR6/FR18.1/FR20、NFR3/NFR8/NFR20/NFR25）
   - [ ] OpenAPI/Prisma定义owner ImportRecord、受保护原始URL、normalized URL/policy version、稳定record id、当前job、状态/结果读模型及`(userId,normalizedUrl)`持久唯一约束；与现有IngestJob/IngestCommand/初始event/executionPending同一受理事务提交。`sourceTitle`仅在取得来源事实后填入，受理时允许明确pending，不伪造标题。
@@ -250,9 +250,22 @@ Codex；本次执行 bmad-create-story，仅建立开发上下文。
 ### Completion Notes List
 
 - 当前准备已补完整源合同、逐场景任务、现有实现/新增边界和验证方案；功能尚未实施。
-- 两份独立只读准备复核的发现已纳入合同并记录在同名validation；所有开发任务保持未勾选。
+- 两份独立只读准备复核的发现已纳入合同并记录在同名validation；准备完成时开发任务均未勾选。
+- T0已核对当前源/权威路径和12文件SHA，保存`story-1-8-dev-progress-2026-09-26.md`及对应baseline.json；产品功能仍未实施，T1起均未完成。
+- T1局部：`xhs-import-v1`纯规则与明确原URL的Home→journal传递已实现并通过本地测试；服务端仍无ImportRecord/URL保护持久化，T1和整张Story保持未勾选。
 
 ### File List
 
 - _bmad-output/implementation-artifacts/1-8-owner-import-records-and-versioned-deduplication.md
 - _bmad-output/implementation-artifacts/1-8-owner-import-records-and-versioned-deduplication-validation.md
+- _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
+- _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/baseline.json
+- _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/validation.json
+- apps/server/src/ingest/url-normalization-policy.ts
+- apps/server/src/ingest/url-normalization-policy.test.ts
+- apps/server/src/ingest/link-parser.ts
+- apps/server/src/ingest/link-parser-original.test.ts
+- apps/mobile/src/home/dock-controller.ts
+- apps/mobile/src/home/dock-original-url.test.ts
+- docs/api/openapi.yaml
+- packages/types/src/api-types.ts

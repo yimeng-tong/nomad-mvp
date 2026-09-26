@@ -2179,11 +2179,13 @@ components:
         original_text: { type: string }
         links:
           type: array
+          description: Distinct supported links in input order. url is the legacy basic normalized URL; original_url is the exact cleaned single-link input to preserve for owner-only import detail.
           items:
             type: object
             required: [url, position]
             properties:
               url: { type: string, format: uri }
+              original_url: { type: string, format: uri }
               position: { type: integer, minimum: 0 }
         duplicate_count: { type: integer, minimum: 0 }
         link_occurrences:
@@ -3275,4 +3277,3 @@ components:
       content:
         application/json:
           schema: { $ref: '#/components/schemas/ErrorEnvelope' }
-

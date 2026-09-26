@@ -1,0 +1,41 @@
+{
+  "kind": "story-1-8-t1-local-partial-validation",
+  "recordedAt": "2026-09-26T06:52:11.609921+00:00",
+  "baseCommit": "6163a4fbed33ee58d17d974e702b7c3726814550",
+  "branch": "codex/story-1-8-import-records",
+  "sourceSha256": {
+    "apps/server/src/ingest/url-normalization-policy.ts": "b4b776da41cee8164fc20772e8e67f11381eb8555f21063ad32508cf0249dc56",
+    "apps/server/src/ingest/url-normalization-policy.test.ts": "390ddd5abe876eb7e3316c18291319785d6eeb94e9c3f36c3770679a205c2a13",
+    "apps/server/src/ingest/link-parser.ts": "309449a570f06ee32e66991f6265ddb9920d6a5a152b9983fe4338ad0f153bad",
+    "apps/server/src/ingest/link-parser-original.test.ts": "875486bd25ceade409206c71fd5f4d04a2b2d268374221cdc3d6dcd8cdc1644e",
+    "apps/mobile/src/home/dock-controller.ts": "27c2b4438e52937dcb0a52955d2cae11320d98dd7bb3c90d35df5331a4ede42d",
+    "apps/mobile/src/home/dock-original-url.test.ts": "f760a72d488fdca2f3d57205fd226d9a5c2811645c11eb7f2c81b35a1e0c0559",
+    "docs/api/openapi.yaml": "9522be82b099ab517cf9f77d6117960f392abb3b44d12a196e287e69b72eed8c",
+    "packages/types/src/api-types.ts": "6dfdb234a3d87b43604538ce8c0ef40cf22f4fe45a4e0806b369a665be11922e"
+  },
+  "checks": {
+    "policyAndOriginalParserNodeTests": {
+      "passed": 4,
+      "failed": 0
+    },
+    "mobileOriginalUrlVitest": {
+      "passed": 1,
+      "failed": 0
+    },
+    "mobileSuiteBeforeTestRelocation": {
+      "passed": 284,
+      "failed": 0,
+      "nativeConfigPassed": 5
+    },
+    "homeLibraryContractProbe": "passed",
+    "workspaceBuildBeforeFinalPolicyBoundaryRefinement": "passed",
+    "serverBuildAfterFinalPolicyBoundaryRefinement": "passed",
+    "typedLint": {
+      "selectedFiles": 118,
+      "failures": 0,
+      "retiredExceptions": 0
+    },
+    "handoff": "passed"
+  },
+  "scope": "Local pure URL policy and Home original single URL through operation journal; no ImportRecord schema, acceptance transaction, real short-link resolution, production key, provider, native device or production DB verification"
+}

@@ -3,14 +3,14 @@ project: nomad-mvp
 updated: '2026-09-26'
 current_epic: 1
 last_completed_story: 9-5-browser-flow-and-visual-regression-gates
-current_story: 1-7-durable-import-progress-and-restart-recovery
+current_story: 1-8-owner-import-records-and-versioned-deduplication
 current_story_status: in-progress
-current_story_file: _bmad-output/implementation-artifacts/1-7-durable-import-progress-and-restart-recovery.md
+current_story_file: _bmad-output/implementation-artifacts/1-8-owner-import-records-and-versioned-deduplication.md
 current_story_spec: _bmad-output/planning-artifacts/epics.md
 planning_status: bmad-sprint-planning-complete
 execution_phase: execution
 next_bmad_action: bmad-dev-story
-next_bmad_checkpoint: story-1-7-shared-ui-recovery-ci
+next_bmad_checkpoint: story-1-8-url-policy-and-import-record-foundation
 readiness_report: _bmad-output/planning-artifacts/implementation-readiness-sp-handoff-2026-09-15.md
 prompt_strength_status: approved-applied-and-revalidated
 prompt_strength_record: _bmad-output/planning-artifacts/prompt-strength-adoption-2026-09-15.md
@@ -18,7 +18,7 @@ sprint_planning_authorized: true
 sprint_planning_completed: true
 create_story_authorized: true
 implementation_authorized: true
-handoff_status: story-1-7-shared-ui-recovery-scoped-ci-accepted
+handoff_status: story-1-8-in-progress-after-independent-preparation
 tracking_system: _bmad-output/implementation-artifacts/sprint-status.yaml
 migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
 migration_report: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.md
@@ -60,7 +60,7 @@ recovery_ui_integration_acceptance: _bmad-output/implementation-artifacts/story-
 
 ## 当前继续执行（2026-09-26）
 
-9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的1.0独立WL-AUTH本地切片通过完整CI36192075867；真实staging/费用/目标仍待验收。1.6规范输入事件`d02d0b0`通过CI36221667847，四ZIP/999文件与108/313源码匹配，证据见input_telemetry_acceptance；SDK/许可/归因/设备及整张1.6仍开放。1.7共享UI恢复`2719998`通过完整CI36222862831两job与五ZIP/1003文件CRC：当前App/IDB双进程22项及三引擎129场景，详见recovery_ui_integration_acceptance。1.7原生C07/生产恢复与9.1正式协议/双端实机仍开放。当前`codex/story-1-8-import-records`已即时准备1.8并经独立复核，源11GWT、10工程条件和shared-ui-adoption完整，Sprint为ready-for-dev；下一步实施本地/隔离切片，真实短链/生产密钥/真机仍开放，3.1暂停。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
+9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的1.0独立WL-AUTH本地切片通过完整CI36192075867；真实staging/费用/目标仍待验收。1.6规范输入事件`d02d0b0`通过CI36221667847，四ZIP/999文件与108/313源码匹配，证据见input_telemetry_acceptance；SDK/许可/归因/设备及整张1.6仍开放。1.7共享UI恢复`2719998`通过完整CI36222862831两job与五ZIP/1003文件CRC：当前App/IDB双进程22项及三引擎129场景，详见recovery_ui_integration_acceptance。1.7原生C07/生产恢复与9.1正式协议/双端实机仍开放。当前`codex/story-1-8-import-records`已即时准备1.8并经独立复核，源11GWT、10工程条件和shared-ui-adoption完整；Sprint及Story为in-progress，T0完成，T1纯URL规则/原链接Home→journal局部通过本地验证，服务端record/加密/事务尚未交付。真实短链/生产密钥/真机仍开放，3.1暂停。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
 
 Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不提前准备1.9。
 

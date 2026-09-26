@@ -42,6 +42,7 @@ await test('rejects forged or unsupported resolutions and retains unknown semant
   assert.throws(() => normalizeImportSourceUrl('https://example.invalid/explore/a'), /INGEST_URL_POLICY_UNSUPPORTED/);
   assert.throws(() => normalizeImportSourceUrl('https://xhslink.com/'), /INGEST_URL_POLICY_UNSUPPORTED/);
   assert.throws(() => normalizeImportSourceUrl('https://www.xiaohongshu.com/'), /INGEST_URL_POLICY_UNSUPPORTED/);
+  assert.throws(() => normalizeImportSourceUrl(`https://www.xiaohongshu.com/explore/${'a'.repeat(2100)}`), /INGEST_URL_POLICY_UNSUPPORTED/);
   assert.throws(() => normalizeImportSourceUrl('https://www.xiaohongshu.com/explore/a', { resolvedUrl: 'https://www.xiaohongshu.com/explore/b' }), /INGEST_URL_POLICY_UNSUPPORTED/);
   assert.equal(normalizeImportSourceUrl('https://www.xiaohongshu.com/user/profile/person/a').normalizedUrl,
     'https://www.xiaohongshu.com/user/profile/person/a');

@@ -1,0 +1,32 @@
+{
+  "kind": "story-1-8-additive-schema-local-validation",
+  "recordedAt": "2026-09-26T07:08:22.620577+00:00",
+  "priorHead": "78f94d4323ea8f9cbc16d1ba82ff0ed926454336",
+  "branch": "codex/story-1-8-import-records",
+  "sourceSha256": {
+    "packages/prisma/schema.prisma": "0ddf00d27e812d72e8cdf9b6e855c253be998c384dc371b334531526f1c03965",
+    "packages/prisma/migrations/20260926000100_story_1_8_import_record_foundation/migration.sql": "fedb2de207944db4eb8bc99467ec5c1261af897d36da445003451141837e620a",
+    "apps/server/scripts/import-record-schema-probe.ts": "94dda0c88981db10762ef995b924e1014d56bea8fd1dd4786d1b6ea1ebe815ca",
+    ".github/workflows/ci.yml": "c82b671c3a29150c295b732aed9a8d9540794d5c47dce8507e4317fe77e75416",
+    "apps/server/src/ingest/url-normalization-policy.ts": "614a6fbff1ccc521a6df1dff2cc083d21be166d4e9952100d00f0c26c07839d2",
+    "apps/server/src/ingest/url-normalization-policy.test.ts": "a837d058f7c8f30910f4a5107a62972832ffe6b04dbccf56285355eecf5d1364"
+  },
+  "checks": {
+    "prismaSchemaValidate": "passed",
+    "prismaClientGenerate": "passed",
+    "workspaceBuild": "passed",
+    "policyNodeTests": {
+      "passed": 3,
+      "failed": 0
+    },
+    "prismaSchemaDiffComparedWithAdditiveMigration": true,
+    "isolatedPostgresqlMigration": "pending-ci",
+    "isolatedPostgresqlConstraintProbe": "pending-ci",
+    "typedLint": {
+      "selectedFiles": 121,
+      "failures": 0,
+      "retiredExceptions": 0
+    }
+  },
+  "scope": "No existing or production database accessed; no legacy backfill, protected URL runtime write, acceptance integration, real short-link or device proof"
+}

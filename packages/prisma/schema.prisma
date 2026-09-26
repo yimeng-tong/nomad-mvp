@@ -141,6 +141,7 @@ model User {
   settings     UserSettings?
   keys         UserKey[]
   ingestJobs   IngestJob[]
+  importRecords ImportRecord[]
   inspirations Inspiration[]
   plans        Plan[]
   planJobs     PlanJob[]
@@ -403,6 +404,7 @@ model IngestJob {
   stateVersion Int @default(0) @map("state_version")
   snapshotJson Json? @map("snapshot_json")
   commands IngestCommand[]
+  importRecord ImportRecord?
   authVersion Int? @map("auth_version")
   id           String        @id @default(uuid()) @db.Uuid
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -417,6 +419,28 @@ model IngestJob {
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @default(now()) @map("updated_at")
   inspirations Inspiration[]
+  @@unique([id, userId], map: "IngestJob_id_userId_key")
+}
+
+model ImportRecord {
+  id                   String        @id @default(uuid()) @db.Uuid
+  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String        @db.Uuid
+  job                  IngestJob     @relation(fields: [jobId, userId], references: [id, userId], onDelete: Cascade)
+  jobId                String        @map("job_id") @db.Uuid
+  normalizedUrl        String        @map("normalized_url") @db.VarChar(2048)
+  normalizationVersion String        @map("normalization_version") @db.VarChar(48)
+  originalUrlProtected Json          @map("original_url_protected")
+  sourceTitle          String?       @map("source_title") @db.VarChar(240)
+  status               IngestStatus  @default(created)
+  createdAt            DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime      @default(now()) @map("updated_at") @db.Timestamptz(3)
+  inspirations         Inspiration[]
+
+  @@unique([userId, normalizedUrl], map: "ImportRecord_userId_normalized_url_key")
+  @@unique([jobId, userId], map: "ImportRecord_job_id_userId_key")
+  @@unique([id, userId], map: "ImportRecord_id_userId_key")
+  @@index([userId, createdAt, id], map: "ImportRecord_owner_created_idx")
 }
 
 model IngestEventRecord {
@@ -441,6 +465,8 @@ model Inspiration {
   userId              String                   @db.Uuid
   job                 IngestJob?               @relation(fields: [jobId], references: [id])
   jobId               String?                  @db.Uuid
+  importRecord         ImportRecord?            @relation(fields: [importRecordId, userId], references: [id, userId], onDelete: Restrict)
+  importRecordId       String?                  @map("import_record_id") @db.Uuid
   title               String?
   text                String?
   tags                String[]

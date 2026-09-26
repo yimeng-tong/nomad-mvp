@@ -159,6 +159,22 @@ jobs:
       - name: Apply Prisma migrations to isolated CI database
         run: pnpm -F nomad-prisma run migrate:deploy
 
+      - name: Owner import record constraints in isolated PostgreSQL
+        working-directory: apps/server
+        env:
+          AUTH_TEST_DATABASE_ACK: isolated-synthetic-only
+          NOMAD_IMPORT_RECORD_REPORT: .import-record-results/schema.json
+        run: node --import tsx scripts/import-record-schema-probe.ts
+
+      - name: Preserve import record database evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nomad-import-record-schema-${{ github.sha }}
+          path: apps/server/.import-record-results/schema.json
+          include-hidden-files: true
+          if-no-files-found: warn
+
       - name: Authentication unit and API contract tests
         run: node --import tsx --test apps/server/src/auth/*.test.ts scripts/check-auth-contract.test.mjs
 

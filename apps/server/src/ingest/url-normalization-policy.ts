@@ -22,7 +22,7 @@ function unsupported(): never {
 }
 
 function parseSupported(value: string): URL {
-  if (value.length > 4096 || !isXhsUrl(value)) unsupported();
+  if (Buffer.byteLength(value, 'utf8') > 4096 || !isXhsUrl(value)) unsupported();
   const url = new URL(value);
   if (url.protocol !== 'http:' && url.protocol !== 'https:') unsupported();
   const path = url.pathname.replace(/\/+$/u, '');
@@ -38,7 +38,9 @@ function normalize(url: URL): string {
   if (shortHosts.has(url.hostname)) url.hostname = 'xhslink.com';
   if (url.pathname !== '/') url.pathname = url.pathname.replace(/\/+$/u, '');
   for (const name of trackingParams) url.searchParams.delete(name);
-  return url.toString();
+  const normalized = url.toString();
+  if (Buffer.byteLength(normalized, 'utf8') > 2048) unsupported();
+  return normalized;
 }
 
 /** Pure policy decision. Resolution is supplied by a separate, bounded adapter; this function never fetches. */

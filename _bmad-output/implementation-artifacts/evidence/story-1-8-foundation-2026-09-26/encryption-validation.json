@@ -1,0 +1,20 @@
+{
+  "kind": "story-1-8-import-url-protection-local-validation",
+  "recordedAt": "2026-09-26T06:57:24.206747+00:00",
+  "priorHead": "5a2fc7c4199d35c1f8261db308fa97455ecc81ac",
+  "branch": "codex/story-1-8-import-records",
+  "sourceSha256": {
+    "apps/server/src/ingest/import-url-protection.ts": "a94a066f00e356e1cf68729cc9371be5d9c81c679cbfb831d4f61b1357ed9236",
+    "apps/server/src/ingest/import-url-protection.test.ts": "2c6c0f2f22aab640ad3d6206b1ac3e913df0cc1898c279da9f671deeafd00279",
+    ".github/workflows/ci.yml": "db2433ea8f14abbe0034a1214d7c7fdca7ac1bdbea3872af6da61a76ef67380a"
+  },
+  "checks": {
+    "securityNodeTests": {
+      "passed": 2,
+      "failed": 0
+    },
+    "serverBuild": "passed",
+    "targetedTypedEslint": "passed"
+  },
+  "scope": "Synthetic in-process keyring only; no real key loaded, no ImportRecord or existing plaintext migration, no production claim"
+}

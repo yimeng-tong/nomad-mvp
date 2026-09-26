@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates, codex/story-9-3-shared-ui, codex/story-1-0-auth-measurements, codex/story-1-6-input-telemetry, codex/story-1-7-ui-integration ]
+    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates, codex/story-9-3-shared-ui, codex/story-1-0-auth-measurements, codex/story-1-6-input-telemetry, codex/story-1-7-ui-integration, codex/story-1-8-import-records ]
   pull_request:
     branches: [ main, codex/story-1-0-production-auth, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates ]
 

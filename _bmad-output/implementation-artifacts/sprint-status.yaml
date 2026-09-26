@@ -328,10 +328,11 @@ condition_progress:
       state: not-started
     CODE-QUALITY-01:
       state: in-progress
-      summary: 仅1.8 T1当前纯URL规则/原链接传递局部本地测试、构建及typed lint通过；完整CI、DB/页面与整张Story尚未验收。
+      summary: 仅1.8 T1纯URL规则/原链接传递及独立AES-GCM保护模块本地测试、构建、typed lint通过；完整CI、DB/页面与整张Story尚未验收。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/encryption-validation.json
     UI-COMPONENT-01:
       state: not-started
     UI-WORKBENCH-01:

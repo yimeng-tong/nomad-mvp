@@ -25,8 +25,8 @@ migration_report: _bmad-output/implementation-artifacts/sprint-migration-ui-foun
 delivery_contract: _bmad-output/implementation-artifacts/sprint-delivery-contract-ui-foundation-2026-09-20.yaml
 revalidation_report: _bmad-output/planning-artifacts/implementation-readiness-ui-foundation-2026-09-20.md
 paused_story: 3-1-minute-timeline-editing-and-plan-wide-undo
-working_branch: codex/story-1-7-ui-integration
-story_preparation_report: _bmad-output/implementation-artifacts/1-6-home-multi-link-import-queue-and-honest-status-validation.md
+working_branch: codex/story-1-8-import-records
+story_preparation_report: _bmad-output/implementation-artifacts/1-8-owner-import-records-and-versioned-deduplication-validation.md
 resource_alignment: _bmad-output/implementation-artifacts/research/story-1-0-resource-confirmation-2026-09-19.md
 input_import_progress: _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
 authentication_progress: _bmad-output/implementation-artifacts/story-1-0-dev-progress-2026-09-19.md
@@ -39,7 +39,7 @@ stop_after_story: null
 stop_after_story_reason: removed-by-explicit-user-direction-2026-09-25
 ui_scope_progress: _bmad-output/implementation-artifacts/ui-foundation-dev-progress-2026-09-20.md
 ui_scope_handoff: _bmad-output/implementation-artifacts/ui-foundation-handoff-2026-09-20.md
-last_prepared_story: 9-3-shared-ui-components-and-safe-app-sheet
+last_prepared_story: 1-8-owner-import-records-and-versioned-deduplication
 ui_prepared_story_status: in-progress
 ui_prepared_story_file: _bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet.md
 ui_story_preparation_report: _bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet-validation.md
@@ -60,9 +60,9 @@ recovery_ui_integration_acceptance: _bmad-output/implementation-artifacts/story-
 
 ## 当前继续执行（2026-09-26）
 
-9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的1.0独立WL-AUTH本地切片通过完整CI36192075867；真实staging/费用/目标仍待验收。1.6规范输入事件`d02d0b0`通过CI36221667847，四ZIP/999文件与108/313源码匹配，证据见input_telemetry_acceptance；SDK/许可/归因/设备及整张1.6仍开放。当前`codex/story-1-7-ui-integration`的`2719998`已通过完整CI36222862831两job与五ZIP/1003文件CRC：当前App/IDB双进程恢复22项、16源码匹配，三引擎129场景/33视觉/313源码匹配，详见recovery_ui_integration_acceptance。1.7原生C07/生产恢复与9.1正式协议/双端实机仍开放；临近实施准备1.8，3.1继续暂停。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
+9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的1.0独立WL-AUTH本地切片通过完整CI36192075867；真实staging/费用/目标仍待验收。1.6规范输入事件`d02d0b0`通过CI36221667847，四ZIP/999文件与108/313源码匹配，证据见input_telemetry_acceptance；SDK/许可/归因/设备及整张1.6仍开放。1.7共享UI恢复`2719998`通过完整CI36222862831两job与五ZIP/1003文件CRC：当前App/IDB双进程22项及三引擎129场景，详见recovery_ui_integration_acceptance。1.7原生C07/生产恢复与9.1正式协议/双端实机仍开放。当前`codex/story-1-8-import-records`已即时准备1.8并经独立复核，源11GWT、10工程条件和shared-ui-adoption完整，Sprint为ready-for-dev；下一步实施本地/隔离切片，真实短链/生产密钥/真机仍开放，3.1暂停。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
 
-Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不批量准备1.8。
+Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不提前准备1.9。
 
 ## 当前执行交接（2026-09-25）
 

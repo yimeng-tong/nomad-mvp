@@ -29,7 +29,7 @@ stop_after_story_reason: removed-by-explicit-user-direction-2026-09-25
 epics_source: _bmad-output/planning-artifacts/epics.md
 migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
 migration_report: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.md
-next_story_to_prepare: 1-8-owner-import-records-and-versioned-deduplication
+next_story_to_prepare: 1-9-production-image-text-understanding-and-evidence
 development_status:
   epic-1: in-progress
   1-0-production-login-and-multi-device-sessions: in-progress
@@ -40,7 +40,7 @@ development_status:
   1-5-settings-feedback-and-account-entry-points: done
   1-6-home-multi-link-import-queue-and-honest-status: in-progress
   1-7-durable-import-progress-and-restart-recovery: in-progress
-  1-8-owner-import-records-and-versioned-deduplication: backlog
+  1-8-owner-import-records-and-versioned-deduplication: ready-for-dev
   1-9-production-image-text-understanding-and-evidence: backlog
   1-10-adaptive-video-understanding-and-local-frame-resampling: backlog
   1-11-amap-poi-verification-branch-disambiguation-and-manual-correction: backlog
@@ -725,20 +725,20 @@ active_workstreams:
     working_branch: codex/story-1-7-ui-integration
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。9.1正式协议/真机仍开放；临近实施准备1.8，真实资源/SDK门槛与3.1暂停不变
+    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。1.8当前合同已即时准备并独立复核，待进入本地/隔离开发；9.1正式协议/真机、真实资源/SDK门槛与3.1暂停不变
 previous_preparation:
-  story: 9-5-browser-flow-and-visual-regression-gates
-  status: complete
-  evidence: _bmad-output/implementation-artifacts/9-5-browser-flow-and-visual-regression-gates-validation.md
-  authorization: _bmad-output/implementation-artifacts/story-9-5-preparation-decisions-2026-09-25.md
-  implementation_started: true
-  execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
-current_preparation:
   story: 9-3-shared-ui-components-and-safe-app-sheet
   status: complete
   evidence: _bmad-output/implementation-artifacts/9-3-shared-ui-components-and-safe-app-sheet-validation.md
   authorization: _bmad-output/implementation-artifacts/story-9-3-preparation-decisions-2026-09-26.md
   implementation_started: true
+  execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
+current_preparation:
+  story: 1-8-owner-import-records-and-versioned-deduplication
+  status: complete
+  evidence: _bmad-output/implementation-artifacts/1-8-owner-import-records-and-versioned-deduplication-validation.md
+  authorization: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
+  implementation_started: false
   execution_resume_record: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_boundary_override: _bmad-output/implementation-artifacts/sprint-execution-resume-2026-09-25.md
 execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md

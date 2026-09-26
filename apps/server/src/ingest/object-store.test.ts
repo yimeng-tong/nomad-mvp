@@ -10,7 +10,7 @@ const validInput = () => ({ ownerId: randomUUID(), jobId: randomUUID(),
   bytes: Buffer.from([0x89, 0x50, 0x4e, 0x47]), contentType: 'image/png' });
 const fault = (code: string) => (error: unknown) => error instanceof AuthFault && error.code === code;
 
-test('media bytes fail closed without a server-side object credential', async () => {
+await test('media bytes fail closed without a server-side object credential', async () => {
   const saved = keys.map((key) => process.env[key]);
   try {
     for (const key of keys) delete process.env[key];
@@ -19,7 +19,7 @@ test('media bytes fail closed without a server-side object credential', async ()
     else process.env[key] = saved[index]; }); }
 });
 
-test('plaintext endpoint is rejected before contacting a storage service', async () => {
+await test('plaintext endpoint is rejected before contacting a storage service', async () => {
   const saved = keys.map((key) => process.env[key]);
   try {
     process.env.NOMAD_OBJECT_ENDPOINT = 'http://127.0.0.1:8333';
@@ -31,7 +31,7 @@ test('plaintext endpoint is rejected before contacting a storage service', async
     else process.env[key] = saved[index]; }); }
 });
 
-test('untrusted media type, owner identity and oversized bytes are rejected', async () => {
+await test('untrusted media type, owner identity and oversized bytes are rejected', async () => {
   await assert.rejects(putMediaBytes({ ...validInput(), contentType: 'text/html' }), fault('MEDIA_OBJECT_INVALID'));
   await assert.rejects(putMediaBytes({ ...validInput(), ownerId: 'someone-else' }), fault('MEDIA_OBJECT_INVALID'));
   await assert.rejects(putMediaBytes({ ...validInput(), bytes: Buffer.alloc(32 * 1024 * 1024 + 1) }),

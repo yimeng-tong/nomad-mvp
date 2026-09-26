@@ -190,6 +190,23 @@ jobs:
           NOMAD_IMPORT_RECORD_REPORT: .import-record-results/schema.json
         run: node --import tsx scripts/import-record-schema-probe.ts
 
+      - name: Legacy import audit analysis and read-only PostgreSQL snapshot
+        working-directory: apps/server
+        env:
+          NOMAD_IMPORT_AUDIT_REPORT: .import-record-results/read-only-audit.json
+        run: |
+          node --import tsx --test src/ingest/import-record-audit.test.ts
+          node --import tsx scripts/import-record-readonly-audit.mjs
+
+      - name: Preserve read-only legacy import audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nomad-import-record-audit-${{ github.sha }}
+          path: apps/server/.import-record-results/read-only-audit.json
+          include-hidden-files: true
+          if-no-files-found: warn
+
       - name: Preserve import record database evidence
         if: always()
         uses: actions/upload-artifact@v4

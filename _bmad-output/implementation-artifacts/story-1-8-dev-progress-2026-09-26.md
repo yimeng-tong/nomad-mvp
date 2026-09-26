@@ -23,3 +23,5 @@ T1数据库结构草案：在现有1.7迁移后新增加法`ImportRecord`表与�
 `d82f681`的CI`36228607706`为部分成功、整轮失败：独立浏览器job三引擎135/135、B32/B33六项、33视觉通过，944项ZIP CRC及源码指纹一致；build-and-test在工作台九个新增场景失败，严格网络策略未声明ImportRecord列表/详情GET，且场景卸载后组件重渲染读取了已失效的scenario。隔离PG十六项因此未运行。保留证据`read-ui-first-ci-verification.json`。工作树现修复路由白名单与卸载时读取，并细化Home重复记录的运行/完成/失败提示；这些修复必须在新完整CI重新验证，不从先前浏览器job推导当前源码全通过。
 
 修复后本地workspace build、typed lint零失败、移动Vitest289项/原生配置5项、工作台类型/网络Node十项/静态构建、handoff及diff检查通过，见`read-ui-workbench-repair-local-validation.json`；本机无Playwright可执行文件，九项工作台浏览器交互与十六项隔离PG仍待CI。
+
+`eb23521`的CI`36229356143`再次是部分成功、整轮失败：浏览器job三引擎135/135、B32/B33六项及33视觉/944项ZIP CRC通过；工作台40/41通过，仅Normal场景在详情仍处loading时立即查找原URL失败，PG步骤仍未运行。证据`read-ui-second-ci-verification.json`。断言现改为等待详情内容；本地把Chromium及所需共享库临时放在`/tmp`运行，首次Vite依赖重优化导致重载，未改源码重跑后工作台6文件41/41实际浏览器通过，见`workbench-final-local-validation.json`。下一步仍需同一源码完整CI与隔离PG十六项。

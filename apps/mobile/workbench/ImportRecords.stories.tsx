@@ -32,7 +32,7 @@ export const Normal: Story = { name: '正常 · 私有详情与返回焦点', pl
   const trigger = canvas.getByRole('button', { name: '查看合成来源 · 西湖傍晚散步的导入记录' });
   await userEvent.click(trigger);
   const sheet = within(await canvas.findByRole('dialog', { name: '导入记录详情' }));
-  await expect(sheet.getByText('https://xhslink.com/workbench-only#original')).toBeVisible();
+  await expect(await sheet.findByText('https://xhslink.com/workbench-only#original')).toBeVisible();
   await userEvent.keyboard('{Escape}');
   await waitFor(() => expect(canvas.queryByRole('dialog')).not.toBeInTheDocument());
   await waitFor(() => expect(trigger).toHaveFocus());

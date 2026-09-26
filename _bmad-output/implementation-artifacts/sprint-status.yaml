@@ -317,7 +317,7 @@ condition_progress:
       summary: Story已进入本地/隔离开发；生产备份、PITR及恢复目标无本Story证据。
     DB-CHANGE-01:
       state: in-progress
-      summary: 4110c7e与40a72e3完整CI中隔离PG加法迁移五项、事件投影八项通过。a6362d3受理PG十三项切片通过但整轮CI失败；d82f681浏览器通过但工作台失败，十六项PG未运行。旧兼容及工作台已修复待完整CI，旧数据审计/生产恢复待验。
+      summary: 4110c7e与40a72e3完整CI中隔离PG加法迁移五项、事件投影八项通过。a6362d3受理PG十三项切片通过但整轮CI失败；d82f681及eb23521均在工作台步骤失败，十六项PG未运行。工作台本地Chromium41/41后待新CI，旧数据审计/生产恢复待验。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-validation.json
@@ -327,6 +327,8 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-first-ci-failure.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-first-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-second-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/workbench-final-local-validation.json
     METRICS-01:
       state: not-started
     METRICS-02:
@@ -337,13 +339,15 @@ condition_progress:
       state: not-started
     CODE-QUALITY-01:
       state: in-progress
-      summary: 限1.8当前受理/读取/UI切片：本地完整构建、typed lint零失败、服务端及289移动测试通过；d82f681完整CI因新增工作台场景失败，修复待新CI，整Story未关闭。
+      summary: 限1.8当前受理/读取/UI切片：本地完整构建、typed lint零失败、服务端及289移动测试通过；eb23521工作台40/41，等待详情断言修复后本地Chromium41/41，完整CI及整Story未关闭。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/encryption-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-first-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-second-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/workbench-final-local-validation.json
     UI-COMPONENT-01:
       state: in-progress
       summary: Home灵感页新增共享Button/AsyncState/私有Sheet记录区域，owner变更遮蔽和复制失败单测通过；完整浏览器、原生和删除状态待验。
@@ -351,16 +355,19 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
     UI-WORKBENCH-01:
       state: in-progress
-      summary: d82f681新增九场景在CI因未声明路由和卸载时读取scenario失败；现已修复，工作台类型/静态构建及Node网络十项本地通过，实际组件浏览器交互待新CI。
+      summary: d82f681九场景因路由/卸载失败；eb23521修复后40/41，Normal仅详情loading断言过早。已修补并在本地Chromium实际跑通41/41，仍待新完整CI与整Story其余状态。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-first-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-second-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/workbench-final-local-validation.json
     UI-BROWSER-01:
       state: in-progress
-      summary: d82f681独立浏览器job三引擎135/135、B32/B33六项及33视觉通过，ZIP CRC与源码一致；整轮CI因工作台失败，且Home重复提示随后修改，当前源码待新完整CI。
+      summary: eb23521独立浏览器job三引擎135/135、B32/B33六项及33视觉通过，ZIP CRC与源码一致；整轮CI因工作台失败，当前仅测试断言修补待新完整CI。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-first-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/read-ui-second-ci-verification.json
   9-1-capacitor-app-installation-and-host-foundation:
     DB-CHANGE-01:
       state: not-applicable

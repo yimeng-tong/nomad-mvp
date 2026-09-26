@@ -1,0 +1,13 @@
+{
+  "kind": "story-1-8-workbench-final-local-validation",
+  "priorHead": "eb235215f9ea485ccc9eac31c0b9769caf8ff96e",
+  "change": "Wait for the owner detail GET to finish before asserting the original URL appears in the private Storybook sheet.",
+  "checks": {
+    "workbenchTypecheck": "passed",
+    "workbenchChromiumBrowser": { "passed": 41, "failed": 0, "total": 41, "testFiles": 6 },
+    "newImportRecordBrowserScenarios": { "passed": 9, "failed": 0 },
+    "isolatedPostgresqlAcceptance": "pending-next-CI"
+  },
+  "localRuntime": "Playwright Chromium was downloaded to /tmp. Missing Ubuntu shared libraries were extracted into /tmp and loaded only for this command; no system packages, repository dependencies or browser baseline were changed. The first run reoptimized a dependency and reloaded Vite; the unchanged second run passed 41/41.",
+  "scope": "Actual local Chromium workbench interaction, not the canonical three-engine product suite, native device proof or the next full CI result."
+}

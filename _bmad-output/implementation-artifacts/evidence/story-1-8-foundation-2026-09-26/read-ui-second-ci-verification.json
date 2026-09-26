@@ -1,0 +1,37 @@
+{
+  "kind": "story-1-8-read-ui-second-ci-verification",
+  "sourceRevision": "eb235215f9ea485ccc9eac31c0b9769caf8ff96e",
+  "workflowRun": "36229356143",
+  "workflowConclusion": "failure",
+  "buildAndTestJob": {
+    "conclusion": "failure",
+    "failedStep": "Workbench types, static build, shared network handlers, interaction and accessibility",
+    "workbenchBrowserTests": { "passed": 40, "failed": 1, "total": 41 },
+    "failure": "Normal import-record story queried the original URL while the detail sheet was still loading; the production detail request had no reported network violation.",
+    "workbenchArtifactId": "10902261974",
+    "workbenchZipSha256": "f06038d002726f5c7894e136601f20daa04f203ac37f42dd40033a5d0abbd74b",
+    "workbenchZipCrc": "all-passed",
+    "isolatedPostgresqlReadAcceptance": "not-run-after-workbench-failure"
+  },
+  "canonicalBrowserJob": {
+    "conclusion": "success",
+    "artifactId": "10902252140",
+    "downloadedZipBytes": 40219442,
+    "zipSha256": "086f0be1edced1ceeea995e1ffdc54921a35f0a6ef5f17e8cd2c9a6caf16449d",
+    "zipEntries": 944,
+    "zipCrc": "all-passed",
+    "sourceRevisionMatchesWorkflow": true,
+    "requiredCases": 135,
+    "expected": 135,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0,
+    "compiledProductVerified": true,
+    "visualFiles": 33,
+    "newB32B33": "both-passed-in-chromium-firefox-webkit-six-checks",
+    "reportHash": "20b39c362227ba326660d281e20b639207f7c30c75cb644ef1c732eb0ffcfb02",
+    "sourceManifestHash": "98038336053c7c3e1433144e5f0648adb39acf55ffb09e9a82a285a736f81128",
+    "nativeDeviceAcceptance": false
+  },
+  "scope": "The successful browser job is evidence only for the exact source revision. The full workflow failed before its PostgreSQL steps."
+}

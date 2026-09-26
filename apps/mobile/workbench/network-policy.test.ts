@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NetworkLedger, isToolAsset, safeRoute } from './network-policy';
+import { NetworkLedger, isScenarioApi, isToolAsset, safeRoute } from './network-policy';
 
 describe('strict workbench network policy', () => {
   const origin = 'http://127.0.0.1:6006';
@@ -20,6 +20,15 @@ describe('strict workbench network policy', () => {
     expect(() => ledger.assertClean()).toThrow('WORKBENCH_NETWORK_VIOLATION');
     expect(JSON.stringify(ledger.records)).not.toMatch(/personal-sentinel|query-sentinel|body-sentinel/);
     expect(safeRoute(`${origin}/auth/config?q=secret`)).toBe('/auth/config');
+  });
+  it('declares only owner record GET routes and redacts detail identifiers from diagnostics', () => {
+    const root = `${origin}/__nomad_workbench__/10000000-0000-4000-8000-000000000001`;
+    const detail = `${root}/library/import-records/10000000-0000-4000-8000-000000000081`;
+    expect(isScenarioApi(new Request(`${root}/library/import-records`))).toBe(true);
+    expect(isScenarioApi(new Request(detail))).toBe(true);
+    expect(safeRoute(detail)).toBe('/library/import-records/:id');
+    expect(isScenarioApi(new Request(detail, { method: 'POST' }))).toBe(false);
+    expect(isScenarioApi(new Request(`${root}/library/import-records/not-a-uuid`))).toBe(false);
   });
   it('does not clear a failed scene to make a subsequent scene pass', () => {
     const previous = new NetworkLedger('previous');

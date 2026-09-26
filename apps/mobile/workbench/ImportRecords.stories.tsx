@@ -8,20 +8,20 @@ import { PrivateUiFixture } from './PrivateUiFixture';
 import { activeScenario } from './scenario';
 import { TextScale } from './TextScale';
 
-function RecordsView() {
+function RecordsView({ baseUrl }: { baseUrl: string }) {
   useAuthSnapshot();
-  const baseUrl = activeScenario().baseUrl;
   const client = createHomeApiClient(baseUrl);
   return <main className="workbench-stage"><h1 tabIndex={-1} data-ui-safe-focus>导入记录组件</h1>
     <ImportRecordsSection client={client} />
   </main>;
 }
-function Example({ largeText = false, unknown = false }: { largeText?: boolean; unknown?: boolean }) {
-  const content = <TextScale enabled={largeText}><RecordsView /></TextScale>;
+function Example({ largeText = false, unknown = false, baseUrl }: { largeText?: boolean; unknown?: boolean; baseUrl?: string }) {
+  const content = <TextScale enabled={largeText}><RecordsView baseUrl={baseUrl!} /></TextScale>;
   return unknown ? <PrivateUiBoundary>{content}</PrivateUiBoundary> : <PrivateUiFixture>{content}</PrivateUiFixture>;
 }
 
-const meta = { title: 'Library/ImportRecords', component: Example } satisfies Meta<typeof Example>;
+const meta = { title: 'Library/ImportRecords', component: Example,
+  render: (args) => <Example {...args} baseUrl={activeScenario().baseUrl} /> } satisfies Meta<typeof Example>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

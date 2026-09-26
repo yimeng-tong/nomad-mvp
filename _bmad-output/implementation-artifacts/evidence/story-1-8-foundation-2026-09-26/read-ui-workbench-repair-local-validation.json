@@ -1,0 +1,24 @@
+{
+  "kind": "story-1-8-read-ui-workbench-repair-local-validation",
+  "branch": "codex/story-1-8-import-records",
+  "priorHead": "d82f681fdbcc7548a240bbfee7741dcdbaaf4e5f",
+  "change": [
+    "Declare only the owner import-record list and UUID detail GET routes in the strict workbench policy, while masking the detail ID in diagnostics.",
+    "Capture the synthetic scenario base URL at Storybook render so an auth update during cleanup does not read an inactive scene.",
+    "Distinguish reused running, completed and failed jobs in Home without adding another completion."
+  ],
+  "checks": {
+    "workspaceBuild": "passed",
+    "typedLint": "passed-zero-failures-zero-exceptions",
+    "mobileVitest": 289,
+    "nativeConfig": 5,
+    "workbenchTypecheck": "passed",
+    "workbenchNetworkNodeTests": 10,
+    "workbenchStaticBuild": "passed",
+    "handoff": "passed-9-epics-67-stories-1089-gwt",
+    "diffWhitespace": "passed",
+    "workbenchBrowserInteractions": "pending-CI",
+    "isolatedPostgresqlAcceptance": "pending-CI"
+  },
+  "limits": "Local Playwright browser executables are unavailable. This local result does not close native devices, production key/backup, deletion, old-data migration or real short-link resolution."
+}

@@ -13,6 +13,11 @@ function status(entry: DockEntry) {
   if (entry.acceptance === 'pending') return '正在确认受理';
   if (entry.acceptance === 'unknown') return '受理结果尚未确认';
   if (entry.acceptance === 'rejected') return entry.errorCode === 'INGEST_CAPABILITY_UNAVAILABLE' ? '导入服务暂时不可用，尚未受理' : '尚未受理，请检查后重新提交';
+  if (entry.disposition === 'reused' && entry.snapshot) {
+    if (entry.snapshot.state === 'done') return '已在灵感库，沿用原结果';
+    if (entry.snapshot.state === 'failed') return entry.snapshot.retriable ? '原导入未完成，可沿原任务重试' : '原导入未完成，当前无法重试';
+    return '原导入任务仍在处理';
+  }
   return entry.snapshot ? stages[entry.snapshot.state] : '正在确认状态';
 }
 function safeTitle(value: string | null | undefined) { return value?.replace(/[\p{Cc}\u202a-\u202e\u2066-\u2069]/gu, '').slice(0, 120) || '分享内容'; }

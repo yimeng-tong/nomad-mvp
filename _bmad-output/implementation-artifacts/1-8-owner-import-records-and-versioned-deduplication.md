@@ -48,7 +48,7 @@ preparation_validation: _bmad-output/implementation-artifacts/1-8-owner-import-r
 
 Status: in-progress
 
-当前合同已通过独立准备复核，正进入已授权本地/隔离开发；ImportRecord、去重和 Library 记录页面尚未实施。源 Requirements 的 NFR3 与当前 delivery 绑定的 NFR8 均须满足，二者不可相互替代。11组源 GWT 与补充合同如下，实际 Tasks 和关闭证据继续保持 owner、设备和真实 PostgreSQL 门槛。
+当前合同已通过独立准备复核，处于已授权本地/隔离开发。ImportRecord、去重与 Home 灵感页记录区已有局部实现，删除/重新导入、旧数据回填、真实短链和原生验收未完成；完整进度见开发记录。源 Requirements 的 NFR3 与当前 delivery 绑定的 NFR8 均须满足，二者不可相互替代。11组源 GWT 与补充合同如下，实际 Tasks 和关闭证据继续保持 owner、设备和真实 PostgreSQL 门槛。
 
 ## Story 与源验收合同
 

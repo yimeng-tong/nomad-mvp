@@ -1,0 +1,39 @@
+{
+  "kind": "story-1-8-read-ui-first-ci-verification",
+  "sourceRevision": "d82f681fdbcc7548a240bbfee7741dcdbaaf4e5f",
+  "workflowRun": "36228607706",
+  "workflowConclusion": "failure",
+  "buildAndTestJob": {
+    "conclusion": "failure",
+    "failedStep": "Workbench types, static build, shared network handlers, interaction and accessibility",
+    "newImportRecordScenariosFailed": 9,
+    "priorWorkbenchScenariosPassed": 32,
+    "diagnosis": [
+      "The strict workbench network policy did not declare the new owner list/detail GET routes.",
+      "The new story component read activeScenario during cleanup after the scene became inactive."
+    ],
+    "isolatedPostgresqlReadAcceptance": "not-run-after-workbench-failure"
+  },
+  "canonicalBrowserJob": {
+    "conclusion": "success",
+    "artifactId": "10902106187",
+    "downloadedZipBytes": 40765214,
+    "zipSha256": "2ddc7e75a9bd816c812ea79974209c0f0bed510ffa14c8e29193a7d5fcd874db",
+    "zipEntries": 944,
+    "zipCrc": "all-passed",
+    "browserRunId": "698651a1-e724-4fb8-8106-c7e5fd22449a",
+    "sourceRevisionMatchesWorkflow": true,
+    "requiredCases": 135,
+    "expected": 135,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0,
+    "compiledProductVerified": true,
+    "visualFiles": 33,
+    "newB32B33": "both-passed-in-chromium-firefox-webkit-six-checks",
+    "reportHash": "a10601a2907b48c4fe2eeb01a79a2fa26d36b161c7052a4a53d6645ede23af88",
+    "sourceManifestHash": "b5cfd808dce96d820a001781de4fa4e7dc505645baaf6c60673a9de82579aaff",
+    "nativeDeviceAcceptance": false
+  },
+  "scope": "This is a partial CI result, not whole-workflow acceptance. The subsequent workbench repair and Home duplicate copy require their own full validation."
+}

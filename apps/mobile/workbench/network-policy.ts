@@ -1,17 +1,19 @@
-const apiRoutes = new Set(['/auth/config', '/auth/otp/start', '/auth/otp/verify', '/me', '/library/cities', '/ingest/workbench-job']);
+const apiRoutes = new Set(['/auth/config', '/auth/otp/start', '/auth/otp/verify', '/me', '/library/cities', '/library/import-records', '/ingest/workbench-job']);
+const recordDetail = /^\/library\/import-records\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const assetFiles = /\.(?:m?js|tsx?|css|map|woff2?|svg|png)$/;
 const assetDirectories = ['/assets/', '/sb-common-assets/', '/sb-addons/', '/sb-preview/', '/node_modules/', '/.storybook/', '/.storybook-cache/', '/workbench/', '/src/'];
 
 /** Paths outside the API contract are represented by a constant, never copied into diagnostics. */
 export function safeRoute(raw: string): string {
   const path = new URL(raw).pathname.replace(/^\/__nomad_workbench__\/[a-f\d-]+/, '');
+  if (recordDetail.test(path)) return '/library/import-records/:id';
   return apiRoutes.has(path) ? path : '[undeclared]';
 }
 
 export function isScenarioApi(request: Request): boolean {
   const path = new URL(request.url).pathname.replace(/^\/__nomad_workbench__\/[a-f\d-]+/, '');
   const method = path === '/auth/otp/start' || path === '/auth/otp/verify' ? 'POST' : 'GET';
-  return apiRoutes.has(path) && request.method === method;
+  return (apiRoutes.has(path) || recordDetail.test(path)) && request.method === method;
 }
 
 export function isToolAsset(request: Request, origin: string): boolean {

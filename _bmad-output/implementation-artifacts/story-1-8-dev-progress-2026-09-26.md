@@ -19,3 +19,7 @@ T1数据库结构草案：在现有1.7迁移后新增加法`ImportRecord`表与�
 `a6362d3`把版本化规范化、受保护原URL、owner record、job、初始event、pending和command接入同一受理事务；新job不再保存明文`source_url`，新Inspiration不再写`canonical_url`，来源证据使用非URL标记。隔离PG十三项受理、并发去重、跨owner、缺密钥fail-closed、旧operation重放通过；但整轮CI`36227255902`在认证历史探针失败：旧done job的非XHS URL被新规则过早拒绝。失败及该轮成功切片均保留在`acceptance-first-ci-failure.json`，不能记完整CI通过。修复为先按保留source hash检索旧job，只有真正新受理才必须通过新URL规则；隔离探针增补对应反例。CI初版随机隔离测试key曾进入runner环境日志，未使用生产key/数据；已改为runner临时0600文件，下一轮验证。
 
 本工作树进一步接入owner限定、只读keyset分页的ImportRecord列表/详情API；原链接仅本人详情解封，旧`/library/inspirations`继续供Planner消费。Home灵感页扩展共享组件记录区域、私有Sheet、Web/Capacitor按宿主复制操作与失败提示，身份变更取消请求并遮蔽迟到详情。OpenAPI先改并重新生成类型；本地workspace构建、136文件typed lint零失败、服务端12项/首页合同、移动288项+原生配置5项、组件3项、工作台类型/静态构建/Node网络9项通过。已编写三引擎B32/B33浏览器与工作台九场景；本机缺Playwright浏览器可执行文件，浏览器实际运行及新增隔离PG十六项等待下一轮CI，详见`acceptance-read-ui-local-validation.json`。删除/重新导入、旧数据冲突审计/回填、真实短链、生产密钥/备份、真机与正式指标仍开放；T1–T5及整张Story继续in-progress。
+
+`d82f681`的CI`36228607706`为部分成功、整轮失败：独立浏览器job三引擎135/135、B32/B33六项、33视觉通过，944项ZIP CRC及源码指纹一致；build-and-test在工作台九个新增场景失败，严格网络策略未声明ImportRecord列表/详情GET，且场景卸载后组件重渲染读取了已失效的scenario。隔离PG十六项因此未运行。保留证据`read-ui-first-ci-verification.json`。工作树现修复路由白名单与卸载时读取，并细化Home重复记录的运行/完成/失败提示；这些修复必须在新完整CI重新验证，不从先前浏览器job推导当前源码全通过。
+
+修复后本地workspace build、typed lint零失败、移动Vitest289项/原生配置5项、工作台类型/网络Node十项/静态构建、handoff及diff检查通过，见`read-ui-workbench-repair-local-validation.json`；本机无Playwright可执行文件，九项工作台浏览器交互与十六项隔离PG仍待CI。

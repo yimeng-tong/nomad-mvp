@@ -47,6 +47,8 @@ export type AnalyticsProps = Record<string, string | number | boolean | null | u
 
 export type Analytics = {
   track: (event: AuthEventName, props?: AnalyticsProps) => void;
+  /** Stable producer identity. Presence does not certify an SDK or query connection. */
+  trackWithId?: (event: AuthEventName, props: unknown, eventId: string) => void;
 };
 
 /** Event-aware validation also applies to explicitly injected component sinks. */

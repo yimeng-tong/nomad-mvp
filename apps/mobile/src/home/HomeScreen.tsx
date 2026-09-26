@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import type { Analytics } from '../auth/analytics';
 import { createNoopAnalytics, trackAnalytics } from '../auth/analytics';
 import type {
@@ -16,6 +16,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent, useModalCovered, AsyncState, 
 import { ImportDockController } from './dock-controller';
 import { getAuthSnapshot, useAuthSnapshot } from '../auth/session-context';
 import { inferPlannerTimeHint } from '../planner/timeHints';
+import { inputTelemetry } from '../telemetry/input-events';
+import { observeVisibleContent } from '../telemetry/visible-content';
 
 type Segment = 'plan' | 'library';
 type LibraryFilter = { kind: 'all' } | { kind: 'city'; city: LibraryCitySummary } | { kind: 'pending' };
@@ -74,6 +76,9 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
   const sheetReturnFocus = useRef<HTMLElement | null>(null);
   const setDockHeight = useCallback((height: number) => shell.current?.style.setProperty('--dock-height', `${height}px`), []);
   const activeResult = useRef<symbol | null>(null);
+  const resultHeading = useRef<HTMLHeadingElement | null>(null);
+  const resultObservation = useRef<(() => void) | null>(null);
+  const resultEvent = useRef<{ request: symbol; telemetry: ReturnType<typeof inputTelemetry.capture>; emitted: boolean } | null>(null);
   const [result, setResult] = useState<LibraryInspirationItem | null>(null);
   const [resultLoading, setResultLoading] = useState(false);
   const tracker = useMemo(() => analytics ?? createNoopAnalytics(), [analytics]);
@@ -215,10 +220,25 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
     });
   };
 
-  const closeResult = () => { activeResult.current = null; setResult(null); setResultLoading(false); };
+  const observeResult = useCallback(() => {
+    resultObservation.current?.(); resultObservation.current = null;
+    const node = resultHeading.current, event = resultEvent.current;
+    if (!node || !event || event.emitted || activeResult.current !== event.request) return;
+    resultObservation.current = observeVisibleContent(node, () => {
+      if (activeResult.current !== event.request || resultEvent.current !== event || event.emitted) return;
+      event.emitted = true;
+      // The current result DTO has no authoritative partial flag; do not invent one.
+      event.telemetry.emit('import_record_opened', {});
+    });
+  }, []);
+  const attachResultHeading = useCallback((node: HTMLHeadingElement | null) => { resultHeading.current = node; observeResult(); }, [observeResult]);
+  useLayoutEffect(() => { if (result && !resultLoading) observeResult(); }, [result, resultLoading, observeResult]);
+  useEffect(() => () => resultObservation.current?.(), []);
+  const closeResult = () => { activeResult.current = null; resultObservation.current?.(); resultEvent.current = null; setResult(null); setResultLoading(false); };
   const viewResult = async (id: string) => {
     if (!client.getIngestResult) { setNotice('当前无法读取已保存内容，请稍后重试'); return; }
     const auth = getAuthSnapshot(), request = Symbol('result'); activeResult.current = request; setResult(null); setResultLoading(true);
+    resultEvent.current = { request, telemetry: inputTelemetry.capture(() => activeResult.current === request), emitted: false };
     try {
       const item = await client.getIngestResult(id);
       if (activeResult.current === request && getAuthSnapshot().activity === auth.activity && getAuthSnapshot().epoch === auth.epoch) setResult(item);
@@ -414,7 +434,7 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
       ) : null}
       {result || resultLoading ? <HomeSheet label="已保存的灵感" onClose={closeResult} restoreFocusTo={sheetReturnFocus.current}>
         {resultLoading ? <p role="status">正在读取已保存内容</p> : result ? <>
-          <h2>{titleFor(result)}</h2><p>{summaryFor(result)}</p>
+          <h2 ref={attachResultHeading}>{titleFor(result)}</h2><p>{summaryFor(result)}</p>
           <p>{result.city_name || (result.locate_status === 'pending' ? '待定位' : '已入库')} · {result.asset_count} 个素材</p>
           <button type="button" disabled={selectedIds.includes(result.id)} onClick={() => { if (!selectedIds.includes(result.id)) toggleSelected(result); closeResult(); setSegment('library'); runAction(refresh); }}>{selectedIds.includes(result.id) ? '已选此灵感' : '加入已选灵感'}</button>
         </> : null}

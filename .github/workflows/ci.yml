@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates, codex/story-9-3-shared-ui, codex/story-1-0-auth-measurements ]
+    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates, codex/story-9-3-shared-ui, codex/story-1-0-auth-measurements, codex/story-1-6-input-telemetry ]
   pull_request:
     branches: [ main, codex/story-1-0-production-auth, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates ]
 
@@ -203,6 +203,20 @@ jobs:
 
       - name: Install Puppeteer Chrome
         run: pnpm -F nomad-server exec puppeteer browsers install chrome
+
+      - name: Actual App input telemetry and private network envelopes
+        env:
+          INPUT_TELEMETRY_OUTPUT: .telemetry-results/input-events-ci
+        run: pnpm run ci:input-telemetry-browser
+
+      - name: Preserve input telemetry browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nomad-input-telemetry-${{ github.sha }}
+          path: .telemetry-results/
+          include-hidden-files: true
+          if-no-files-found: warn
 
       - name: Actual isolated authentication workload and cutoff
         run: |

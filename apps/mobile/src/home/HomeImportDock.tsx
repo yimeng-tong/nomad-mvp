@@ -4,6 +4,7 @@ import type { Completion, DockEntry, Snapshot } from './dock-model';
 import type { ImportDockController } from './dock-controller';
 import { readClipboardText } from './clipboard';
 import { inputInbox } from './input-runtime';
+import { observeVisibleContent } from '../telemetry/visible-content';
 
 const stages: Record<Snapshot['state'], string> = {
   created: '等待获取内容', fetching: '获取内容', parsing: '理解图文', geo: '验证地点', storing: '保存灵感', done: '灵感已保存', failed: '这条导入未完成',
@@ -43,7 +44,7 @@ export function HomeImportDock({ controller, selectedCount, onPlan, onView, noti
     });
   }, [controller]);
   const pendingInput = inbox.pending.find((item) => item.ownerId === null || item.ownerId === auth.identity?.ownerId);
-  const ref = useRef<HTMLElement>(null), input = useRef<HTMLTextAreaElement>(null);
+  const ref = useRef<HTMLElement>(null), input = useRef<HTMLTextAreaElement>(null), completionRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; y: number } | null>(null);
   useEffect(() => { if (auth.phase === 'authenticated' && inbox.recoverySignal) runAction(() => controller.restore(true)); }, [controller, auth.phase, inbox.recoverySignal, runAction]);
   useEffect(() => {
@@ -51,9 +52,11 @@ export function HomeImportDock({ controller, selectedCount, onPlan, onView, noti
     visible(); document.addEventListener('visibilitychange', visible);
     return () => { document.removeEventListener('visibilitychange', visible); controller.setVisible(false); };
   }, [controller, auth.phase, auth.activity, active]);
+  const presentationKey = state.presenting?.key;
   useLayoutEffect(() => {
-    if (state.presenting && state.visible) controller.acknowledgePresentation(state.presenting.key);
-  }, [controller, state.presenting, state.visible]);
+    if (!presentationKey || !state.visible || !completionRef.current) return;
+    return observeVisibleContent(completionRef.current, () => controller.acknowledgePresentation(presentationKey));
+  }, [controller, presentationKey, state.visible]);
   useLayoutEffect(() => {
     if (!ref.current || typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(([entry]) => onHeight?.(entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height));
@@ -76,7 +79,7 @@ export function HomeImportDock({ controller, selectedCount, onPlan, onView, noti
         onClick={() => controller.setExpanded(!state.expanded)}><span aria-hidden="true">{state.expanded ? '⌄' : '⌃'}</span></button>
     </div>
     <span className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{live}</span>
-    {completion ? <div className="dock-completion">
+    {completion ? <div ref={completionRef} className="dock-completion">
       <span className="dock-title">{safeTitle(completion.snapshot.source_title)}</span>
       {current ? <span>{current.position}/{current.total}</span> : null}
       <span>{completion.snapshot.result?.city_name || '已存入灵感库'}</span>

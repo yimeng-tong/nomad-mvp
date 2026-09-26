@@ -227,17 +227,22 @@ condition_progress:
       summary: 已落入1.6当前实施合同；准备完成，未把1.0/9.1局部证据继承为本Story验收。
     METRICS-03:
       state: in-progress
-      summary: 已保留输入/回执/FIFO/粘贴/URL、IDB核心22项和两进程App恢复/重放/owner反例；本地测量及首用遥测21反例/网络信封已补，实际SDK/归因/基线门槛继续实施。
+      summary: 已保留输入/回执/FIFO/粘贴/URL、IDB与两进程App恢复/owner反例；规范输入事件生产点及Chrome真实App遮挡/许可/owner/私人信封反例通过三层CR与本地复验。实际SDK/归因/基线门槛仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
+      - _bmad-output/implementation-artifacts/story-1-6-input-telemetry-progress-2026-09-26.md
+      - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
     APP-HOST-01:
       state: in-progress
-      summary: Dock/粘贴/URL/持久动作接线已消费宿主，浏览器两进程恢复和双端静态注册/Android编译通过；实际归因与真实双端运行仍待验证。
+      summary: Dock/粘贴/URL/持久动作接线已消费宿主；规范呈现事件在Chrome真实App受视觉视口/遮挡保护。双端静态注册/Android编译已有旧证据，实际归因与双端设备仍待验证。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
+      - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
     CODE-QUALITY-01:
-      state: not-started
-      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+      state: in-progress
+      summary: 本Story本轮新增事件/探针已通过本地typed lint、282移动测试与完整构建；当前分支CI独立复跑及整Story适用条件仍待确认。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
     UI-COMPONENT-01:
       state: not-started
       summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
@@ -245,8 +250,10 @@ condition_progress:
       state: not-started
       summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
     UI-BROWSER-01:
-      state: not-started
-      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+      state: in-progress
+      summary: 本轮Chrome实际App/IDB的输入事件、遮挡可见和私人信封已验证；1.6整Story三引擎/原生交互及真实服务闭环仍待验收。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
   1-7-durable-import-progress-and-restart-recovery:
     OPS-01:
       state: in-progress
@@ -696,15 +703,15 @@ active_workstreams:
     contract: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md
     evidence: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
   near_term_execution:
-    story: 1-0-production-login-and-multi-device-sessions
+    story: 1-6-home-multi-link-import-queue-and-honest-status
     thread_id: 01a0d78a-3692-78b1-aee5-76268a743925
     host_id: local
     environment: current-saved-project
     status: active
-    working_branch: codex/story-1-0-auth-measurements
+    working_branch: codex/story-1-6-input-telemetry
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.3本地gate已verified、T9仍open；1.0独立WL-AUTH本地实现/当前CI已核验，接续1.6规范输入事件。真实资源/SDK门槛、唯一writer与3.1暂停不变
+    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH当前CI已核验。1.6规范输入事件本地实现/三层CR/Chrome探针已通过，分支CI待独立复跑；真实资源/SDK门槛、唯一writer与3.1暂停不变
 previous_preparation:
   story: 9-5-browser-flow-and-visual-regression-gates
   status: complete

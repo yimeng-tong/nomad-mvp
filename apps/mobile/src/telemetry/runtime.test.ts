@@ -30,6 +30,19 @@ it('exports only validated immutable envelopes and distinguishes SDK acceptance 
   expect(runtime.snapshot()).toMatchObject({ counters: { accepted: 1 }, providerQueryVerified: false });
 });
 
+it('accepts the input SHA-256 v8 profile only for its two declared events and preserves deduplication', async () => {
+  const { runtime, session } = fixture(); runtime.updateContext(context); const bound = runtime.bind();
+  const reference = '87ac5d88-c6d1-859c-89e6-b81c77b36056';
+  bound.trackWithId('ingest_presented', { attempt: 2, stored_count: 3 }, reference);
+  bound.trackWithId('ingest_presented', { attempt: 2, stored_count: 3 }, reference.toUpperCase());
+  bound.trackWithId('auth_view', { source_page: 'login' }, reference);
+  bound.trackWithId('ingest_presented', { attempt: 2, stored_count: 3 }, '00000000-0000-1000-8000-000000000001');
+  bound.trackWithId('ingest_presented', { attempt: 2, stored_count: 3 }, reference + '\n');
+  await settle();
+  expect(session.send).toHaveBeenCalledTimes(1);
+  expect(runtime.snapshot().counters).toMatchObject({ accepted: 1, duplicate: 1, invalid: 3 });
+});
+
 it('drops old bound emitters and queued events across revoke/identity ABA without attributing them to the new context', async () => {
   let finish!: (session: TelemetrySession) => void;
   const old: TelemetrySession = { send: vi.fn(async () => 'accepted' as const), close: vi.fn() };

@@ -1,5 +1,6 @@
 import type { Analytics, AuthEventName } from '../auth/analytics';
 import { sanitizeAnalyticsEvent, telemetrySchemaVersion, type SafeTelemetryEvent } from './dictionary';
+import { isTelemetryEventId } from './event-id';
 
 export type TelemetryContext = Readonly<{ consent: 'unknown' | 'granted' | 'denied'; policyVersion: string | null;
   authEpoch: number; phase: 'anonymous' | 'authenticated' | 'checking' | 'unavailable'; host: 'web' | 'android' | 'ios' }>;
@@ -10,7 +11,6 @@ export type TelemetryEnvelope = Readonly<{ schemaVersion: typeof telemetrySchema
 export type TelemetrySession = { send: (event: TelemetryEnvelope, signal: AbortSignal) => Promise<'accepted' | 'rejected'>; close: () => void | Promise<void> };
 export type TelemetrySink = { open: (options: { host: TelemetryContext['host']; policyVersion: string; signal: AbortSignal }) => Promise<TelemetrySession> };
 type BoundAnalytics = Analytics & { trackWithId: (event: AuthEventName, props: unknown, eventId: string) => void };
-const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ttl = 30000, dedupeTtl = 300000, maxQueue = 64, maxSeen = 1024;
 
 export function createTelemetryRuntime(options: { requiredPolicyVersion: string; sink: TelemetrySink; clock?: () => number }) {
@@ -42,7 +42,7 @@ export function createTelemetryRuntime(options: { requiredPolicyVersion: string;
   const stop = () => {
     generation++; abort.abort(); abort = new AbortController(); abandonQueue(); seen.clear();
     const previous = session; session = undefined;
-    if (previous) void closeSession(previous);
+    if (previous) closeSession(previous).catch(fault);
   };
   const fault = () => { if (failed) return; failed = true; count('failed'); stop(); };
   async function pump() {
@@ -73,10 +73,10 @@ export function createTelemetryRuntime(options: { requiredPolicyVersion: string;
   }
   function reconcile() {
     if (!eligible() || opening || closing || sending) return;
-    if (session) { if (queue.length) void pump(); return; }
+    if (session) { if (queue.length) pump().catch(fault); return; }
     opening = true; const version = generation, signal = abort.signal, host = context!.host;
     let delivered: TelemetrySession | undefined, disposed = false, settled = false;
-    const cleanupLate = (value: TelemetrySession) => { if (!disposed) { disposed = true; void closeSession(value); } };
+    const cleanupLate = (value: TelemetrySession) => { if (!disposed) { disposed = true; closeSession(value).catch(fault); } };
     const work = Promise.resolve().then(() => {
       if (!current(version) || signal.aborted) throw new Error('TELEMETRY_CONTEXT_CHANGED');
       return openSink({ host, policyVersion: requiredPolicyVersion, signal });
@@ -96,7 +96,7 @@ export function createTelemetryRuntime(options: { requiredPolicyVersion: string;
   function enqueue(version: number, event: AuthEventName, props: unknown, eventId: string) {
     if (!current(version)) { count('blocked'); return; }
     const safe = sanitizeAnalyticsEvent(event, props), now = clock();
-    if (!safe || typeof eventId !== 'string' || !uuid.test(eventId) || !Number.isFinite(now) || now < 0) { count('invalid'); return; }
+    if (!safe || !isTelemetryEventId(safe.name, eventId) || !Number.isFinite(now) || now < 0) { count('invalid'); return; }
     eventId = eventId.toLowerCase();
     for (const [key, expires] of seen) if (expires <= now) seen.delete(key);
     const key = `${safe.name}:${eventId}`;

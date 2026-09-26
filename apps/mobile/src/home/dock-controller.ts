@@ -8,6 +8,7 @@ import {watchDurableJob} from './durable-watch';
 import {parseIngestCursor} from './ingest-protocol';
 import type {IngestCheckpoint} from './ingest-checkpoint-store';
 import type { PendingInput } from './input-inbox';
+import { inputTelemetry } from '../telemetry/input-events';
 
 export type DockViewState = DockState & {
   notice: string | null; parsing: boolean; parsed: HomeInputParseResponse | null;
@@ -70,6 +71,16 @@ export class ImportDockController {
     this.state = { ...this.state, ...next };
     for (const listener of this.listeners) listener();
   }
+  private runBackground(work: () => Promise<unknown>) {
+    const activity = getAuthSnapshot().activity;
+    const failed = () => {
+      // Normal failures are handled in the domain method. This last boundary does
+      // not invent a receipt, retry, or terminal result after an unexpected rejection.
+      try { if (this.current(activity) && !this.state.notice) this.update({ notice: '状态暂时无法更新，请重新确认。' }); }
+      catch { /* A failing view listener cannot create another unhandled rejection. */ }
+    };
+    try { work().catch(failed); } catch { failed(); }
+  }
   private usable() { const now = getAuthSnapshot(); return this.live && !this.invalidated && now.epoch === this.scope.epoch && now.phase === 'authenticated'; }
   private current(activity: number) { return this.usable() && getAuthSnapshot().activity === activity; }
   private journalScope(activity = getAuthSnapshot().activity): JournalScope { return { ownerId: this.scope.identity?.ownerId ?? '', valid: () => this.current(activity) }; }
@@ -88,7 +99,7 @@ export class ImportDockController {
       }
       this.setVisible(this.wantedVisible);
       if (!this.usable()) this.closeWatch();
-      else { this.nextRead = 0; void this.restore(); void this.pump(); if (this.state.visible) void this.reconcile(); }
+      else { this.nextRead = 0; this.runBackground(() => this.restore()); this.runBackground(() => this.pump()); if (this.state.visible) this.runBackground(() => this.reconcile()); }
     };
     this.unsubscribe = subscribeAuth(sync);
     this.timer = setInterval(() => this.tick(), 250); sync();
@@ -104,13 +115,21 @@ export class ImportDockController {
     this.update(setDockVisibility(this.state, next));
     if (changed) { this.lastTick = performance.now(); this.renderedKey = undefined; }
     if (!this.state.visible) this.closeWatch();
-    else { this.nextRead = 0; void this.reconcile(); }
+    else { this.nextRead = 0; this.runBackground(() => this.reconcile()); }
   }
-  acknowledgePresentation(key: string) { if (this.state.visible && this.state.presenting?.key === key && this.renderedKey !== key) { this.renderedKey = key; this.lastTick = performance.now(); this.observe('visible-start', this.state.presenting.entryId, this.state.presenting.snapshot.attempt); } }
+  acknowledgePresentation(key: string) {
+    if (this.state.visible && this.state.presenting?.key === key && this.renderedKey !== key) {
+      this.renderedKey = key; this.lastTick = performance.now();
+      const completion = this.state.presenting, activity = getAuthSnapshot().activity;
+      this.observe('visible-start', completion.entryId, completion.snapshot.attempt);
+      inputTelemetry.capture(() => this.current(activity)).emitJob('ingest_presented', completion.jobId, completion.snapshot.attempt,
+        { attempt: completion.snapshot.attempt, stored_count: completion.snapshot.stored_count });
+    }
+  }
   private tick() {
     const now = performance.now(), elapsed = now - this.lastTick; this.lastTick = now;
     if (!this.state.visible || !this.usable()) return;
-    if (!this.restored && !this.state.journalError) void this.restore();
+    if (!this.restored && !this.state.journalError) this.runBackground(() => this.restore());
     if (this.renderedKey === this.state.presenting?.key && this.state.presenting) {
       const before = this.state.presenting; this.update(elapseVisible(this.state, elapsed));
       if (this.state.presenting?.key !== before.key) {
@@ -119,7 +138,7 @@ export class ImportDockController {
         void this.journal.noteDone(this.journalScope(), before.jobId, before.snapshot.attempt).catch(() => { /* A replayed presentation is safer than inventing a new business action. */ });
       }
     }
-    if (now >= this.nextRead) void this.reconcile();
+    if (now >= this.nextRead) this.runBackground(() => this.reconcile());
   }
   setInput(input: string) {
     if (!this.usable()) return;
@@ -163,11 +182,11 @@ export class ImportDockController {
         this.installRecords(rows); this.restored = true;
         void this.restoreCheckpoints(rows,activity).catch(()=>{if(this.current(activity))this.update({notice:'本机进度暂时无法读取，正在确认原任务。'});});
         // The local read is the preparation barrier. Network reconciliation proceeds independently.
-        void this.reconcile();
+        this.runBackground(() => this.reconcile());
       } catch { if (this.current(activity)) this.update({ journalError: true, notice: '暂时无法读取本机导入记录，输入仍保留。' }); }
       finally {
         this.restoreFlight = undefined; this.update({ restoring: false });
-        if (this.refreshRequested && this.usable()) { this.refreshRequested = false; void this.restore(true); }
+        if (this.refreshRequested && this.usable()) { this.refreshRequested = false; this.runBackground(() => this.restore(true)); }
       }
     })();
     return this.restoreFlight;
@@ -279,7 +298,7 @@ export class ImportDockController {
       if (await this.prepareInputs([{ share_text: text }], activity, bindings)) {
         this.clearParsed();
         if (this.state.input === text) this.setInput('');
-        void this.pump();
+        this.runBackground(() => this.pump());
       }
     } catch { if (this.current(activity)) this.update({ notice: '暂时无法保存这次导入操作，内容仍保留，尚未发送。' }); }
     finally { this.update({ parsing: false }); }
@@ -311,24 +330,28 @@ export class ImportDockController {
     const text = this.state.input.trim();
     if (!text || !this.usable() || this.state.parsing) return;
     const activity = getAuthSnapshot().activity, bindings = this.captureBindings();
+    const telemetry = inputTelemetry.capture(() => this.current(activity));
+    telemetry.emit('home_input_submit', {});
     this.parsedBindings = undefined;
     this.update({ parsing: true, notice: null, parsed: null });
     try {
       const result = await this.api.parseInput({ text });
       if (!this.current(activity)) return;
       const links = result.links ?? (result.url ? [{ url: result.url, position: 0 }] : []);
+      telemetry.emit('home_input_classified', { classification: result.type === 'trip_params' ? 'trip_request' : result.type,
+        ...(result.links || result.url ? { link_count: links.length } : {}), ...(result.unrecognized ? { unrecognized_count: result.unrecognized.length } : {}) });
       if (result.type === 'xhs_link' && links.length) {
         if (bindings.length && !result.link_occurrences) throw new JournalError('JOURNAL_CORRUPT');
         const contributing = bindings.filter((binding) => result.link_occurrences?.some((link) => Number.isSafeInteger(link.position) && link.position >= binding.start && link.position < binding.end)).map((binding) => binding.id);
         if (await this.prepareInputs(links.map(({ url }) => ({ url })), activity, contributing, result.unrecognized ?? [], result.duplicate_count ?? 0)) {
           if (this.state.input.trim() === text) this.setInput('');
-          void this.pump();
+          this.runBackground(() => this.pump());
         }
       } else { this.parsedBindings = { text: (result.original_text || text).trim(), ids: bindings.map((binding) => binding.id) }; this.update({ parsed: result }); }
     } catch (error) {
       if (this.current(activity)) {
         this.update({ notice: error instanceof JournalError ? error.code === 'INPUT_REPLAY_CONFLICT' ? '部分分享已有确认记录，请移除已确认的内容后重试。其余输入已保留。' : '暂时无法保存这次导入操作，内容仍保留，尚未发送。' : '输入暂时无法识别，内容已保留，请重试。' });
-        if (error instanceof JournalError && error.code === 'INPUT_REPLAY_CONFLICT') void this.restore(true);
+        if (error instanceof JournalError && error.code === 'INPUT_REPLAY_CONFLICT') this.runBackground(() => this.restore(true));
       }
     }
     finally { if (!this.invalidated) this.update({ parsing: false }); }
@@ -344,7 +367,7 @@ export class ImportDockController {
       }
     } finally { this.pumping = false; }
   }
-  private async accept(id: string, receipt: IngestAcceptedResponse, activity: number) {
+  private async accept(id: string, receipt: IngestAcceptedResponse, activity: number, telemetry?: ReturnType<typeof inputTelemetry.capture>) {
     const retry = this.retries.get(id);
     const knownJob = this.records.get(retry?.request.operation_id ?? id)?.jobId;
     if (!['created', 'reused', 'retried'].includes(receipt.disposition) || receipt.operation_id !== (retry?.request.operation_id ?? id) || !receipt.snapshot || receipt.ingest_id !== receipt.snapshot.ingest_id
@@ -359,7 +382,10 @@ export class ImportDockController {
     if (!this.current(activity)) throw new Error('AUTH_ACTIVITY_CHANGED');
     const record = this.records.get(operationId); if (record) { record.phase = 'accepted'; record.jobId = receipt.ingest_id;record.disposition??=pending.disposition;record.completionEligible??=pending.completionEligible; }
     const observed = Math.max(0, ...[...this.records.values()].filter((row) => row.entryId === id).map((row) => row.observedDoneAttempt ?? 0));
-    this.update(acceptEntry(this.state, id, receipt, observed,record?.completionEligible));
+    const accepted = acceptEntry(this.state, id, receipt, observed, record?.completionEligible);
+    // A created command certifies the initial attempt. Recovery GETs never backfill old collection.
+    if (receipt.disposition === 'created') telemetry?.emitJob('ingest_job_created', receipt.ingest_id, 1, { disposition: 'created', attempt: 1 });
+    this.update(accepted);
     this.retries.delete(id);
     this.update({ uncertainRetries: this.state.uncertainRetries.filter((item) => item !== id) });
     if (this.current(activity) && this.state.visible) this.ensureWatch();
@@ -384,9 +410,10 @@ export class ImportDockController {
         }
       }
       if (!this.current(activity)) return;
+      const telemetry = inputTelemetry.capture(() => this.current(activity));
       const receipt = retry ? await this.api.retryIngest!(retry.jobId, retry.request) : await this.api.startIngest({ ...body!, operation_id: operationId });
       if (!this.current(activity)) throw new Error('AUTH_ACTIVITY_CHANGED');
-      await this.accept(id, receipt as IngestAcceptedResponse, activity);
+      await this.accept(id, receipt as IngestAcceptedResponse, activity, telemetry);
     } catch (error) {
       if (this.invalidated) return;
       // A pre-admission rejection (e.g. 429) cannot settle a previous request whose result is unknown.
@@ -398,7 +425,7 @@ export class ImportDockController {
       if (retry) {
         if (rejected && this.current(activity)) {
           this.retries.delete(id); this.update({ uncertainRetries: this.state.uncertainRetries.filter((item) => item !== id), notice: '当前状态不接受这次重试，正在重新确认。' });
-          void this.reconcile();
+          this.runBackground(() => this.reconcile());
         } else this.update({ uncertainRetries: [...new Set([...this.state.uncertainRetries, id])] });
       } else this.update(setEntryAcceptance(this.state, id, rejected && this.current(activity) ? 'rejected' : 'unknown', error instanceof AuthApiError ? error.code : undefined));
     } finally { this.update({ busy: this.state.busy.filter((item) => item !== id) }); }

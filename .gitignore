@@ -54,3 +54,4 @@ _bmad-output/implementation-artifacts/investigations/evidence/**/*.txt
 **/playwright-report/
 **/.browser-results/
 **/.measurement-results/
+**/.telemetry-results/

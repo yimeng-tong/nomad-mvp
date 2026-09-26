@@ -300,6 +300,14 @@ App 宿主补充：FR52; NFR25; AR23-AR24; UX-DR36。
 - [x] [Review][Patch] 真正send微任务前再次检查过期，主线程阻塞后的旧队列不穿透TTL。
 - [x] [Review][Patch] UUIDv4事件引用规范化为小写再去重，不因大小写重复上报；旧节点型UUID不进入字典。
 
+### T6 规范输入事件限定Review Findings（2026-09-26）
+
+本轮仅覆盖规范事件生产边界、视觉可见性、隔离浏览器探针与有限交付文档；三层审阅归并3项patch，均已修复并以聚焦测试/实际App网络信封复核。无决策/延期项，不关闭真实SDK/归因/设备/T7或全Story。
+
+- [x] [Review][Patch] 浏览器探针精确断言提交、分类及三个导入事件的数量；未知许可旧事件不能在重授时混入成功样本。
+- [x] [Review][Patch] Dock完成卡片通过视觉视口和遮挡命中后才ACK并开始可见窗口；遮挡期间的后台终态不计`ingest_presented`。
+- [x] [Review][Patch] 注入的异步Analytics方法拒绝Promise时由producer收口，记录有界失败计数，不形成未处理异常或改变业务操作。
+
 
 
 ### UI范围增量任务（2026-09-20）
@@ -515,6 +523,23 @@ GPT-6 Astra（当前任务配置）。
 - _bmad-output/implementation-artifacts/evidence/story-1-6-umeng-sdk-2026-09-19/artifact-audit.json
 - _bmad-output/implementation-artifacts/evidence/story-1-6-umeng-sdk-2026-09-19/android-lifecycle.json
 
+- docs/ops/input-telemetry-v1.md
+- _bmad-output/implementation-artifacts/story-1-6-input-telemetry-progress-2026-09-26.md
+- _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
+- _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/actual-opened-result.png
+- apps/mobile/src/home/dock-telemetry.test.ts
+- apps/mobile/src/home/result-telemetry.test.tsx
+- apps/mobile/src/telemetry/event-id.ts
+- apps/mobile/src/telemetry/input-events.ts
+- apps/mobile/src/telemetry/input-events.test.ts
+- apps/mobile/src/telemetry/visible-content.ts
+- apps/mobile/src/telemetry/visible-content.test.ts
+- scripts/telemetry/input-events-browser.mts
+- scripts/telemetry/tsconfig.json
+- eslint.config.mjs
+- .gitignore
+- _bmad-output/implementation-artifacts/capacitor-task-monitor-state.json
+
 ### 实施开始
 
 2026-09-19：按持续授权进入T0/T1，启动前快照在/tmp/nomad-story16-start-20260919。保留1.0/9.1和全部原工作树变更；新增接口先写反例，再扩展现有IngestJob/命令回执/事实快照，不另造ImportRecord或持久事件日志。
@@ -565,3 +590,10 @@ operation-journal实现真实IndexedDB原子批次/指纹和同entry未知retry�
 ### T6 原生SDK真实制品/离线探针
 
 固定四个官方SDK包并核对摘要；Android真实SDK离线探针已构建和执行，双IP族出站隔离、合成AppKey、无真实供应商事件。关闭组合10秒后仍有SDK数据库/信封/标识文件，不能据此实现一个谎称同步清理成功的close。iOS只有XCFramework结构/头文件核验。实际集成和许可策略门槛保持，详情见progress和umeng-sdk-artifact-audit.md；不以此关闭T6或Story。
+
+
+### T6 第五段：规范输入事件消费点
+
+已将四个规范输入/导入事件接到当前Home、Controller和Dock的真实边界，并保留显式提交事件。服务端created回执与恢复GET区分；Dock完成卡片通过视觉视口及遮挡命中后才确认呈现；保护结果Sheet读到且可见后才记录打开。业务重放事件从随机job与attempt派生稳定UUIDv8，原始链接、文本、owner/session和job ID不进入信封。默认App供应商出口继续不可用，不将隔离投递写作真实SDK通过。
+
+代码、算法、缺项与本地Chrome网络信封/实际App+IDB证据见`docs/ops/input-telemetry-v1.md`和`story-1-6-input-telemetry-progress-2026-09-26.md`。三层限定CR发现的探针计数、遮挡ACK及异步适配器拒绝路径已修复并复验。T6真实SDK/同意/归因、T7真实样本/目标、APP-HOST-01双端设备与全Story关闭仍保持in-progress。

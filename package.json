@@ -21,6 +21,7 @@
     "ci:import-measurements": "node --import tsx --test scripts/measurements/import-report.test.mts && tsc -p scripts/measurements/tsconfig.json --noEmit",
     "ci:auth-measurements": "node --import tsx --test scripts/measurements/auth-report.test.mts scripts/measurements/auth-harness-boundaries.test.mts && tsc -p scripts/measurements/tsconfig.json --noEmit",
     "ci:auth-measurements:negative": "node --import tsx scripts/measurements/check-auth-guards.mts",
+    "ci:input-telemetry-browser": "node --import tsx scripts/telemetry/input-events-browser.mts",
     "measure:auth": "node --import tsx scripts/measurements/run-auth.mts",
     "measure:auth-report": "node --import tsx scripts/measurements/auth-report.mts",
     "measure:import-dock": "node --import tsx scripts/measurements/run-import-dock.mts",

@@ -3,14 +3,14 @@ project: nomad-mvp
 updated: '2026-09-26'
 current_epic: 1
 last_completed_story: 9-5-browser-flow-and-visual-regression-gates
-current_story: 1-6-home-multi-link-import-queue-and-honest-status
+current_story: 1-7-durable-import-progress-and-restart-recovery
 current_story_status: in-progress
-current_story_file: _bmad-output/implementation-artifacts/1-6-home-multi-link-import-queue-and-honest-status.md
+current_story_file: _bmad-output/implementation-artifacts/1-7-durable-import-progress-and-restart-recovery.md
 current_story_spec: _bmad-output/planning-artifacts/epics.md
 planning_status: bmad-sprint-planning-complete
 execution_phase: execution
 next_bmad_action: bmad-dev-story
-next_bmad_checkpoint: in-progress-story-1-7-9-1-integration
+next_bmad_checkpoint: story-1-7-shared-ui-recovery-ci
 readiness_report: _bmad-output/planning-artifacts/implementation-readiness-sp-handoff-2026-09-15.md
 prompt_strength_status: approved-applied-and-revalidated
 prompt_strength_record: _bmad-output/planning-artifacts/prompt-strength-adoption-2026-09-15.md
@@ -18,14 +18,14 @@ sprint_planning_authorized: true
 sprint_planning_completed: true
 create_story_authorized: true
 implementation_authorized: true
-handoff_status: story-1-6-canonical-input-events-scoped-ci-accepted
+handoff_status: story-1-7-shared-ui-recovery-local-passed-ci-pending
 tracking_system: _bmad-output/implementation-artifacts/sprint-status.yaml
 migration_manifest: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.yaml
 migration_report: _bmad-output/implementation-artifacts/sprint-migration-ui-foundation-2026-09-20.md
 delivery_contract: _bmad-output/implementation-artifacts/sprint-delivery-contract-ui-foundation-2026-09-20.yaml
 revalidation_report: _bmad-output/planning-artifacts/implementation-readiness-ui-foundation-2026-09-20.md
 paused_story: 3-1-minute-timeline-editing-and-plan-wide-undo
-working_branch: codex/story-1-6-input-telemetry
+working_branch: codex/story-1-7-ui-integration
 story_preparation_report: _bmad-output/implementation-artifacts/1-6-home-multi-link-import-queue-and-honest-status-validation.md
 resource_alignment: _bmad-output/implementation-artifacts/research/story-1-0-resource-confirmation-2026-09-19.md
 input_import_progress: _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
@@ -52,13 +52,14 @@ development_thread_id: 01a0d78a-3692-78b1-aee5-76268a743925
 development_thread_host: local
 input_telemetry_progress: _bmad-output/implementation-artifacts/story-1-6-input-telemetry-progress-2026-09-26.md
 input_telemetry_acceptance: _bmad-output/implementation-artifacts/story-1-6-input-telemetry-acceptance-2026-09-26.md
+recovery_ui_integration_progress: _bmad-output/implementation-artifacts/story-1-7-ui-integration-progress-2026-09-26.md
 ---
 
 # Nomad Current Handoff
 
 ## 当前继续执行（2026-09-26）
 
-9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的1.0独立WL-AUTH本地切片通过完整CI36192075867；真实staging/费用/目标仍待验收。1.6 T6规范输入/导入事件切片已于`codex/story-1-6-input-telemetry`的`d02d0b0`提交推送，完整CI36221667847两job成功，四ZIP/999文件CRC、108遥测源码和313三引擎浏览器源码匹配；本地283移动+5配置与长时遮挡/许可/owner/私人信封探针通过。验收边界见story-1-6-input-telemetry-acceptance-2026-09-26.md。真实SDK/许可UI/归因查询、双端设备和整张1.6仍开放；第5步接续1.7/9.1在制集成，临近开发才准备1.8。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
+9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的1.0独立WL-AUTH本地切片通过完整CI36192075867；真实staging/费用/目标仍待验收。1.6 T6规范输入/导入事件切片已于`codex/story-1-6-input-telemetry`的`d02d0b0`通过完整CI36221667847，两job与四ZIP/999文件CRC、108遥测源码/313浏览器源码匹配，证据见input_telemetry_acceptance；真实SDK/许可UI/归因查询、双端设备和整张1.6仍开放。当前`codex/story-1-7-ui-integration`的共享UI恢复/返回局部回归已在Chrome真实App+IDB双进程通过22检查、16源码匹配；旧`.home-body.inert`断言改为当前外层保护及关闭恢复，新增CI步骤和独立产物待推送验证，证据见recovery_ui_integration_progress。真实资源/设备、3.1暂停和临近实施才准备1.8的顺序保留。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
 
 Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不批量准备1.8。
 

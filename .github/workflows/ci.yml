@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates, codex/story-9-3-shared-ui, codex/story-1-0-auth-measurements, codex/story-1-6-input-telemetry ]
+    branches: [ main, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates, codex/story-9-3-shared-ui, codex/story-1-0-auth-measurements, codex/story-1-6-input-telemetry, codex/story-1-7-ui-integration ]
   pull_request:
     branches: [ main, codex/story-1-0-production-auth, codex/story-9-4-workbench-quality, codex/story-9-5-browser-gates ]
 
@@ -215,6 +215,20 @@ jobs:
         with:
           name: nomad-input-telemetry-${{ github.sha }}
           path: .telemetry-results/
+          include-hidden-files: true
+          if-no-files-found: warn
+
+      - name: Actual App durable Home recovery across two browser processes
+        env:
+          DOCK_PROBE_OUTPUT: apps/mobile/.browser-results/story-1-7-home-dock-ci
+        run: pnpm run ci:durable-home-browser
+
+      - name: Preserve durable Home browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nomad-durable-home-${{ github.sha }}
+          path: apps/mobile/.browser-results/story-1-7-home-dock-ci/
           include-hidden-files: true
           if-no-files-found: warn
 

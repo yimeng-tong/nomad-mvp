@@ -26,6 +26,8 @@ backend_environment: homelab-vm104
 
 该修补已由`d02d0b0`推送，CI`36221667847`两job成功；四ZIP/999文件CRC、108遥测与313浏览器源码匹配。本轮1.6 CODE-QUALITY-01/UI-BROWSER-01仅在本Story本地切片范围verified；1.6整张及SDK/许可/归因/原生/METRICS门槛仍open。接续第5步1.7/9.1在制集成；详见story-1-6-input-telemetry-acceptance-2026-09-26.md。
 
+1.7共享UI迁移后的真实App+IDB双进程恢复/返回Web回归已在本地通过22项/16源码匹配，修正的是旧探针对私有遮蔽位置的过时断言，新增CI步骤及独立产物待推送复验；真实原生C07/9.1设备仍开放。见story-1-7-ui-integration-progress-2026-09-26.md。
+
 下方9月25日交接时的数量、ready与Git状态属于历史快照；当前CURRENT/Sprint及本段决定现时派发。执行顺序和资源边界继续有效。
 
 ## 2026-09-25执行决定（保留）

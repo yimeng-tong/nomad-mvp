@@ -22,11 +22,11 @@
   "handoff_acknowledged_turn": null,
   "continuous_goal_active": false,
   "continuous_goal_evidence": "本任务按正式交接持续开发；未创建或恢复旧持续目标/heartbeat。",
-  "current_story": "1-6-home-multi-link-import-queue-and-honest-status",
+  "current_story": "1-7-durable-import-progress-and-restart-recovery",
   "current_story_status": "in-progress",
   "next_story_to_prepare": "1-8-owner-import-records-and-versioned-deduplication",
   "routine_nudge_needed": false,
-  "last_coordination_decision": "1.6规范输入/导入事件d02d0b0通过完整CI36221667847及四ZIP/999文件/源码核验；唯一writer接续1.7/9.1在制集成，真实SDK/许可/归因和原生门槛保留。",
+  "last_coordination_decision": "1.7共享UI恢复/返回Web双进程22项本地通过，16源码匹配；新增CI步骤/产物待推送核验。1.6独立验收已封存，真实资源和原生门槛保留。",
   "latest_android_artifact": {
     "path": "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
     "sha256": "35251310c690598b7295e193c665fe86e1f3470e9d821cbb9786a1e44ee0d252",
@@ -54,7 +54,7 @@
     "real_runtime_gates_preserved": true
   },
   "previous_observed_turn": "01a0b727-577c-73e1-930f-7a85eee428c6",
-  "next_bmad_checkpoint": "story-1-6-canonical-input-events",
+  "next_bmad_checkpoint": "story-1-7-shared-ui-recovery-regression",
   "previous_android_artifact": {
     "path": "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
     "sha256": "4445bd94860a55f11acb860c9730e15567f26541f6968294706a4a49ad5fd426",

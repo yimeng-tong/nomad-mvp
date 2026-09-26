@@ -13,7 +13,7 @@ const origin = 'http://127.0.0.1:5188';
 const profile = await mkdtemp('/tmp/nomad-dock-restart-');
 const nonce = randomUUID(), proofConfig = resolve(await mkdtemp('/tmp/nomad-dock-vite-'), 'config.mjs');
 await writeFile(proofConfig, `import base from ${JSON.stringify(resolve(root, 'apps/mobile/vite.config.ts'))}; export default {...base, root:${JSON.stringify(resolve(root, 'apps/mobile'))}, plugins:[...base.plugins,{name:'dock-proof-identity',configureServer(server){server.middlewares.use((req,res,next)=>{if(req.url==='/__dock_probe_identity'){res.end(${JSON.stringify(nonce)});return;}next();});}}]};`);
-const sourceFiles = ['apps/mobile/src/App.tsx','apps/mobile/src/home/dock-controller.ts','apps/mobile/src/home/dock-model.ts','apps/mobile/src/home/HomeImportDock.tsx','apps/mobile/src/home/HomeScreen.tsx','apps/mobile/src/home/HomeSheet.tsx','apps/mobile/src/auth/stream.ts','apps/mobile/src/styles.css','apps/mobile/src/home/clipboard.ts','apps/mobile/src/home/input-inbox.ts','apps/mobile/src/home/input-runtime.ts','apps/mobile/src/home/operation-journal.ts'];
+const sourceFiles = ['apps/mobile/scripts/home-dock-browser-probe.mjs','apps/mobile/src/App.tsx','apps/mobile/src/home/dock-controller.ts','apps/mobile/src/home/dock-model.ts','apps/mobile/src/home/HomeImportDock.tsx','apps/mobile/src/home/HomeScreen.tsx','apps/mobile/src/home/HomeSheet.tsx','apps/mobile/src/auth/stream.ts','apps/mobile/src/styles.css','apps/mobile/src/home/clipboard.ts','apps/mobile/src/home/input-inbox.ts','apps/mobile/src/home/input-runtime.ts','apps/mobile/src/home/operation-journal.ts','apps/mobile/src/ui/components/PrivateUiBoundary.tsx','apps/mobile/src/ui/components/AppDialog.tsx','apps/mobile/src/ui/styles/modal.css'];
 const hashSources = async () => Object.fromEntries(await Promise.all(sourceFiles.map(async (path) => [path, createHash('sha256').update(await readFile(resolve(root,path))).digest('hex')])));
 const sourceHashes = await hashSources();
 const child = spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--config', proofConfig, '--host', '127.0.0.1', '--port', '5188', '--strictPort'], {
@@ -94,7 +94,7 @@ try {
   let ready = false;
   for (let i = 0; i < 50; i++) {
     if (child.exitCode !== null) throw new Error('Owned Home proof server exited');
-    try { if (await (await fetch(origin + '/__dock_probe_identity')).text() === nonce) { ready = true; break; } } catch {}
+    try { if (await (await fetch(origin + '/__dock_probe_identity')).text() === nonce) { ready = true; break; } } catch { /* Owned Vite is still starting. */ }
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   assert.ok(ready, 'Owned Home proof server not ready');
@@ -121,12 +121,13 @@ try {
   assert.match(await page.$eval('.home-import-dock .visually-hidden', (node) => node.textContent), /第2条，共2条/);
   await page.screenshot({ path: resolve(output, 'mobile-queue-partial-completion.png'), fullPage: true });
   await clickText(page, '查看已保存内容'); await waitText(page, '已确认保存的旅行内容');
-  assert.equal(await page.$eval('.home-body', (node) => node.inert), true);
+  await page.waitForFunction(() => !!document.querySelector('.home-body')?.closest('[inert][aria-hidden="true"]'));
   // Longer than the entire completion window: a covered Dock must not count this time.
   await new Promise(resolve=>setTimeout(resolve,11000));
   const coveredDone=await page.evaluate(async owner=>{const {operationJournal}=await import('/src/home/operation-journal.ts');return (await operationJournal.list({ownerId:owner,valid:()=>true})).map(row=>row.observedDoneAttempt??0);},user.user_id);
   assert.ok(coveredDone.every(attempt=>attempt===0));
   await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.querySelector('[role="dialog"]'));
+  await page.waitForFunction(() => !document.querySelector('.home-body')?.closest('[inert], [aria-hidden="true"]'));
   await clickText(page, '重试这条导入'); await waitText(page, '获取内容');
   finish([...jobs.values()][0]); await waitText(page, '灵感已保存');
   await page.waitForFunction(() => document.querySelector('.dock-completion .dock-title')?.textContent === '厦门旅行收藏 1', { timeout: 20000 });
@@ -184,6 +185,6 @@ try {
   assert.deepEqual(await hashSources(), sourceHashes, 'Source changed during browser proof');
   await writeFile(resolve(output, 'report.json'), JSON.stringify({ result: 'passed', sourceHashes, browser: await browser.version(), actualBrowser: true, explicitHttpAndSseFixtures: true, realAuthenticationVerified: false,
     realProviderCalls: 0, nativeDeviceVerified: false, completedStory: false, clipboardUsesExplicitFixture: true, deepLinkDeliveryUsesExplicitFixture: true, browserProcesses: 2, controllerJournalIntegrationVerified: true,
-    checks: ['explicit-paste-only', 'clipboard-denial-keeps-input', 'downward-drag-collapse', 'ordered-batch-acceptance', 'editable-draft', 'settings-navigation-draft-retained', 'true-partial-copy', 'safe-result-sheet', 'sheet-focus-escape','covered-sheet-eleven-seconds-does-not-complete-presentation', 'same-job-retry', 'fifo-completion-and-distinct-announcement', 'unknown-command-recovery-without-repost', '44px-targets', 'no-horizontal-overflow', 'reduced-motion', 'confirmed-deep-input-persisted', 'lost-ack-recovers-original-command-after-browser-restart', 'confirmed-link-replay-does-not-resubmit', 'changed-owner-does-not-read-old-commands', 'owned-server-and-unchanged-source'], geometry }, null, 2));
+    checks: ['explicit-paste-only', 'clipboard-denial-keeps-input', 'downward-drag-collapse', 'ordered-batch-acceptance', 'editable-draft', 'settings-navigation-draft-retained', 'true-partial-copy', 'safe-result-sheet', 'sheet-focus-escape','shared-ui-owner-mask-and-restoration','covered-sheet-eleven-seconds-does-not-complete-presentation', 'same-job-retry', 'fifo-completion-and-distinct-announcement', 'unknown-command-recovery-without-repost', '44px-targets', 'no-horizontal-overflow', 'reduced-motion', 'confirmed-deep-input-persisted', 'lost-ack-recovers-original-command-after-browser-restart', 'confirmed-link-replay-does-not-resubmit', 'changed-owner-does-not-read-old-commands', 'owned-server-and-unchanged-source'], geometry }, null, 2));
   console.log(JSON.stringify({ result: 'home-dock-browser-probe-passed', output, realProviderCalls: 0 }));
 } finally { await browser?.close(); child.kill('SIGTERM'); }

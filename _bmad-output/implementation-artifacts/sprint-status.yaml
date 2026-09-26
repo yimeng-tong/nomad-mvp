@@ -285,22 +285,28 @@ condition_progress:
       - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
     METRICS-03:
       state: in-progress
-      summary: 服务端PG/进程/TCP反例、IDB14、App-PG6及压力双窗口3项重复3轮已封存；真实平台C07仍开放。
+      summary: 服务端PG/进程/TCP反例、IDB14、App-PG6及压力双窗口3项重复3轮已封存；共享UI迁移后实际App/IDB双进程22项Web回归通过，真实平台C07仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
       - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/validation.json
     APP-HOST-01:
       state: in-progress
-      summary: 双端sync、Android243tasks/14s及APK资产匹配通过；Web恢复/FIFO/Sheet/44px等回归与native实机C07分别记录，iOS未编译。
+      summary: 双端sync、Android243tasks/14s及APK资产匹配为旧局部证据；共享UI迁移后Web双进程恢复/FIFO/Sheet遮蔽回归通过，native实机C07与iOS编译未验收。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-7-client-validation-2026-09-19.md
       - _bmad-output/implementation-artifacts/story-1-7-local-validation-2026-09-19.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/validation.json
     CODE-QUALITY-01:
-      state: not-started
-      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+      state: in-progress
+      summary: 本轮共享UI恢复探针已通过本地typed lint；当前分支完整CI与本Story适用范围的独立验收仍待核验。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/validation.json
     UI-BROWSER-01:
-      state: not-started
-      summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
+      state: in-progress
+      summary: 当前App/IDB双进程22项恢复/FIFO/遮蔽/owner Web回归已通过，本分支CI探针及三引擎产物待独立复验，原生另列。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-1-7-ui-integration-2026-09-26/validation.json
   9-1-capacitor-app-installation-and-host-foundation:
     DB-CHANGE-01:
       state: not-applicable
@@ -707,15 +713,15 @@ active_workstreams:
     contract: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality.md
     evidence: _bmad-output/implementation-artifacts/9-4-component-workbench-and-enforced-code-quality-validation.md
   near_term_execution:
-    story: 1-6-home-multi-link-import-queue-and-honest-status
+    story: 1-7-durable-import-progress-and-restart-recovery
     thread_id: 01a0d78a-3692-78b1-aee5-76268a743925
     host_id: local
     environment: current-saved-project
     status: active
-    working_branch: codex/story-1-6-input-telemetry
+    working_branch: codex/story-1-7-ui-integration
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH与1.6规范输入事件分别完成独立CI及本地切片验收。接续1.7/9.1受影响集成；真实资源/SDK门槛、唯一writer与3.1暂停不变
+    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH与1.6规范输入事件分别完成独立CI及本地切片验收。当前唯一writer核对1.7/9.1共享UI迁移后的恢复/返回回归；真实资源/SDK门槛与3.1暂停不变
 previous_preparation:
   story: 9-5-browser-flow-and-visual-regression-gates
   status: complete

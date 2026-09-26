@@ -1,0 +1,108 @@
+{
+  "result": "passed",
+  "sourceHashes": {
+    "apps/mobile/scripts/home-dock-browser-probe.mjs": "6da7750ff4e8508d3a117bc4e3c894c1e3dd9bddc513cbbb442aa2f777c12d35",
+    "apps/mobile/src/App.tsx": "ab97fe19eb4b111c393a9101ed9e6a2580107354032e96091656162bd7af0efb",
+    "apps/mobile/src/home/dock-controller.ts": "c8b14df29c9c9de33d9a1fbc0e4b934116a3b971b4a2f8ad2048653300a5786c",
+    "apps/mobile/src/home/dock-model.ts": "e460eee431b23e17255b2af6bbb658942a0975a51827af0268489583ad67d038",
+    "apps/mobile/src/home/HomeImportDock.tsx": "636caa65c592bcfaa6bfe2f8d4e70f91f583d59ce5713af7830c59b6e1bfef65",
+    "apps/mobile/src/home/HomeScreen.tsx": "a4eca5dddee690cb2ffc7a83cb6d818b48dca98a4a878efe2160911339a8b29b",
+    "apps/mobile/src/home/HomeSheet.tsx": "99697e51bf02c99f9fba4911185b9e2b053a0c6a386e4d86b566443abb8bb2b7",
+    "apps/mobile/src/auth/stream.ts": "b87e8788f536673cc9f9e203f77929bdb530e96ff7fcc065c2d2dda584adb617",
+    "apps/mobile/src/styles.css": "196ec6d087c396b8f61c328847c29a93d203dc67ffe2e2fa9661f4db4df9aeba",
+    "apps/mobile/src/home/clipboard.ts": "9ff088bc4419063b2afb5e68fc774db8195093f31f3dea22b0d74a3cde1e8d84",
+    "apps/mobile/src/home/input-inbox.ts": "14fc6c3c4eb5b762809bd735a5fdae3db8459cf3b4c781bd6c757ef62716f75a",
+    "apps/mobile/src/home/input-runtime.ts": "879b721a8e82e7f2fc12ccb19996e9224bd32465da9d6151b8180e61ae21a6d2",
+    "apps/mobile/src/home/operation-journal.ts": "b8e799eecd0f02bd329925cc8bab6bc1fea96cfa04f753a3a3c4dc622ba753d7",
+    "apps/mobile/src/ui/components/PrivateUiBoundary.tsx": "2004ff01abe79f2d060ca17bf5d3648784758e988f1140ec32d1f54a9ff8a9a9",
+    "apps/mobile/src/ui/components/AppDialog.tsx": "fe283c77644f1a191c42722eda8e1bc9d3e56c0dde12e69fe8d03cc83ca1e5d1",
+    "apps/mobile/src/ui/styles/modal.css": "4e9215b7bb028c17531b49250316ce9c1726b08ca637bf30af240ccb5712106b"
+  },
+  "browser": "Chrome/127.0.6533.88",
+  "actualBrowser": true,
+  "explicitHttpAndSseFixtures": true,
+  "realAuthenticationVerified": false,
+  "realProviderCalls": 0,
+  "nativeDeviceVerified": false,
+  "completedStory": false,
+  "clipboardUsesExplicitFixture": true,
+  "deepLinkDeliveryUsesExplicitFixture": true,
+  "browserProcesses": 2,
+  "controllerJournalIntegrationVerified": true,
+  "checks": [
+    "explicit-paste-only",
+    "clipboard-denial-keeps-input",
+    "downward-drag-collapse",
+    "ordered-batch-acceptance",
+    "editable-draft",
+    "settings-navigation-draft-retained",
+    "true-partial-copy",
+    "safe-result-sheet",
+    "sheet-focus-escape",
+    "shared-ui-owner-mask-and-restoration",
+    "covered-sheet-eleven-seconds-does-not-complete-presentation",
+    "same-job-retry",
+    "fifo-completion-and-distinct-announcement",
+    "unknown-command-recovery-without-repost",
+    "44px-targets",
+    "no-horizontal-overflow",
+    "reduced-motion",
+    "confirmed-deep-input-persisted",
+    "lost-ack-recovers-original-command-after-browser-restart",
+    "confirmed-link-replay-does-not-resubmit",
+    "changed-owner-does-not-read-old-commands",
+    "owned-server-and-unchanged-source"
+  ],
+  "geometry": [
+    {
+      "label": "收起队列",
+      "width": 44.109375,
+      "height": 44
+    },
+    {
+      "label": "查看",
+      "width": 56.015625,
+      "height": 44
+    },
+    {
+      "label": "重新确认状态",
+      "width": 120.015625,
+      "height": 44
+    },
+    {
+      "label": "查看已保存内容",
+      "width": 136.015625,
+      "height": 44
+    },
+    {
+      "label": "查看已保存内容",
+      "width": 136.015625,
+      "height": 44
+    },
+    {
+      "label": "重新确认状态",
+      "width": 120.015625,
+      "height": 44
+    },
+    {
+      "label": "统一输入",
+      "width": 298,
+      "height": 83
+    },
+    {
+      "label": "添加",
+      "width": 48,
+      "height": 48
+    },
+    {
+      "label": "从剪贴板粘贴",
+      "width": 56.015625,
+      "height": 46
+    },
+    {
+      "label": "开始规划",
+      "width": 88.015625,
+      "height": 46
+    }
+  ]
+}

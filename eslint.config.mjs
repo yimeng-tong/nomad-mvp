@@ -43,6 +43,7 @@ export default [
   { files: ['scripts/measurements/**/*.mts', 'apps/mobile/scripts/*-measurement-harness.tsx'],
     languageOptions: { parserOptions: { project: ['./scripts/measurements/tsconfig.json'] } } },
   { files: ['scripts/telemetry/**/*.mts'], languageOptions: { parserOptions: { project: ['./scripts/telemetry/tsconfig.json'] } } },
+  { files: ['apps/mobile/scripts/home-dock-browser-probe.mjs'], languageOptions: { globals: { ...globals.node, ...globals.browser } } },
   { files: ['apps/mobile/playwright.config.ts', 'apps/mobile/e2e/**/*.ts'], languageOptions: { globals: globals.node,
     parserOptions: { project: ['./apps/mobile/tsconfig.e2e.json'] } } },
   {

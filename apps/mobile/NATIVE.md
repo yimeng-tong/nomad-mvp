@@ -16,6 +16,10 @@ Use WSL Node 22 and the workspace pnpm. This checkout's existing store is `/tmp/
 
 Only these public settings enter Capacitor configuration. Never load server/admin env files into Vite/Capacitor. Empty API in development intentionally leaves native authentication unavailable. A supplied ID does not prove provider registration or signing. The development namespace is not a release identity; verify actual PNVS/U-App/Apple/WeChat registrations and signing continuity before finalizing it.
 
+The homelab phone API candidate currently uses `NOMAD_NATIVE_API_ORIGIN=https://nomad-test.yinianyunqi.top` and `NOMAD_NATIVE_API_BASE_PATH=/api`; see the [phone API runbook](../../docs/ops/phone-api-domain-2026-09-27.md). Its public DNS/TLS/network checks passed, but actual login remains unavailable until published legal URLs are configured, and this does not establish device or App installation acceptance.
+
+With these public variables and the development identity `dev.nomad.mvp`, the mobile web build, Android/iOS sync and `native:verify` passed on WSL. The generated projects are build outputs; repeat the sync with the intended registered App ID for a device build. This WSL preflight had no JDK21/Android SDK36 or Xcode, so it did not compile native binaries.
+
 The native auth plugin consumes `plugins.NomadNativeAuth.apiOrigin` and `apiBasePath`; JavaScript cannot select arbitrary authenticated destinations. See `packages/native-auth/ADR.md` for its wire and secure-store boundary. No credential belongs in Preferences/localStorage, URL, application config or logs.
 
 A foundation-only build has no native authentication and cannot satisfy Story1.0 or final release gates. Always sync again with authentication included once its native implementation is ready; `native:verify` deliberately requires that registration. The explicit development option does not permit a browser-cookie or test-identity fallback.

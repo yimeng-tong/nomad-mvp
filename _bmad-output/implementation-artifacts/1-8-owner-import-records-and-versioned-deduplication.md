@@ -276,6 +276,7 @@ Codex；本次执行 bmad-create-story，仅建立开发上下文。
 
 - `6348743`三层审查九项Patch均已修补；完整CI`36257939023`两job通过，隔离PG29项含下载期间删除撤权、旧record升级七项及只读审计checksum/目标结构守卫。VM104独立development部署同一提交，合成PNG正确字节可读、同长度篡改拒绝且探针对象清理；原staging仍17 job/健康。VM108双向跨桶GET/HEAD/LIST/DELETE/PUT拒绝、证书账号不得读S3管理员配置、多行公钥注入拒绝。旧PITR恢复实例停止已独立核对，修补后的PITR停止失败分支尚未以新故障实演替代原恢复证据。阿里云frps确认是旧OpenList链路、当前无在线代理，Nomad公网API仍未部署；真实XHS、双端设备、异机灾备及17项owner认定均开放。证据`evidence/story-1-8-homelab-2026-09-27/review-acceptance.json`，本Story继续in-progress。
 - 用户指定在运行中的VM/CT选择FRPC宿主后，VM104已部署专用frpc，阿里云独立frps使用新令牌/私有CA/7001，代理仅绑定云端网桥25245并转发开发API回环43104。实测私有健康200、匿名ImportRecord401、NPM容器可达、双服务各自重启复连；旧OpenList7000/25244未改。此项只是私有传输，公网域名/可信HTTPS反代与正式Origin/audience未验收，不关闭APP-HOST-01或整Story。脱敏证据`evidence/story-1-8-homelab-2026-09-27/frp-acceptance.json`，配置/回滚见`ops/homelab-frp/README.md`。
+- 上条为FRP初装阶段记录。2026-09-27已将专用frpc切至VM104独立phone43105；AliDNS`nomad-test.yinianyunqi.top`、Let’s Encrypt DNS-01证书、阿里云NPM `/api/*`反代与精确原生audience/Origin已上线。公网TLS、健康/重定向、匿名401、错误audience/Origin/Cookie403、CORS及重启恢复通过；独立phone新库九迁移且无受理数据，原staging/development/旧OpenList保留。开发身份下手机Web构建、Android/iOS Capacitor sync与`native:verify`静态通过；WSL无Android JDK/SDK和Xcode，不构成原生编译/安装证明。NPM重载附近有短暂TLS握手失败，稳定后50/50通过，原因未定须监测。真实隐私政策/用户协议URL缺失导致`/api/auth/config`仍`unavailable`；没有真实登录、认证SSE、短信或设备证明。用户明确本次域名网络验收不以真机为必要条件；整Story/APP-HOST-01及其他门槛仍开放。脱敏证据`evidence/story-1-8-homelab-2026-09-27/phone-domain-acceptance.json`，运行/回滚见`docs/ops/phone-api-domain-2026-09-27.md`。
 
 ### File List
 

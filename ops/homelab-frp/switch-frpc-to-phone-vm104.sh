@@ -8,6 +8,7 @@ unit_backup=/etc/systemd/system/nomad-frpc.service.pre-phone
 [[ -f $config && -f $unit && ! -e $backup && ! -e $unit_backup ]] || exit 65
 curl --fail --silent --show-error --max-time 5 http://127.0.0.1:43105/health >/dev/null
 [[ $(grep -c '^localPort = 43104$' "$config") == 1 ]] || exit 65
+[[ $(grep -c '^name = "nomad-development-api"$' "$config") == 1 ]] || exit 65
 [[ $(grep -o 'nomad-development.service' "$unit" | wc -l) == 2 ]] || exit 65
 
 cp -p "$config" "$backup"
@@ -18,7 +19,9 @@ path = Path(sys.argv[1])
 text = path.read_text()
 before = 'localPort = 43104'
 assert text.count(before) == 1
-path.write_text(text.replace(before, 'localPort = 43105'))
+name_before = 'name = "nomad-development-api"'
+assert text.count(name_before) == 1
+path.write_text(text.replace(before, 'localPort = 43105').replace(name_before, 'name = "nomad-phone-api"'))
 PY
 chown root:nomad-frpc "$config"
 chmod 0640 "$config"

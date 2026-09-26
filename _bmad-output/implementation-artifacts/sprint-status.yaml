@@ -314,13 +314,15 @@ condition_progress:
   1-8-owner-import-records-and-versioned-deduplication:
     OPS-01:
       state: in-progress
-      summary: 限VM104/108同PVE homelab：PG加密全量+15分钟WAL归档及独立socket指定时点恢复通过，恢复实例已停、源健康；审查修复PITR通过报告停止顺序。VM104专用frpc至阿里云独立frps私有隧道已实测健康/撤权及重连，但公网HTTPS/正式认证未配。异机容灾、历史key保管、真实负载RPO和新停止失败实演仍开放。
+      summary: 限VM104/108同PVE homelab：PG加密全量+15分钟WAL归档及独立socket指定时点恢复通过，恢复实例已停、源健康；审查修复PITR通过报告停止顺序。VM104独立phone后端经专用FRP与阿里云NPM公开受信HTTPS，DNS/TLS/健康/匿名及负向认证/CORS/重启已验收；真实登录因法律URL缺失不可用，NPM重载短暂TLS异常待监测。异机容灾、历史key保管、真实负载RPO和新停止失败实演仍开放。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/review-acceptance.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/frp-acceptance.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/phone-domain-acceptance.json
       - ops/postgres/README.md
       - ops/homelab-frp/README.md
+      - docs/ops/phone-api-domain-2026-09-27.md
     DB-CHANGE-01:
       state: in-progress
       summary: 6348743完整CI主隔离PG29项含下载期间删除撤权、旧record升级七项及checksum/目标结构守卫审计通过；VM104源两迁移/隔离副本九迁移checksum匹配，旧staging17 job仍需owner权威且未迁移/回填。development九迁移；全库diff、实际旧库写入及整Story仍开放。
@@ -355,7 +357,11 @@ condition_progress:
     METRICS-03:
       state: not-started
     APP-HOST-01:
-      state: not-started
+      state: in-progress
+      summary: 本Story手机API候选域名已用公网受信HTTPS、原生audience与错误Origin/Cookie拒绝实测；开发身份下Web构建、双平台Capacitor sync/native:verify静态通过。用户本次域名网络验收不要求真机；真实登录/认证SSE与Android/iOS宿主行为、编译/安装/前后台等仍未验收，不把公网健康或配置当设备证据。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-homelab-2026-09-27/phone-domain-acceptance.json
+      - docs/ops/phone-api-domain-2026-09-27.md
     CODE-QUALITY-01:
       state: in-progress
       summary: 6348743完整CI两job及API类型/typed lint通过，三层审查九项修补；PG29项、VM104真实S3合成PNG同长度篡改拒绝及VM108双向桶ACL负例通过。真实Provider/原生及整Story仍开放，首次a058c68 lint失败保留。
@@ -824,7 +830,7 @@ active_workstreams:
     working_branch: codex/story-1-8-import-records
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。1.8已完成同宿主homelab对象TLS/分桶、共享PG全量+WAL/PITR局部、旧库隔离只读审计及VM104→阿里云专用FRP私有隧道，17个旧job均待owner证据；XHS实采/公网原生API HTTPS与正式认证/双端真机、异机灾备与3.1暂停不变
+    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH、1.6规范输入事件、1.7共享UI恢复Web回归分别完成独立CI及局部验收。1.8已完成同宿主homelab对象TLS/分桶、共享PG全量+WAL/PITR局部、旧库隔离只读审计及VM104独立phone后端→专用FRP→阿里云公网DNS/受信HTTPS负向认证网络验收，17个旧job均待owner证据；真实法律URL/登录及认证SSE、XHS实采、双端真机、异机灾备与3.1暂停保持开放
 previous_preparation:
   story: 9-3-shared-ui-components-and-safe-app-sheet
   status: complete

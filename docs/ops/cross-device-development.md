@@ -1,6 +1,6 @@
 # WSL / macOS 开发与 homelab 后端
 
-Updated: 2026-09-25
+Updated: 2026-09-27
 
 用户明确支持通过 Git 在 WSL 与 Mac 间同步开发。Mac可承担组件和iOS；不强制把所有开发切到Mac，也不因尚未切换暂停独立工作。Windows原生Node/pnpm继续不用于项目。iOS编译/签名必须在实际Mac/Xcode完成，WSL构建不作替代。
 
@@ -77,15 +77,17 @@ Mac可直接curl --fail http://localhost:43104/health。使用Windows OpenSSH建
 
 ## frp与原生HTTPS
 
-用户确认曾使用frp。2026-09-27只读复核发现阿里云上海`47.101.189.96`运行Docker frps，控制端口7000；现有`cloud.yinianyunqi.top`经Nginx Proxy Manager指向内侧25244，历史代理`alist_tcp`最后成功注册于8月1日。当前frps无在线客户端/代理，homelab侧客户端未定位；homelab目录46份Markdown没有frp记载，运行中的PVE、CT105/106、VM104/107/108/190未发现frpc。CT105的一条`autossh`反向控制隧道不是frp。完整脱敏盘点见[FRP调查](frp-investigation-2026-09-27.md)。旧计划`nomad-test.yinianyunqi.top`在VM104解析失败，不能当当前可用地址。现有frps是单一共享token，新Nomad客户端不应复制旧OpenList凭据；优先另建隔离frps实例/端口与公开HTTPS入口，仍须实测TLS、精确Origin/Cookie、反代/SSE与原生API audience。
+当前给手机使用的候选API入口为`https://nomad-test.yinianyunqi.top`，客户端分别配置`NOMAD_NATIVE_API_ORIGIN=https://nomad-test.yinianyunqi.top`与`NOMAD_NATIVE_API_BASE_PATH=/api`。域名A记录指向阿里云上海`47.101.189.96`，NPM用公开可信证书终止TLS，`/api/*`经云端仅网桥`172.17.0.1:25245`的专用FRP代理到VM104回环`127.0.0.1:43105`的独立`nomad-phone.service`。手机后端使用独立`nomad_phone`数据库/Redis DB5、staging真实认证模式、精确HTTPS Origin/代理信任和安全Cookie；原开发43104仅供桌面SSH隧道。公网健康200、TLS受信、匿名及错误audience/Origin/Cookie拒绝、CORS、重启恢复均已实测，详见[手机API域名运行与验收](phone-api-domain-2026-09-27.md)。`/api/auth/config`仍因真实法律协议URL缺失而`unavailable`；本次未验收真实登录、已认证SSE或双端真机，Story1.8与APP-HOST-01保持开放。NPM重载近旁有短暂TLS握手异常，稳定后50/50通过，后续重载须监测。
 
-随后按用户指示，在运行中的VM104安装`nomad-frpc.service`，阿里云新增独立`nomad-frps.service`，未复制旧OpenList令牌。客户端以专用私有CA校验FRPS证书，出站连接`47.101.189.96:7001`，新代理仅监听云端网桥`172.17.0.1:25245`并转发VM104本机`127.0.0.1:43104`。私有健康200、匿名导入记录401、NPM容器内健康200、两端各自重启后复连均实测；公网直连25245超时。旧Docker FRPS 7000、25244和`cloud.yinianyunqi.top`均保留。证据与回滚见[Nomad FRP运行手册](../../ops/homelab-frp/README.md)。公网Nomad域名、受信HTTPS虚拟主机、正式Origin/Cookie/API audience及SSE/原生实机仍开放；此通道不直接供手机App使用。
+以下为部署前的调查和私有隧道阶段记录，不代表当前路由状态。用户确认曾使用frp。2026-09-27只读复核发现阿里云上海`47.101.189.96`运行Docker frps，控制端口7000；`cloud.yinianyunqi.top`经Nginx Proxy Manager指向内侧25244，历史代理`alist_tcp`最后成功注册于8月1日。当时frps无在线客户端/代理，homelab侧客户端未定位；homelab目录46份Markdown没有frp记载，运行中的PVE、CT105/106、VM104/107/108/190未发现frpc。CT105的一条`autossh`反向控制隧道不是frp。完整脱敏盘点见[FRP调查](frp-investigation-2026-09-27.md)。当时`nomad-test.yinianyunqi.top`在VM104解析失败，后来已新增A记录。旧frps是单一共享token，新Nomad客户端未复制旧OpenList凭据。
 
-2026-09-27：AliDNS DNS-01已为**对象存储**`objects.yinianyunqi.top`签发公开可信证书，VM104经内网8333验证证书与签名S3读写；证书每日自动续期，无需入站80/443。此域名只服务私有对象存储，**不**代表App API的公开HTTPS、原生登录Origin/audience或双端实机已可用。API若采用高端口HTTPS，还需独立核验域名解析、路由/端口映射、Nginx及认证配置，不能把对象存储证书直接算作API验收。
+私有隧道初装时按用户指示，在运行中的VM104安装`nomad-frpc.service`，阿里云新增独立`nomad-frps.service`，未复制旧OpenList令牌。客户端以专用私有CA校验FRPS证书，出站连接`47.101.189.96:7001`，新代理仅监听云端网桥`172.17.0.1:25245`并**曾**转发VM104本机开发`127.0.0.1:43104`。私有健康200、匿名导入记录401、NPM容器内健康200、两端各自重启后复连均实测；公网直连25245超时。随后已将同一代理切到隔离手机后端43105，并完成公开HTTPS验证。旧Docker FRPS 7000、25244和`cloud.yinianyunqi.top`均保留。证据与回滚见[Nomad FRP运行手册](../../ops/homelab-frp/README.md)。
 
-同日也只读核对了一个备选公网高端口路径：homelab历史外部验收记录`24443/TCP`曾转发到CT105 `192.168.31.3:443`，当前CT105仍运行Nginx；本轮未复测公网DNAT。这与阿里云frp无关。优先方案是在阿里云现有frps上为Nomad建立独立代理/HTTPS虚拟主机；若它不适用，才重新评估CT105备选。VM104当前只监听`127.0.0.1:43104`，两种公网API路径均未部署。AX3000管理SSH当前只提供旧`ssh-rsa`主机算法且主机密钥与已保存记录不符；本轮没有绕过身份核验或改路由器。
+2026-09-27：AliDNS DNS-01先为**对象存储**`objects.yinianyunqi.top`签发公开可信证书，VM104经内网8333验证证书与签名S3读写；它与随后单独签发的手机API证书/域名是不同资源。对象存储证书本身不证明手机API或真机可用。
 
-SSH隧道只供桌面开发。iPhone/Android真机不能把自己的localhost当Mac，也不放宽原生HTTPS校验。原生构建使用已核验的HTTPS后端及原有CAP_*配置；缺实际入口时C07/真实认证等对应切片保持未验收，组件工作不被整体阻塞。
+同日只读核对过备选公网高端口路径：homelab历史外部验收记录`24443/TCP`曾转发到CT105 `192.168.31.3:443`，未复测公网DNAT。当前采用阿里云专用FRP/HTTPS路径，无需更改路由器；AX3000管理SSH只提供旧`ssh-rsa`主机算法且主机密钥与已保存记录不符，没有绕过身份核验。
+
+SSH隧道只供桌面开发。iPhone/Android真机不能把自己的localhost当Mac，也不放宽原生HTTPS校验。已有公开HTTPS入口可供后续原生构建配置；C07/真实认证、设备行为等对应切片仍待各自验收，组件工作不被整体阻塞。
 
 ## 受控开发发布
 

@@ -1,0 +1,48 @@
+{
+  "kind": "story-1-8-acceptance-first-ci-failure",
+  "runId": "36227255902",
+  "headSha": "a6362d32065608ce0b540d940585ff208fd023f0",
+  "status": "completed",
+  "conclusion": "failure",
+  "successfulSlice": {
+    "isolatedPostgresql": {
+      "kind": "story-1-8-isolated-postgresql-schema-probe",
+      "headSha": "a6362d32065608ce0b540d940585ff208fd023f0",
+      "checks": [
+        "runtime-schema-preflight-validates-owner-and-protected-url-guards",
+        "concurrent-owner-normalized-url-unique-and-losing-job-rolled-back",
+        "same-url-independent-record-for-second-owner",
+        "record-job-composite-owner-foreign-key",
+        "inspiration-record-composite-owner-foreign-key",
+        "accepted-record-status-pending-title-and-sealed-original",
+        "record-status-and-title-advance-with-job-and-event-in-one-transaction",
+        "committed-inspiration-attaches-to-the-same-owner-record",
+        "actual-acceptance-deduplicates-canonical-variants-across-two-operations",
+        "actual-acceptance-atomically-commits-sealed-original-record-job-event-and-command",
+        "committed-operation-replays-without-key-and-new-write-fails-closed",
+        "actual-acceptance-keeps-identical-url-owner-records-separate",
+        "pre-upgrade-command-replays-from-legacy-normalized-hash-without-backfill"
+      ],
+      "completed": true,
+      "realProviderCalls": 0,
+      "databaseScope": "guarded-isolated-synthetic-only"
+    },
+    "artifactId": 10900329848,
+    "zipBytes": 683,
+    "zipSha256": "340327ca029f53361d08d8e8484e496bf865df1a706c81dd7f38aefc1ba2dc8c",
+    "reportSha256": "a116048cd39904a2b2f435980c040983855f5b21268cab1667abc4c5960300a0",
+    "crcCheckedFiles": 1
+  },
+  "failure": {
+    "step": "Persistent authentication with explicit provider substitutes",
+    "probe": "auth-persistence-probe.ts",
+    "observed": "Legacy done job with a non-XHS historical URL was rejected by the new URL policy before retained source-hash lookup.",
+    "expected": "Preserve legacy owner/job/result replay and surface the existing durable-event inconsistency."
+  },
+  "correction": "Move retained source-hash lookup before new policy application; apply policy to new acceptance, while unsupported pre-upgrade sources reuse an existing owned job.",
+  "scope": "CI was not fully successful; database probe success does not validate all downstream legacy, UI, device or production paths",
+  "ciKeyHandling": {
+    "observed": "The first run exposed its random isolated-CI key in the runner environment section of CI logs. No production key or production data was used.",
+    "correction": "Keep the generated key in a mode-0600 runner-temporary file and export it only inside the two consuming shell steps; do not put it in GITHUB_ENV or uploaded artifacts."
+  }
+}

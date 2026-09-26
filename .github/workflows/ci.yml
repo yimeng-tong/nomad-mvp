@@ -161,11 +161,12 @@ jobs:
 
       - name: Prepare ephemeral import URL key for isolated CI only
         run: |
-          node --input-type=module <<'JS' >> "$GITHUB_ENV"
+          node --input-type=module <<'JS' > "$RUNNER_TEMP/nomad-import-url-keyring.json"
           import { randomBytes } from 'node:crypto';
           const key = randomBytes(32).toString('base64');
-          process.stdout.write('IMPORT_URL_KEYRING_JSON=' + JSON.stringify({activeKeyId:'isolated-ci',keys:{'isolated-ci':key}}) + '\n');
+          process.stdout.write(JSON.stringify({activeKeyId:'isolated-ci',keys:{'isolated-ci':key}}) + '\n');
           JS
+          chmod 600 "$RUNNER_TEMP/nomad-import-url-keyring.json"
 
       - name: Owner import record constraints in isolated PostgreSQL
         working-directory: apps/server
@@ -202,6 +203,7 @@ jobs:
           AUTH_TEST_DATABASE_ACK: isolated-synthetic-only
           REDIS_TEST_ACK: isolated-synthetic-only
         run: |
+          export IMPORT_URL_KEYRING_JSON="$(cat "$RUNNER_TEMP/nomad-import-url-keyring.json")"
           node --import tsx scripts/redis-lifecycle-probe.ts
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f ../../packages/prisma/tests/auth-migration-seed.sql
           node --import tsx scripts/auth-persistence-probe.ts
@@ -291,6 +293,7 @@ jobs:
           INGEST_WORKER_MODE: enabled
           INGEST_RECOVERY_ISOLATED: 'false'
         run: |
+          export IMPORT_URL_KEYRING_JSON="$(cat "$RUNNER_TEMP/nomad-import-url-keyring.json")"
           pnpm run ci:start-server &
           echo $! > server.pid
           for attempt in $(seq 1 30); do

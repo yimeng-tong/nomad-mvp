@@ -36,6 +36,18 @@ export const partialImport = {
   actions: { retry: true, view: true },
 } satisfies components['schemas']['IngestSnapshot'];
 
+export const importRecord = {
+  id: '10000000-0000-4000-8000-000000000081',
+  ingest_id: 'ing_10000000-0000-4000-8000-000000000091',
+  status: 'done', title: '合成来源 · 西湖傍晚散步', inspiration_id: '10000000-0000-4000-8000-000000000071',
+  locate_status: 'pending', poi_name: null, poi_address: null, asset_count: 1,
+  created_at: '2026-09-25T00:00:00.000Z', updated_at: '2026-09-25T00:01:00.000Z',
+} satisfies components['schemas']['LibraryImportRecordItem'];
+
+export const importRecordDetail = { ...importRecord,
+  original_url: 'https://xhslink.com/workbench-only#original',
+} satisfies components['schemas']['LibraryImportRecordDetail'];
+
 export const blocked = {
   error_code: 'WORKBENCH_FORBIDDEN', error_message: '合成场景：当前登录方式暂不可用', retriable: false,
 } satisfies components['schemas']['ErrorEnvelope'];

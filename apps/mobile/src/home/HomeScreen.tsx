@@ -11,6 +11,7 @@ import type {
 } from './api';
 import { createHomeApiClient } from './api';
 import { HomeImportDock } from './HomeImportDock';
+import { ImportRecordsSection } from './ImportRecordsSection';
 import { HomeSheet } from './HomeSheet';
 import { Tabs, TabsList, TabsTrigger, TabsContent, useModalCovered, AsyncState, Button } from '../ui';
 import { ImportDockController } from './dock-controller';
@@ -390,6 +391,7 @@ export function HomeScreen({ apiClient, dockController, analytics, onPlannerHand
                 </section>
               ) : null}
             </div>
+            {client.getImportRecords && client.getImportRecordDetail ? <ImportRecordsSection client={client} /> : null}
           </TabsContent>
         ) : (
           <TabsContent value="plan" className="plan-panel" render={<section aria-label="规划入口" />}>

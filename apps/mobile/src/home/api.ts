@@ -19,6 +19,9 @@ export type LibraryInspirationItem = components['schemas']['LibraryInspirationIt
 export type LibraryInspirationsResponse = components['schemas']['LibraryInspirationsResponse'];
 export type LibraryCandidate = components['schemas']['LibraryCandidate'];
 export type LibraryCandidatesResponse = components['schemas']['LibraryCandidatesResponse'];
+export type LibraryImportRecordItem = components['schemas']['LibraryImportRecordItem'];
+export type LibraryImportRecordsResponse = components['schemas']['LibraryImportRecordsResponse'];
+export type LibraryImportRecordDetail = components['schemas']['LibraryImportRecordDetail'];
 export type PlannerHandoff = components['schemas']['PlannerHandoff'];
 export type PlannerHandoffSelectedItem = components['schemas']['PlannerHandoffSelectedItem'];
 
@@ -26,6 +29,8 @@ export type HomeApiClient = {
   getCities: () => Promise<LibraryCitiesResponse>;
   getInspirations: (filters?: { cityId?: string; locateStatus?: 'resolved' | 'pending' }) => Promise<LibraryInspirationsResponse>;
   getCandidates: (inspirationId: string) => Promise<LibraryCandidatesResponse>;
+  getImportRecords?: (input?: { limit?: number; cursor?: string }, signal?: AbortSignal) => Promise<LibraryImportRecordsResponse>;
+  getImportRecordDetail?: (recordId: string, signal?: AbortSignal) => Promise<LibraryImportRecordDetail>;
   parseInput: (request: HomeInputParseRequest) => Promise<HomeInputParseResponse>;
   startIngest: (request: IngestXhsRequest) => Promise<IngestStartResponse>;
   getIngestResult?: (jobId: string) => Promise<LibraryInspirationItem>;
@@ -80,7 +85,7 @@ function queryString(filters?: { cityId?: string; locateStatus?: 'resolved' | 'p
   return value ? `?${value}` : '';
 }
 
-export function createHomeApiClient(baseUrl = getApiBaseUrl()): HomeApiClient {
+export function createHomeApiClient(baseUrl: string = getApiBaseUrl() as string): HomeApiClient {
   const scope = getAuthSnapshot();
   const bound = createBoundJsonRequest(baseUrl, parseError);
   const requestJson = <T>(_baseUrl: string, path: string, init?: RequestInit) => bound<T>(path, init);
@@ -88,6 +93,14 @@ export function createHomeApiClient(baseUrl = getApiBaseUrl()): HomeApiClient {
     getCities: () => requestJson<LibraryCitiesResponse>(baseUrl, '/library/cities'),
     getInspirations: (filters) => requestJson<LibraryInspirationsResponse>(baseUrl, `/library/inspirations${queryString(filters)}`),
     getCandidates: (inspirationId) => requestJson<LibraryCandidatesResponse>(baseUrl, `/library/inspirations/${encodeURIComponent(inspirationId)}/candidates`),
+    getImportRecords: (input, signal) => {
+      const query = new URLSearchParams();
+      if (input?.limit !== undefined) query.set('limit', String(input.limit));
+      if (input?.cursor) query.set('cursor', input.cursor);
+      const suffix = query.toString();
+      return bound<LibraryImportRecordsResponse>(`/library/import-records${suffix ? `?${suffix}` : ''}`, { signal });
+    },
+    getImportRecordDetail: (id, signal) => bound<LibraryImportRecordDetail>(`/library/import-records/${encodeURIComponent(id)}`, { signal }),
     parseInput: (body) => requestJson<HomeInputParseResponse>(baseUrl, '/home/input/parse', { method: 'POST', body: JSON.stringify(body) }),
     startIngest: (body) => requestJson<IngestStartResponse>(baseUrl, '/ingest/xhs', { method: 'POST', body: JSON.stringify(body) }),
     getIngestResult: (id) => bound<LibraryInspirationItem>(`/ingest/${encodeURIComponent(id)}/result`),

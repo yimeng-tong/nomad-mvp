@@ -21,3 +21,15 @@ export async function readClipboardText(): Promise<ClipboardResult> {
     return { kind: 'text', value: text };
   } catch { return { kind: 'unavailable' }; }
 }
+
+/** Write only after an explicit owner-detail copy action; never fall back across platforms. */
+export async function writeClipboardText(value: string): Promise<boolean> {
+  if (!value || new TextEncoder().encode(value).length > 4096) return false;
+  try {
+    if (getHostPlatform() === 'web') {
+      if (!navigator.clipboard?.writeText) return false;
+      await navigator.clipboard.writeText(value);
+    } else await Clipboard.write({ string: value });
+    return true;
+  } catch { return false; }
+}

@@ -10,6 +10,7 @@ import { appendSnapshotEvent } from '../src/ingest/event-log.js';
 import { acceptIngestCommand, readIngestCommand } from '../src/ingest/store.js';
 import { advanceSnapshot, initialSnapshot } from '../src/ingest/job-state.js';
 import { assertImportRecordSchema } from '../src/ingest/import-record-schema.js';
+import { getImportRecordDetail, listImportRecords } from '../src/ingest/import-record-read.js';
 import { AuthFault } from '../src/auth/errors.js';
 
 const connection = process.env.DATABASE_URL;
@@ -161,6 +162,31 @@ try {
   assert.equal(await db.importRecord.count({ where: { normalizedUrl: actual.normalizedUrl } }), 2);
   checks.push('actual-acceptance-keeps-identical-url-owner-records-separate');
 
+  const beforeReads = { jobs: await db.ingestJob.count(), commands: await db.ingestCommand.count(), events: await db.ingestEventRecord.count() };
+  const list = await listImportRecords(ownerA);
+  assert.ok(list.items.some((item) => item.id === actual.id));
+  assert.ok(!JSON.stringify(list).includes(rawA) && !JSON.stringify(list).includes(rawB));
+  assert.ok(list.items.every((item) => !('original_url' in item)));
+  const detail = await getImportRecordDetail(ownerA, actual.id);
+  assert.equal(detail.original_url, opened);
+  await assert.rejects(getImportRecordDetail(ownerB, actual.id),
+    (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_IMPORT_RECORD_NOT_FOUND');
+  await assert.rejects(getImportRecordDetail(ownerA, randomUUID()),
+    (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_IMPORT_RECORD_NOT_FOUND');
+  checks.push('owner-only-detail-decrypts-while-list-excludes-original-and-foreign-identity');
+
+  const page1 = await listImportRecords(ownerA, { limit: '1' });
+  assert.equal(page1.items.length, 1);
+  assert.ok(page1.next_cursor);
+  const page2 = await listImportRecords(ownerA, { limit: '1', cursor: page1.next_cursor! });
+  assert.equal(page2.items.length, 1);
+  assert.notEqual(page1.items[0]!.id, page2.items[0]!.id);
+  await assert.rejects(listImportRecords(ownerA, { cursor: 'invalid' }),
+    (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_CURSOR_INVALID');
+  const afterReads = { jobs: await db.ingestJob.count(), commands: await db.ingestCommand.count(), events: await db.ingestEventRecord.count() };
+  assert.deepEqual(afterReads, beforeReads);
+  checks.push('keyset-list-and-detail-reads-do-not-create-job-command-or-event');
+
   const legacyRaw = `https://xhslink.com/${randomUUID()}#copied`;
   const legacyUrl = normalizeXhsUrl(legacyRaw), legacyJobId = randomUUID(), legacyOperationId = randomUUID();
   await db.ingestJob.create({ data: { id: legacyJobId, userId: ownerA, authVersion: 0, sourceType: 'xhs', sourceUrl: legacyUrl,
@@ -175,12 +201,26 @@ try {
   assert.equal(legacyReplay.shouldRun, false);
   assert.equal(await db.importRecord.count({ where: { jobId: legacyJobId } }), 0);
   checks.push('pre-upgrade-command-replays-from-legacy-normalized-hash-without-backfill');
+
+  const unsupported = `https://example.invalid/retained/${randomUUID()}`;
+  const unsupportedJobId = randomUUID(), unsupportedResultId = randomUUID();
+  await db.ingestJob.create({ data: { id: unsupportedJobId, userId: ownerA, authVersion: 0, sourceType: 'xhs',
+    sourceUrl: unsupported, sourceHash: createHash('sha256').update(`${ownerA}:${unsupported}`).digest('hex'), status: 'done' } });
+  await db.inspiration.create({ data: { id: unsupportedResultId, userId: ownerA, jobId: unsupportedJobId,
+    sourceHash: createHash('sha256').update(randomUUID()).digest('hex'), tags: [], title: 'Synthetic retained result' } });
+  const retained = await acceptIngestCommand({ userId: ownerA, sourceUrl: unsupported,
+    traceId: randomUUID(), operationId: randomUUID(), enqueue: false });
+  assert.equal(retained.disposition, 'reused');
+  assert.equal(retained.job.dbId, unsupportedJobId);
+  assert.equal(retained.job.snapshot?.result?.inspiration_id, unsupportedResultId);
+  assert.equal(await db.importRecord.count({ where: { jobId: unsupportedJobId } }), 0);
+  checks.push('unsupported-pre-upgrade-source-recovers-owned-job-and-result-before-new-policy');
 } finally {
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, JSON.stringify({ kind: 'story-1-8-isolated-postgresql-schema-probe',
-    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 13,
+    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 16,
     realProviderCalls: 0, databaseScope: 'guarded-isolated-synthetic-only' }, null, 2) + '\n');
   await db.$disconnect();
 }
 
-assert.equal(checks.length, 13);
+assert.equal(checks.length, 16);

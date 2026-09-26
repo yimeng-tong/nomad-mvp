@@ -256,6 +256,8 @@ Codex；本次执行 bmad-create-story，仅建立开发上下文。
 - T1保护预备：独立原URL AES-GCM keyring封装与owner/record绑定测试通过；未接入持久受理，也未获得或保存真实密钥，T1继续未勾选。
 - T1结构草案：加法ImportRecord/owner复合FK与隔离PG探针已写，schema验证/构建通过；真实PG探针、旧数据冲突与受理事务未通过前不勾T1/DB-CHANGE-01。
 - `4110c7e`完整CI及五项隔离PG约束探针已验证结构切片；本轮事件同事务状态/标题/结果投影与启动预检尚待新提交CI，生产/回填/受理仍开放。
+- `40a72e3`完整CI及八项隔离PG事件投影探针已通过；`a6362d3`十三项实际受理PG切片通过但整轮CI因旧非XHS历史job兼容失败，完整失败记录已保留。当前修复先查旧source hash，再对新受理执行版本化URL规则；下一轮CI待验。
+- 当前T1/T2/T3局部：新受理事务、密文原URL、owner列表/详情、Home共享记录区域及复制/身份遮蔽已实现；删除、旧数据迁移、真实短链/设备/生产密钥/恢复和完整浏览器证据尚未通过，开发任务与整张Story保持未勾选。
 
 ### File List
 
@@ -285,3 +287,25 @@ Codex；本次执行 bmad-create-story，仅建立开发上下文。
 - apps/server/src/ingest/import-record-schema.ts
 - apps/server/src/routes/ingest.ts
 - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/event-projection-validation.json
+- _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/event-projection-ci-verification.json
+- _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-first-ci-failure.json
+- _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
+- apps/server/src/ingest/store.ts
+- apps/server/src/ingest/import-record-read.ts
+- apps/server/src/ingest/import-record-routes.test.ts
+- apps/server/src/routes/library.ts
+- apps/server/src/ingest/link-parser.test.ts
+- apps/mobile/src/home/ImportRecordsSection.tsx
+- apps/mobile/src/home/ImportRecordsSection.test.tsx
+- apps/mobile/src/home/clipboard.ts
+- apps/mobile/src/home/clipboard.test.ts
+- apps/mobile/src/home/HomeScreen.tsx
+- apps/mobile/src/home/api.ts
+- apps/mobile/src/styles.css
+- apps/mobile/e2e/fixtures/api-scenario.ts
+- apps/mobile/e2e/flows/import-records.spec.ts
+- apps/mobile/e2e/run-contract.json
+- apps/mobile/workbench/ImportRecords.stories.tsx
+- apps/mobile/workbench/fixtures.ts
+- apps/mobile/workbench/handlers.ts
+- docs/ops/import-record-url-protection.md

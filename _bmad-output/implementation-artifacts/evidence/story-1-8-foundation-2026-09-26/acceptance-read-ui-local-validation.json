@@ -1,0 +1,60 @@
+{
+  "kind": "story-1-8-acceptance-read-ui-local-validation",
+  "recordedAt": "2026-09-26T08:01:39.963051+00:00",
+  "priorHead": "a6362d32065608ce0b540d940585ff208fd023f0",
+  "branch": "codex/story-1-8-import-records",
+  "sourceSha256": {
+    ".github/workflows/ci.yml": "60b654118d8cdb7f86a999c70a95548bf72d194b5d45da565237593ee8e85752",
+    "apps/mobile/e2e/fixtures/api-scenario.ts": "9dafee35e3da41960d4bd42b3aa8f276774477d1a3a7f03ecd1ce87454732e09",
+    "apps/mobile/e2e/flows/import-records.spec.ts": "fbce8c56b4df62c49bf3c477fed72280d417eb0abcdc702e29111986fbd0d626",
+    "apps/mobile/e2e/run-contract.json": "6b68fbb62b0bfa99b7450d3e916e9d64f070fa8e36ce051c8a73a96be177e2ef",
+    "apps/mobile/src/home/HomeScreen.tsx": "245d5ede9d0cf98eed94e136e73a82585d268afae9ff31cfa647af7a612aa27d",
+    "apps/mobile/src/home/ImportRecordsSection.test.tsx": "49709f512915730a6d0e90707f28988be32b6a80546665e6e0859d7c86a7fc4f",
+    "apps/mobile/src/home/ImportRecordsSection.tsx": "bc0fbc2ade9ef4d599eb622dd952e77bb39a7cce6ef829579adcdcd297e5c786",
+    "apps/mobile/src/home/api.ts": "ba084f2e17c691aecb2a53da26d9dd6acefc7ef77b53d1add3c1a59e3a884d1d",
+    "apps/mobile/src/home/clipboard.test.ts": "3f1c2ef9cece705e77f7d79cac6d9915c1feb8d80efc2892bfb21c1d015675ff",
+    "apps/mobile/src/home/clipboard.ts": "95be4a9b711c6eb8541ba2779fbda8be637b3298938d7f51c3820dc325be3557",
+    "apps/mobile/src/styles.css": "1816800addfff31831f8ec680cbb130ba8fa37433235adf9384ce788ede2650a",
+    "apps/mobile/workbench/ImportRecords.stories.tsx": "47947095d79a7d76662e3a56982f83869a972be55c8910bed2d960716140c5a6",
+    "apps/mobile/workbench/fixtures.ts": "df7499480f18b3e6685146de6295ac55fa9202499646229a8a7f17add0851016",
+    "apps/mobile/workbench/handlers.ts": "101262f064ff4d748a4bf27d358e42b69825e1ebbde55f93027c67b13a0c211e",
+    "apps/server/scripts/import-record-schema-probe.ts": "21b6e885f4f9d2e70051fdb33858e4b180e830a7941228de81c53a1e29f85b64",
+    "apps/server/src/ingest/import-record-read.ts": "d92374922e5b4f69d990ed0da33d88e980a88a7f9180f7ecd19aeeba35c030a4",
+    "apps/server/src/ingest/import-record-routes.test.ts": "e134b98a7a7a0439f5915bb4259357b754c2d83851b824eb66c2d8ed7cc081b2",
+    "apps/server/src/ingest/store.ts": "4ebf2a64ec418a0a461ed450bbe83b4c21ee99a9d96e4b1953b05a73845174d3",
+    "apps/server/src/routes/library.ts": "30eb6ed627ecbb004a1cf0284cabff2f1dbb23cbccef06b5fb86849e1d7053ab",
+    "docs/api/openapi.yaml": "d684d83d4365f2af6647335202fd592ba5e816e22eb0137afad29f8de35152f1",
+    "docs/ops/import-record-url-protection.md": "ddb95f7382b006206d59fc6a1e98b62ec969096866c0199e1408f97f673e208b",
+    "packages/types/src/api-types.ts": "d7183da5eaba79966420aae658fef35aab639dbb79ffe92815d4e4af487eee97"
+  },
+  "checks": {
+    "serverAndWorkspaceBuild": "passed",
+    "openapiGeneratedTypes": "passed",
+    "typedLint": {
+      "selectedFiles": 136,
+      "failures": 0,
+      "retiredExceptions": 0
+    },
+    "serverIngestAndRouteTests": 12,
+    "homeLibraryContract": "passed",
+    "mobileTests": {
+      "vitest": 288,
+      "nativeConfig": 5
+    },
+    "newImportRecordComponentTests": 3,
+    "workbenchNodeNetworkTests": 9,
+    "workbenchTypecheck": "passed",
+    "workbenchStaticBuild": "passed",
+    "browserTypecheck": "passed",
+    "browserRuntime": "unverified-locally-missing-Playwright-browser-executables",
+    "isolatedPostgresqlAcceptanceAndRead": "pending-next-CI",
+    "hostClipboardCopy": "Web and native branches unit-tested; actual device remains unverified"
+  },
+  "previousCI": {
+    "runId": "36227255902",
+    "conclusion": "failure",
+    "isolatedPostgresqlChecksPassed": 13,
+    "failureEvidence": "_bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-first-ci-failure.json"
+  },
+  "scope": "New owner record acceptance/read/UI slice only. No actual local browser run, production key, old-record migration, deletion, device or live provider proof."
+}

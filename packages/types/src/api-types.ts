@@ -22,6 +22,20 @@ export interface paths {
     /** List user-owned inspirations for Home and Library */
     get: operations["listLibraryInspirations"];
   };
+  "/library/import-records": {
+    /**
+     * List owner import records, including running and failed imports
+     * @description Read-only, owner-qualified keyset page. Does not create or resume ingest work and never returns an original URL.
+     */
+    get: operations["listImportRecords"];
+  };
+  "/library/import-records/{record_id}": {
+    /**
+     * Read one owner import record and its protected original URL
+     * @description Decrypts the selected original URL only after current owner qualification; no ingest state transition occurs.
+     */
+    get: operations["getImportRecordDetail"];
+  };
   "/library/inspirations/{inspiration_id}/candidates": {
     /** List sanitized pending-location candidates for an inspiration */
     get: operations["listLibraryCandidates"];
@@ -545,6 +559,37 @@ export interface components {
     };
     LibraryInspirationsResponse: {
       items: components["schemas"]["LibraryInspirationItem"][];
+    };
+    LibraryImportRecordItem: {
+      /** Format: uuid */
+      id: string;
+      ingest_id: string;
+      /** @enum {string} */
+      status: "created" | "fetching" | "parsing" | "geo" | "storing" | "done" | "failed";
+      /** @description Null until a real source title is observed. */
+      title: string | null;
+      /** Format: uuid */
+      inspiration_id: string | null;
+      /** @enum {string|null} */
+      locate_status: "resolved" | "pending" | null;
+      poi_name: string | null;
+      poi_address: string | null;
+      asset_count: number;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    LibraryImportRecordsResponse: {
+      items: components["schemas"]["LibraryImportRecordItem"][];
+      next_cursor: string | null;
+    };
+    LibraryImportRecordDetail: components["schemas"]["LibraryImportRecordItem"] & {
+      /**
+       * Format: uri
+       * @description Owner-only original single URL; copy or open only after an explicit action.
+       */
+      original_url: string;
     };
     LibraryCandidate: {
       candidate_id: string;
@@ -1459,6 +1504,53 @@ export interface operations {
       401: components["responses"]["Error401"];
       403: components["responses"]["Error403"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  /**
+   * List owner import records, including running and failed imports
+   * @description Read-only, owner-qualified keyset page. Does not create or resume ingest work and never returns an original URL.
+   */
+  listImportRecords: {
+    parameters: {
+      query?: {
+        limit?: number;
+        cursor?: string;
+      };
+    };
+    responses: {
+      /** @description Owner import records in descending creation order */
+      200: {
+        content: {
+          "application/json": components["schemas"]["LibraryImportRecordsResponse"];
+        };
+      };
+      400: components["responses"]["Error400"];
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  /**
+   * Read one owner import record and its protected original URL
+   * @description Decrypts the selected original URL only after current owner qualification; no ingest state transition occurs.
+   */
+  getImportRecordDetail: {
+    parameters: {
+      path: {
+        record_id: string;
+      };
+    };
+    responses: {
+      /** @description Owner import record detail */
+      200: {
+        content: {
+          "application/json": components["schemas"]["LibraryImportRecordDetail"];
+        };
+      };
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      404: components["responses"]["Error404"];
       503: components["responses"]["Error503"];
     };
   };

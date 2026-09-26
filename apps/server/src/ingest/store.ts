@@ -170,17 +170,17 @@ export async function acceptIngestCommand(input: { userId: string; sourceUrl: st
       else if (old.kind !== 'start' || old.requestHash !== hash && old.requestHash !== commandHash(['start', input.sourceUrl]))
         throw new AuthFault('INGEST_COMMAND_CONFLICT',409);
       return { row: await ensureDbEventLog(tx,row), normalizedUrl: source?.normalizedUrl, disposition: old.disposition as Command['disposition'], shouldRun: false }; }
-    try { decision = normalizeImportSourceUrl(originalUrl); }
-    catch { throw new AuthFault('INGEST_URL_POLICY_UNSUPPORTED', 400); }
-    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`import-record:${ownerId}:${decision.normalizedUrl}`},0))`;
     const sourceHash = sourceHashFor(input.userId, input.sourceUrl);
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`ingest-source:${sourceHash}`},0))`;
     const hashes = fixtureAuth() ? [sourceHash] : await retainedSourceHashes(tx, ownerId, input.sourceUrl);
     const existing = await tx.ingestJob.findMany({ where: { userId: ownerId, sourceHash: { in: hashes } }, take: 2 });
     if (existing.length > 1) throw new AuthFault('AUTH_LEGACY_DEDUP_CONFLICT',409);
     if (existing[0] && !fixtureAuth() && existing[0].authVersion === null && existing[0].status !== 'done') throw new AuthFault('AUTH_LEGACY_OWNER_UNVERIFIED',403);
-    const priorRecord = await tx.importRecord.findUnique({ where: { userId_normalizedUrl: {
-      userId: ownerId, normalizedUrl: decision.normalizedUrl } }, select: { jobId: true } });
+    try { decision = normalizeImportSourceUrl(originalUrl); }
+    catch { if (!existing[0]) throw new AuthFault('INGEST_URL_POLICY_UNSUPPORTED', 400); }
+    if (decision) await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`import-record:${ownerId}:${decision.normalizedUrl}`},0))`;
+    const priorRecord = decision ? await tx.importRecord.findUnique({ where: { userId_normalizedUrl: {
+      userId: ownerId, normalizedUrl: decision.normalizedUrl } }, select: { jobId: true } }) : null;
     if (priorRecord && existing[0] && priorRecord.jobId !== existing[0].id) throw new AuthFault('INGEST_NORMALIZATION_CONFLICT', 409);
     const priorJob = priorRecord ? await tx.ingestJob.findFirst({ where: { id: priorRecord.jobId, userId: ownerId } }) : existing[0];
     if (priorRecord && !priorJob) throw new AuthFault('INGEST_STATE_UNAVAILABLE', 503, true);
@@ -189,6 +189,7 @@ export async function acceptIngestCommand(input: { userId: string; sourceUrl: st
     const id = randomUUID(), recordId = randomUUID();
     let createdOrExisting = priorJob;
     if (!createdOrExisting) {
+      if (!decision) throw new AuthFault('INGEST_URL_POLICY_UNSUPPORTED', 400);
       let protectedUrl: Prisma.InputJsonValue;
       try { protectedUrl = sealImportOriginalUrl({ ownerId, recordId, originalUrl: decision.originalUrl }, loadImportUrlKeyring(process.env)) as unknown as Prisma.InputJsonValue; }
       catch { throw new AuthFault('INGEST_URL_PROTECTION_UNAVAILABLE', 503, true); }
@@ -203,7 +204,7 @@ export async function acceptIngestCommand(input: { userId: string; sourceUrl: st
     const disposition = priorJob ? 'reused' as const : 'created' as const;
     await tx.ingestCommand.create({ data: { userId: ownerId, operationId: input.operationId, kind: 'start', requestHash: hash,
       jobId: row.id, attempt: row.retryCount + 1, disposition } });
-    return { row, normalizedUrl: decision.normalizedUrl, disposition, shouldRun: !priorJob };
+    return { row, normalizedUrl: decision?.normalizedUrl, disposition, shouldRun: !priorJob };
   }));
   return { job: hydrateJobFromDb(accepted.row, { ...input, sourceUrl: accepted.normalizedUrl ?? input.sourceUrl }), disposition: accepted.disposition, shouldRun: accepted.shouldRun };
 }

@@ -34,6 +34,7 @@ export class ApiScenario {
   sessionRevision = 0;
   authorityUnavailable = false;
   library: 'normal' | 'empty' | 'error' | 'long' = 'normal';
+  importRecords: 'empty' | 'sample' = 'empty';
   pendingInspirationCount = 1;
   otpError = false;
   dropNextAck = false;
@@ -121,6 +122,12 @@ export class ApiScenario {
   private item(owner: Owner, id = `fixture-${owner}`): Schema['LibraryInspirationItem'] {
     return { id, title: `${owner}的合成灵感`, summary: `${owner}的合成私有内容`, locate_status: 'pending', city_id: null,
       city_name: null, poi_id: null, poi_name: null, poi_address: null, asset_count: 1, candidate_count: 1, created_at: timestamp };
+  }
+  private importRecord(owner: Owner): Schema['LibraryImportRecordItem'] {
+    return { id: owner === 'A' ? '10000000-0000-4000-8000-000000000081' : '10000000-0000-4000-8000-000000000082',
+      ingest_id: owner === 'A' ? 'ing_10000000-0000-4000-8000-000000000091' : 'ing_10000000-0000-4000-8000-000000000092',
+      status: 'failed', title: `${owner}的合成来源`, inspiration_id: null, locate_status: null,
+      poi_name: null, poi_address: null, asset_count: 0, created_at: timestamp, updated_at: timestamp };
   }
   private append(job: Job, patch: Partial<Snapshot>) {
     const seq = job.events.length + 1;
@@ -213,10 +220,12 @@ export class ApiScenario {
       await this.json(route, this.user(this.identity)); return;
     }
     const command = /^\/api\/ingest\/commands\/([^/]+)$/.exec(path);
+    const recordDetail = /^\/api\/library\/import-records\/([^/]+)$/.exec(path);
     const match = /^\/api\/ingest\/([^/]+)(?:\/(recovery|events|result|retry))?$/.exec(path);
     const job = match ? this.jobs.get(match[1]) : undefined;
-    const declared = method === 'GET' && ['/api/library/cities', '/api/library/inspirations', '/api/user-key',
+    const declared = method === 'GET' && ['/api/library/cities', '/api/library/inspirations', '/api/library/import-records', '/api/user-key',
       '/api/library/inspirations/fixture-A/candidates', '/api/library/inspirations/fixture-B/candidates'].includes(path)
+      || method === 'GET' && !!recordDetail
       || method === 'POST' && ['/api/logout', '/api/home/input/parse', '/api/ingest/xhs'].includes(path)
       || method === 'GET' && !!command && this.commands.has(command[1])
       || !!job && !!match && (method === 'GET' && match[2] !== 'retry' || method === 'POST' && match[2] === 'retry');
@@ -244,6 +253,16 @@ export class ApiScenario {
         ? url.searchParams.get('city_id') === `city-${owner}` ? [located] : [] : [located, ...pending];
       const items: Schema['LibraryInspirationsResponse'] = { items: this.library === 'empty' ? [] : filtered };
       await this.json(route, items); return;
+    }
+    if (method === 'GET' && path === '/api/library/import-records') {
+      const page: Schema['LibraryImportRecordsResponse'] = { items: this.importRecords === 'sample' ? [this.importRecord(owner)] : [], next_cursor: null };
+      await this.json(route, page); return;
+    }
+    if (method === 'GET' && recordDetail) {
+      const owned = this.importRecords === 'sample' && recordDetail[1] === this.importRecord(owner).id;
+      if (!owned) { await this.json(route, fault('LIBRARY_IMPORT_RECORD_NOT_FOUND'), 404); return; }
+      const detail: Schema['LibraryImportRecordDetail'] = { ...this.importRecord(owner), original_url: `https://xhslink.com/synthetic-${owner}#copied` };
+      await this.json(route, detail); return;
     }
     if (method === 'GET' && path === `/api/library/inspirations/fixture-${owner}/candidates`) {
       await this.json(route, { candidates: [{ candidate_id: `candidate-${owner}`, name: `${owner}的合成候选`, address: '合成地址，仅用于界面测试' }] } satisfies Schema['LibraryCandidatesResponse']); return;

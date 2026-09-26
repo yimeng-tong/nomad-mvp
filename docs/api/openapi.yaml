@@ -102,6 +102,58 @@ paths:
         '401': { $ref: '#/components/responses/Error401' }
         '500': { $ref: '#/components/responses/Error500' }
 
+  /library/import-records:
+    get:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
+      tags: [Library]
+      summary: List owner import records, including running and failed imports
+      description: Read-only, owner-qualified keyset page. Does not create or resume ingest work and never returns an original URL.
+      operationId: listImportRecords
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+        - in: query
+          name: cursor
+          schema: { type: string }
+      responses:
+        '200':
+          description: Owner import records in descending creation order
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LibraryImportRecordsResponse' }
+        '400': { $ref: '#/components/responses/Error400' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '503': { $ref: '#/components/responses/Error503' }
+
+  /library/import-records/{record_id}:
+    get:
+      security:
+        - SessionAuth: []
+        - BearerAuth: []
+      tags: [Library]
+      summary: Read one owner import record and its protected original URL
+      description: Decrypts the selected original URL only after current owner qualification; no ingest state transition occurs.
+      operationId: getImportRecordDetail
+      parameters:
+        - in: path
+          name: record_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Owner import record detail
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LibraryImportRecordDetail' }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '404': { $ref: '#/components/responses/Error404' }
+        '503': { $ref: '#/components/responses/Error503' }
+
   /library/inspirations/{inspiration_id}/candidates:
     get:
       security:
@@ -2260,6 +2312,39 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LibraryInspirationItem'
+
+    LibraryImportRecordItem:
+      type: object
+      required: [id, ingest_id, status, title, inspiration_id, locate_status, poi_name, poi_address, asset_count, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        ingest_id: { type: string }
+        status: { type: string, enum: [created, fetching, parsing, geo, storing, done, failed] }
+        title: { type: string, nullable: true, description: Null until a real source title is observed. }
+        inspiration_id: { type: string, format: uuid, nullable: true }
+        locate_status: { type: string, enum: [resolved, pending], nullable: true }
+        poi_name: { type: string, nullable: true }
+        poi_address: { type: string, nullable: true }
+        asset_count: { type: integer, minimum: 0 }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    LibraryImportRecordsResponse:
+      type: object
+      required: [items, next_cursor]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/LibraryImportRecordItem' }
+        next_cursor: { type: string, nullable: true }
+
+    LibraryImportRecordDetail:
+      allOf:
+        - $ref: '#/components/schemas/LibraryImportRecordItem'
+        - type: object
+          required: [original_url]
+          properties:
+            original_url: { type: string, format: uri, description: Owner-only original single URL; copy or open only after an explicit action. }
 
     LibraryCandidate:
       type: object

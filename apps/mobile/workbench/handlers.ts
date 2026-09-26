@@ -1,6 +1,6 @@
 import { http, HttpResponse, passthrough } from 'msw';
 import type { components } from 'nomad-types/src/api-types';
-import { assertFixtureConfig, authConfig, blocked, currentUser, libraryCities, otpSent, partialImport } from './fixtures';
+import { assertFixtureConfig, authConfig, blocked, currentUser, importRecord, importRecordDetail, libraryCities, otpSent, partialImport } from './fixtures';
 import { isToolAsset, type NetworkLedger } from './network-policy';
 
 export const scenarioNames = ['success', 'empty', 'forbidden', 'timeout', 'loading', 'captcha', 'partial', 'reconnect', 'long'] as const;
@@ -39,6 +39,7 @@ export function createHandlers(origin: string, scenario: ScenarioName, signal: A
   assertFixtureConfig(config);
   let configCalls = 0;
   let otpCalls = 0;
+  let recordCalls = 0;
   return [
     http.get(`${origin}/auth/config`, async () => {
       configCalls++;
@@ -61,6 +62,19 @@ export function createHandlers(origin: string, scenario: ScenarioName, signal: A
     http.post(`${origin}/auth/otp/verify`, () => HttpResponse.json(currentUser)),
     http.get(`${origin}/me`, () => HttpResponse.json(currentUser)),
     http.get(`${origin}/library/cities`, () => HttpResponse.json(scenario === 'empty' ? { cities: [], unlocated_count: 0 } : libraryCities)),
+    http.get(`${origin}/library/import-records`, async () => {
+      recordCalls++;
+      if (scenario === 'loading' || scenario === 'timeout') { await waitForCancellation(signal); return HttpResponse.error(); }
+      if (scenario === 'forbidden') return HttpResponse.json(blocked, { status: 403 });
+      if (scenario === 'reconnect' && recordCalls === 1) return HttpResponse.json(blocked, { status: 503 });
+      if (scenario === 'empty') return HttpResponse.json({ items: [], next_cursor: null });
+      const item = scenario === 'partial' ? { ...importRecord, status: 'failed' as const }
+        : scenario === 'long' ? { ...importRecord, title: '合成超长中文来源标题，用于检查窄屏和放大文字的换行行为。'.repeat(6) } : importRecord;
+      return HttpResponse.json({ items: [item], next_cursor: null });
+    }),
+    http.get(`${origin}/library/import-records/:id`, ({ params }) => params.id === importRecord.id
+      ? HttpResponse.json(scenario === 'partial' ? { ...importRecordDetail, status: 'failed' as const } : importRecordDetail)
+      : HttpResponse.json({ error_code: 'LIBRARY_IMPORT_RECORD_NOT_FOUND', error_message: 'not found', retriable: false }, { status: 404 })),
     http.get(`${origin}/ingest/workbench-job`, () => HttpResponse.json(partialImport)),
   ];
 }

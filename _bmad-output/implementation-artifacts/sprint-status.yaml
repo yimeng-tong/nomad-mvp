@@ -317,12 +317,15 @@ condition_progress:
       summary: Story已进入本地/隔离开发；生产备份、PITR及恢复目标无本Story证据。
     DB-CHANGE-01:
       state: in-progress
-      summary: 4110c7e完整CI中隔离PG加法迁移与五项唯一/回滚/跨owner/密文探针通过；本轮event事务投影/启动预检待新CI，旧数据冲突审计和生产恢复仍开放。
+      summary: 4110c7e与40a72e3完整CI中隔离PG加法迁移五项、事件投影八项通过。a6362d3受理PG十三项切片通过但整轮CI因旧非XHS历史job兼容失败；已修复并增加反例，十六项及旧数据冲突审计/生产恢复待验。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/schema-ci-verification.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/event-projection-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/event-projection-ci-verification.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-first-ci-failure.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
     METRICS-01:
       state: not-started
     METRICS-02:
@@ -333,17 +336,27 @@ condition_progress:
       state: not-started
     CODE-QUALITY-01:
       state: in-progress
-      summary: 仅1.8 T1纯URL规则/原链接传递及独立AES-GCM保护模块本地测试、构建、typed lint通过；完整CI、DB/页面与整张Story尚未验收。
+      summary: 限1.8当前受理/读取/UI切片：本地完整构建、136文件typed lint零失败、服务端及288移动测试通过；最新完整CI因历史兼容失败，已修复待新CI，整Story未关闭。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-8-dev-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/validation.json
       - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/encryption-validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
     UI-COMPONENT-01:
-      state: not-started
+      state: in-progress
+      summary: Home灵感页新增共享Button/AsyncState/私有Sheet记录区域，owner变更遮蔽和复制失败单测通过；完整浏览器、原生和删除状态待验。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
     UI-WORKBENCH-01:
-      state: not-started
+      state: in-progress
+      summary: 九个导入记录合成组件场景、MSW严格声明、工作台类型/静态构建与Node网络测试通过；实际组件浏览器交互待CI。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
     UI-BROWSER-01:
-      state: not-started
+      state: in-progress
+      summary: 新B32/B33三引擎隐私详情与迟到owner响应测试已编写并更新run-contract；本地缺浏览器可执行文件，实际三引擎CI待验。
+      evidence:
+      - _bmad-output/implementation-artifacts/evidence/story-1-8-foundation-2026-09-26/acceptance-read-ui-local-validation.json
   9-1-capacitor-app-installation-and-host-foundation:
     DB-CHANGE-01:
       state: not-applicable

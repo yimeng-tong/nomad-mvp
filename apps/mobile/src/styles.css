@@ -438,6 +438,41 @@ button:focus-visible {
   font-size: 16px;
 }
 
+.import-records,
+.import-record-list,
+.import-record-detail {
+  display: grid;
+  gap: 10px;
+}
+
+.import-records {
+  margin-top: 12px;
+  border-top: 1px solid rgba(23, 33, 27, 0.12);
+  padding-top: 16px;
+}
+
+.import-records-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.import-records-heading p {
+  color: #52635a;
+}
+
+.import-record-status {
+  color: #247e6f;
+  font-weight: 720;
+}
+
+.import-record-url {
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
 .inspiration-row {
   display: grid;
   grid-template-columns: 1fr;

@@ -55,7 +55,7 @@ export function HomeImportDock({ controller, selectedCount, onPlan, onView, noti
   const presentationKey = state.presenting?.key;
   useLayoutEffect(() => {
     if (!presentationKey || !state.visible || !completionRef.current) return;
-    return observeVisibleContent(completionRef.current, () => controller.acknowledgePresentation(presentationKey));
+    return observeVisibleContent(completionRef.current, () => controller.acknowledgePresentation(presentationKey), { persistent: true });
   }, [controller, presentationKey, state.visible]);
   useLayoutEffect(() => {
     if (!ref.current || typeof ResizeObserver === 'undefined') return;

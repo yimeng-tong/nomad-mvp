@@ -57,7 +57,7 @@ input_telemetry_progress: _bmad-output/implementation-artifacts/story-1-6-input-
 
 ## 当前继续执行（2026-09-26）
 
-9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的受影响集成回归已落盘，1.0独立T9/METRICS-01的WL-AUTH本地实现已通过0b9585e完整CI36192075867及独立产物核验：997文件/30ZIP，6份数据重算/641源码匹配；真实staging/费用/目标仍待验收。当前从已推送0830c79进入codex/story-1-6-input-telemetry，1.6 T6规范输入/导入事件生产点已通过三层CR、本地282移动+5配置、完整构建/typed lint及Chrome真实App/IDB遮挡/许可/owner/私人信封探针；分支CI待推送复验，证据见input_telemetry_progress。真实SDK/许可UI/归因查询和双端设备仍开放，1.6整张in-progress。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
+9.3本地UI验收检查点dd2a970已提交推送，T9/APP-HOST-01仍in-progress。近期计划第5步的受影响集成回归已落盘，1.0独立T9/METRICS-01的WL-AUTH本地实现已通过0b9585e完整CI36192075867及独立产物核验：997文件/30ZIP，6份数据重算/641源码匹配；真实staging/费用/目标仍待验收。当前从已推送0830c79进入codex/story-1-6-input-telemetry，1.6 T6规范输入/导入事件生产点已通过三层CR、本地283移动+5配置、完整构建/typed lint及Chrome真实App/IDB长时遮挡/许可/owner/私人信封探针；首提交566d96b已推送，长时遮挡修补待追加推送和分支CI复验，证据见input_telemetry_progress。真实SDK/许可UI/归因查询和双端设备仍开放，1.6整张in-progress。仍由本任务唯一写入，两个原Story baseline7250a8a均不改。
 
 Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不批量准备1.8。
 

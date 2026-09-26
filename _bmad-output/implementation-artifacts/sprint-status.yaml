@@ -240,7 +240,7 @@ condition_progress:
       - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
     CODE-QUALITY-01:
       state: in-progress
-      summary: 本Story本轮新增事件/探针已通过本地typed lint、282移动测试与完整构建；当前分支CI独立复跑及整Story适用条件仍待确认。
+      summary: 本Story本轮新增事件/探针已通过本地typed lint、283移动测试与完整构建；当前分支CI独立复跑及整Story适用条件仍待确认。
       evidence:
       - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
     UI-COMPONENT-01:

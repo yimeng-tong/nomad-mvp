@@ -1,12 +1,15 @@
 /** Observe an actually rendered, unmasked element. Missing layout stays missing telemetry. */
-export function observeVisibleContent(element: HTMLElement, visible: () => void): () => void {
+export function observeVisibleContent(element: HTMLElement, visible: () => void, options: { persistent?: boolean } = {}): () => void {
   if (typeof requestAnimationFrame !== 'function') return () => undefined;
-  let cancelled = false, frame = 0, remainingFrames = 180;
+  const persistent = options.persistent === true;
+  let cancelled = false, frame = 0, timer: ReturnType<typeof setTimeout> | undefined, remainingFrames = 180;
   const started = performance.now();
-  const stop = () => { cancelled = true; cancelAnimationFrame(frame); };
+  const stop = () => { cancelled = true; cancelAnimationFrame(frame); clearTimeout(timer); };
+  const again = () => { if (persistent) timer = setTimeout(inspect, 250); else frame = requestAnimationFrame(inspect); };
   const inspect = () => {
     if (cancelled) return;
-    if (!element.isConnected || document.visibilityState === 'hidden' || !Number.isFinite(started) || performance.now() - started >= 2000 || --remainingFrames <= 0) { stop(); return; }
+    if (!element.isConnected || !Number.isFinite(started) || !persistent && (performance.now() - started >= 2000 || --remainingFrames <= 0)) { stop(); return; }
+    if (document.visibilityState === 'hidden') { if (persistent) again(); else stop(); return; }
     let ready = false;
     try {
       const bounds = element.getBoundingClientRect(), viewport = window.visualViewport;
@@ -26,7 +29,7 @@ export function observeVisibleContent(element: HTMLElement, visible: () => void)
       }
     } catch { stop(); return; }
     if (ready) { stop(); try { visible(); } catch { /* Observation does not own UI success. */ } return; }
-    frame = requestAnimationFrame(inspect);
+    again();
   };
   frame = requestAnimationFrame(inspect); return stop;
 }

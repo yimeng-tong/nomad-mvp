@@ -22,7 +22,7 @@ backend_environment: homelab-vm104
 
 1.0独立WL-AUTH本地切片已通过0b9585e完整CI36192075867与997文件/30ZIP、641源码比对；1.0整张及真实指标仍in-progress。继续第5步1.6规范输入事件接线，SDK/许可/真实查询和第三方登录资源保持单列未完成。详见story-1-0-auth-measurement-acceptance-2026-09-26.md。
 
-1.6 T6规范输入/导入事件接线、本地三层CR和Chrome实际App/IDB网络信封已通过；最新本地282移动+5配置、构建/typed lint/handoff通过，分支CI待推送复验。完成卡片需视觉视口内未遮挡才计呈现，重复事件ID跨许可代次仍可能二次投递；真实SDK去重/查询未验证。证据见story-1-6-input-telemetry-progress-2026-09-26.md。第5步在制Story与硬资源门槛继续，3.1暂停不变。
+1.6 T6规范输入/导入事件接线、本地三层CR和Chrome实际App/IDB网络信封已通过；最新本地283移动+5配置、构建/typed lint/handoff通过，长时遮挡修补待追加推送和分支CI复验。完成卡片需视觉视口内未遮挡才计呈现，遮挡超过两秒仍继续等待；重复事件ID跨许可代次仍可能二次投递，真实SDK去重/查询未验证。证据见story-1-6-input-telemetry-progress-2026-09-26.md。第5步在制Story与硬资源门槛继续，3.1暂停不变。
 
 下方9月25日交接时的数量、ready与Git状态属于历史快照；当前CURRENT/Sprint及本段决定现时派发。执行顺序和资源边界继续有效。
 

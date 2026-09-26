@@ -1,19 +1,19 @@
 {
   "kind": "actual-app-input-telemetry-probe",
   "result": "passed",
-  "baselineCommit": "0830c7909c7f8200ace948c451ea6f0b55c815f3",
+  "baselineCommit": "566d96b9b09500fe947a0eb97a806af2fe941181",
   "browser": "Chrome/127.0.6533.88",
-  "reportSha256": "69fc9952f1cb24848151137d6e7bb14a460b209f9d7517cbba03ea389fe62ea7",
+  "reportSha256": "6089a962617fd53606ace182beab7d7573576589e0d8169055cf0f9a54ec8dee",
   "sourceFilesVerified": 108,
   "keySourceSha256": {
     "apps/mobile/src/home/dock-controller.ts": "c8b14df29c9c9de33d9a1fbc0e4b934116a3b971b4a2f8ad2048653300a5786c",
-    "apps/mobile/src/home/HomeImportDock.tsx": "5b337dc11d9071044c606703c17736a2230816bf14b2d1aa590c6a410a2718e3",
+    "apps/mobile/src/home/HomeImportDock.tsx": "636caa65c592bcfaa6bfe2f8d4e70f91f583d59ce5713af7830c59b6e1bfef65",
     "apps/mobile/src/home/HomeScreen.tsx": "a4eca5dddee690cb2ffc7a83cb6d818b48dca98a4a878efe2160911339a8b29b",
     "apps/mobile/src/telemetry/event-id.ts": "e88216456aa600596927e71d222ce9eb07689a8da88491ce533663eea83952ed",
     "apps/mobile/src/telemetry/input-events.ts": "7fccee17ecfcbb0c46a75686babfb4c77cb78eb9571f6e364341859ccf906d24",
     "apps/mobile/src/telemetry/runtime.ts": "07ed887d62d9d8c4e271986eba31c88829058cffb7aba230137b7162ad5bd1db",
-    "apps/mobile/src/telemetry/visible-content.ts": "e06889589a64b0b902b3eda43bfaecaeb3136eef5bdf255c1923179828fdfd3d",
-    "scripts/telemetry/input-events-browser.mts": "61e546a99dfce1bc1c5fb4574ba0ca21c0c58a792c3af602b1de75957ccdec44"
+    "apps/mobile/src/telemetry/visible-content.ts": "c19f9f3057d4cc2f3cf8243ca99cf48d3b11deab4c8c8be79b91b3cfbac3afbe",
+    "scripts/telemetry/input-events-browser.mts": "870423beabf3d51d9f04fc03b85340b99ebb19137f240418648071b999d24e03"
   },
   "counts": {
     "home_input_submit": 2,
@@ -49,32 +49,26 @@
     {
       "command": "pnpm run ci:mobile",
       "exitCode": 0,
-      "result": "37 Vitest files, 282 tests and 5 native-config tests passed",
-      "logSha256": "d6090dcb2163cd5b9d229030f7732d65b0210b0a04a467bdd1e32dfafdedc218"
+      "result": "37 Vitest files, 283 tests and 5 native-config tests passed",
+      "logSha256": "a02eae4fdca59906a007e3d6e48348f8831c21a0da9a2fe2585b039b56d92d70"
     },
     {
       "command": "pnpm run ci:build",
       "exitCode": 0,
       "result": "workspace build passed",
-      "logSha256": "a53091fff189a0b9f915fdf001e0c646fcdacbdc8d38b18648e012d6da662cfb"
+      "logSha256": "464a5aca384ebd0eb2ec13d30230ee3a6c65c9f2456e2d01d84559227a724ec7"
     },
     {
       "command": "pnpm run ci:lint",
       "exitCode": 0,
       "result": "typed lint passed",
-      "logSha256": "14ec13cb92c794caa1798cf013242e08d9d48204a08b8ceb7adac8710c2f6961"
+      "logSha256": "56106e328f356d91660390be3b654fcabf2e44ff1c9af1838b0a849a159db510"
     },
     {
       "command": "pnpm run ci:handoff",
       "exitCode": 0,
       "result": "9 epics, 67 stories, 1089 GWT",
       "logSha256": "fa6618f0ada428387dcd1bd24c0b50f7559dbea3c5a547d2f5227007d904fe67"
-    },
-    {
-      "command": "pnpm exec tsc -p scripts/telemetry/tsconfig.json --noEmit",
-      "exitCode": 0,
-      "result": "browser probe typecheck passed",
-      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   ]
 }

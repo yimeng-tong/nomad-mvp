@@ -138,7 +138,7 @@ try {
   })()`);
   await page.waitForSelector('.dock-completion', { visible: true });
   const coveredBy = await page.evaluate(`(() => { const bounds = document.querySelector('.dock-completion').getBoundingClientRect(); return document.elementFromPoint((bounds.left + bounds.right) / 2, (bounds.top + bounds.bottom) / 2)?.id; })()`);
-  assert.equal(coveredBy, 'input-telemetry-cover'); await wait(150);
+  assert.equal(coveredBy, 'input-telemetry-cover'); await wait(2150);
   assert.equal(envelopes.filter((e) => e.name === 'ingest_presented').length, 0);
   await page.evaluate("document.getElementById('input-telemetry-cover').remove()");
   await until(() => envelopes.some((e) => e.name === 'ingest_presented'));

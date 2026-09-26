@@ -41,3 +41,16 @@ it('waits for the visual viewport and an unobstructed hit target', () => {
     else Reflect.deleteProperty(document, 'elementFromPoint');
   }
 });
+
+it('keeps an obstructed Dock observation alive beyond the short result deadline', () => {
+  const f = fixture(), publish = vi.fn(), now = vi.spyOn(performance, 'now').mockReturnValue(100);
+  const timers = new Map<number, () => void>(); let sequence = 0;
+  vi.stubGlobal('setTimeout', (callback: () => void) => { timers.set(++sequence, callback); return sequence; });
+  vi.stubGlobal('clearTimeout', (id: number) => { timers.delete(id); });
+  f.wrapper.hidden = true;
+  observeVisibleContent(f.node, publish, { persistent: true }); f.step();
+  expect(timers.size).toBe(1); expect(publish).not.toHaveBeenCalled();
+  now.mockReturnValue(5000); f.wrapper.hidden = false;
+  const next = [...timers.values()][0]; timers.clear(); next();
+  expect(publish).toHaveBeenCalledTimes(1); expect(timers.size).toBe(0);
+});

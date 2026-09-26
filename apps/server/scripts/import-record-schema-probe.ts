@@ -13,6 +13,7 @@ import { advanceSnapshot, initialSnapshot } from '../src/ingest/job-state.js';
 import { assertImportRecordSchema } from '../src/ingest/import-record-schema.js';
 import { getImportRecordDetail, listImportRecords } from '../src/ingest/import-record-read.js';
 import { deleteImportRecord } from '../src/ingest/import-record-delete.js';
+import { readOwnerAsset } from '../src/ingest/asset-read.js';
 import { lockIngestLease } from '../src/ingest/execution-lease.js';
 import { readIngestRecovery, readIngestReplayPage, withIngestReplayEvent, withIngestResyncHead } from '../src/ingest/event-replay.js';
 import { PrismaPlannerSourceRepository } from '../src/planner/source.js';
@@ -333,15 +334,25 @@ try {
   const sharedPoi = await db.canonicalPOI.create({ data: { cityId: sharedCity.id, name: 'Synthetic shared POI' } });
   const sharedObjectKey = `synthetic/shared-${randomUUID()}`;
   await db.inspiration.update({ where: { id: inspirationId }, data: { cityId: sharedCity.id, poiId: sharedPoi.id, locateStatus: 'resolved' } });
-  await db.asset.create({ data: { inspirationId, kind: 'image', cosKey: sharedObjectKey } });
+  const ownerAsset = await db.asset.create({ data: { inspirationId, kind: 'image', cosKey: sharedObjectKey } });
   const otherRecord = await db.importRecord.findFirstOrThrow({ where: { jobId: other.job.dbId, userId: ownerB } });
   const otherInspiration = await db.inspiration.create({ data: { userId: ownerB, jobId: other.job.dbId,
     importRecordId: otherRecord.id, cityId: sharedCity.id, poiId: sharedPoi.id, locateStatus: 'resolved',
     sourceHash: createHash('sha256').update(randomUUID()).digest('hex'), tags: [], title: 'Other owner source',
     assets: { create: [{ kind: 'image', cosKey: sharedObjectKey }] } } });
+  const otherAsset = await db.asset.findFirstOrThrow({ where: { inspirationId: otherInspiration.id,
+    cosKey: sharedObjectKey } });
+  await assert.rejects(readOwnerAsset(ownerB, ownerAsset.id),
+    (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_ASSET_NOT_FOUND');
+  await assert.rejects(readOwnerAsset(ownerA, otherAsset.id),
+    (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_ASSET_NOT_FOUND');
+  checks.push('asset-byte-read-denies-foreign-owner-before-object-key-access');
   await deleteImportRecord(ownerA, winner.recordId);
   assert.ok((await db.inspiration.findUniqueOrThrow({ where: { id: inspirationId } })).deletedAt);
   assert.ok(!(await listLibraryInspirationsForUser(ownerA)).some((item) => item.id === inspirationId));
+  await assert.rejects(readOwnerAsset(ownerA, ownerAsset.id),
+    (error: unknown) => error instanceof AuthFault && error.code === 'LIBRARY_ASSET_NOT_FOUND');
+  checks.push('asset-byte-read-denies-deleted-owner-reference-before-object-key-access');
   assert.deepEqual(await new PrismaPlannerSourceRepository(db).getInspirations(ownerA, [inspirationId]), []);
   await assert.rejects(getIngestResult(ownerA, `ing_${winner.jobId}`),
     (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_JOB_NOT_FOUND');
@@ -355,9 +366,9 @@ try {
 } finally {
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, JSON.stringify({ kind: 'story-1-8-isolated-postgresql-schema-probe',
-    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 26,
+    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 28,
     realProviderCalls: 0, databaseScope: 'guarded-isolated-synthetic-only' }, null, 2) + '\n');
   await db.$disconnect();
 }
 
-assert.equal(checks.length, 26);
+assert.equal(checks.length, 28);

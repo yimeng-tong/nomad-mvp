@@ -22,6 +22,13 @@ export interface paths {
     /** List user-owned inspirations for Home and Library */
     get: operations["listLibraryInspirations"];
   };
+  "/library/assets/{asset_id}/content": {
+    /**
+     * Read hosted media bytes for one active owner asset
+     * @description Requires a current owner and active Inspiration row; the caller supplies an Asset ID, never an object key. Missing and foreign assets share the same response. Bytes are not cached.
+     */
+    get: operations["getLibraryAssetContent"];
+  };
   "/library/import-records": {
     /**
      * List owner import records, including running and failed imports
@@ -1509,6 +1516,38 @@ export interface operations {
       401: components["responses"]["Error401"];
       403: components["responses"]["Error403"];
       500: components["responses"]["Error500"];
+      503: components["responses"]["Error503"];
+    };
+  };
+  /**
+   * Read hosted media bytes for one active owner asset
+   * @description Requires a current owner and active Inspiration row; the caller supplies an Asset ID, never an object key. Missing and foreign assets share the same response. Bytes are not cached.
+   */
+  getLibraryAssetContent: {
+    parameters: {
+      path: {
+        asset_id: string;
+      };
+    };
+    responses: {
+      /** @description Private hosted media bytes */
+      200: {
+        headers: {
+          "Cache-Control"?: "private, no-store";
+        };
+        content: {
+          "image/jpeg": string;
+          "image/png": string;
+          "image/webp": string;
+          "image/gif": string;
+          "image/avif": string;
+          "video/mp4": string;
+          "video/webm": string;
+        };
+      };
+      401: components["responses"]["Error401"];
+      403: components["responses"]["Error403"];
+      404: components["responses"]["Error404"];
       503: components["responses"]["Error503"];
     };
   };

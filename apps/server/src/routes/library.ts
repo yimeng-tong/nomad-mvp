@@ -3,6 +3,7 @@ import { authGuard } from '../plugins/auth.js';
 import { listLibraryCandidatesForUser, listLibraryCitiesForUser, listLibraryInspirationsForUser } from '../ingest/store.js';
 import { getImportRecordDetail, listImportRecords } from '../ingest/import-record-read.js';
 import { deleteImportRecord } from '../ingest/import-record-delete.js';
+import { readOwnerAsset } from '../ingest/asset-read.js';
 import { getPrisma } from '../db/prisma.js';
 import { AuthFault } from '../auth/errors.js';
 import type { FastifyReply, FastifyRequest } from 'fastify';
@@ -48,6 +49,12 @@ export default fp(async (app) => {
     }
     return { candidates };
   });
+
+  app.get<{ Params: { assetId: string } }>('/library/assets/:assetId/content', { preHandler: authGuard }, async (req, reply) => safeRead(reply, async () => {
+    reply.header('Cache-Control', 'private, no-store');
+    const media = await readOwnerAsset(req.user!.id, req.params.assetId);
+    return reply.type(media.contentType).header('Content-Length', media.bytes.length).send(media.bytes);
+  }));
 
   app.get<{ Querystring: { limit?: unknown; cursor?: unknown } }>('/library/import-records', { preHandler: authGuard }, async (req, reply) => safeRead(reply, async () => {
     reply.header('Cache-Control', 'no-store');

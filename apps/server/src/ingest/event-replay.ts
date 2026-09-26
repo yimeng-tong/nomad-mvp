@@ -73,6 +73,22 @@ export function readIngestReplayPage(userId:string,jobId:string,cursor?:unknown)
   });
 }
 
+/** A queued page is no longer authority to write a frame after owner deletion. */
+export function withIngestReplayEvent(userId:string,jobId:string,expected:DurableIngestEvent,send:()=>Promise<boolean>):Promise<boolean>{
+ return withHead(userId,jobId,async(_tx,head)=>{
+  if(expected.ingest_id!==`ing_${head.id}`)return false;
+  const resolved=resolveIngestCursor(expected.cursor,position(head));
+  if(resolved.mode!=='replay'||resolved.after<1n||resolved.after!==BigInt(expected.seq))return false;
+  return send();
+ });
+}
+export function withIngestResyncHead(userId:string,jobId:string,expected:Control,send:()=>Promise<boolean>):Promise<boolean>{
+ return withHead(userId,jobId,async(_tx,head)=>{
+  if(expected.kind!=='resync'||expected.ingest_id!==`ing_${head.id}`||expected.attempt!==head.retryCount+1
+   ||expected.state_version!==head.stateVersion||expected.cursor!==encodeIngestCursor(head.eventStreamId!,head.lastEventSeq))return false;
+  return send();
+ });
+}
 
 /** Hold qualification and the job head through the terminal control write/close boundary. */
 export function withIngestTerminalHead(userId:string,jobId:string,expected:Control,send:()=>Promise<void>):Promise<boolean>{

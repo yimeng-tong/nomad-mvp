@@ -72,6 +72,8 @@ recovery_ui_integration_acceptance: _bmad-output/implementation-artifacts/story-
 
 更新：`d55efe6`完整CI36232326277两job通过，隔离PG23项及分阶段旧record升级七项产物HEAD与提取文件SHA一致，证据`deletion-server-ci-verification.json`。工作树新增移动端二次确认删除、成功后Library/已选规划项与Dock回执/外部输入claim撤权；丢失删除响应保持未确认，owner切换遮蔽迟到回执。本地297移动用例+5原生配置、12文件typed lint、真实产品Chromium B32–B34三项及类型/构建通过，见`deletion-ui-local-validation.json`；此工作树仍待提交后完整CI三引擎。活跃SSE残帧、共享对象实际生命周期、旧库只读审计/回填、生产密钥/PITR、真实短链和原生双端仍开放，1.8维持in-progress，3.1暂停。
 
+`0ffc3e0`已提交推送，CI36233616834的浏览器实际交互三引擎138/138通过，但固定覆盖合同尚未列B34，导致浏览器job在`NOMAD_E2E_REQUIRED_MATRIX`失败；build-and-test成功，整轮仍失败，下载产物离线复验及失败证据见`deletion-ui-first-ci-failure.json`。工作树已将B34纳入合同，并在服务端每次发送排队SSE事件/重同步控制前持有owner/job读锁复核，防止删除提交后残帧外发；隔离PG探针待新CI执行。本地server build、三文件typed lint、handoff及82项回归通过。旧库审计/回填、真实对象/PITR、短链和设备仍开放，1.8与3.1状态不变。
+
 Apple/微信实际直接应用或身份平台/非密配置位置已询问；已有法律/U-Link/设备问题不重复。SDK关闭/缓存残留证据保持，未接通的许可/归因不会被测量工作关闭；没有选择新的供应商、外发短信或部署。缺项只阻断对应切片，完成当前独立工作后继续按execution_plan，不提前准备1.9。
 
 ## 当前执行交接（2026-09-25）

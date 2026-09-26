@@ -41,3 +41,5 @@ T1数据库结构草案：在现有1.7迁移后新增加法`ImportRecord`表与�
 `d55efe6`现已通过完整CI`36232326277`两job。隔离PG23项含跨owner中性404、worker lease栅栏、回执/重试/Planner撤权及同owner重提；独立旧record库按阶段升级七项含旧唯一键释放、原字段不变及作废后新活动键。两个产物提取后的HEAD与SHA-256核对一致，详见`deletion-server-ci-verification.json`。这不是既有库迁移、真实媒体对象清理或生产PITR证据。
 
 当前工作树补产品删除流程：Home私有详情中二次确认，204后才撤下记录并刷新；网络结果不明保持未确认提示。成功删除同步清除相关Library/规划已选项，Dock停止所看流、移除重复job进度/FIFO并在严格IndexedDB事务删除本owner操作、checkpoint和批次外部输入claim；跨owner输入/草稿不清。404对账亦去除本机陈旧job，身份改变时取消/遮蔽迟到删除回执，迟到流帧被丢弃。当前本地移动Vitest297项+原生配置5项、12文件typed lint、类型与实际产品构建及Chromium B32/B33/B34三项通过，证据`deletion-ui-local-validation.json`。完整提交CI三引擎、真实IDB写失败后的重启遮蔽、跨进程活跃SSE残帧、对象引用/物理清理、旧库只读审计/回填、生产密钥/PITR、真实短链及双端设备仍开放；Story和T1–T5均保持in-progress。
+
+`0ffc3e0`提交后CI`36233616834`的浏览器实际B00–B34/V01–V11在三引擎138/138全部通过，但校验器的固定`run-contract.json`未同步B34，浏览器job以`NOMAD_E2E_REQUIRED_MATRIX`失败；build-and-test成功，整轮仍失败。下载浏览器产物离线复现同一合同失败，报告/manifest SHA及HEAD见`deletion-ui-first-ci-failure.json`。当前工作树给合同追加B34，并针对T4发现的服务端SSE读取与写入间删除竞态，在每帧/重同步控制发送时重验owner/job并持有共享锁；隔离PG探针加入删除前可发与删除后不可发的双向反例，预期25项。当前仅server build、定向typed lint、handoff与82项回归通过，真实PG25项和完整CI待新提交，见`sse-deletion-local-validation.json`。

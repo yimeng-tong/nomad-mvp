@@ -1,0 +1,9 @@
+{
+  "kind": "story-1-8-sse-deletion-local-validation",
+  "sourceState": "uncommitted-after-0ffc3e0360f5881127d19ad3ad7b7a08ca3d19e5",
+  "serverBuild": "passed",
+  "typedLint": "event-replay, event-stream and isolated PostgreSQL probe passed",
+  "browserCoverageContract": "B34 added to the fixed three-engine matrix; next full CI pending",
+  "isolatedPostgresql": "25-check probe prepared but not yet run",
+  "scope": "Queued event and resync-control writes now revalidate the current owner and nondeleted job while holding a database share lock through the socket write. This local build does not establish the PostgreSQL race result or eliminate bytes already sent before deletion commits."
+}

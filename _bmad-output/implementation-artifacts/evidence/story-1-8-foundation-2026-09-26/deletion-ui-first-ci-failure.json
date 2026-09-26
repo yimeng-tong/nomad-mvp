@@ -1,0 +1,24 @@
+{
+  "kind": "story-1-8-deletion-ui-first-ci-failure",
+  "sourceRevision": "0ffc3e0360f5881127d19ad3ad7b7a08ca3d19e5",
+  "workflowRun": "36233616834",
+  "workflowConclusion": "failure",
+  "jobs": {
+    "Canonical browser environment and product entry": "failure",
+    "build-and-test": "success"
+  },
+  "browser": {
+    "artifactId": "10902853998",
+    "runId": "21b8dc14-67ae-421d-bc95-a534f8e03a99",
+    "reportSha256": "4321ec5cac8e2b4ea34e48755283f70bb26159f28fb4ffaeb2e923492d93d442",
+    "sourceManifestSha256": "3815c7faf4a1148df631dd7d1cb53e45c7dd9cf67ed0506a1e15c3d622df7ccf",
+    "headShaMatchesWorkflow": true,
+    "actualPassed": 138,
+    "unexpected": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "failureCode": "NOMAD_E2E_REQUIRED_MATRIX",
+    "cause": "The committed flowIds ended at B33 while the three-engine report also contained B34. Offline verification of the downloaded artifact reproduced the same contract failure."
+  },
+  "scope": "The product browser cases passed, but the workflow is not complete success. The current worktree adds B34 to the fixed run contract; it requires a new committed-source full workflow."
+}

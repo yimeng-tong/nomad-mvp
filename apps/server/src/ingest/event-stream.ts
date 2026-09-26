@@ -3,7 +3,7 @@ import {AuthFault} from '../auth/errors.js';
 import {createAuthorizedSse} from '../auth/sse.js';
 import {getIngestSnapshot} from './store.js';
 import {selectIngestCursor} from './cursor.js';
-import {readIngestReplayPage,withIngestTerminalHead,type IngestReplayPage} from './event-replay.js';
+import {readIngestReplayPage,withIngestReplayEvent,withIngestResyncHead,withIngestTerminalHead,type IngestReplayPage} from './event-replay.js';
 export type IngestStreamTask={close:()=>void;finished:Promise<void>};
 export type IngestStreamRegistry={closing:boolean;tasks:Set<IngestStreamTask>};
 const delay=(ms:number,signal:AbortSignal)=>new Promise<void>(resolve=>{
@@ -30,16 +30,27 @@ export async function streamDurableIngest(req:FastifyRequest,reply:FastifyReply,
   if(!await sender.comment()){close();return;}heartbeatWritten();
   heartbeat=setInterval(()=>{
    if(heartbeatPending||controller.signal.aborted)return;heartbeatPending=true;
-   void sender!.comment().then(ok=>{if(!ok)close();else heartbeatWritten();}).finally(()=>{heartbeatPending=false;});
+   void sender!.comment().then(ok=>{if(!ok)close();else heartbeatWritten();}).finally(()=>{heartbeatPending=false;}).catch(close);
   },3000);heartbeat.unref();
   let page:IngestReplayPage=initial,nextSend=performance.now();
   while(!controller.signal.aborted){
    if(page.mode==='resync'){
-    if(await sender.send({event:'ingest_control',data:JSON.stringify(page.control)}))finish();else close();return;
+    const control=page.control;
+    let written=false;
+    const ok=await sender.send({event:'ingest_control',data:JSON.stringify(control)},async write=>{
+     const valid=await withIngestResyncHead(req.user!.id,jobId,control,async()=>{written=await write();return written;});
+     return !valid||written;
+    });
+    if(ok&&written)finish();else close();return;
    }
    for(const event of page.events){
     await delay(nextSend-performance.now(),controller.signal);if(controller.signal.aborted)return;
-    if(!await sender.send({id:event.cursor,event:'ingest',data:JSON.stringify(event)})){close();return;}
+    let written=false;
+    const ok=await sender.send({id:event.cursor,event:'ingest',data:JSON.stringify(event)},async write=>{
+     const valid=await withIngestReplayEvent(req.user!.id,jobId,event,async()=>{written=await write();return written;});
+     return !valid||written;
+    });
+    if(!ok||!written){close();return;}
     cursor=event.cursor;nextSend=performance.now()+20;
    }
    if(page.complete){

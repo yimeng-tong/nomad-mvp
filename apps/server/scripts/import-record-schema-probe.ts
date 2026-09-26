@@ -14,7 +14,7 @@ import { assertImportRecordSchema } from '../src/ingest/import-record-schema.js'
 import { getImportRecordDetail, listImportRecords } from '../src/ingest/import-record-read.js';
 import { deleteImportRecord } from '../src/ingest/import-record-delete.js';
 import { lockIngestLease } from '../src/ingest/execution-lease.js';
-import { readIngestRecovery } from '../src/ingest/event-replay.js';
+import { readIngestRecovery, readIngestReplayPage, withIngestReplayEvent, withIngestResyncHead } from '../src/ingest/event-replay.js';
 import { PrismaPlannerSourceRepository } from '../src/planner/source.js';
 import { AuthFault } from '../src/auth/errors.js';
 
@@ -266,6 +266,17 @@ try {
   checks.push('foreign-and-missing-delete-return-the-same-neutral-response-without-mutation');
 
   const workerId = randomUUID();
+  const queuedPage = await readIngestReplayPage(ownerA, accepted[0]!.job.id);
+  assert.equal(queuedPage.mode, 'replay');
+  const queuedEvent = queuedPage.mode === 'replay' ? queuedPage.events[0] : undefined;
+  assert.ok(queuedEvent);
+  const queuedControl = { kind: 'resync' as const, ingest_id: accepted[0]!.job.id,
+    cursor: queuedEvent.cursor, attempt: queuedEvent.attempt, state_version: queuedEvent.state_version };
+  let liveFrameSent = 0;
+  assert.equal(await withIngestReplayEvent(ownerA, accepted[0]!.job.id, queuedEvent, async () => { liveFrameSent++; return true; }), true);
+  assert.equal(await withIngestResyncHead(ownerA, accepted[0]!.job.id, queuedControl, async () => { liveFrameSent++; return true; }), true);
+  assert.equal(liveFrameSent, 2);
+  checks.push('current-owner-sse-event-and-resync-control-are-authorized-at-write-boundary');
   await db.ingestJob.update({ where: { id: acceptedJobId }, data: { executionPending: true,
     leaseOwner: workerId, leaseExpiresAt: new Date(Date.now() + 60_000), leaseFence: 1n } });
   await deleteImportRecord(ownerA, actual.id);
@@ -282,6 +293,16 @@ try {
     authVersion: 0, attempt: 1, workerId, fence: 1n })),
   (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_LEASE_LOST');
   checks.push('delete-tombstones-record-and-job-atomically-and-fences-a-previous-worker-lease');
+
+  let staleFrameSent = false;
+  await assert.rejects(withIngestReplayEvent(ownerA, accepted[0]!.job.id, queuedEvent, async () => {
+    staleFrameSent = true; return true;
+  }), (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_JOB_NOT_FOUND');
+  await assert.rejects(withIngestResyncHead(ownerA, accepted[0]!.job.id, queuedControl, async () => {
+    staleFrameSent = true; return true;
+  }), (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_JOB_NOT_FOUND');
+  assert.equal(staleFrameSent, false);
+  checks.push('queued-sse-event-and-control-are-not-sent-after-owner-record-deletion');
 
   assert.ok(!(await listImportRecords(ownerA)).items.some((item) => item.id === actual.id));
   await assert.rejects(getImportRecordDetail(ownerA, actual.id),
@@ -318,9 +339,9 @@ try {
 } finally {
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, JSON.stringify({ kind: 'story-1-8-isolated-postgresql-schema-probe',
-    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 23,
+    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 25,
     realProviderCalls: 0, databaseScope: 'guarded-isolated-synthetic-only' }, null, 2) + '\n');
   await db.$disconnect();
 }
 
-assert.equal(checks.length, 23);
+assert.equal(checks.length, 25);

@@ -5,6 +5,7 @@ type IngestInput = {
 
 export type XhsParseResult = {
   url?: string;
+  originalUrl?: string;
   extraUrls: string[];
   warning?: {
     code: 'INGEST_SINGLE_LINK_ONLY';
@@ -50,11 +51,12 @@ export function parseXhsInput(input: IngestInput): XhsParseResult {
   ]
     .map(cleanXhsUrl)
     .filter(isXhsUrl)
-    .map(normalizeXhsUrl);
+    .map((originalUrl) => ({ originalUrl, url: normalizeXhsUrl(originalUrl) }));
 
-  const unique = Array.from(new Set(candidates));
-  const [url, ...extraUrls] = unique;
-  if (!url) {
+  const seen = new Set<string>();
+  const unique = candidates.filter((item) => !seen.has(item.url) && !!seen.add(item.url));
+  const [first, ...extras] = unique;
+  if (!first) {
     return {
       extraUrls: [],
       error: {
@@ -65,13 +67,14 @@ export function parseXhsInput(input: IngestInput): XhsParseResult {
   }
 
   return {
-    url,
-    extraUrls,
-    warning: extraUrls.length
+    url: first.url,
+    originalUrl: first.originalUrl,
+    extraUrls: extras.map((item) => item.url),
+    warning: extras.length
       ? {
           code: 'INGEST_SINGLE_LINK_ONLY',
           message: '一次仅处理一条链接，其余请逐条粘贴',
-          extra_count: extraUrls.length,
+          extra_count: extras.length,
         }
       : undefined,
   };

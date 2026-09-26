@@ -29,7 +29,8 @@ async function start(req: FastifyRequest, reply: FastifyReply, input: {url?:stri
   const parsed = parseXhsInput(input);
   if (!parsed.url) throw new AuthFault('INGEST_XHS_URL_REQUIRED',400);
   const operationId = input.operation_id ?? randomUUID();
-  const accepted = await acceptIngestCommand({userId:req.user!.id,sourceUrl:parsed.url,traceId:req.traceId || randomUUID(),operationId,warning:parsed.warning,canDispatch});
+  const accepted = await acceptIngestCommand({userId:req.user!.id,sourceUrl:parsed.url,originalSourceUrl:parsed.originalUrl,
+    traceId:req.traceId || randomUUID(),operationId,warning:parsed.warning,canDispatch});
   // Do not place a fallible read between committed acceptance and the winner's dispatch.
   if (accepted.shouldRun) dispatch(accepted.job.id);
   const snapshot = accepted.job.legacySnapshot ? await getIngestSnapshot(req.user!.id,accepted.job.id) : accepted.job.snapshot!;

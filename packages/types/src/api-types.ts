@@ -734,7 +734,7 @@ export interface components {
       message: string;
       extra_count: number;
     };
-    /** @description Provide either url or share_text containing a Xiaohongshu URL. */
+    /** @description Provide either the original single url or share_text containing a Xiaohongshu URL. The selected raw URL is bound to the durable operation and protected for owner-only detail; other share text and links are not persisted as that original URL. */
     IngestXhsRequest: {
       /**
        * Format: uuid

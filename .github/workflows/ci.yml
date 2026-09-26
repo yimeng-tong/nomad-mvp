@@ -159,6 +159,14 @@ jobs:
       - name: Apply Prisma migrations to isolated CI database
         run: pnpm -F nomad-prisma run migrate:deploy
 
+      - name: Prepare ephemeral import URL key for isolated CI only
+        run: |
+          node --input-type=module <<'JS' >> "$GITHUB_ENV"
+          import { randomBytes } from 'node:crypto';
+          const key = randomBytes(32).toString('base64');
+          process.stdout.write('IMPORT_URL_KEYRING_JSON=' + JSON.stringify({activeKeyId:'isolated-ci',keys:{'isolated-ci':key}}) + '\n');
+          JS
+
       - name: Owner import record constraints in isolated PostgreSQL
         working-directory: apps/server
         env:

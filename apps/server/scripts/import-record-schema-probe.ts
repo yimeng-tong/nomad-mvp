@@ -4,10 +4,13 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { normalizeImportSourceUrl } from '../src/ingest/url-normalization-policy.js';
-import { sealImportOriginalUrl } from '../src/ingest/import-url-protection.js';
+import { normalizeXhsUrl } from '../src/ingest/link-parser.js';
+import { loadImportUrlKeyring, openImportOriginalUrl, sealImportOriginalUrl, type ProtectedImportUrl } from '../src/ingest/import-url-protection.js';
 import { appendSnapshotEvent } from '../src/ingest/event-log.js';
+import { acceptIngestCommand, readIngestCommand } from '../src/ingest/store.js';
 import { advanceSnapshot, initialSnapshot } from '../src/ingest/job-state.js';
 import { assertImportRecordSchema } from '../src/ingest/import-record-schema.js';
+import { AuthFault } from '../src/auth/errors.js';
 
 const connection = process.env.DATABASE_URL;
 assert.equal(process.env.AUTH_TEST_DATABASE_ACK, 'isolated-synthetic-only');
@@ -19,6 +22,8 @@ assert.match(target.pathname, /^\/nomad_auth_test_[a-z0-9_]+$/u);
 const db = new PrismaClient();
 const ownerA = randomUUID(), ownerB = randomUUID();
 const keyring = { activeKeyId: 'synthetic-ci', keys: new Map([['synthetic-ci', randomBytes(32)]]) };
+process.env.IMPORT_URL_KEYRING_JSON = JSON.stringify({ activeKeyId: keyring.activeKeyId,
+  keys: { [keyring.activeKeyId]: keyring.keys.get(keyring.activeKeyId)!.toString('base64') } });
 const originalUrl = 'https://xhslink.com/synthetic-schema-probe';
 const decision = normalizeImportSourceUrl(originalUrl);
 const checks: string[] = [];
@@ -108,12 +113,74 @@ try {
     await tx.ingestJob.findFirstOrThrow({ where: { id: winner.jobId, userId: ownerA } }), storing));
   assert.equal((await db.inspiration.findUniqueOrThrow({ where: { id: inspirationId } })).importRecordId, winner.recordId);
   checks.push('committed-inspiration-attaches-to-the-same-owner-record');
+
+  const stem = `https://www.xiaohongshu.com/explore/${randomUUID()}`;
+  const rawA = `${stem}?x=1&utm_source=alpha#original`;
+  const rawB = `${stem.replace('www.', '')}?utm_source=beta&x=1`;
+  const input = (originalSourceUrl: string, userId = ownerA) => ({ userId, originalSourceUrl,
+    sourceUrl: normalizeXhsUrl(originalSourceUrl), traceId: randomUUID(), operationId: randomUUID(), enqueue: false });
+  const firstInput = input(rawA), secondInput = input(rawB);
+  const accepted = await Promise.all([acceptIngestCommand(firstInput), acceptIngestCommand(secondInput)]);
+  assert.equal(accepted.filter((item) => item.disposition === 'created').length, 1);
+  assert.equal(accepted.filter((item) => item.disposition === 'reused').length, 1);
+  assert.equal(accepted[0]!.job.id, accepted[1]!.job.id);
+  assert.equal(accepted.filter((item) => item.shouldRun).length, 1);
+  checks.push('actual-acceptance-deduplicates-canonical-variants-across-two-operations');
+
+  const acceptedJobId = accepted[0]!.job.dbId;
+  const actual = await db.importRecord.findFirstOrThrow({ where: { userId: ownerA, jobId: acceptedJobId } });
+  assert.equal(actual.normalizedUrl, normalizeImportSourceUrl(rawA).normalizedUrl);
+  assert.equal(actual.normalizationVersion, decision.policyVersion);
+  assert.equal(actual.sourceTitle, null);
+  assert.ok(!JSON.stringify(actual.originalUrlProtected).includes('utm_source'));
+  const opened = openImportOriginalUrl(actual.originalUrlProtected as unknown as ProtectedImportUrl,
+    { ownerId: ownerA, recordId: actual.id }, loadImportUrlKeyring(process.env));
+  assert.ok([rawA, rawB].includes(opened));
+  assert.equal((await db.ingestJob.findUniqueOrThrow({ where: { id: acceptedJobId } })).sourceUrl, null);
+  assert.equal(await db.ingestEventRecord.count({ where: { jobId: acceptedJobId } }), 1);
+  assert.equal(await db.ingestCommand.count({ where: { jobId: acceptedJobId } }), 2);
+  checks.push('actual-acceptance-atomically-commits-sealed-original-record-job-event-and-command');
+
+  const priorKeyring = process.env.IMPORT_URL_KEYRING_JSON;
+  delete process.env.IMPORT_URL_KEYRING_JSON;
+  try {
+    const replay = await acceptIngestCommand(firstInput);
+    assert.equal(replay.disposition, accepted[0]!.disposition);
+    assert.equal(replay.shouldRun, false);
+    assert.equal(replay.job.id, accepted[0]!.job.id);
+    assert.equal((await readIngestCommand(ownerA, firstInput.operationId)).ingest_id, replay.job.id);
+    const missing = input(`https://www.xiaohongshu.com/explore/${randomUUID()}`);
+    await assert.rejects(acceptIngestCommand(missing), (error: unknown) => error instanceof AuthFault && error.code === 'INGEST_URL_PROTECTION_UNAVAILABLE');
+    assert.equal(await db.ingestCommand.count({ where: { userId: ownerA, operationId: missing.operationId } }), 0);
+  } finally { process.env.IMPORT_URL_KEYRING_JSON = priorKeyring; }
+  checks.push('committed-operation-replays-without-key-and-new-write-fails-closed');
+
+  const other = await acceptIngestCommand(input(rawA, ownerB));
+  assert.equal(other.disposition, 'created');
+  assert.notEqual(other.job.id, accepted[0]!.job.id);
+  assert.equal(await db.importRecord.count({ where: { normalizedUrl: actual.normalizedUrl } }), 2);
+  checks.push('actual-acceptance-keeps-identical-url-owner-records-separate');
+
+  const legacyRaw = `https://xhslink.com/${randomUUID()}#copied`;
+  const legacyUrl = normalizeXhsUrl(legacyRaw), legacyJobId = randomUUID(), legacyOperationId = randomUUID();
+  await db.ingestJob.create({ data: { id: legacyJobId, userId: ownerA, authVersion: 0, sourceType: 'xhs', sourceUrl: legacyUrl,
+    sourceHash: createHash('sha256').update(`${ownerA}:${legacyUrl}`).digest('hex'), traceId: randomUUID(),
+    snapshotJson: initialSnapshot(`ing_${legacyJobId}`) as Prisma.InputJsonValue } });
+  await db.ingestCommand.create({ data: { userId: ownerA, operationId: legacyOperationId, kind: 'start',
+    requestHash: createHash('sha256').update(JSON.stringify(['start', legacyUrl])).digest('hex'),
+    jobId: legacyJobId, attempt: 1, disposition: 'created' } });
+  const legacyReplay = await acceptIngestCommand({ userId: ownerA, originalSourceUrl: legacyRaw,
+    sourceUrl: legacyUrl, traceId: randomUUID(), operationId: legacyOperationId, enqueue: false });
+  assert.equal(legacyReplay.job.dbId, legacyJobId);
+  assert.equal(legacyReplay.shouldRun, false);
+  assert.equal(await db.importRecord.count({ where: { jobId: legacyJobId } }), 0);
+  checks.push('pre-upgrade-command-replays-from-legacy-normalized-hash-without-backfill');
 } finally {
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, JSON.stringify({ kind: 'story-1-8-isolated-postgresql-schema-probe',
-    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 8,
+    headSha: process.env.GITHUB_SHA || null, checks, completed: checks.length === 13,
     realProviderCalls: 0, databaseScope: 'guarded-isolated-synthetic-only' }, null, 2) + '\n');
   await db.$disconnect();
 }
 
-assert.equal(checks.length, 8);
+assert.equal(checks.length, 13);

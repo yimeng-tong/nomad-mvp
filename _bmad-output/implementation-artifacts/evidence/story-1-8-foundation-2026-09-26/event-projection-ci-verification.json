@@ -1,0 +1,37 @@
+{
+  "kind": "story-1-8-event-projection-ci-verification",
+  "runId": "36226573986",
+  "headSha": "40a72e319594217a50b47fe0880d0a7d7d56c01a",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": {
+    "build-and-test": "success",
+    "Canonical browser environment and product entry": "success"
+  },
+  "schemaArtifact": {
+    "id": 10901360042,
+    "zipBytes": 538,
+    "zipSha256": "d1a6155d6852c9180e89a55f095e4b5dec213b4c27287a2c7256bf8a1c45f24f",
+    "crcCheckedFiles": 1,
+    "crcFailure": null,
+    "reportSha256": "d1f7d9db46ea0282659fbbeb0816d6e363118f15211692d1cdc52369f0181083"
+  },
+  "isolatedPostgresql": {
+    "kind": "story-1-8-isolated-postgresql-schema-probe",
+    "headSha": "40a72e319594217a50b47fe0880d0a7d7d56c01a",
+    "checks": [
+      "runtime-schema-preflight-validates-owner-and-protected-url-guards",
+      "concurrent-owner-normalized-url-unique-and-losing-job-rolled-back",
+      "same-url-independent-record-for-second-owner",
+      "record-job-composite-owner-foreign-key",
+      "inspiration-record-composite-owner-foreign-key",
+      "accepted-record-status-pending-title-and-sealed-original",
+      "record-status-and-title-advance-with-job-and-event-in-one-transaction",
+      "committed-inspiration-attaches-to-the-same-owner-record"
+    ],
+    "completed": true,
+    "realProviderCalls": 0,
+    "databaseScope": "guarded-isolated-synthetic-only"
+  },
+  "scope": "Eight isolated synthetic owner, schema, event projection and result-link checks; no new acceptance transaction, old data migration, real provider, device or production proof"
+}

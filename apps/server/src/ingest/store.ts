@@ -6,6 +6,8 @@ import { AuthFault, authAuthority } from '../auth/errors.js';
 import { lockIngestLease, markIngestPending, type IngestLease } from './execution-lease.js';
 import { writeIngestCheckpoint, type IngestExecutionCheckpoint } from './execution-checkpoint.js';
 import { appendSnapshotEvent } from './event-log.js';
+import { normalizeImportSourceUrl, type ImportUrlDecision } from './url-normalization-policy.js';
+import { loadImportUrlKeyring, sealImportOriginalUrl } from './import-url-protection.js';
 import { encodeIngestCursor } from './cursor.js';
 import { advanceSnapshot, initialSnapshot, retrySnapshot, type IngestSnapshot } from './job-state.js';
 import { refreshAnchorPoolForCity } from '../planner/anchor-pool.js';
@@ -16,7 +18,7 @@ import {
 import type { RankedBranchCandidate } from './branch-rules.js';
 import type { RehostedAsset, StandardizedCandidate, XhsFetchedPost } from './adapters.js';
 import type { ExtractedTimeEvidence } from './evidence.js';
-import type { IngestEvent, IngestWriteEvent, IngestJobRecord, IngestStage, IngestWarning, StoredInspirationResult } from './types.js';
+import type { IngestEvent, IngestWriteEvent, IngestJobRecord, IngestWarning, StoredInspirationResult } from './types.js';
 
 type Subscriber = (event: IngestEvent) => void;
 export type LibraryCitySummaryRecord = {
@@ -144,8 +146,9 @@ async function qualifyAcceptance(tx: Prisma.TransactionClient, userId: string, o
   return lockQualifiedOwner(tx, ownerId);
 }
 /** enqueue=false is reserved for internal isolated producer probes; HTTP never exposes that option. */
-export async function acceptIngestCommand(input: { userId: string; sourceUrl: string; traceId: string; operationId: string; warning?: IngestWarning; canDispatch?: () => void; enqueue?: boolean }) {
-  const ownerId = dbUserIdFor(input.userId), hash = commandHash(['start', input.sourceUrl]), db = getPrisma();
+export async function acceptIngestCommand(input: { userId: string; sourceUrl: string; originalSourceUrl?: string; traceId: string; operationId: string; warning?: IngestWarning; canDispatch?: () => void; enqueue?: boolean }) {
+  const ownerId = dbUserIdFor(input.userId), originalUrl = input.originalSourceUrl ?? input.sourceUrl;
+  const hash = commandHash(['start', originalUrl]), db = getPrisma();
   if (!uuidPattern.test(input.operationId)) throw new AuthFault('INGEST_PARAMS_INVALID', 400);
   if (!db) return memoryAuthority(() => {
     const key = `${ownerId}:${input.operationId}`, old = commands.get(key);
@@ -156,29 +159,53 @@ export async function acceptIngestCommand(input: { userId: string; sourceUrl: st
     commands.set(key, { kind: 'start', requestHash: hash, jobId: job.id, attempt: job.retryCount + 1, disposition });
     return { job, disposition, shouldRun: !existingId };
   });
+  let decision: ImportUrlDecision | undefined;
   const accepted = await authAuthority(() => db.$transaction(async (tx) => {
     const authVersion = await qualifyAcceptance(tx, input.userId, ownerId);
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`ingest-command:${ownerId}:${input.operationId}`},0))`;
     const old = await tx.ingestCommand.findUnique({ where: { userId_operationId: { userId: ownerId, operationId: input.operationId } } });
-    if (old) { replayCommand(old as Command,'start',hash); const row=await tx.ingestJob.findFirst({where:{id:old.jobId,userId:ownerId}}); if(!row)throw new AuthFault('INGEST_JOB_NOT_FOUND',404); return { row: await ensureDbEventLog(tx,row), disposition: old.disposition as Command['disposition'], shouldRun: false }; }
+    if (old) { const row=await tx.ingestJob.findFirst({where:{id:old.jobId,userId:ownerId}}); if(!row)throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
+      const source = row.sourceUrl ? undefined : await tx.importRecord.findFirst({ where: { jobId: row.id, userId: ownerId }, select: { normalizedUrl: true } });
+      if (source) replayCommand(old as Command,'start',hash);
+      else if (old.kind !== 'start' || old.requestHash !== hash && old.requestHash !== commandHash(['start', input.sourceUrl]))
+        throw new AuthFault('INGEST_COMMAND_CONFLICT',409);
+      return { row: await ensureDbEventLog(tx,row), normalizedUrl: source?.normalizedUrl, disposition: old.disposition as Command['disposition'], shouldRun: false }; }
+    try { decision = normalizeImportSourceUrl(originalUrl); }
+    catch { throw new AuthFault('INGEST_URL_POLICY_UNSUPPORTED', 400); }
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`import-record:${ownerId}:${decision.normalizedUrl}`},0))`;
     const sourceHash = sourceHashFor(input.userId, input.sourceUrl);
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`ingest-source:${sourceHash}`},0))`;
     const hashes = fixtureAuth() ? [sourceHash] : await retainedSourceHashes(tx, ownerId, input.sourceUrl);
     const existing = await tx.ingestJob.findMany({ where: { userId: ownerId, sourceHash: { in: hashes } }, take: 2 });
     if (existing.length > 1) throw new AuthFault('AUTH_LEGACY_DEDUP_CONFLICT',409);
     if (existing[0] && !fixtureAuth() && existing[0].authVersion === null && existing[0].status !== 'done') throw new AuthFault('AUTH_LEGACY_OWNER_UNVERIFIED',403);
-    if (!existing[0]) input.canDispatch?.();
-    const id = randomUUID();
-    const createdOrExisting = existing[0] ?? await tx.ingestJob.create({ data: { id, userId: ownerId, authVersion, sourceType: 'xhs', sourceUrl: input.sourceUrl,
-      sourceHash, traceId: input.traceId, status: 'created', snapshotJson: initialSnapshot(`ing_${id}`) as Prisma.InputJsonValue } });
-    let row = existing[0] ? await ensureDbEventLog(tx,createdOrExisting) : (await appendSnapshotEvent(tx,createdOrExisting,snapshotFromDb(createdOrExisting))).row;
-    if(!existing[0]&&input.enqueue!==false)row=await markIngestPending(tx,row.id);
-    const disposition = existing[0] ? 'reused' as const : 'created' as const;
+    const priorRecord = await tx.importRecord.findUnique({ where: { userId_normalizedUrl: {
+      userId: ownerId, normalizedUrl: decision.normalizedUrl } }, select: { jobId: true } });
+    if (priorRecord && existing[0] && priorRecord.jobId !== existing[0].id) throw new AuthFault('INGEST_NORMALIZATION_CONFLICT', 409);
+    const priorJob = priorRecord ? await tx.ingestJob.findFirst({ where: { id: priorRecord.jobId, userId: ownerId } }) : existing[0];
+    if (priorRecord && !priorJob) throw new AuthFault('INGEST_STATE_UNAVAILABLE', 503, true);
+    if (priorJob && !fixtureAuth() && priorJob.authVersion === null && priorJob.status !== 'done') throw new AuthFault('AUTH_LEGACY_OWNER_UNVERIFIED',403);
+    if (!priorJob) input.canDispatch?.();
+    const id = randomUUID(), recordId = randomUUID();
+    let createdOrExisting = priorJob;
+    if (!createdOrExisting) {
+      let protectedUrl: Prisma.InputJsonValue;
+      try { protectedUrl = sealImportOriginalUrl({ ownerId, recordId, originalUrl: decision.originalUrl }, loadImportUrlKeyring(process.env)) as unknown as Prisma.InputJsonValue; }
+      catch { throw new AuthFault('INGEST_URL_PROTECTION_UNAVAILABLE', 503, true); }
+      createdOrExisting = await tx.ingestJob.create({ data: { id, userId: ownerId, authVersion, sourceType: 'xhs', sourceUrl: null,
+        sourceHash, traceId: input.traceId, status: 'created', snapshotJson: initialSnapshot(`ing_${id}`) as Prisma.InputJsonValue } });
+      await tx.importRecord.create({ data: { id: recordId, userId: ownerId, jobId: id,
+        normalizedUrl: decision.normalizedUrl, normalizationVersion: decision.policyVersion,
+        originalUrlProtected: protectedUrl } });
+    }
+    let row = priorJob ? await ensureDbEventLog(tx,createdOrExisting) : (await appendSnapshotEvent(tx,createdOrExisting,snapshotFromDb(createdOrExisting))).row;
+    if(!priorJob&&input.enqueue!==false)row=await markIngestPending(tx,row.id);
+    const disposition = priorJob ? 'reused' as const : 'created' as const;
     await tx.ingestCommand.create({ data: { userId: ownerId, operationId: input.operationId, kind: 'start', requestHash: hash,
       jobId: row.id, attempt: row.retryCount + 1, disposition } });
-    return { row, disposition, shouldRun: !existing[0] };
+    return { row, normalizedUrl: decision.normalizedUrl, disposition, shouldRun: !priorJob };
   }));
-  return { job: hydrateJobFromDb(accepted.row, input), disposition: accepted.disposition, shouldRun: accepted.shouldRun };
+  return { job: hydrateJobFromDb(accepted.row, { ...input, sourceUrl: accepted.normalizedUrl ?? input.sourceUrl }), disposition: accepted.disposition, shouldRun: accepted.shouldRun };
 }
 export async function createOrGetIngestJob(input: { userId: string; sourceUrl: string; traceId: string; warning?: IngestWarning }) {
   return (await acceptIngestCommand({ ...input, operationId: randomUUID() })).job;
@@ -188,8 +215,9 @@ export async function getOrHydrateJob(id: string) {
   if (!db) { if (!fixtureAuth()) throw new AuthFault('AUTH_AUTHORITY_UNAVAILABLE',503,true); return jobs.get(id); }
   const dbId = id.startsWith('ing_') ? id.slice(4) : id;
   if (!uuidPattern.test(dbId)) return undefined;
-  const row = await authAuthority(() => db.ingestJob.findUnique({ where: { id: dbId } }));
-  return row ? hydrateJobFromDb(row, { traceId: row.traceId || randomUUID() }) : undefined;
+  const row = await authAuthority(() => db.ingestJob.findUnique({ where: { id: dbId },
+    include: { importRecord: { select: { normalizedUrl: true } } } }));
+  return row ? hydrateJobFromDb(row, { traceId: row.traceId || randomUUID(), sourceUrl: row.importRecord?.normalizedUrl }) : undefined;
 }
 export async function getIngestSnapshot(userId: string, id: string): Promise<IngestSnapshot> {
   const db = getPrisma(), ownerId = dbUserIdFor(userId), dbId = id.startsWith('ing_') ? id.slice(4) : id;
@@ -238,7 +266,9 @@ export async function retryIngestCommand(input: { userId: string; jobId: string;
     await qualifyAcceptance(tx,input.userId,ownerId);
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`ingest-command:${ownerId}:${input.operationId}`},0))`;
     const old = await tx.ingestCommand.findUnique({ where: { userId_operationId: { userId: ownerId, operationId: input.operationId } } });
-    if (old) { replayCommand(old as Command,'retry',hash); const row=await tx.ingestJob.findFirst({where:{id:old.jobId,userId:ownerId}}); if(!row)throw new AuthFault('INGEST_JOB_NOT_FOUND',404); return { row:await ensureDbEventLog(tx,row), shouldRun:false, disposition:old.disposition as Command['disposition'] }; }
+    if (old) { replayCommand(old as Command,'retry',hash); const row=await tx.ingestJob.findFirst({where:{id:old.jobId,userId:ownerId}}); if(!row)throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
+      const source = row.sourceUrl ? undefined : await tx.importRecord.findFirst({ where: { jobId: row.id, userId: ownerId }, select: { normalizedUrl: true } });
+      return { row:await ensureDbEventLog(tx,row), sourceUrl: source?.normalizedUrl, shouldRun:false, disposition:old.disposition as Command['disposition'] }; }
     const id = input.jobId.replace(/^ing_/, ''); if (!uuidPattern.test(id)) throw new AuthFault('INGEST_JOB_NOT_FOUND',404);
     await tx.$queryRaw`SELECT id FROM "IngestJob" WHERE id=${id}::uuid AND "userId"=${ownerId}::uuid FOR UPDATE`;
     let before = await tx.ingestJob.findFirst({where:{id,userId:ownerId}});
@@ -249,9 +279,10 @@ export async function retryIngestCommand(input: { userId: string; jobId: string;
     let row = (await appendSnapshotEvent(tx,before,snapshot)).row;
     if(input.enqueue!==false)row=await markIngestPending(tx,row.id);
     await tx.ingestCommand.create({ data:{userId:ownerId,operationId:input.operationId,kind:'retry',requestHash:hash,jobId:id,attempt:snapshot.attempt,disposition:'retried'} });
-    return { row, shouldRun:true, disposition:'retried' as const };
+    const source = row.sourceUrl ? undefined : await tx.importRecord.findFirst({ where: { jobId: row.id, userId: ownerId }, select: { normalizedUrl: true } });
+    return { row, sourceUrl: source?.normalizedUrl, shouldRun:true, disposition:'retried' as const };
   }));
-  return { job:hydrateJobFromDb(accepted.row,{traceId:accepted.row.traceId || randomUUID()}),shouldRun:accepted.shouldRun,disposition:accepted.disposition };
+  return { job:hydrateJobFromDb(accepted.row,{traceId:accepted.row.traceId || randomUUID(),sourceUrl:accepted.sourceUrl}),shouldRun:accepted.shouldRun,disposition:accepted.disposition };
 }
 function publish(job: IngestJobRecord, event: IngestEvent) {
   const current = jobs.get(job.id) ?? job;
@@ -368,6 +399,7 @@ export async function persistIngestOutput(input: {
       await lockIngestLease(tx,input.lease);
     }
     if (currentJob.retryCount !== input.job.retryCount || ['done','failed'].includes(currentJob.status)) throw new AuthFault('INGEST_ATTEMPT_CHANGED',409);
+    const importRecord = await tx.importRecord.findFirst({ where: { jobId: currentJob.id, userId: currentJob.userId }, select: { id: true } });
     const previous = await tx.inspiration.findUnique({where:{sourceHash:`${input.job.sourceHash}:inspiration`},include:{assets:true,city:true}});
     let cityId: string | undefined;
     let poiId: string | undefined;
@@ -423,23 +455,25 @@ export async function persistIngestOutput(input: {
       jobId: input.job.dbId,
       title: input.post.title || undefined,
       text: input.post.text || undefined,
-      canonicalUrl: input.job.sourceUrl,
+      canonicalUrl: importRecord ? null : input.job.sourceUrl,
+      ...(importRecord ? { importRecordId: importRecord.id } : {}),
       locateStatus: poiId ? locateStatus : previous?.locateStatus ?? locateStatus,
       poiId: poiId ?? undefined,
       cityId: cityId ?? undefined,
-    } as any,
+    },
     create: {
       userId: input.job.dbUserId,
       jobId: input.job.dbId,
       title: input.post.title,
       text: input.post.text,
       tags: [],
-      canonicalUrl: input.job.sourceUrl,
+      canonicalUrl: importRecord ? null : input.job.sourceUrl,
+      ...(importRecord ? { importRecordId: importRecord.id } : {}),
       locateStatus,
       poiId,
       cityId,
       sourceHash: `${input.job.sourceHash}:inspiration`,
-    } as any,
+    },
   });
 
     // A retry's absent assets are not a deletion command. Keep committed partial output.
@@ -516,7 +550,7 @@ export async function persistIngestOutput(input: {
           ${evidence.startLocal}, ${evidence.endLocal}, ${cityTimezone},
           ${evidence.timeHint}::"PlannerTimeHint",
           ${evidence.source}::"EvidenceSource",
-          ${evidenceRef}, ${input.job.sourceUrl},
+          ${evidenceRef}, ${importRecord ? 'xhs:owner-import' : input.job.sourceUrl},
           ${highConfidence ? 'high' : 'medium'}::"QualityGrade",
           NOW(), NOW()
         )
@@ -624,7 +658,7 @@ export async function listLibraryInspirationsForUser(userId: string, filters: { 
       .map(toLibraryItem);
   }
 
-  const rows = (await prisma.inspiration.findMany({
+  const rows = await prisma.inspiration.findMany({
     where: {
       userId: dbUserId,
       ...(filters.cityId ? { cityId: filters.cityId } : {}),
@@ -632,18 +666,17 @@ export async function listLibraryInspirationsForUser(userId: string, filters: { 
     },
     orderBy: { createdAt: 'desc' },
     take: limit,
-    include: {
-      city: true,
-      poi: true,
-      assets: { select: { id: true } },
-      candidates: { select: { id: true } },
-    },
-  } as any)) as any[];
+    include: libraryInclude,
+  });
 
   return rows.map(toPrismaLibraryItem);
 }
 
-function toPrismaLibraryItem(row: any): LibraryInspirationRecord {
+const libraryInclude = { city: true, poi: true, assets: { select: { id: true } },
+  candidates: { select: { id: true } } } as const;
+type LibraryRow = Prisma.InspirationGetPayload<{ include: typeof libraryInclude }>;
+
+function toPrismaLibraryItem(row: LibraryRow): LibraryInspirationRecord {
   return {
     id: row.id,
     title: row.title,
@@ -670,7 +703,7 @@ export async function getIngestResult(userId: string, jobId: string): Promise<Li
     return toLibraryItem(row);
   }
   const row = await authAuthority(() => db.inspiration.findFirst({where:{id:snapshot.result!.inspiration_id,userId:ownerId},
-    include:{city:true,poi:true,assets:{select:{id:true}},candidates:{select:{id:true}}}}));
+    include:libraryInclude}));
   if (!row) throw new AuthFault('INGEST_RESULT_NOT_FOUND',404);
   return toPrismaLibraryItem(row);
 }
@@ -687,14 +720,16 @@ export async function listLibraryCandidatesForUser(userId: string, inspirationId
   }
   if (!uuidPattern.test(inspirationId)) return null;
 
-  const inspiration = (await prisma.inspiration.findFirst({
+  const inspiration = await prisma.inspiration.findFirst({
     where: { id: inspirationId, userId: dbUserId, locateStatus: 'pending' },
     include: { candidates: { orderBy: { rank: 'asc' } } },
-  } as any)) as any | null;
+  });
   if (!inspiration) return null;
 
-  return inspiration.candidates.slice(0, 5).map((candidate: any): LibraryCandidateRecord => {
-    const snapshot = candidate.poiSnapshot && typeof candidate.poiSnapshot === 'object' ? candidate.poiSnapshot : {};
+  return inspiration.candidates.slice(0, 5).map((candidate): LibraryCandidateRecord => {
+    const raw = candidate.poiSnapshot;
+    const snapshot: Record<string, unknown> = raw && typeof raw === 'object' && !Array.isArray(raw)
+      ? raw as Record<string, unknown> : {};
     return {
       candidate_id: candidate.id,
       name: typeof snapshot.name === 'string' ? snapshot.name : '待确认地点',

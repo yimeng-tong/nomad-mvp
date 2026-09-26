@@ -232,17 +232,20 @@ condition_progress:
       - _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
       - _bmad-output/implementation-artifacts/story-1-6-input-telemetry-progress-2026-09-26.md
       - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/ci-verification.json
     APP-HOST-01:
       state: in-progress
       summary: Dock/粘贴/URL/持久动作接线已消费宿主；规范呈现事件在Chrome真实App受视觉视口/遮挡保护。双端静态注册/Android编译已有旧证据，实际归因与双端设备仍待验证。
       evidence:
       - _bmad-output/implementation-artifacts/story-1-6-dev-progress-2026-09-19.md
       - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
+      - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/ci-verification.json
     CODE-QUALITY-01:
-      state: in-progress
-      summary: 本Story本轮新增事件/探针已通过本地typed lint、283移动测试与完整构建；当前分支CI独立复跑及整Story适用条件仍待确认。
+      state: verified
+      summary: 限本Story本轮规范事件切片：d02d0b0完整CI两job、typed lint、283移动+5配置、完整构建通过；真实SDK/设备与整Story关闭不由质量门禁代替。
       evidence:
-      - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
+      - _bmad-output/implementation-artifacts/story-1-6-input-telemetry-acceptance-2026-09-26.md
+      - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/ci-verification.json
     UI-COMPONENT-01:
       state: not-started
       summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
@@ -250,10 +253,11 @@ condition_progress:
       state: not-started
       summary: 本次新增UI义务；原实现/历史证据保留，不推导新条件通过。
     UI-BROWSER-01:
-      state: in-progress
-      summary: 本轮Chrome实际App/IDB的输入事件、遮挡可见和私人信封已验证；1.6整Story三引擎/原生交互及真实服务闭环仍待验收。
+      state: verified
+      summary: 限本Story本轮本地浏览器门禁：Chrome实际App/IDB输入事件及2.15秒遮挡反例、CI三引擎129场景/33视觉与313源码匹配；原生设备/真实服务另列不关闭。
       evidence:
-      - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
+      - _bmad-output/implementation-artifacts/story-1-6-input-telemetry-acceptance-2026-09-26.md
+      - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/ci-verification.json
   1-7-durable-import-progress-and-restart-recovery:
     OPS-01:
       state: in-progress
@@ -711,7 +715,7 @@ active_workstreams:
     working_branch: codex/story-1-6-input-telemetry
     single_writer: true
     execution_plan: _bmad-output/implementation-artifacts/near-term-development-plan-2026-09-25.md
-    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH当前CI已核验。1.6规范输入事件本地实现/三层CR/Chrome探针已通过，分支CI待独立复跑；真实资源/SDK门槛、唯一writer与3.1暂停不变
+    scope: 9.3本地gate已verified、T9仍open；1.0 WL-AUTH与1.6规范输入事件分别完成独立CI及本地切片验收。接续1.7/9.1受影响集成；真实资源/SDK门槛、唯一writer与3.1暂停不变
 previous_preparation:
   story: 9-5-browser-flow-and-visual-regression-gates
   status: complete

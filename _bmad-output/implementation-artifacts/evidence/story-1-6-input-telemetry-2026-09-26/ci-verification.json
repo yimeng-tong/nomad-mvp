@@ -1,0 +1,102 @@
+{
+  "kind": "story-1-6-input-telemetry-ci-verification",
+  "runId": "36221667847",
+  "headSha": "d02d0b002456dee6c2bc07471af63dcfc4cd50e9",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "Canonical browser environment and product entry",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "build-and-test",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "nomad-input-telemetry-d02d0b002456dee6c2bc07471af63dcfc4cd50e9",
+      "artifactId": 10899467083,
+      "archiveBytes": 55478,
+      "archiveSha256": "a421d8121371f51653a155a102fa92eee5fede031584916a1bde5b9e4227b223",
+      "crcCheckedFiles": 2,
+      "crcFailure": null
+    },
+    {
+      "name": "nomad-browser-environment-d02d0b002456dee6c2bc07471af63dcfc4cd50e9",
+      "artifactId": 10899264632,
+      "archiveBytes": 40601394,
+      "archiveSha256": "5d441f053bfefce1aca594022c3a235c76172e355cafaf04f2c6100654d8097e",
+      "crcCheckedFiles": 944,
+      "crcFailure": null
+    },
+    {
+      "name": "nomad-workbench-d02d0b002456dee6c2bc07471af63dcfc4cd50e9",
+      "artifactId": 10899083150,
+      "archiveBytes": 206967,
+      "archiveSha256": "cc6694436aeacce5ad405a6aa9b5b725b6cddc727b1db19af0ea5ca5fef0540d",
+      "crcCheckedFiles": 26,
+      "crcFailure": null
+    },
+    {
+      "name": "nomad-auth-measurement-d02d0b002456dee6c2bc07471af63dcfc4cd50e9",
+      "artifactId": 10899516824,
+      "archiveBytes": 71965,
+      "archiveSha256": "c8a40e28632b5abbc5384f4263663880b9a0de9911778b521fa343b48c118d06",
+      "crcCheckedFiles": 27,
+      "crcFailure": null
+    }
+  ],
+  "inputProbe": {
+    "reportSha256": "904eb95f700155c8de3a4e520c00896a7e2600c763829f0776d8a4be61723ce2",
+    "browser": "Chrome/127.0.6533.88",
+    "sourceFilesMatched": 108,
+    "counts": {
+      "home_input_submit": 2,
+      "home_input_classified": 1,
+      "ingest_job_created": 1,
+      "ingest_presented": 2,
+      "import_record_opened": 1
+    },
+    "presentationNetworkEnvelopes": 2,
+    "distinctPresentationEventIds": 1,
+    "writes": 1,
+    "externalRequests": 0,
+    "realProviderCalls": 0,
+    "privateSentinelsAbsent": true,
+    "realAuthenticationVerified": false,
+    "realSdkInitialized": false,
+    "realProviderQueryVerified": false,
+    "nativeConsentVerified": false,
+    "checks": [
+      "pre-consent-not-exported",
+      "classification-vs-admission-vs-render",
+      "created-only-confirmed-mutation",
+      "background-terminal-not-presentation",
+      "occluded-completion-not-presentation",
+      "actual-result-visibility",
+      "same-presentation-id-after-coverage",
+      "old-consent-result-not-rebound",
+      "old-owner-classification-not-rebound",
+      "serialized-private-sentinels-absent",
+      "owned-server-and-unchanged-sources"
+    ]
+  },
+  "browserSuite": {
+    "runId": "09545772-3580-4836-bbe9-e20f801cc93d",
+    "sourceFilesMatched": 313,
+    "projects": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "expected": 129,
+    "unexpected": 0,
+    "flaky": 0,
+    "visualScenarios": 33
+  },
+  "scope": "isolated browser, explicit fixture HTTP/identity/consent/sink; no native device, real SDK/provider or production acceptance"
+}

@@ -526,7 +526,9 @@ GPT-6 Astra（当前任务配置）。
 - docs/ops/input-telemetry-v1.md
 - _bmad-output/implementation-artifacts/story-1-6-input-telemetry-progress-2026-09-26.md
 - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/validation.json
+- _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/ci-verification.json
 - _bmad-output/implementation-artifacts/evidence/story-1-6-input-telemetry-2026-09-26/actual-opened-result.png
+- _bmad-output/implementation-artifacts/story-1-6-input-telemetry-acceptance-2026-09-26.md
 - apps/mobile/src/home/dock-telemetry.test.ts
 - apps/mobile/src/home/result-telemetry.test.tsx
 - apps/mobile/src/telemetry/event-id.ts
@@ -597,3 +599,5 @@ operation-journal实现真实IndexedDB原子批次/指纹和同entry未知retry�
 已将四个规范输入/导入事件接到当前Home、Controller和Dock的真实边界，并保留显式提交事件。服务端created回执与恢复GET区分；Dock完成卡片通过视觉视口及遮挡命中后才确认呈现，长时遮挡以250ms检查直到露出/卸载而不锁住FIFO；保护结果Sheet读到且可见后才记录打开。业务重放事件从随机job与attempt派生稳定UUIDv8，原始链接、文本、owner/session和job ID不进入信封。默认App供应商出口继续不可用，不将隔离投递写作真实SDK通过。
 
 代码、算法、缺项与本地Chrome网络信封/实际App+IDB证据见`docs/ops/input-telemetry-v1.md`和`story-1-6-input-telemetry-progress-2026-09-26.md`。三层限定CR发现的探针计数、遮挡ACK及异步适配器拒绝路径已修复并复验。T6真实SDK/同意/归因、T7真实样本/目标、APP-HOST-01双端设备与全Story关闭仍保持in-progress。
+
+最终提交`d02d0b0`在CI`36221667847`两job成功，四ZIP/999文件CRC、108遥测源码与313浏览器源码比对见`story-1-6-input-telemetry-acceptance-2026-09-26.md`。仅本轮CODE-QUALITY-01与UI-BROWSER-01的本Story本地切片证据收口；不能据此勾选完整T6/T7或将Story标review/done。
